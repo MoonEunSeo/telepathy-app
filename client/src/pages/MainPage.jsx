@@ -444,16 +444,16 @@ export default function MainPage() {
       )}
 
       <div className="login-container">
-        {sessionActive && (selectedWord || intent) && (
-          <WordTimer
-            word={getDisplayedWord(selectedWord, intent)}
-            displayedText={getDisplayedWord(selectedWord, intent)}
-            onExpire={() => {
-              toast.error('⏰ 5분 내 연결이 되지 않았어요.');
-              endSession();
-            }}
-          />
-        )}
+            {sessionActive && (
+        <WordTimer
+          word={getDisplayedWord(word || selectedWord, intent)}
+          displayedText={getDisplayedWord(word || selectedWord, intent)}
+          onExpire={() => {
+            toast.error('⏰ 5분 내 연결이 되지 않았어요.');
+            endSession();
+          }}
+        />
+      )}
 
         <h1 className="title">Telepathy</h1>
         <p className="subtitle">누군가 지금,<br />이 단어를 기다리고 있어요.</p>

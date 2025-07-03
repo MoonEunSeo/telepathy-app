@@ -290,6 +290,9 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
+// ✅ 빌드된 assets 경로도 서빙되도록 추가
+app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')));
+
 // ✅ 서버 실행
 const PORT = process.env.SERV_DEV || 5000;
 server.listen(PORT, () => {
