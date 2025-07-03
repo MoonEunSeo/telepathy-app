@@ -1,0 +1,49 @@
+.terms-container {
+    max-width: 460px;
+    margin: 0 auto;
+    background-color: #f9f6f1;
+    padding: 24px;
+    font-family: 'Gowun Batang', serif;
+    line-height: 1.7;
+    color: #2b2115;
+    text-align: left;
+  }
+  
+  .terms-container h2 {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .terms-container hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 24px 0;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 12px;
+    font-family: 'Gowun Batang', serif;
+    background-color: #fffdf9;
+    color: #3c2f27;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .styled-table thead tr {
+    background-color: #f0e9df;
+    color: #3a3020;
+    text-align: left;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2dcd2;
+    vertical-align: top;
+  }
+  
+  .styled-table tbody tr:last-child td {
+    border-bottom: none;
+  }

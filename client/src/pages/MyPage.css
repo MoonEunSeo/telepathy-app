@@ -1,0 +1,181 @@
+/* MyPage.css */
+
+body {
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .mypage-container hr {
+    border: none;
+    border-top: 1px solid #e7e7e7;
+    width: 400px;
+    border-radius: 9999px;
+    align-content: center;
+    margin-bottom: 5px;
+  }  
+  
+  .mypage-container {
+    display: flex;
+    height: max-content;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 80vh;
+    background-color: #f9f6f1;
+    color: #333;
+    padding: 20px 16px 24px;
+    box-sizing: border-box;
+  }
+  
+  .mypage-current-word {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    background-color: #f5c5c5;
+    padding: 6px 0;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    max-width: 350px;
+  }
+  
+  .mypage-title {
+    font-family: 'Judson', serif;
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    align-items: center;
+  }
+  
+  .mypage-profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 1px solid #e5e5e5;
+  }
+  
+  .mypage-nickname {
+    font-family: 'Gowun Batang', sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align:center;
+  }
+  
+  .mypage-section {
+    width: 100%;
+    text-align:center;
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  
+  .mypage-section-title {
+    font-family: 'Gowun Batang', sans-serif;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align:center;
+    font-size: 18px;
+  }
+  
+  .mypage-text {
+    margin-bottom: 15px;
+    text-align:center;
+    font-size: 14px;
+  }
+
+  .mypage-button-full{
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align:center;
+    max-width: 230px;
+    width: 100%;
+  }
+  
+  .mypage-button {
+    font-family: 'Gowun Dodum', sans-serif;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    text-align:center;
+    width: 100%;
+    max-width: 195px;
+    font-size: 14px;
+    font: weight 500px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    color: #333;
+  }
+  
+
+  .mypage-button-full:hover {
+    background-color: #fafafa;
+    
+  }
+  
+  .mypage-button-group {
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    gap: 10px; /* 버튼 간격 넉넉히 */
+    margin-top: 16px;
+    width: 100%; /* 부모는 화면 전체 너비 */
+}
+
+
+  .full-width {
+    width: 100%;
+    margin-top: 8px;
+    align-items: center;
+  }
+  
+  .mypage-withdraw-button {
+    margin-top: 20px;
+    font-family: 'Gowun Dodum', sans-serif;
+    color: #d84f4f;
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+  }
+  
+  
+  .login-button1 {
+    background-color: #000;      /* 예: 검정 배경 */
+    color: #fff;                 /* ✅ 텍스트 흰색으로 명확히 지정 */
+    border: none;
+    padding: 15px 20px;
+    width: 200px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none; /* ✅ 버튼 border가 입력창과 다르면 폭이 어긋남 */
+    line-height: 1.2;
+  }
+  
+  
+  .login-button1:hover {
+    background-color: #333;      /* 살짝 어둡게 */
+  }
+  
+  .login-button1.cancel {
+    background-color: #e0e0e0;   /* 회색 배경 */
+    color: #333;                 /* ✅ 검정 텍스트 */
+  }
+  
+  .login-button1.cancel:hover {
+    background-color: #d0d0d0;
+  }

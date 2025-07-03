@@ -1,0 +1,78 @@
+.nickname-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.nickname-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  font-family: 'Gowun Dodum', sans-serif;
+  align-items: center;
+}
+
+.nickname-modal-title {
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.nickname-modal-input {
+  margin-top: 10px;
+  width: 90%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 30px;
+}
+
+.nickname-modal-primary-btn {
+  background-color: #3a3020;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+}
+
+.nickname-modal-primary-btn:hover {
+  background-color: #2e2415;
+}
+
+.nickname-modal-secondary-btn {
+  background-color: #f5f5f5;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.nickname-modal-secondary-btn:hover {
+  background-color: #e9e9e9;
+}
+
+.nickname-modal-desc {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.nickname-highlight {
+  color: #e5625e;
+}

@@ -1,0 +1,241 @@
+/* ChatPage.css */
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  font-family: 'Gowun Dodum', sans-serif;
+}
+
+.chat-header {
+  display: flex;
+  padding: 16px;
+  font-weight: bold;
+  justify-content: space-between;
+  font-size: 20px;
+  background-color: #fffffff8;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.exit-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.exit-button:hover {
+  color: #d84f4f;
+  font-weight: bold;
+}
+
+.chat-date-divider{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: 14px;
+  margin: 24px 0;
+  position: relative;
+}
+
+.chat-date-divider::before,
+.chat-date-divider::after {
+  content: "";
+  flex: 1;
+  height: 0.5px; /* 선 두께 */
+  background-color: #eeeeee;
+  margin: 0 12px;
+  border-radius: 99px; 
+}
+
+.chat-messages {
+  margin-top: 30px;
+  animation: fadeIn 0.3s ease;
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+.chat-message {
+  max-width: 60%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  /* 줄바꿈 안정화 */
+  white-space: pre-wrap; 
+  word-wrap: break-word;
+  overflow-wrap: break-word; 
+  hyphens: auto;
+  box-sizing: border-box;
+}
+
+.chat-message.self {
+  align-self: flex-end;
+  background-color: #000000;
+  color: #ffffff;
+  border-bottom-right-radius: 5px;
+}
+
+.chat-message.other {
+  max-width: 60%;
+  align-self: flex-start;
+  background-color: #F9F6F1;
+  color: #000000;
+  border-bottom-left-radius: 4px;
+  font-size: 15px;
+  line-height: 1.5;
+  /* 줄바꿈 안정화 */
+  white-space: pre-wrap; 
+  word-wrap: break-word;
+  overflow-wrap: break-word; 
+  hyphens: auto;
+  box-sizing: border-box;
+}
+
+.chat-input-container {
+  display: flex;
+  padding: 10px 16px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fff;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  outline: none;
+  font-size: 15px;
+}
+
+.chat-send-button {
+  margin-left: 8px;
+  padding: 12px 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+
+.chat-read-indicator {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.chat-header-subtitle{
+    font-size: 14px;
+    color: #555;
+}
+
+.chat-typing-indicator {
+    display: inline-block;
+    margin: 5px;
+    max-width: 120px;
+    text-align: center;
+  }
+  
+  .typing-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .typing-dots span {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin: 0 3px;
+    background-color: #888;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+  }
+  
+  .typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes blink {
+    0% {
+      opacity: 0.2;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.2;
+    }
+  }
+  
+  .chat-ended-modal {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 20px 50px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    align-content: center;
+    font-size: 17px;
+
+    text-align: center;
+  }
+
+  .chat-input:disabled,
+.chat-send-button:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.exit-button-text {
+  align-content: center;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.exit-button-text:hover {
+  background-color: #222;
+}

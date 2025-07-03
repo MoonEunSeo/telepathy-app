@@ -1,0 +1,224 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Gowun Dodum', sans-serif;
+  background-color: #f9f6f1;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.auth-input {
+  width: 350px;
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
+  line-height: 1.2;
+}
+
+.login-button {
+  width: 350px;
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
+
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  border: none; /* ✅ 버튼 border가 입력창과 다르면 폭이 어긋남 */
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  font-family: 'Gowun Batang';
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+}
+
+.login-title {
+  font-family: 'Gowun Dodum';
+  font-size: 32px;
+  margin: 10px 0 20px;
+}
+
+.auth-footer-question {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.bold-link {
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 350px;
+  font-family: 'Gowun Dodum';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.agree-button,
+.next-button {
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  padding: 12px 20px;       /* ✅ 높이 맞춤 */
+  margin: 10px 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1.2;
+  box-sizing: border-box;
+  height: 48px;             /* ✅ input과 높이 일치 */
+}
+
+.alert-box {
+  background-color: #ffecec;
+  color: #c40000;
+  border: 1px solid #ff8080;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 12px;
+  white-space: pre-line;
+}
+
+.id-check-row {
+  display: flex;
+  width: 350px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.check-button {
+  height: 48px;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.2
+}
+
+.result-message {
+  color: #2c68ff;
+  font-size: 14px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  text-align: left;
+  padding-left: 2px;
+  width: 350px;
+  padding: 0;
+}
+.result-message.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  text-align: left;
+  padding-left: 2px;
+  width: 350px;
+  padding: 0;
+}
+
+.id-check-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.toggle-button {
+  height: 45px;
+  font-family: 'Gowun Dodum';
+  font-size: 16px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.toggle-button {
+  background-color: white;
+  cursor: pointer;
+}
+
+.toggle-button.active {
+  background-color: black;
+  color: white;
+}
+
+.birth-input{
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
+  line-height: 1.2;
+}
+
+.title {
+  font-family: 'Judson', serif;
+  font-size: 60px;
+  text-align: center;
+  margin-top: 90px;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: 14px;
+  margin: 24px 0;
+  position: relative;
+  width: 100%;
+  height: 20px;        /* ✔️ 반드시 있어야 함 */
+  text-align: center;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;         /* ✔️ 선 두께 */
+  background-color: #ddd;
+  margin: 0 12px;
+  max-width: 200px;
+  display: block;      /* ✔️ 꼭 필요 */
+}
