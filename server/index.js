@@ -259,6 +259,7 @@ server.listen(PORT, () => {
 */
 
 //통합 서버 실행
+// 📦 통합 서버 실행
 
 import express from 'express';
 import http from 'http';
@@ -269,18 +270,18 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// 📦 라우트 모듈 import
-import authRoutes from '../routes/auth.routes.js';
-import verifyRoutes from '../routes/verify.routes.js';
-import verifyMvpRoutes from '../routes/verify-mvp.routes.js';
-import matchRoutes from '../routes/match.routes.js';
-import registerRoutes from '../routes/register.routes.js';
-import passwordRoutes from '../routes/password.routes.js';
-import nicknameRoutes from '../routes/nickname.routes.js';
-import withdrawRoutes from '../routes/withdraw.routes.js';
-import balanceGameRoutes from '../routes/balanceGame.routes.js';
+// 📦 라우트 모듈 import (server/src/routes 기준)
+import authRoutes from './src/routes/auth.routes.js';
+import verifyRoutes from './src/routes/verify.routes.js';
+import verifyMvpRoutes from './src/routes/verify-mvp.routes.js';
+import matchRoutes from './src/routes/match.routes.js';
+import registerRoutes from './src/routes/register.routes.js';
+import passwordRoutes from './src/routes/password.routes.js';
+import nicknameRoutes from './src/routes/nickname.routes.js';
+import withdrawRoutes from './src/routes/withdraw.routes.js';
+import balanceGameRoutes from './src/routes/balanceGame.routes.js';
 
-import registerChatHandlers from './chat.socket.js'; // 소켓 핸들러
+import registerChatHandlers from './src/config/chat.socket.js'; // 소켓 핸들러
 
 dotenv.config();
 
@@ -312,11 +313,11 @@ app.get('/healthz', (req, res) => {
 });
 
 // ✅ 정적 파일 서빙
-app.use(express.static(path.join(__dirname, '../../../client/dist')));
+app.use(express.static(path.join(__dirname, '../../client/dist')));
 
 // ✅ SPA 핸들러
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
 // ✅ 소켓 서버 연결
