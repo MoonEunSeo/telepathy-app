@@ -17,6 +17,7 @@
     "redux": "^5.0.1",
     "socket.io-client": "^4.8.1",
     "styles": "^0.2.1",
+    "telepathy-app": "file:..",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

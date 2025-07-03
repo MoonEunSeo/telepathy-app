@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Express + Vite integrated server",
   "main": "server/index.js",      
-  "scripts": {
-    "start": "node server/index.js",              
-    "dev": "nodemon server/index.js",           
-    "build": "npm run build --prefix client"     
-  },
+"scripts": {
+  "start": "node server/index.js",
+  "dev": "nodemon server/index.js",
+  "build": "npm install --prefix client && npm run build --prefix client"
+},
   "dependencies": {
     "@portone/server-sdk": "^0.14.0",
     "@supabase/supabase-js": "^2.49.4",
