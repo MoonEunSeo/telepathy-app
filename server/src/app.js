@@ -39,6 +39,10 @@ app.use('/api/nickname', nicknameRoutes);  // 위치는 여기도 OK (CORS는 �
 app.use('/api/auth/withdraw', withdrawRoutes);
 app.use('/api/balance-game', balanceGameRoutes);
 
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.get('/', (req, res) => {
   res.send('텔레파시 서버 작동 중...');
 });
