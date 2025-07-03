@@ -22,7 +22,7 @@ import BottomLayout from './components/BottomLayout';
 import ChangePassword from './pages/ChangePassword';
 import Likepage from './pages/LikePage';
 import { IntentProvider } from './contexts/IntentContext';
-import { WordSessionProvider } from './contexts/WordSessionContext';
+
 
 export default function App() {
   const navigate = useNavigate();
@@ -41,7 +41,6 @@ export default function App() {
   
   return (
     <IntentProvider>
-       <WordSessionProvider>
       <Routes>
         
         <Route path="/login" element={<LoginPage />} />
@@ -81,7 +80,6 @@ export default function App() {
         <Route path="/terms/notification-consent" element={<NotificationConsent />} />
         
       </Routes>
-      </WordSessionProvider>
       </IntentProvider>
   );
 }

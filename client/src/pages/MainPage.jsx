@@ -282,8 +282,7 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainPage.css';
-
-import searchIcon from '../assets/SearchIcon.svg';
+import recommendations from '../assets/recommendations'; // ✅ 추천 단어 import
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -293,6 +292,8 @@ export default function MainPage() {
   const [showModal, setShowModal] = useState(false);
   const [showNicknameModal, setShowNicknameModal] = useState(false);
   const [isIntentVisible, setIsIntentVisible] = useState(false);
+  const [currentRecommendation, setCurrentRecommendation] = useState(recommendations[0]);
+
 
   const { intent, setIntent } = useIntent();
   const {
@@ -300,7 +301,12 @@ export default function MainPage() {
     isSessionActive: sessionActive,
     startSession,
     endSession,
+    startTime
   } = useWordSession();
+
+  useEffect(() => {
+    console.log('🟢 [MainPage] sessionActive:', sessionActive, 'startTime:', startTime, 'selectedWord:', selectedWord);
+  }, [sessionActive, startTime, selectedWord]);
 
   const wordMap = {
     comfort_me: '위로받고싶어요_밸',
@@ -327,7 +333,7 @@ export default function MainPage() {
 
   const handleWordSubmit = () => {
     if (!word.trim()) return setError('단어를 입력해주세요.');
-    setIntent(null);            // 기존 입력 방식이므로 intent 초기화
+    setIntent(null);
     setShowModal(true);
   };
 
@@ -335,12 +341,14 @@ export default function MainPage() {
     const mappedWord = wordMap[selectedIntent];
     if (!mappedWord) return;
     setIntent(selectedIntent);
-    setWord(mappedWord);       // 모달에 intent 기반 단어 전달
+    setWord(mappedWord);
     setShowModal(true);
   };
 
   const handleWordConfirm = async () => {
+    console.log('🔥 handleWordConfirm 호출됨');
     startSession(word);
+    console.log('📅 startSession 실행됨, word:', word);
     setShowModal(false);
     try {
       if (intent) {
@@ -439,6 +447,19 @@ export default function MainPage() {
     return () => clearInterval(interval);
   }, [sessionActive, selectedWord, intent, navigate]);
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentRecommendation((prev) => {
+        const currentIdx = recommendations.indexOf(prev);
+        const nextIdx = (currentIdx + 1) % recommendations.length;
+        return recommendations[nextIdx];
+      });
+    }, 60000); // 1분마다 교체
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       {showNicknameModal && (
@@ -446,20 +467,22 @@ export default function MainPage() {
       )}
 
       <div className="login-container">
-            {sessionActive && (
-        <WordTimer
-          word={getDisplayedWord(selectedWord, intent)}   // ✅ selectedWord로 고정
-          displayedText={getDisplayedWord(selectedWord, intent)}
-          onExpire={() => {
-            toast.error('⏰ 5분 내 연결이 되지 않았어요.');
-            endSession();
-          }}
-        />
-      )}
+        {sessionActive && (
+          <WordTimer
+            word={getDisplayedWord(word || selectedWord, intent)}
+            displayedText={getDisplayedWord(word || selectedWord, intent)}
+            onExpire={() => {
+              toast.error('⏰ 5분 내 연결이 되지 않았어요.');
+              endSession();
+            }}
+          />
+        )}
 
         <h1 className="title">Telepathy</h1>
         <p className="subtitle">누군가 지금,<br />이 단어를 기다리고 있어요.</p>
-        <p className="recommend-word">• 추천 단어 : 「그리움」</p>
+        <p className={`recommend-word ${fadeClass}`}>
+        • 추천 단어 : 「{currentRecommendation}」
+      </p>
 
         <div className="search-box">
           <input
@@ -470,7 +493,7 @@ export default function MainPage() {
             onKeyDown={(e) => e.key === 'Enter' && handleWordSubmit()}
           />
           <button className="search-btn" onClick={handleWordSubmit}>
-            <img className="mypage-profile-image" src={searchIcon} alt="검색" />
+            <img src="/src/assets/SearchIcon.svg" alt="검색" />
           </button>
         </div>
 
