@@ -470,7 +470,7 @@ export default function MainPage() {
             onKeyDown={(e) => e.key === 'Enter' && handleWordSubmit()}
           />
           <button className="search-btn" onClick={handleWordSubmit}>
-            <img src={searchIcon} alt="검색" />
+            <img className="mypage-profile-image" src={searchIcon} alt="검색" />
           </button>
         </div>
 

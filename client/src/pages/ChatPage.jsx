@@ -395,7 +395,7 @@ useEffect(() => {
 
 }
 */
-/*
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ChatPage.css';
@@ -581,8 +581,8 @@ export default function ChatPage() {
       )}
     </div>
   );
-}*/
-
+}
+/*
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ChatPage.css';
@@ -791,3 +791,4 @@ export default function ChatPage() {
     </div>
   );
 }
+*/

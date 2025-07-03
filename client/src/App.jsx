@@ -40,6 +40,7 @@ export default function App() {
   
   return (
     <IntentProvider>
+       <WordSessionProvider>
       <Routes>
         
         <Route path="/login" element={<LoginPage />} />
@@ -78,6 +79,8 @@ export default function App() {
         <Route path="/terms/improve-consent" element={<ImproveConsent />} />
         <Route path="/terms/notification-consent" element={<NotificationConsent />} />
         
-      </Routes></IntentProvider>
+      </Routes>
+      </WordSessionProvider>
+      </IntentProvider>
   );
 }
