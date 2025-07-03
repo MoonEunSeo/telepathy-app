@@ -2,6 +2,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
+// 개발/배포 환경에 따라 소켓 서버 주소를 자동으로 선택
+const SOCKET_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://your-render-domain.onrender.com' // Render 배포 후 실제 도메인으로 교체해줘
+    : 'http://localhost:5000';
+
 const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }) => {
   const socketRef = useRef(null);
   const [messages, setMessages] = useState([]);
@@ -9,13 +15,13 @@ const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }) => {
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000', {
+    const socket = io(SOCKET_URL, {
       query: { roomId, senderId, senderNickname, word },
     });
     socketRef.current = socket;
 
     socket.on('chatMessage', (data) => {
-      setMessages((prev) => [...prev, data]); // 수신 기반으로만 추가
+      setMessages((prev) => [...prev, data]);
     });
 
     socket.on('receiverInfo', (info) => {
@@ -37,7 +43,6 @@ const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }) => {
   const sendMessage = (msgData) => {
     if (socketRef.current) {
       socketRef.current.emit('chatMessage', msgData);
-      // ❌ setMessages 제거: 서버 수신 시만 반영
     }
   };
 

@@ -258,12 +258,12 @@ server.listen(PORT, () => {
 });
 */
 
-// 📦 src/index.js
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const app = require('./src/app');
 const { createClient } = require('@supabase/supabase-js');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
+require('dotenv').config(); // dotenv 추가
 
 // 글로벌 상태
 global.activeMatches = {};
@@ -275,11 +275,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// .env에 설정한 클라이언트 Origin 사용
+const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
+
 // 서버 및 소켓 초기화
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5179',
+    origin: CLIENT_ORIGIN,
     credentials: true,
   },
 });

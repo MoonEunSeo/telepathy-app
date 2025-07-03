@@ -14,7 +14,7 @@ export default function ChangePassword() {
       return;
     }
 
-    const res = await fetch('http://localhost:5000/api/password/change', {
+    const res = await fetch('/api/password/change', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', // 로그인된 사용자

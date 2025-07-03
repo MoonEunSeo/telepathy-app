@@ -16,7 +16,7 @@ export default function VerifyCallback() {
       }
 
       try {
-        const res = await fetch('http://localhost:5000/api/verify/confirm', {
+        const res = await fetch('/api/verify/confirm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ identityVerificationId }),

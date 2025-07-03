@@ -17,12 +17,13 @@ const balanceGameRoutes = require('./routes/balanceGame.routes');
 
 const app = express();
 
-
-// ✅ CORS는 가장 먼저 정확하게 설정 1회만
+// ✅ CORS 설정을 환경변수로 변경
+const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
 app.use(cors({
-  origin: 'http://localhost:5179',
-  credentials: true
+  origin: CLIENT_ORIGIN,
+  credentials: true,
 }));
+
 
 app.use(express.json());
 app.use(cookieParser());

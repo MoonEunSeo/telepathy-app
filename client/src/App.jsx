@@ -27,7 +27,7 @@ export default function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/auth/check', {
+    fetch('/api/auth/check', {
       credentials: 'include' // 쿠키 포함 필수
     })
       .then(res => res.json())

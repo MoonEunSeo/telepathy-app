@@ -39,7 +39,7 @@ export default function Verify() {
     const run = async () => {
       try {
         // 1. 백엔드에서 ID 발급 요청
-        const res = await fetch('http://localhost:5000/api/verify/prepare', {
+        const res = await fetch('/api/verify/prepare', {
           method: 'POST',
         });
         const { identityVerificationId } = await res.json();
@@ -49,7 +49,7 @@ export default function Verify() {
           storeId: 'store-28f76078-58f0-4b81-ba04-94e49ca9d3d2', // 실제 테스트 상점코드 입력
           identityVerificationId,
           channelKey: 'channel-key-ea252c8d-2eab-46a2-9d7d-189ce289bab9', // 테스트 채널키
-          redirectUrl: 'http://localhost:5179/verify/callback',
+          redirectUrl: '/verify/callback',
         });
 
         if (response.code) {
