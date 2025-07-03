@@ -68,11 +68,11 @@ app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 
 // ✅ Vite 빌드 결과 정적 파일 서빙
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join( __dirname, '../../../client/dist')));
 
 // ✅ SPA 지원을 위해 나머지 경로는 index.html로 리디렉션
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
 });
 
 // 소켓 연결
