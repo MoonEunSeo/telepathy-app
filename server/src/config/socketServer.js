@@ -42,35 +42,47 @@ server.listen(PORT, () => {
 });
 */
 
-//app을 불러와 소켓 서버와 프론트 정적 서비스까지 통합
-// 📦 src/config/socketServer.js
-const http = require('http');
-const { Server } = require('socket.io');
-const path = require('path');
-const express = require('express');
-const app = require('../app'); // API까지 등록된 app
-const { registerSocketHandlers } = require('./chat.socket');
-require('dotenv').config();
+// 📦 backend/socketServer.js
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import registerChatHandlers from './chat.socket.js'; // 경로는 네 구조에 맞춰 수정
 
-const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
+dotenv.config();
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
 const server = http.createServer(app);
+
+const CLIENT_ORIGIN = process.env.REALSITE;
+
+// CORS 설정
 const io = new Server(server, {
-  cors: {
-    origin: CLIENT_ORIGIN,
-    credentials: true,
-  },
+  cors: { origin: CLIENT_ORIGIN, credentials: true },
 });
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+app.use(express.json());
 
-// 소켓 이벤트 연결
-registerSocketHandlers(io);
+// ✅ Vite 빌드 결과 정적 파일 서빙
+app.use(express.static(path.join( __dirname, '../../../client/dist')));
 
-// ⚠️ 반드시 API 라우트 이후에 정적 서빙 추가
-app.use(express.static(path.join(__dirname, '../../../client/dist')));
-
-// ⚠️ SPA 핸들러는 맨 마지막에 등록
+// ✅ SPA 지원을 위해 나머지 경로는 index.html로 리디렉션
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
 });
 
-module.exports = server;
+// 소켓 연결
+io.on('connection', (socket) => {
+  console.log(`✅ 사용자 연결됨 [socket.id: ${socket.id}]`);
+  registerChatHandlers(io, socket);
+  socket.on('disconnect', () => console.log(`❌ 연결 종료 [socket.id: ${socket.id}]`));
+});
+
+const PORT = process.env.SERV_DEV || 5000;
+server.listen(PORT, () => {
+  console.log(`🚀 통합 서버 실행 중: http://localhost:${PORT}`);
+});
