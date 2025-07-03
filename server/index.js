@@ -261,64 +261,16 @@ server.listen(PORT, () => {
 //통합 서버 실행
 // 📦 통합 서버 실행
 
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const http = require('http');
+const path = require('path');
+const { Server } = require('socket.io');
+const app = require('./app');
+const { registerSocketHandlers } = require('./src/config/chat.socket');
+require('dotenv').config();
 
-// 📦 라우트 모듈 import (server/src/routes 기준)
-import authRoutes from './src/routes/auth.routes.js';
-import verifyRoutes from './src/routes/verify.routes.js';
-import verifyMvpRoutes from './src/routes/verify-mvp.routes.js';
-import matchRoutes from './src/routes/match.routes.js';
-import registerRoutes from './src/routes/register.routes.js';
-import passwordRoutes from './src/routes/password.routes.js';
-import nicknameRoutes from './src/routes/nickname.routes.js';
-import withdrawRoutes from './src/routes/withdraw.routes.js';
-import balanceGameRoutes from './src/routes/balanceGame.routes.js';
-
-import registerChatHandlers from './src/config/chat.socket.js'; // 소켓 핸들러
-
-dotenv.config();
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const app = express();
 const server = http.createServer(app);
 
 const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
-
-// ✅ CORS 설정
-app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
-app.use(express.json());
-app.use(cookieParser());
-
-// ✅ API 라우트 등록
-app.use('/api/auth', authRoutes);
-app.use('/api/verify', verifyRoutes);
-app.use('/api/verify-mvp', verifyMvpRoutes);
-app.use('/api/match', matchRoutes);
-app.use('/api/register', registerRoutes);
-app.use('/api/password', passwordRoutes);
-app.use('/api/nickname', nicknameRoutes);
-app.use('/api/auth/withdraw', withdrawRoutes);
-app.use('/api/balance-game', balanceGameRoutes);
-
-// ✅ 헬스체크
-app.get('/healthz', (req, res) => {
-  res.status(200).send('OK');
-});
-
-// ✅ 정적 파일 서빙
-app.use(express.static(path.join(__dirname, '../../client/dist')));
-
-// ✅ SPA 핸들러
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
-});
 
 // ✅ 소켓 서버 연결
 const io = new Server(server, {
@@ -326,12 +278,20 @@ const io = new Server(server, {
 });
 io.on('connection', (socket) => {
   console.log(`✅ 사용자 연결됨 [socket.id: ${socket.id}]`);
-  registerChatHandlers(io, socket);
+  registerSocketHandlers(io, socket);
   socket.on('disconnect', () => console.log(`❌ 연결 종료 [socket.id: ${socket.id}]`));
+});
+
+// ✅ 정적 파일 서빙 (빌드된 Vite 프론트)
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// ✅ SPA 핸들러 (app.get('*') → app.use(...)로 변경)
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 // ✅ 서버 실행
 const PORT = process.env.SERV_DEV || 5000;
 server.listen(PORT, () => {
-  console.log(`🚀 통합 서버 실행 중: http://localhost:${PORT}`);
+  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
 });
