@@ -260,39 +260,77 @@ server.listen(PORT, () => {
 
 //통합 서버 실행
 
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const { createClient } = require('@supabase/supabase-js');
-const { registerSocketHandlers } = require('./src/config/chat.socket');
-require('dotenv').config(); // dotenv 추가
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// 글로벌 상태
-global.activeMatches = {};
-global.queue = {};
+// 📦 라우트 모듈 import
+import authRoutes from '../routes/auth.routes.js';
+import verifyRoutes from '../routes/verify.routes.js';
+import verifyMvpRoutes from '../routes/verify-mvp.routes.js';
+import matchRoutes from '../routes/match.routes.js';
+import registerRoutes from '../routes/register.routes.js';
+import passwordRoutes from '../routes/password.routes.js';
+import nicknameRoutes from '../routes/nickname.routes.js';
+import withdrawRoutes from '../routes/withdraw.routes.js';
+import balanceGameRoutes from '../routes/balanceGame.routes.js';
 
-// Supabase 클라이언트
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import registerChatHandlers from './chat.socket.js'; // 소켓 핸들러
 
-// .env에 설정한 클라이언트 Origin 사용
+dotenv.config();
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
+const server = http.createServer(app);
+
 const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
 
-// 서버 및 소켓 초기화
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: CLIENT_ORIGIN,
-    credentials: true,
-  },
+// ✅ CORS 설정
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+app.use(express.json());
+app.use(cookieParser());
+
+// ✅ API 라우트 등록
+app.use('/api/auth', authRoutes);
+app.use('/api/verify', verifyRoutes);
+app.use('/api/verify-mvp', verifyMvpRoutes);
+app.use('/api/match', matchRoutes);
+app.use('/api/register', registerRoutes);
+app.use('/api/password', passwordRoutes);
+app.use('/api/nickname', nicknameRoutes);
+app.use('/api/auth/withdraw', withdrawRoutes);
+app.use('/api/balance-game', balanceGameRoutes);
+
+// ✅ 헬스체크
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
 });
 
-// 소켓 이벤트 연결
-registerSocketHandlers(io);
+// ✅ 정적 파일 서빙
+app.use(express.static(path.join(__dirname, '../../../client/dist')));
 
-// 서버 실행
-const PORT = process.env.PORT || 5000;
+// ✅ SPA 핸들러
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
+});
+
+// ✅ 소켓 서버 연결
+const io = new Server(server, {
+  cors: { origin: CLIENT_ORIGIN, credentials: true },
+});
+io.on('connection', (socket) => {
+  console.log(`✅ 사용자 연결됨 [socket.id: ${socket.id}]`);
+  registerChatHandlers(io, socket);
+  socket.on('disconnect', () => console.log(`❌ 연결 종료 [socket.id: ${socket.id}]`));
+});
+
+// ✅ 서버 실행
+const PORT = process.env.SERV_DEV || 5000;
 server.listen(PORT, () => {
-  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+  console.log(`🚀 통합 서버 실행 중: http://localhost:${PORT}`);
 });
