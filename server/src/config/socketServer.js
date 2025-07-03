@@ -57,7 +57,6 @@ dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const server = http.createServer(app);
-const path = require('path');
 
 const CLIENT_ORIGIN = process.env.REALSITE;
 
