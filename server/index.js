@@ -260,7 +260,7 @@ server.listen(PORT, () => {
 
 //통합 서버 실행
 // 📦 통합 서버 실행
-
+const express = require('express');
 const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
