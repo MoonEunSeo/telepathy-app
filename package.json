@@ -1,0 +1,27 @@
+{
+  "name": "telepathy-app",
+  "version": "1.0.0",
+  "description": "Express + Vite integrated server",
+  "main": "server/index.js",      
+  "scripts": {
+    "start": "node server/index.js",              
+    "dev": "nodemon server/index.js",           
+    "build": "npm run build --prefix client"     
+  },
+  "dependencies": {
+    "@portone/server-sdk": "^0.14.0",
+    "@supabase/supabase-js": "^2.49.4",
+    "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "solapi": "^5.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
