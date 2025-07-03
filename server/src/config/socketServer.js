@@ -48,11 +48,12 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const express = require('express');
-const app = require('../app'); // API 라우트용 app 가져오기
+const app = require('../app'); // API까지 등록된 app
 const { registerSocketHandlers } = require('./chat.socket');
 require('dotenv').config();
 
 const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -64,10 +65,10 @@ const io = new Server(server, {
 // 소켓 이벤트 연결
 registerSocketHandlers(io);
 
-// Vite 빌드 결과 정적 파일 서빙
+// ⚠️ 반드시 API 라우트 이후에 정적 서빙 추가
 app.use(express.static(path.join(__dirname, '../../../client/dist')));
 
-// SPA를 위해 나머지 경로는 index.html로 리디렉션
+// ⚠️ SPA 핸들러는 맨 마지막에 등록
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
 });
