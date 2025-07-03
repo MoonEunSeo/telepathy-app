@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 // 개발/배포 환경에 따라 소켓 서버 주소를 자동으로 선택
 const SOCKET_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://your-render-domain.onrender.com' // Render 배포 후 실제 도메인으로 교체해줘
+    ? 'https://telepathy-app.onrender.com' // Render 배포 후 실제 도메인으로 교체해줘
     : 'http://localhost:5000';
 
 const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }) => {
