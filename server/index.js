@@ -258,9 +258,11 @@ server.listen(PORT, () => {
 });
 */
 
+//통합 서버 실행
+/*
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const app = require('./src/app');
+const app = require('./src/config/socketServer.js');
 const { createClient } = require('@supabase/supabase-js');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
 require('dotenv').config(); // dotenv 추가
@@ -292,6 +294,14 @@ registerSocketHandlers(io);
 
 // 서버 실행
 const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+});
+*/
+// 📦 index.js
+const server = require('./src/config/socketServer');
+const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
   console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
 });
