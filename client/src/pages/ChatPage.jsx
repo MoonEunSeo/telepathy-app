@@ -441,6 +441,27 @@ export default function ChatPage() {
     onChatEnded: () => setChatEnded(true),
   });
 
+  
+useEffect(() => {
+  const handleDisconnect = () => {
+    console.log('❌ 연결 종료됨');
+  };
+
+  const handleLeaveRoom = (data) => {
+    console.log('👋 방 나감:', data);
+  };
+
+  // ✅ 리스너 등록
+  socket.on('disconnect', handleDisconnect);
+  socket.on('leaveRoom', handleLeaveRoom);
+
+  // ✅ 언마운트 시 리스너 해제
+  return () => {
+    socket.off('disconnect', handleDisconnect);
+    socket.off('leaveRoom', handleLeaveRoom);
+  };
+}, []);
+
   useEffect(() => {
     const checkSession = async () => {
       try {

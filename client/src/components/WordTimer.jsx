@@ -8,7 +8,7 @@ export default function WordTimer({ word, displayedText, onExpire }) {
 
   useEffect(() => {
     if (!startTime) return;
-
+  
     const update = () => {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       const remaining = Math.max(0, 300 - elapsed);
@@ -17,11 +17,12 @@ export default function WordTimer({ word, displayedText, onExpire }) {
         onExpire();
       }
     };
-
-    update();
+  
+    update(); // 즉시 실행
     const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
-  }, [startTime, onExpire]);
+  
+    return () => clearInterval(interval); // 무조건 cleanup
+  }, [startTime]); // ⬅️ onExpire는 포함하지 않아도 됨. (변하지 않으니)
 
   const formatTime = (sec) => {
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
