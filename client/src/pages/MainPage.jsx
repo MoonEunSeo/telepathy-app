@@ -283,6 +283,8 @@ import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainPage.css';
 
+import searchIcon from '../assets/SearchIcon.svg';
+
 export default function MainPage() {
   const navigate = useNavigate();
 
@@ -446,8 +448,8 @@ export default function MainPage() {
       <div className="login-container">
             {sessionActive && (
         <WordTimer
-          word={getDisplayedWord(word || selectedWord, intent)}
-          displayedText={getDisplayedWord(word || selectedWord, intent)}
+          word={getDisplayedWord(selectedWord, intent)}   // ✅ selectedWord로 고정
+          displayedText={getDisplayedWord(selectedWord, intent)}
           onExpire={() => {
             toast.error('⏰ 5분 내 연결이 되지 않았어요.');
             endSession();
@@ -468,7 +470,7 @@ export default function MainPage() {
             onKeyDown={(e) => e.key === 'Enter' && handleWordSubmit()}
           />
           <button className="search-btn" onClick={handleWordSubmit}>
-            <img src="/src/assets/SearchIcon.svg" alt="검색" />
+            <img src={searchIcon} alt="검색" />
           </button>
         </div>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWordSession } from '../contexts/WordSessionContext';
 import WordTimer from '../components/WordTimer';
+import profileImage from '../assets/profile_image.png';
 import './MyPage.css';
 
 const MyPage = () => {
@@ -105,11 +106,8 @@ const MyPage = () => {
 
       <h1 className="mypage-title">Telepathy</h1>
 
-      <img
-        src="./src/assets/profile_image.png"
-        alt="프로필 이미지"
-        className="mypage-profile-image"
-      />
+      
+      <img src={profileImage} alt="프로필" />
 
       <div className="mypage-nickname">{nickname || '닉네임 로딩중...'}</div>
 
