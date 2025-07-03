@@ -7,6 +7,8 @@ export default function WordTimer({ word, displayedText, onExpire }) {
 
 
   useEffect(() => {
+
+    console.log("✅ WordTimer mounted, startTime:", startTime);
     if (!startTime) return;
   
     const update = () => {
