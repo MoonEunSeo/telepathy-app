@@ -262,7 +262,6 @@ server.listen(PORT, () => {
 
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const app = require('./src/config/socketServer.js');
 const { createClient } = require('@supabase/supabase-js');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
 require('dotenv').config(); // dotenv 추가
