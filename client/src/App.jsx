@@ -22,6 +22,7 @@ import BottomLayout from './components/BottomLayout';
 import ChangePassword from './pages/ChangePassword';
 import Likepage from './pages/LikePage';
 import { IntentProvider } from './contexts/IntentContext';
+import { WordSessionProvider } from './contexts/WordSessionContext';
 
 export default function App() {
   const navigate = useNavigate();
