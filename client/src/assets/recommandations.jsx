@@ -1,4 +1,4 @@
-// 📦 src/assets/recommendations.js
+// 📦 src/assets/recommendations.jsx
 
 const recommendations = [
     '그리움', '행복', '설렘', '외로움', '희망',
