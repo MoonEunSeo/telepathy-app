@@ -282,7 +282,7 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainPage.css';
-import recommendations from '../assets/recommendations'; // ✅ 추천 단어 import
+import { recommendations } from '../assets/recommendations'; // ✅ 추천 단어 import
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -292,7 +292,21 @@ export default function MainPage() {
   const [showModal, setShowModal] = useState(false);
   const [showNicknameModal, setShowNicknameModal] = useState(false);
   const [isIntentVisible, setIsIntentVisible] = useState(false);
-  const [currentRecommendation, setCurrentRecommendation] = useState(recommendations[0]);
+
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [recommendClass, setRecommendClass] = useState("recommend-transition"[0]);
+
+// 추천단어 페이드인
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRecommendClass("recommend-transition"); // 페이드 아웃
+      setTimeout(() => {
+        setCurrentIdx((prev) => (prev + 1) % recommendations.length);
+        setRecommendClass("recommend-transition recommend-visible"); // 페이드 인
+      }, 500); // 페이드 아웃 시간 후 단어 변경 & 페이드 인
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
 
   const { intent, setIntent } = useIntent();
@@ -448,17 +462,6 @@ export default function MainPage() {
   }, [sessionActive, selectedWord, intent, navigate]);
 
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentRecommendation((prev) => {
-        const currentIdx = recommendations.indexOf(prev);
-        const nextIdx = (currentIdx + 1) % recommendations.length;
-        return recommendations[nextIdx];
-      });
-    }, 60000); // 1분마다 교체
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <>
@@ -478,11 +481,17 @@ export default function MainPage() {
           />
         )}
 
+
         <h1 className="title">Telepathy</h1>
         <p className="subtitle">누군가 지금,<br />이 단어를 기다리고 있어요.</p>
-        <p className={`recommend-word ${fadeClass}`}>
-        • 추천 단어 : 「{currentRecommendation}」
-      </p>
+
+
+        <p className="recommend-word">
+        • 추천 단어 : 
+        <span className={recommendClass}>
+          「{recommendations[currentIdx]}」
+        </span>
+        </p>
 
         <div className="search-box">
           <input

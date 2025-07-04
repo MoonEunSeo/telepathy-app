@@ -258,11 +258,8 @@ server.listen(PORT, () => {
 });
 */
 
-//통합 서버 실행
-// 📦 통합 서버 실행
-const express = require('express');
+// 📦 index.js
 const http = require('http');
-const path = require('path');
 const { Server } = require('socket.io');
 const app = require('./app');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
@@ -270,9 +267,11 @@ require('dotenv').config();
 
 const server = http.createServer(app);
 
-const CLIENT_ORIGIN = process.env.REALSITE || 'http://localhost:5179';
+const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
+  ? 'https://telepathy-app.onrender.com'
+  : 'http://localhost:5179';
 
-// ✅ 소켓 서버 연결
+// ✅ 소켓 서버 설정
 const io = new Server(server, {
   cors: { origin: CLIENT_ORIGIN, credentials: true },
 });
@@ -281,17 +280,6 @@ io.on('connection', (socket) => {
   registerSocketHandlers(io, socket);
   socket.on('disconnect', () => console.log(`❌ 연결 종료 [socket.id: ${socket.id}]`));
 });
-
-// ✅ 정적 파일 서빙 (빌드된 Vite 프론트)
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// ✅ SPA 핸들러 (app.get('*') → app.use(...)로 변경)
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
-
-// ✅ 빌드된 assets 경로도 서빙되도록 추가
-app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')));
 
 // ✅ 서버 실행
 const PORT = process.env.SERV_DEV || 5000;
