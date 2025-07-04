@@ -265,16 +265,24 @@ const app = require('./app');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
 require('dotenv').config();
 
+// ✅ 여기에 로거 호출!
+const { initLogger } = require('./src/utils/logger');
+initLogger();
+
+
 const server = http.createServer(app);
 
 const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
   ? 'https://telepathy-app.onrender.com'
   : 'http://localhost:5179';
 
-// ✅ 소켓 서버 설정
-const io = new Server(server, {
-  cors: { origin: CLIENT_ORIGIN, credentials: true },
-});
+  const io = new Server(server, {
+    cors: {
+      origin: CLIENT_ORIGIN,
+      credentials: true,
+    },
+  });
+
 io.on('connection', (socket) => {
   console.log(`✅ 사용자 연결됨 [socket.id: ${socket.id}]`);
   registerSocketHandlers(io, socket);
