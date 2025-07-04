@@ -16,6 +16,7 @@ const nicknameRoutes = require('./src/routes/nickname.routes');
 const withdrawRoutes = require('./src/routes/withdraw.routes');
 const balanceGameRoutes = require('./src/routes/balanceGame.routes');
 
+
 const app = express();
 
 const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
@@ -40,6 +41,11 @@ app.use('/api/password', passwordRoutes);
 app.use('/api/nickname', nicknameRoutes);
 app.use('/api/auth/withdraw', withdrawRoutes);
 app.use('/api/balance-game', balanceGameRoutes);
+
+// ✅ 서버단 리디렉션: 루트로 들어오면 /login으로 보낸다
+app.get(['/', '/index.html'], (req, res) => {
+    res.redirect(302, '/login');
+  });
 
 // ✅ 헬스체크
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
