@@ -272,17 +272,20 @@ initLogger();
 
 const server = http.createServer(app);
 
-const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
-  ? 'https://telepathy-app.onrender.com'
-  : 'http://localhost:5179';
+const CLIENT_ORIGIN =
+  process.env.NODE_ENV === 'production'
+    ? [
+        'https://telepathy.my',              // ✅ 실제 배포 프론트 도메인
+        'https://telepathy-app.onrender.com' // ✅ 기존 Render 도메인
+      ]
+    : 'http://localhost:5179'; // 개발 환경
 
-  const io = new Server(server, {
-    cors: {
-      origin: CLIENT_ORIGIN,
-      credentials: true,
-    },
-  });
-
+const io = new Server(server, {
+  cors: {
+    origin: CLIENT_ORIGIN,
+    credentials: true,
+  },
+});
 io.on('connection', (socket) => {
   console.log(`✅ 사용자 연결됨 [socket.id: ${socket.id}]`);
   registerSocketHandlers(io, socket);

@@ -19,9 +19,13 @@ const balanceGameRoutes = require('./src/routes/balanceGame.routes');
 
 const app = express();
 
-const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
-  ? 'https://telepathy-app.onrender.com'
-  : 'http://localhost:5179';
+const CLIENT_ORIGIN =
+  process.env.NODE_ENV === 'production'
+    ? [
+        'https://telepathy.my',              // ✅ 실제 프론트 배포 도메인
+        'https://telepathy-app.onrender.com' // ✅ 기존 Render 도메인
+      ]
+    : 'http://localhost:5179'; // 개발 환경
 
 app.use(cors({
   origin: CLIENT_ORIGIN,
