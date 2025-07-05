@@ -732,7 +732,6 @@ export default function ChatPage() {
 }
 */
 
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ChatPage.css';
@@ -741,17 +740,22 @@ import { useWordSession } from '../contexts/WordSessionContext';
 import useSocket from '../hooks/useSocket';
 
 export default function ChatPage() {
-  // 📌 URL 파라미터 및 전역 세션
   const navigate = useNavigate();
-  const { word, roomId, senderId, senderNickname, receiverId, receiverNickname } = useParams();
-  const { endSession } = useWordSession();
+  const {
+    roomId,
+    myId,
+    myNickname,
+    partnerId,
+    partnerNickname,
+    word,
+  } = useParams();
 
-  // 📌 상태
+  const { endSession } = useWordSession();
   const [message, setMessage] = useState('');
   const [chatEnded, setChatEnded] = useState(false);
+  const [isReadyToChat, setIsReadyToChat] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // 📌 소켓 훅
   const {
     messages,
     receiverInfo,
@@ -761,38 +765,22 @@ export default function ChatPage() {
     sendLeave,
   } = useSocket({
     roomId,
-    senderId,
-    senderNickname,
+    senderId: myId,
+    senderNickname: myNickname,
     word,
     onChatEnded: () => setChatEnded(true),
   });
 
-  // 📌 메시지 도착 시 스크롤 맨 아래로 이동
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // 📌 세션 상태 확인 (초기 1회)
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await fetch('/api/match/session-status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ word, userId: senderId }),
-        });
-        const data = await res.json();
-        if (!data.active) navigate('/main');
-      } catch (err) {
-        console.error('❌ 세션 확인 실패:', err);
-        navigate('/main');
-      }
-    };
-    checkSession();
-  }, [navigate, word, senderId]);
+    if (receiverInfo?.receiverId === partnerId) {
+      setIsReadyToChat(true);
+    }
+  }, [receiverInfo, partnerId]);
 
-  // 📌 채팅방 나가기
   const handleExitChat = async () => {
     try {
       await fetch('/api/match/end', {
@@ -810,85 +798,93 @@ export default function ChatPage() {
     }
   };
 
-  // 📌 메시지 전송
   const handleSendMessage = () => {
-    if (!message.trim() || chatEnded) return;
-    sendMessage({
+    if (!message.trim() || !isReadyToChat) return;
+    const msgData = {
       roomId,
-      senderId,
-      senderNickname,
-      receiverId: receiverInfo.receiverId,
-      receiverNickname: receiverInfo.receiverNickname,
+      senderId: myId,
+      senderNickname: myNickname,
+      receiverId: partnerId,
+      receiverNickname: partnerNickname,
       word,
       message,
       timestamp: Date.now(),
-    });
+    };
+    sendMessage(msgData);
     setMessage('');
   };
 
-  // 📌 입력중 표시
   const handleTyping = (e) => {
     setMessage(e.target.value);
     sendTyping();
   };
 
-  // 📌 메시지 렌더링
-  const renderMessages = () =>
-    messages.map((msg, idx) => (
-      <div key={idx} className={`chat-message ${msg.senderId === senderId ? 'self' : 'other'}`}>
-        {msg.message}
-      </div>
-    ));
+  const renderMessages = () => {
+    const rendered = [];
+    let lastDate = '';
+
+    messages.forEach((msg, idx) => {
+      const date = new Date(msg.timestamp).toLocaleDateString();
+      if (date !== lastDate) {
+        rendered.push(<div key={`date-${idx}`} className="chat-date-divider">{date}</div>);
+        lastDate = date;
+      }
+      rendered.push(
+        <div key={idx} className={`chat-message ${msg.senderId === myId ? 'self' : 'other'}`}>
+          {msg.message}
+        </div>
+      );
+    });
+
+    if (isTyping) {
+      rendered.push(
+        <div key="typing-indicator" className="chat-message other">
+          <div className="chat-typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      );
+    }
+
+    return rendered;
+  };
 
   return (
     <div className="chat-container" style={{ position: 'relative' }}>
-      <header className="chat-header">
+      <div className="chat-header">
         채팅방 ({word})
-        <button className="exit-button" onClick={handleExitChat}>
-          <LogOut size={20} />
-        </button>
-      </header>
+        <button className="exit-button" onClick={handleExitChat}><LogOut size={20} /></button>
+      </div>
 
-      <main className="chat-messages">
+      <div className="chat-messages">
         <div className="chat-info-banner">
-          <strong>
-            방금 {receiverInfo?.receiverNickname || receiverNickname || '(상대방 로딩중)'}님과<br />
-            같은 단어를 떠올렸어요!
-          </strong>
-          <br />
-          <br />여기서 만나다니,<br />운명인가요?
+          <strong>{partnerNickname || '(상대방 로딩중)'}님과<br />연결되었습니다!</strong>
+          <br /><br />즐거운 대화를 나눠보세요 🎉
         </div>
-
-        {renderMessages()}
-
-        {isTyping && (
-          <div className="chat-message other">
-            <div className="chat-typing-indicator">
-              <span></span><span></span><span></span>
-            </div>
-          </div>
+        {!isReadyToChat && (
+          <div className="chat-wait-banner">상대방이 입장 중입니다...</div>
         )}
-
+        {renderMessages()}
         <div ref={messagesEndRef} />
-      </main>
+      </div>
 
-      <footer className="chat-input-container">
+      <div className="chat-input-container">
         <input
           className="chat-input"
           placeholder="메시지를 입력하세요."
           value={message}
           onChange={handleTyping}
           onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-          disabled={chatEnded}
+          disabled={chatEnded || !isReadyToChat}
         />
         <button
           className="chat-send-button"
           onClick={handleSendMessage}
-          disabled={chatEnded}
+          disabled={chatEnded || !isReadyToChat}
         >
           전송
         </button>
-      </footer>
+      </div>
 
       {chatEnded && (
         <div className="chat-ended-modal">
