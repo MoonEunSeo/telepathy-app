@@ -146,7 +146,7 @@ module.exports = { registerSocketHandlers };*/
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const app = require('./app'); // app.js에서 export한 Express 앱
-const { registerSocketHandlers } = require('./config/chat.socket');
+const { registerSocketHandlers } = require('../config/chat.socket');
 require('dotenv').config();
 
 // 글로벌 상태 (필요 시 유지)
