@@ -106,7 +106,7 @@ module.exports = { registerSocketHandlers };
 */
 
 // 📦 src/config/chat.socket.js
-const { supabase } = require('../supabase');
+const { supabase } = require('./supabase');
 
 function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
