@@ -103,96 +103,80 @@ function registerSocketHandlers(io) {
 
 module.exports = { registerSocketHandlers };
 
-*/
+*/// 📦 src/config/chat.socket.js
+const { Server } = require('socket.io');
 
-const { supabase } = require('./supabase');
-const roomReceiverSent = {}; // ✅ 방별 receiverInfo 전송 여부 기록
+function setupSocket(server) {
+  const io = new Server(server, {
+    cors: {
+      origin: [
+        'https://telepathy.my',
+        'https://telepathy-app.onrender.com',
+        'http://localhost:5173',
+      ],
+      credentials: true,
+    },
+  });
 
-function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
     const { roomId, senderId, senderNickname, word } = socket.handshake.query;
+    if (!roomId || !senderId) {
+      console.log('❌ 잘못된 연결 시도, query 누락');
+      socket.disconnect();
+      return;
+    }
+
     console.log(`🟢 Socket connected: senderId=${senderId}, roomId=${roomId}`);
 
+    // 방 입장
     socket.join(roomId);
-    logRoomState(io, roomId);
+    console.log(`🔍 socket joined room ${roomId}`);
 
-    sendReceiverInfoIfReady(io, roomId);
+    // 현재 방 참가자 정보 확인 후 상대방 정보 전달
+    const clients = [...io.sockets.adapter.rooms.get(roomId) || []];
+    const otherSocketId = clients.find((id) => id !== socket.id);
 
-    socket.on('chatMessage', async (data) => {
-      console.log('💬 Chat message:', data);
+    if (otherSocketId) {
+      const otherSocket = io.sockets.sockets.get(otherSocketId);
+      if (otherSocket) {
+        const otherQuery = otherSocket.handshake.query;
+        // 현재 접속자에게 상대 정보 전달
+        socket.emit('receiverInfo', {
+          receiverId: otherQuery.senderId,
+          receiverNickname: otherQuery.senderNickname,
+        });
+        // 상대방에게도 이 접속자의 정보 전달
+        otherSocket.emit('receiverInfo', {
+          receiverId: senderId,
+          receiverNickname: senderNickname,
+        });
+      }
+    }
 
-      const { roomId, senderId, senderNickname, receiverId, receiverNickname, word, message, timestamp } = data;
-
-      const { error } = await supabase.from('chat_logs').insert({
-        room_id: roomId,
-        sender_id: senderId,
-        sender_nickname: senderNickname,
-        receiver_id: receiverId,
-        receiver_nickname: receiverNickname,
-        word,
-        message,
-        timestamp: new Date(timestamp),
-      });
-
-      if (error) console.error('❌ chat_logs 저장 실패:', error.message);
-      else console.log('✅ chat_logs 저장 완료!');
-
-      io.to(roomId).emit('chatMessage', data);
+    // 메시지 전송
+    socket.on('chatMessage', (msg) => {
+      console.log(`💬 ${senderNickname}의 메시지 중계`);
+      socket.to(roomId).emit('chatMessage', msg);
     });
 
+    // 타이핑 표시
     socket.on('typing', () => socket.to(roomId).emit('typing'));
     socket.on('stopTyping', () => socket.to(roomId).emit('stopTyping'));
 
-    socket.on('leaveRoom', ({ roomId }) => {
-      console.log(`🚪 leaveRoom: senderId=${senderId}, roomId=${roomId}`);
-      socket.to(roomId).emit('chatEnded');
-      socket.leave(roomId);
-      socket.disconnect(true);
+    // 방 나가기 요청
+    socket.on('leaveRoom', ({ roomId: leaveRoomId }) => {
+      console.log(`👋 ${senderNickname} leaveRoom 호출`);
+      socket.leave(leaveRoomId);
+      socket.to(leaveRoomId).emit('chatEnded'); // 남은 사람에게 종료 알림
+      socket.disconnect();
     });
 
-    socket.on('disconnect', () => {
-      const clients = io.sockets.adapter.rooms.get(roomId);
-      if (!clients || clients.size === 0) {
-        delete roomReceiverSent[roomId]; // ✅ 방 비면 receiverInfo 상태 초기화
-        console.log(`🧹 방 상태 초기화: roomId=${roomId}`);
-      }
-      console.log(`🔴 Socket disconnected: senderId=${senderId}, roomId=${roomId}`);
+    // 연결 끊김 처리
+    socket.on('disconnect', (reason) => {
+      console.log(`🔴 Socket disconnected: senderId=${senderId}, roomId=${roomId}, reason=${reason}`);
+      socket.to(roomId).emit('chatEnded');
     });
   });
 }
 
-function sendReceiverInfoIfReady(io, roomId) {
-  const clients = io.sockets.adapter.rooms.get(roomId);
-  if (clients?.size === 2 && !roomReceiverSent[roomId]) {
-    const [firstSocketId, secondSocketId] = [...clients];
-    const firstSocket = io.sockets.sockets.get(firstSocketId);
-    const secondSocket = io.sockets.sockets.get(secondSocketId);
-
-    if (firstSocket && secondSocket) {
-      const firstQuery = firstSocket.handshake.query;
-      const secondQuery = secondSocket.handshake.query;
-
-      firstSocket.emit('receiverInfo', {
-        receiverId: secondQuery.senderId,
-        receiverNickname: secondQuery.senderNickname,
-      });
-
-      secondSocket.emit('receiverInfo', {
-        receiverId: firstQuery.senderId,
-        receiverNickname: firstQuery.senderNickname,
-      });
-
-      roomReceiverSent[roomId] = true; // ✅ 중복 방지
-      console.log('✅ receiverInfo emitted to both users');
-    }
-  }
-}
-
-function logRoomState(io, roomId) {
-  const clients = io.sockets.adapter.rooms.get(roomId);
-  console.log('🔍 socket joined room', roomId);
-  console.log('👥 현재 방 참가자 수:', clients?.size || 0);
-  console.log('📌 현재 방 참가자 ID 목록:', [...(clients || [])]);
-}
-
-module.exports = { registerSocketHandlers };
+module.exports = setupSocket;
