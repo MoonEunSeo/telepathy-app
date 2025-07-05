@@ -107,7 +107,7 @@ const MyPage = () => {
       <h1 className="mypage-title">Telepathy</h1>
 
       
-      <img src={profileImage} alt="프로필" />
+      <img className="mypage-profile-image" src={profileImage} alt="프로필" />
 
       <div className="mypage-nickname">{nickname || '닉네임 로딩중...'}</div>
 
