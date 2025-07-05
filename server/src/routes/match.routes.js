@@ -108,7 +108,7 @@ module.exports = router;*/
 
 // 📦 routes/match.routes.js2
 
-
+/*
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -371,6 +371,139 @@ router.post('/session-status', async (req, res) => {
   } catch (err) {
     console.error('세션 상태 확인 오류:', err);
     res.status(500).json({ active: false });
+  }
+});
+
+module.exports = router;*/
+
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
+const { createClient } = require('@supabase/supabase-js');
+const { v4: uuidv4 } = require('uuid');
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// 글로벌 상태 관리
+let queue = {}; // { word: [ { userId, nickname, timestamp } ] }
+let activeMatches = {}; // { word: { userId: { roomId, receiverId, receiverNickname } } }
+const MAX_SESSION_DURATION = 5 * 60 * 1000; // 5분
+
+// ✅ 단어 등록 API
+router.post('/start', (req, res) => {
+  const { word } = req.body;
+  const now = Date.now();
+
+  if (!word) return res.status(400).json({ error: '단어 누락' });
+
+  if (!queue[word]) queue[word] = [];
+
+  // 오래된 항목 제거
+  queue[word] = queue[word].filter(entry => now - entry.timestamp < MAX_SESSION_DURATION);
+
+  res.json({ success: true });
+});
+
+// ✅ 매칭 확인 API
+router.post('/check', async (req, res) => {
+  const token = req.cookies.token;
+  const { word } = req.body;
+
+  console.log('\n✅ 매칭 확인 요청:', word);
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const senderId = decoded.user_id;
+
+    // 닉네임 Supabase에서 조회
+    const { data: userProfile, error } = await supabase
+      .from('users')
+      .select('nickname')
+      .eq('id', senderId)
+      .single();
+
+    if (error || !userProfile) {
+      console.error('❌ 닉네임 조회 실패:', error);
+      return res.status(500).json({ success: false, message: '닉네임 조회 실패' });
+    }
+
+    const senderNickname = userProfile.nickname;
+    console.log('✅ senderId:', senderId, 'senderNickname:', senderNickname);
+
+    // 기존 매칭 유지
+    if (activeMatches[word] && activeMatches[word][senderId]) {
+      const matchInfo = activeMatches[word][senderId];
+      console.log(`🎉 [기존 매칭 유지] senderId=${senderId}, roomId=${matchInfo.roomId}`);
+
+      return res.json({
+        matched: true,
+        roomId: matchInfo.roomId,
+        senderId,
+        senderNickname,
+        receiverId: matchInfo.receiverId,
+        receiverNickname: matchInfo.receiverNickname,
+        word
+      });
+    }
+
+    // 대기열 초기화 및 정리
+    if (!queue[word]) queue[word] = [];
+
+    const now = Date.now();
+    queue[word] = queue[word].filter(entry => now - entry.timestamp < MAX_SESSION_DURATION);
+    queue[word] = queue[word].filter(entry => entry.userId !== senderId);
+
+    // 현재 유저 큐에 추가
+    queue[word].push({ userId: senderId, nickname: senderNickname, timestamp: now });
+
+    console.log('⏳ 대기중 word=' + word + ', queue=', queue[word].map(u => u.nickname));
+
+    // 매칭 시도
+    if (queue[word].length >= 2) {
+      const user1 = queue[word].shift();
+      const user2 = queue[word].shift();
+      const roomId = uuidv4();
+
+      // 매칭 정보 저장
+      activeMatches[word] = activeMatches[word] || {};
+      activeMatches[word][user1.userId] = {
+        roomId,
+        receiverId: user2.userId,
+        receiverNickname: user2.nickname
+      };
+      activeMatches[word][user2.userId] = {
+        roomId,
+        receiverId: user1.userId,
+        receiverNickname: user1.nickname
+      };
+
+      console.log(`🎉 매칭 성공: [${user1.nickname}] <-> [${user2.nickname}] roomId=${roomId}`);
+
+      const isSenderUser1 = senderId === user1.userId;
+
+      return res.json({
+        matched: true,
+        roomId,
+        senderId,
+        senderNickname,
+        receiverId: isSenderUser1 ? user2.userId : user1.userId,
+        receiverNickname: isSenderUser1 ? user2.nickname : user1.nickname,
+        word
+      });
+    } else {
+      return res.json({ matched: false });
+    }
+
+  } catch (err) {
+    console.error('[매칭 확인 오류]', err);
+    return res.status(500).json({ success: false, message: '서버 오류' });
   }
 });
 
