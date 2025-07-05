@@ -282,6 +282,7 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainPage.css';
+import SearchIcon from '../assets/SearchIcon.svg'
 import { recommendations } from '../assets/recommendations'; // ✅ 추천 단어 import
 
 export default function MainPage() {
@@ -502,7 +503,7 @@ export default function MainPage() {
             onKeyDown={(e) => e.key === 'Enter' && handleWordSubmit()}
           />
           <button className="search-btn" onClick={handleWordSubmit}>
-            <img src="../assets/SearchIcon.svg" alt="검색" />
+            <img src={SearchIcon} alt="검색" />
           </button>
         </div>
 
