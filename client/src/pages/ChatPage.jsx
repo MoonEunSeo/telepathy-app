@@ -731,7 +731,6 @@ export default function ChatPage() {
   );
 }
 */
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ChatPage.css';
@@ -743,12 +742,14 @@ export default function ChatPage() {
   const navigate = useNavigate();
   const {
     roomId,
-    myId,
-    myNickname,
     partnerId,
     partnerNickname,
     word,
   } = useParams();
+
+  // 🔥 myId, myNickname은 localStorage에서 가져오도록 수정
+  const myId = localStorage.getItem('userId');
+  const myNickname = localStorage.getItem('nickname');
 
   const { endSession } = useWordSession();
   const [message, setMessage] = useState('');
