@@ -1,62 +1,41 @@
+// src/hooks/useChat.js
 import { useEffect, useState } from 'react';
 import socket from './socketInstance';
 
-const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }) => {
+const useChat = ({ roomId, senderId, nickname, onChatEnded }) => {
   const [messages, setMessages] = useState([]);
-  const [receiverInfo, setReceiverInfo] = useState({ receiverId: '', receiverNickname: '' });
-  const [isTyping, setIsTyping] = useState(false);
+  const [receiverInfo, setReceiverInfo] = useState(null);
 
   useEffect(() => {
-    // 쿼리로 방 정보 전달 후 연결
-    socket.io.opts.query = { roomId, senderId, senderNickname, word };
-    socket.connect();
+    if (!roomId || !senderId) return;
 
-    socket.on('chatMessage', (data) => {
-      setMessages((prev) => [...prev, data]);
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit('joinRoom', { roomId, senderId, nickname });
+
+    socket.on('chatMessage', (msg) => {
+      setMessages((prev) => [...prev, msg]);
     });
 
-    socket.on('receiverInfo', (info) => {
-      setReceiverInfo(info);
-    });
+    socket.on('receiverInfo', (info) => setReceiverInfo(info));
 
-    socket.on('typing', () => setIsTyping(true));
-    socket.on('stopTyping', () => setIsTyping(false));
-    socket.on('chatEnded', () => onChatEnded());
+    socket.on('chatEnded', onChatEnded);
 
     return () => {
+      socket.emit('leaveRoom', { roomId });
       socket.off('chatMessage');
       socket.off('receiverInfo');
-      socket.off('typing');
-      socket.off('stopTyping');
       socket.off('chatEnded');
-      socket.disconnect();
     };
-  }, [roomId, senderId, senderNickname, word, onChatEnded]); // ✅ 필요 의존성 추가
+  }, [roomId, senderId, nickname, onChatEnded]);
 
-  const sendMessage = (msgData) => {
-    socket.emit('chatMessage', msgData);
+  const sendMessage = (message) => {
+    socket.emit('sendMessage', { roomId, senderId, message });
   };
 
-  const sendTyping = () => {
-    socket.emit('typing');
-    clearTimeout(socket.typingTimeout);
-    socket.typingTimeout = setTimeout(() => {
-      socket.emit('stopTyping');
-    }, 1000);
-  };
-
-  const sendLeave = () => {
-    socket.emit('leaveRoom', { roomId });
-  };
-
-  return {
-    messages,
-    receiverInfo,
-    isTyping,
-    sendMessage,
-    sendTyping,
-    sendLeave,
-  };
+  return { messages, receiverInfo, sendMessage };
 };
 
-export default useSocket;
+export default useChat;

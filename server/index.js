@@ -265,6 +265,7 @@ const app = require('./app');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
 require('dotenv').config();
 
+
 // ✅ 여기에 로거 호출!
 const { initLogger } = require('./src/utils/logger');
 initLogger();

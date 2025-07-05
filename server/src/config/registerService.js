@@ -1,4 +1,6 @@
 // server/src/services/registerService.js
+//회원데이터 생성 전용 서비스
+// DB 관련 로직(중복체크 및 유저 insert) 담당
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const supabase = require('../lib/supabaseClient');
