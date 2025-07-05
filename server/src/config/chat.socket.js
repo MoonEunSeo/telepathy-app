@@ -1,5 +1,5 @@
 // 📦 src/config/chat.socket.js
-
+/*
 const { supabase } = require('./supabase');
 
 function registerSocketHandlers(io) {
@@ -103,8 +103,8 @@ function registerSocketHandlers(io) {
 
 module.exports = { registerSocketHandlers };
 
+*/
 
-/*
 const { supabase } = require('./supabase');
 const roomReceiverSent = {}; // ✅ 방별 receiverInfo 전송 여부 기록
 
@@ -195,4 +195,4 @@ function logRoomState(io, roomId) {
   console.log('📌 현재 방 참가자 ID 목록:', [...(clients || [])]);
 }
 
-module.exports = { registerSocketHandlers };*/
+module.exports = { registerSocketHandlers };
