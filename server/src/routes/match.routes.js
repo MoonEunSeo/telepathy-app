@@ -108,7 +108,7 @@ module.exports = router;*/
 
 // 📦 routes/match.routes.js2
 
-/*
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -291,6 +291,10 @@ router.post('/check', async (req, res) => {
           }
         ], { onConflict: ['word', 'user_id'] });
 
+  // ✅ 현재 요청자(senderId) 기준으로 URL 생성
+  const url = `/chatpage/${roomId}/${senderId}/${senderNickname}/${receiverId}/${receiverNickname}/${word}`;
+
+
       return res.json({
         matched: true,
         roomId,
@@ -374,8 +378,8 @@ router.post('/session-status', async (req, res) => {
   }
 });
 
-module.exports = router;*/
-
+module.exports = router;
+/*
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -507,4 +511,4 @@ router.post('/check', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router;*/
