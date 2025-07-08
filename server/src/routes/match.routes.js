@@ -220,6 +220,7 @@ router.post('/check', async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const senderId = decoded.user_id;
 
+    // 🔎 닉네임 조회
     const { data: userProfile, error } = await supabase
       .from('users')
       .select('nickname')
@@ -233,8 +234,12 @@ router.post('/check', async (req, res) => {
 
     const senderNickname = userProfile.nickname;
 
+    // 🔎 이미 매칭된 상태라면 activeMatches에서 정보 반환
     if (activeMatches[word]?.[senderId]) {
       const matchInfo = activeMatches[word][senderId];
+
+      const url = `/chatpage/${matchInfo.roomId}/${senderId}/${encodeURIComponent(senderNickname)}/${matchInfo.receiverId}/${encodeURIComponent(matchInfo.receiverNickname)}/${encodeURIComponent(word)}`;
+
       return res.json({
         matched: true,
         roomId: matchInfo.roomId,
@@ -242,10 +247,12 @@ router.post('/check', async (req, res) => {
         senderNickname,
         receiverId: matchInfo.receiverId,
         receiverNickname: matchInfo.receiverNickname,
-        word
+        word,
+        url
       });
     }
 
+    // 🔎 대기 큐 필터링 및 갱신
     if (!queue[word]) queue[word] = [];
     const now = Date.now();
     queue[word] = queue[word].filter(entry => now - entry.timestamp < MAX_SESSION_DURATION);
@@ -254,6 +261,7 @@ router.post('/check', async (req, res) => {
 
     console.log('⏳ 대기중 word=' + word + ', queue=', queue[word].map(u => u.nickname));
 
+    // 🔎 supabase 세션 insert (waiting 상태)
     await supabase
       .from('telepathy_sessions')
       .insert({
@@ -262,6 +270,7 @@ router.post('/check', async (req, res) => {
         status: 'waiting'
       }, { onConflict: ['word', 'user_id'] });
 
+    // ✅ 매칭 가능한 상태인지 검사
     if (queue[word].length >= 2) {
       const user1 = queue[word].shift();
       const user2 = queue[word].shift();
@@ -272,39 +281,36 @@ router.post('/check', async (req, res) => {
         [user2.userId]: { roomId, receiverId: user1.userId, receiverNickname: user1.nickname },
       };
 
-      await supabase
-        .from('telepathy_sessions')
-        .insert([
-          {
-            word,
-            user_id: user1.userId,
-            status: 'matched',
-            matched_user_id: user2.userId,
-            room_id: roomId
-          },
-          {
-            word,
-            user_id: user2.userId,
-            status: 'matched',
-            matched_user_id: user1.userId,
-            room_id: roomId
-          }
-        ], { onConflict: ['word', 'user_id'] });
+      await supabase.from('telepathy_sessions').insert([
+        { word, user_id: user1.userId, status: 'matched', matched_user_id: user2.userId, room_id: roomId },
+        { word, user_id: user2.userId, status: 'matched', matched_user_id: user1.userId, room_id: roomId }
+      ], { onConflict: ['word', 'user_id'] });
 
-  // ✅ 현재 요청자(senderId) 기준으로 URL 생성
-  const url = `/chatpage/${roomId}/${senderId}/${senderNickname}/${receiverId}/${receiverNickname}/${word}`;
+      // ✅ sender 기준 상대 정보 할당
+      let receiverId, receiverNickname;
+      if (senderId === user1.userId) {
+        receiverId = user2.userId;
+        receiverNickname = user2.nickname;
+      } else {
+        receiverId = user1.userId;
+        receiverNickname = user1.nickname;
+      }
 
+      const url = `/chatpage/${roomId}/${senderId}/${encodeURIComponent(senderNickname)}/${receiverId}/${encodeURIComponent(receiverNickname)}/${encodeURIComponent(word)}`;
 
       return res.json({
         matched: true,
         roomId,
         senderId,
         senderNickname,
-        receiverId: senderId === user1.userId ? user2.userId : user1.userId,
-        receiverNickname: senderId === user1.userId ? user2.nickname : user1.nickname,
-        word
+        receiverId,
+        receiverNickname,
+        word,
+        url // ✅ 서버가 생성한 정확한 URL 포함
       });
+      
     } else {
+      // 아직 매칭되지 않음
       return res.json({ matched: false });
     }
   } catch (err) {
