@@ -731,133 +731,105 @@ export default function ChatPage() {
   );
 }
 */// 📦 ChatPage.jsx (튜닝 클라이언트 버전)
-import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
-import { toast } from 'react-toastify';
+// 📁 ChatPage.jsx
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+import './ChatPage.css';
 
-const ChatPage = () => {
-  const [socket, setSocket] = useState(null);
-  const [roomInfo, setRoomInfo] = useState(null);
+const socket = io('/', { transports: ['websocket'] });
+
+function ChatPage() {
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
-  const messagesEndRef = useRef(null);
+  const [input, setInput] = useState('');
+  const [typing, setTyping] = useState(false);
+  const [partnerTyping, setPartnerTyping] = useState(false);
+  const chatEndRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { userId, nickname, word } = location.state || {};
 
   useEffect(() => {
-
-    const stored = localStorage.getItem('chatInfo');
-    if (!stored) {
-      toast.error('⚠️ 채팅 정보가 없습니다. 메인으로 이동합니다.');
+    if (!userId || !nickname || !word) {
+      alert('유효하지 않은 접근입니다.');
       navigate('/main');
       return;
     }
-  
-    const { roomId, myId, myNickname, partnerId, partnerNickname, word } = JSON.parse(stored);
-  
-    // 이 정보로 socket 연결 시작
-    const socket = io('https://telepathy.my', {
-      transports: ['websocket'],
-      withCredentials: true,
-    });
-  
-    socket.emit('joinRoomDirect', {
-      roomId,
-      myId,
-      myNickname,
-      partnerId,
-      partnerNickname,
-      word,
+
+    socket.emit('joinRoom', { userId, nickname, word });
+
+    socket.on('startChat', ({ users, roomId }) => {
+      console.log('💬 채팅 시작');
     });
 
+    socket.on('receiveMessage', ({ message, sender }) => {
+      setMessages(prev => [...prev, { message, sender }]);
+    });
 
-    const initSocket = async () => {
-      try {
-        const res = await fetch('/api/me', { credentials: 'include' });
-        const { user_id, nickname, word, token } = await res.json();
+    socket.on('typing', () => setPartnerTyping(true));
+    socket.on('stopTyping', () => setPartnerTyping(false));
+    socket.on('userLeft', () => {
+      alert('상대방이 대화를 종료했습니다.');
+      navigate('/main');
+    });
 
-        if (!user_id || !word || !token) {
-          toast.error('사용자 정보가 불완전합니다.');
-          return navigate('/main');
-        }
-
-        const newSocket = io('https://telepathy.my', {
-          transports: ['websocket'],
-          withCredentials: true,
-        });
-
-        newSocket.emit('joinWordQueue', { token, word });
-
-        newSocket.on('matched', (info) => {
-          setRoomInfo(info);
-          toast.success('✨ 연결되었습니다!');
-        });
-
-        newSocket.on('receiveMessage', (data) => {
-          setMessages(prev => [...prev, data]);
-        });
-
-        newSocket.on('matchError', ({ message }) => {
-          toast.error(message);
-          navigate('/main');
-        });
-
-        setSocket(newSocket);
-
-        return () => newSocket.disconnect();
-      } catch (err) {
-        console.error('채팅 초기화 오류:', err);
-        navigate('/main');
-      }
+    return () => {
+      socket.emit('leaveRoom');
+      socket.disconnect();
     };
+  }, []);
 
-    initSocket();
-  }, [navigate]);
-
-  const handleSend = () => {
-    if (!message.trim() || !roomInfo || !socket) return;
-    const payload = {
-      roomId: roomInfo.roomId,
-      sender: roomInfo.myNickname,
-      content: message.trim(),
-    };
-    socket.emit('sendMessage', payload);
-    setMessages(prev => [...prev, payload]);
-    setMessage('');
+  const sendMessage = () => {
+    if (!input.trim()) return;
+    const messageObj = { message: input, sender: nickname };
+    socket.emit('sendMessage', { roomId: `room-${word}`, ...messageObj });
+    setMessages(prev => [...prev, messageObj]);
+    setInput('');
+    socket.emit('stopTyping', { roomId: `room-${word}` });
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
-    <div style={{ maxWidth: 400, margin: '0 auto', padding: '1rem' }}>
-      <h2>💬 채팅방</h2>
-      {roomInfo && (
-        <p style={{ marginBottom: '0.5rem' }}>
-          <strong>{roomInfo.partnerNickname}</strong> 님과 연결되었습니다.
-        </p>
-      )}
-      <div style={{ height: '300px', overflowY: 'scroll', border: '1px solid #ccc', padding: '0.5rem' }}>
-        {messages.map((msg, i) => (
-          <div key={i}>
-            <strong>{msg.sender}:</strong> {msg.content}
+    <div className="chat-container">
+      <div className="chat-header">
+        <div>{word}</div>
+        <button className="exit-button" onClick={() => navigate('/main')}>나가기</button>
+      </div>
+
+      <div className="chat-messages">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`chat-message ${msg.sender === nickname ? 'self' : 'other'}`}>
+            {msg.message}
           </div>
         ))}
-        <div ref={messagesEndRef} />
+        {partnerTyping && (
+          <div className="chat-typing-indicator">
+            <div className="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        )}
+        <div ref={chatEndRef} />
       </div>
-      <div style={{ display: 'flex', marginTop: '0.5rem' }}>
+
+      <div className="chat-input-container">
         <input
-          type="text"
-          value={message}
-          onChange={e => setMessage(e.target.value)}
-          placeholder="메시지를 입력하세요"
-          style={{ flex: 1, padding: '0.5rem' }}
+          className="chat-input"
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+            socket.emit('typing', { roomId: `room-${word}`, userId });
+            if (!e.target.value) socket.emit('stopTyping', { roomId: `room-${word}`, userId });
+          }}
+          placeholder="메시지를 입력하세요..."
         />
-        <button onClick={handleSend} style={{ marginLeft: '0.5rem' }}>전송</button>
+        <button className="chat-send-button" onClick={sendMessage}>전송</button>
       </div>
     </div>
   );
-};
+}
 
 export default ChatPage;

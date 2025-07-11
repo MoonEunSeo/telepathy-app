@@ -106,140 +106,73 @@ module.exports = { registerSocketHandlers };
 */
 
 // 📦 src/config/chat.socket.js
-// ✅ chat.socket.js
-const { Server } = require('socket.io');
-const { createClient } = require('@supabase/supabase-js');
-const jwt = require('jsonwebtoken');
+// 📁 chat.socket.js
 const { v4: uuidv4 } = require('uuid');
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const queue = {}; // { word: [ { socketId, userId, nickname, timestamp } ] }
-const activeRooms = {}; // { roomId: [ socketId1, socketId2 ] }
+const { supabase } = require('./supabase');
+const activeRooms = {};
 
 function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
     console.log('✅ Socket 연결됨:', socket.id);
 
-    socket.on('joinWordQueue', async ({ token, word }) => {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.user_id;
+    socket.on('joinRoom', async ({ userId, nickname, word }) => {
+      if (!word || !userId || !nickname) return;
 
-        const { data: userProfile, error } = await supabase
-          .from('users')
-          .select('nickname')
-          .eq('id', userId)
-          .single();
+      const roomId = `room-${word}`;
+      socket.join(roomId);
+      socket.data = { userId, nickname, word, roomId };
+      console.log(`🟢 [joinRoom] ${nickname} (${userId})가 방 ${roomId} 입장`);
 
-        if (error || !userProfile) {
-          socket.emit('matchError', { message: '닉네임 조회 실패' });
-          return;
-        }
+      if (!activeRooms[roomId]) activeRooms[roomId] = [];
+      activeRooms[roomId].push(socket);
 
-        const nickname = userProfile.nickname;
-        const now = Date.now();
-
-        if (!queue[word]) queue[word] = [];
-        queue[word] = queue[word].filter(entry => now - entry.timestamp < 5 * 60 * 1000);
-        queue[word] = queue[word].filter(entry => entry.userId !== userId);
-
-        queue[word].push({ socketId: socket.id, userId, nickname, timestamp: now });
-
-        if (queue[word].length >= 2) {
-          const user1 = queue[word].shift();
-          const user2 = queue[word].shift();
-          const roomId = uuidv4();
-
-          activeRooms[roomId] = [user1.socketId, user2.socketId];
-
-          await supabase.from('telepathy_sessions').insert([
-            { word, user_id: user1.userId, status: 'matched', matched_user_id: user2.userId, room_id: roomId },
-            { word, user_id: user2.userId, status: 'matched', matched_user_id: user1.userId, room_id: roomId }
-          ]);
-
-          io.to(user1.socketId).emit('matched', {
-            roomId,
-            myId: user1.userId,
-            myNickname: user1.nickname,
-            partnerId: user2.userId,
-            partnerNickname: user2.nickname,
-            word
-          });
-
-          io.to(user2.socketId).emit('matched', {
-            roomId,
-            myId: user2.userId,
-            myNickname: user2.nickname,
-            partnerId: user1.userId,
-            partnerNickname: user1.nickname,
-            word
-          });
-        }
-      } catch (err) {
-        console.error('❌ 소켓 매칭 오류:', err);
-        socket.emit('matchError', { message: '서버 오류' });
+      // 두 명이 모이면 채팅 시작
+      if (activeRooms[roomId].length === 2) {
+        const [a, b] = activeRooms[roomId];
+        const payload = {
+          roomId,
+          users: [
+            { id: a.data.userId, nickname: a.data.nickname },
+            { id: b.data.userId, nickname: b.data.nickname },
+          ],
+          word,
+        };
+        io.to(roomId).emit('startChat', payload);
+        console.log(`🎉 [매칭 완료] ${a.data.nickname}와 ${b.data.nickname} - ${word}`);
       }
     });
 
-    // 🔁 기존의 socket.on('joinRoom') 아래쪽 또는 적절한 위치에 추가
-socket.on('joinRoomDirect', async (payload) => {
-  const {
-    roomId,
-    myId,
-    myNickname,
-    partnerId,
-    partnerNickname,
-    word,
-  } = payload;
+    socket.on('sendMessage', ({ roomId, message, sender }) => {
+      io.to(roomId).emit('receiveMessage', { message, sender });
+    });
 
-  console.log(`🟢 [joinRoomDirect] 유저 ${myNickname} (${myId})가 방 ${roomId}에 참가합니다.`);
+    socket.on('typing', ({ roomId, userId }) => {
+      socket.to(roomId).emit('typing', { userId });
+    });
 
-  socket.join(roomId);
+    socket.on('stopTyping', ({ roomId, userId }) => {
+      socket.to(roomId).emit('stopTyping', { userId });
+    });
 
-  // 유저 정보를 소켓에 저장해두기 (나중에 나갈 때 사용)
-  socket.roomId = roomId;
-  socket.userId = myId;
-  socket.nickname = myNickname;
-
-  // 🧠 activeMatches에 등록
-  if (!global.activeMatches[word]) global.activeMatches[word] = {};
-  global.activeMatches[word][myId] = {
-    roomId,
-    receiverId: partnerId,
-    receiverNickname: partnerNickname,
-  };
-
-  // 상대방에게도 메시지 보낼 수 있도록 소켓 알림
-  socket.to(roomId).emit('userJoined', {
-    userId: myId,
-    nickname: myNickname,
-  });
-
-  console.log(`✅ [joinRoomDirect] ${myNickname} (${myId}) 참가 완료`);
-});
-
-    socket.on('sendMessage', ({ roomId, sender, content }) => {
-      if (!activeRooms[roomId]) return;
-      activeRooms[roomId].forEach(id => {
-        if (id !== socket.id) {
-          io.to(id).emit('receiveMessage', { sender, content });
-        }
-      });
+    socket.on('leaveRoom', () => {
+      const { roomId, userId, nickname } = socket.data || {};
+      socket.leave(roomId);
+      if (roomId && activeRooms[roomId]) {
+        activeRooms[roomId] = activeRooms[roomId].filter(s => s.id !== socket.id);
+        if (activeRooms[roomId].length === 0) delete activeRooms[roomId];
+      }
+      io.to(roomId).emit('userLeft', { userId, nickname });
+      console.log(`👋 ${nickname}가 방 ${roomId}에서 나감`);
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ Socket 연결 해제됨:', socket.id);
-      for (const word in queue) {
-        queue[word] = queue[word].filter(entry => entry.socketId !== socket.id);
-      }
-      for (const roomId in activeRooms) {
-        activeRooms[roomId] = activeRooms[roomId].filter(id => id !== socket.id);
+      const { roomId, userId, nickname } = socket.data || {};
+      if (roomId && activeRooms[roomId]) {
+        activeRooms[roomId] = activeRooms[roomId].filter(s => s.id !== socket.id);
         if (activeRooms[roomId].length === 0) delete activeRooms[roomId];
       }
+      io.to(roomId).emit('userLeft', { userId, nickname });
+      console.log(`❌ 소켓 연결 해제: ${nickname || socket.id}`);
     });
   });
 }
