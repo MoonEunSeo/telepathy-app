@@ -167,6 +167,7 @@ const io = new Server(server, {
       : 'http://localhost:5179',
     credentials: true,
   },
+  allowEIO3: true // 구버전 클라이언트 대응
 });
 
 // 소켓 이벤트 등록

@@ -106,92 +106,29 @@ module.exports = { registerSocketHandlers };
 */
 
 // 📦 src/config/chat.socket.js
-// 📦 src/chat.socket.js (튜닝 버전)
-const { Server } = require("socket.io");
-const { supabase } = require("./supabase");
-const { v4: uuidv4 } = require("uuid");
-
-// 전역 큐 및 매칭 정보
-const queue = [];
-const socketToUser = {}; // socket.id -> user info
-const userToSocket = {}; // userId -> socket
+// 📦 chat.socket.js
+const { Server } = require('socket.io');
 
 function registerSocketHandlers(io) {
-  io.on("connection", (socket) => {
-    console.log(`✅ 소켓 연결됨: ${socket.id}`);
+  io.on('connection', (socket) => {
+    console.log('✅ 새 소켓 연결:', socket.id);
 
-    // 사용자 정보 등록
-    socket.on("register", ({ userId, nickname }) => {
-      socket.userId = userId;
-      socket.nickname = nickname;
-      socketToUser[socket.id] = { userId, nickname };
-      userToSocket[userId] = socket;
-      tryMatch(socket);
+    // 유저가 방 입장
+    socket.on('joinRoom', ({ roomId, userId }) => {
+      socket.join(roomId);
+      console.log(`📥 ${userId} 님이 방(${roomId})에 입장했습니다.`);
     });
 
-    // 타이핑 표시
-    socket.on("typing", () => {
-      socket.partner?.emit("typing");
-    });
-    socket.on("stopTyping", () => {
-      socket.partner?.emit("stopTyping");
+    // 메시지 수신 및 브로드캐스트
+    socket.on('chatMessage', ({ roomId, userId, message }) => {
+      console.log(`💬 [${roomId}] ${userId}: ${message}`);
+      io.to(roomId).emit('message', { userId, message });
     });
 
-    // 메시지 송수신
-    socket.on("message", (msg, ack) => {
-      if (socket.partner) {
-        socket.partner.emit("message", msg);
-        ack?.({ success: true });
-      } else {
-        ack?.({ success: false });
-      }
+    // 연결 해제
+    socket.on('disconnect', () => {
+      console.log(`❌ 연결 해제: ${socket.id}`);
     });
-
-    // 연결 종료
-    socket.on("disconnect", () => {
-      console.log(`❌ 연결 종료됨: ${socket.id}`);
-      if (socket.partner) {
-        socket.partner.emit("partner-disconnected");
-        socket.partner.partner = null;
-      }
-      // 큐에서 제거
-      const idx = queue.findIndex((s) => s.id === socket.id);
-      if (idx !== -1) queue.splice(idx, 1);
-    });
-  });
-}
-
-async function tryMatch(socket) {
-  if (queue.length === 0) {
-    queue.push(socket);
-    return;
-  }
-  const partner = queue.shift();
-  if (partner.id === socket.id) return;
-
-  // 연결
-  socket.partner = partner;
-  partner.partner = socket;
-
-  const roomId = uuidv4();
-  const timestamp = new Date().toISOString();
-
-  // Supabase 기록
-  await supabase.from("matches").insert([
-    { user_id: socket.userId, partner_id: partner.userId, status: "active", created_at: timestamp },
-    { user_id: partner.userId, partner_id: socket.userId, status: "active", created_at: timestamp }
-  ]);
-
-  // 양쪽에게 연결 알림
-  socket.emit("matched", {
-    roomId,
-    partnerId: partner.userId,
-    partnerNickname: partner.nickname
-  });
-  partner.emit("matched", {
-    roomId,
-    partnerId: socket.userId,
-    partnerNickname: socket.nickname
   });
 }
 

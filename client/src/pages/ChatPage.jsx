@@ -731,102 +731,70 @@ export default function ChatPage() {
   );
 }
 */// 📦 ChatPage.jsx (튜닝 클라이언트 버전)
-import React, { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
+import { useEffect, useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
-const socket = io("/", {
-  reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 2000,
-  timeout: 5000,
-});
-
-export default function ChatPage({ userId, nickname }) {
-  const [matched, setMatched] = useState(false);
-  const [partner, setPartner] = useState({});
+const ChatPage = () => {
+  const { roomId, senderId, senderNickname, receiverId, receiverNickname, word } = useParams();
+  const [socket, setSocket] = useState(null);
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const chatRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    socket.emit("register", { userId, nickname });
+    if (!roomId || !senderId || !receiverId || !word) return;
 
-    socket.on("matched", ({ roomId, partnerId, partnerNickname }) => {
-      setPartner({ id: partnerId, nickname: partnerNickname });
-      setMatched(true);
+    const newSocket = io('https://telepathy.my', {
+      transports: ['websocket'],
+      withCredentials: true,
     });
 
-    socket.on("message", (msg) => {
-      setMessages((prev) => [...prev, { sender: "partner", text: msg }]);
-    });
+    newSocket.emit('joinRoom', { roomId, userId: senderId });
+    setSocket(newSocket);
 
-    socket.on("typing", () => setIsTyping(true));
-    socket.on("stopTyping", () => setIsTyping(false));
-
-    socket.on("partner-disconnected", () => {
-      alert("상대방이 연결을 종료했어요.");
-      setMatched(false);
+    newSocket.on('message', (msg) => {
+      setMessages(prev => [...prev, msg]);
     });
 
     return () => {
-      socket.disconnect();
+      newSocket.disconnect();
     };
-  }, []);
+  }, [roomId, senderId, receiverId, word]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    socket.emit("message", input, (ack) => {
-      if (ack?.success) {
-        setMessages((prev) => [...prev, { sender: "me", text: input }]);
-        setInput("");
-        socket.emit("stopTyping");
-      } else {
-        alert("전송 실패");
-      }
-    });
-  };
-
-  const handleTyping = () => {
-    socket.emit("typing");
-    setTimeout(() => {
-      socket.emit("stopTyping");
-    }, 1000);
+    if (socket && message.trim()) {
+      socket.emit('chatMessage', { roomId, userId: senderId, message });
+      setMessage('');
+    }
   };
 
   useEffect(() => {
-    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
-    <div className="chat-container">
-      {matched ? (
-        <>
-          <div className="chat-header">
-            {partner.nickname} 님과 연결됨
-            {isTyping && <span className="typing-indicator">상대가 입력 중...</span>}
+    <div style={{ padding: '1rem', maxWidth: 400, margin: '0 auto' }}>
+      <h3>💬 {senderNickname} ↔ {receiverNickname}</h3>
+      <div style={{ border: '1px solid #ccc', height: '300px', overflowY: 'scroll', padding: '0.5rem' }}>
+        {messages.map((msg, idx) => (
+          <div key={idx} style={{ marginBottom: '0.5rem' }}>
+            <strong>{msg.userId === senderId ? '나' : receiverNickname}:</strong> {msg.message}
           </div>
-          <div className="chat-body">
-            {messages.map((msg, i) => (
-              <div key={i} className={msg.sender === "me" ? "my-msg" : "partner-msg"}>
-                {msg.text}
-              </div>
-            ))}
-            <div ref={chatRef} />
-          </div>
-          <div className="chat-input">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleTyping}
-              placeholder="메시지를 입력하세요"
-            />
-            <button onClick={handleSend}>전송</button>
-          </div>
-        </>
-      ) : (
-        <p>상대방을 찾는 중입니다...</p>
-      )}
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <div style={{ display: 'flex', marginTop: '0.5rem' }}>
+        <input
+          type="text"
+          value={message}
+          onChange={e => setMessage(e.target.value)}
+          style={{ flex: 1, padding: '0.5rem' }}
+        />
+        <button onClick={handleSend} style={{ marginLeft: '0.5rem' }}>전송</button>
+      </div>
     </div>
   );
-}
+};
+
+export default ChatPage;
