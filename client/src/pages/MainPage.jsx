@@ -447,14 +447,13 @@ export default function MainPage() {
         }
         data = await res.json();
         if (data.matched) {
-          // ✅ localStorage에 채팅 정보 저장
           localStorage.setItem('chatInfo', JSON.stringify({
             roomId: data.roomId,
             myId: data.senderId,
             myNickname: data.senderNickname,
             partnerId: data.receiverId,
             partnerNickname: data.receiverNickname,
-            word: intent || selectedWord
+            word: intent || selectedWord // ❗여기서 intent도 selectedWord도 null이면 undefined 저장됨
           }));
         
           toast.success('✨ 연결되었습니다! 잠시 후 채팅으로 이동합니다.', { autoClose: 5000 });

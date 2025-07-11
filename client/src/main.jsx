@@ -8,12 +8,12 @@ import { WordSessionProvider } from './contexts/WordSessionContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
  // <React.StrictMode>
+ <WordSessionProvider>
     <BrowserRouter>
       <ModalProvider>
-      <WordSessionProvider>
         <App />
-        </WordSessionProvider>
       </ModalProvider>
     </BrowserRouter>
+    </WordSessionProvider>
   // </React.StrictMode>
 );

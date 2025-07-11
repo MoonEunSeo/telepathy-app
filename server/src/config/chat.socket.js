@@ -1,5 +1,5 @@
 // 📦 src/config/chat.socket.js
-/*
+
 const { supabase } = require('./supabase');
 
 function registerSocketHandlers(io) {
@@ -103,78 +103,81 @@ function registerSocketHandlers(io) {
 
 module.exports = { registerSocketHandlers };
 
-*/
+
 
 // 📦 src/config/chat.socket.js
-// 📁 chat.socket.js
-const { v4: uuidv4 } = require('uuid');
-const { supabase } = require('./supabase');
-const activeRooms = {};
+// 📦 src/config/chat.socket.js
+/*const { createClient } = require('@supabase/supabase-js');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
-    console.log('✅ Socket 연결됨:', socket.id);
+    console.log('✅ 소켓 연결됨:', socket.id);
 
-    socket.on('joinRoom', async ({ userId, nickname, word }) => {
-      if (!word || !userId || !nickname) return;
+    let roomId;
+    let currentUser = null;
 
-      const roomId = `room-${word}`;
-      socket.join(roomId);
-      socket.data = { userId, nickname, word, roomId };
-      console.log(`🟢 [joinRoom] ${nickname} (${userId})가 방 ${roomId} 입장`);
+    socket.on('joinRoom', async ({ token }) => {
+      try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        currentUser = payload;
 
-      if (!activeRooms[roomId]) activeRooms[roomId] = [];
-      activeRooms[roomId].push(socket);
+        const { data, error } = await supabase
+          .from('telepathy_sessions')
+          .select('*')
+          .eq('user1_id', currentUser.id)
+          .maybeSingle();
 
-      // 두 명이 모이면 채팅 시작
-      if (activeRooms[roomId].length === 2) {
-        const [a, b] = activeRooms[roomId];
-        const payload = {
-          roomId,
-          users: [
-            { id: a.data.userId, nickname: a.data.nickname },
-            { id: b.data.userId, nickname: b.data.nickname },
-          ],
-          word,
-        };
-        io.to(roomId).emit('startChat', payload);
-        console.log(`🎉 [매칭 완료] ${a.data.nickname}와 ${b.data.nickname} - ${word}`);
+        if (!data) {
+          console.log('❌ 세션 없음');
+          return;
+        }
+
+        roomId = data.room_id;
+        socket.join(roomId);
+        console.log(`🟢 ${currentUser.nickname} 님 ${roomId} 입장 완료`);
+
+        socket.to(roomId).emit('userJoined', {
+          nickname: currentUser.nickname,
+        });
+      } catch (err) {
+        console.error('❌ 토큰 인증 오류:', err);
       }
     });
 
-    socket.on('sendMessage', ({ roomId, message, sender }) => {
-      io.to(roomId).emit('receiveMessage', { message, sender });
+    socket.on('message', (msg) => {
+      if (!roomId || !currentUser) return;
+      io.to(roomId).emit('message', {
+        ...msg,
+        senderId: currentUser.id,
+        senderNickname: currentUser.nickname,
+      });
     });
 
-    socket.on('typing', ({ roomId, userId }) => {
-      socket.to(roomId).emit('typing', { userId });
+    socket.on('typing', () => {
+      if (!roomId || !currentUser) return;
+      socket.to(roomId).emit('typing', {
+        senderId: currentUser.id,
+      });
     });
 
-    socket.on('stopTyping', ({ roomId, userId }) => {
-      socket.to(roomId).emit('stopTyping', { userId });
-    });
-
-    socket.on('leaveRoom', () => {
-      const { roomId, userId, nickname } = socket.data || {};
-      socket.leave(roomId);
-      if (roomId && activeRooms[roomId]) {
-        activeRooms[roomId] = activeRooms[roomId].filter(s => s.id !== socket.id);
-        if (activeRooms[roomId].length === 0) delete activeRooms[roomId];
+    socket.on('leave', () => {
+      if (roomId) {
+        socket.to(roomId).emit('chatEnded');
+        socket.leave(roomId);
       }
-      io.to(roomId).emit('userLeft', { userId, nickname });
-      console.log(`👋 ${nickname}가 방 ${roomId}에서 나감`);
     });
 
     socket.on('disconnect', () => {
-      const { roomId, userId, nickname } = socket.data || {};
-      if (roomId && activeRooms[roomId]) {
-        activeRooms[roomId] = activeRooms[roomId].filter(s => s.id !== socket.id);
-        if (activeRooms[roomId].length === 0) delete activeRooms[roomId];
-      }
-      io.to(roomId).emit('userLeft', { userId, nickname });
-      console.log(`❌ 소켓 연결 해제: ${nickname || socket.id}`);
+      console.log('🔌 연결 해제됨:', socket.id);
     });
   });
 }
 
-module.exports = { registerSocketHandlers };
+module.exports = { registerSocketHandlers };*/
