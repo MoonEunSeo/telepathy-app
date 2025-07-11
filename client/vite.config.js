@@ -1,8 +1,22 @@
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import dotenv from 'dotenv';
 
-const res = await fetch(`${API_URL}/api/match/start`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  credentials: 'include',
-  body: JSON.stringify({ word }),
+dotenv.config(); // 환경변수 불러오기
+
+const API_URL = process.env.VITE_API_BASE_URL;
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5179,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: API_URL,
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
