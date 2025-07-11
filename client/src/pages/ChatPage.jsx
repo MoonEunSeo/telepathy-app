@@ -733,103 +733,155 @@ export default function ChatPage() {
 */// 📦 ChatPage.jsx (튜닝 클라이언트 버전)
 // 📁 ChatPage.jsx
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 import './ChatPage.css';
+import { LogOut } from 'lucide-react';
+import { useWordSession } from '../contexts/WordSessionContext';
+import useSocket from '../hooks/useSocket';
 
-const socket = io('/', { transports: ['websocket'] });
-
-function ChatPage() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [typing, setTyping] = useState(false);
-  const [partnerTyping, setPartnerTyping] = useState(false);
-  const chatEndRef = useRef(null);
+export default function ChatPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { userId, nickname, word } = location.state || {};
+  const { word, roomId, senderId, senderNickname, receiverId, receiverNickname } = window.__TELEPATHY_CONTEXT__ || {};
+  const { endSession } = useWordSession();
+
+  const [message, setMessage] = useState('');
+  const [chatEnded, setChatEnded] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const {
+    messages,
+    receiverInfo,
+    isTyping,
+    sendMessage,
+    sendTyping,
+    sendLeave,
+  } = useSocket({
+    roomId,
+    senderId,
+    senderNickname,
+    word,
+    onChatEnded: () => setChatEnded(true),
+  });
 
   useEffect(() => {
-    if (!userId || !nickname || !word) {
-      alert('유효하지 않은 접근입니다.');
-      navigate('/main');
-      return;
-    }
-
-    socket.emit('joinRoom', { userId, nickname, word });
-
-    socket.on('startChat', ({ users, roomId }) => {
-      console.log('💬 채팅 시작');
-    });
-
-    socket.on('receiveMessage', ({ message, sender }) => {
-      setMessages(prev => [...prev, { message, sender }]);
-    });
-
-    socket.on('typing', () => setPartnerTyping(true));
-    socket.on('stopTyping', () => setPartnerTyping(false));
-    socket.on('userLeft', () => {
-      alert('상대방이 대화를 종료했습니다.');
-      navigate('/main');
-    });
-
-    return () => {
-      socket.emit('leaveRoom');
-      socket.disconnect();
-    };
-  }, []);
-
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    const messageObj = { message: input, sender: nickname };
-    socket.emit('sendMessage', { roomId: `room-${word}`, ...messageObj });
-    setMessages(prev => [...prev, messageObj]);
-    setInput('');
-    socket.emit('stopTyping', { roomId: `room-${word}` });
-  };
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/match/session-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ word, userId: senderId })
+        });
+        const data = await res.json();
+        if (!data.active) navigate('/main');
+      } catch (err) {
+        console.error('❌ 세션 확인 실패', err);
+        navigate('/main');
+      }
+    };
+    checkSession();
+  }, [navigate, word, senderId]);
+
+  const handleExitChat = async () => {
+    try {
+      await fetch('/api/match/end', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ word }),
+      });
+      sendLeave();
+    } catch (err) {
+      console.error('❌ 세션 종료 오류:', err);
+    } finally {
+      endSession();
+      navigate('/main');
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (!message.trim() || chatEnded) return;
+    sendMessage({
+      roomId,
+      senderId,
+      senderNickname,
+      receiverId: receiverInfo?.receiverId || receiverId,
+      receiverNickname: receiverInfo?.receiverNickname || receiverNickname,
+      word,
+      message,
+      timestamp: Date.now(),
+    });
+    setMessage('');
+  };
+
+  const handleTyping = (e) => {
+    setMessage(e.target.value);
+    sendTyping();
+  };
+
+  const renderMessages = () =>
+    messages.map((msg, idx) => (
+      <div key={idx} className={`chat-message ${msg.senderId === senderId ? 'self' : 'other'}`}>
+        {msg.message}
+      </div>
+    )).concat(
+      isTyping && (
+        <div key="typing-indicator" className="chat-message other">
+          <div className="chat-typing-indicator">
+            <div className="typing-dots">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </div>
+      )
+    );
+
   return (
-    <div className="chat-container">
+    <div className="chat-container" style={{ position: 'relative' }}>
       <div className="chat-header">
-        <div>{word}</div>
-        <button className="exit-button" onClick={() => navigate('/main')}>나가기</button>
+        채팅방 ({word})
+        <button className="exit-button" onClick={handleExitChat}><LogOut size={20} /></button>
       </div>
 
       <div className="chat-messages">
-        {messages.map((msg, idx) => (
-          <div key={idx} className={`chat-message ${msg.sender === nickname ? 'self' : 'other'}`}>
-            {msg.message}
-          </div>
-        ))}
-        {partnerTyping && (
-          <div className="chat-typing-indicator">
-            <div className="typing-dots">
-              <span></span><span></span><span></span>
-            </div>
-          </div>
-        )}
-        <div ref={chatEndRef} />
+        <div className="chat-info-banner">
+          <strong>{receiverInfo?.receiverNickname || receiverNickname || '(상대방 로딩중)'}님과<br />같은 단어를 떠올렸어요!</strong><br /><br />
+          여기서 만나다니, 운명인가요?
+        </div>
+        {renderMessages()}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="chat-input-container">
         <input
           className="chat-input"
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            socket.emit('typing', { roomId: `room-${word}`, userId });
-            if (!e.target.value) socket.emit('stopTyping', { roomId: `room-${word}`, userId });
-          }}
-          placeholder="메시지를 입력하세요..."
+          placeholder="메시지를 입력하세요."
+          value={message}
+          onChange={handleTyping}
+          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+          disabled={chatEnded}
         />
-        <button className="chat-send-button" onClick={sendMessage}>전송</button>
+        <button
+          className="chat-send-button"
+          onClick={handleSendMessage}
+          disabled={chatEnded}
+        >
+          전송
+        </button>
       </div>
+
+      {chatEnded && (
+        <div className="chat-ended-modal">
+          <p>상대방이 <br /> 대화를 종료했어요.</p>
+          <button className="exit-button-text" onClick={handleExitChat}>나가기</button>
+        </div>
+      )}
     </div>
   );
 }
-
-export default ChatPage;
