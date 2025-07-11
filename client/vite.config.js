@@ -1,17 +1,8 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 5179,
-    strictPort: true,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000', // Express 서버 주소
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
+const res = await fetch(`${API_URL}/api/match/start`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include',
+  body: JSON.stringify({ word }),
 });
