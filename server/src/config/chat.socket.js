@@ -111,23 +111,27 @@ const { Server } = require('socket.io');
 
 function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
-    console.log('✅ 새 소켓 연결:', socket.id);
-
-    // 유저가 방 입장
-    socket.on('joinRoom', ({ roomId, userId }) => {
-      socket.join(roomId);
-      console.log(`📥 ${userId} 님이 방(${roomId})에 입장했습니다.`);
+    console.log('✅ 새 연결:', socket.id);
+  
+    socket.on('enterChat', ({ userId, nickname }) => {
+      socket.data.userId = userId;
+      socket.data.nickname = nickname;
+  
+      socket.join('publicRoom'); // 모든 유저 한 방에 넣기 가능
+      console.log(`🎯 ${nickname} (${userId}) 입장`);
     });
-
-    // 메시지 수신 및 브로드캐스트
-    socket.on('chatMessage', ({ roomId, userId, message }) => {
-      console.log(`💬 [${roomId}] ${userId}: ${message}`);
-      io.to(roomId).emit('message', { userId, message });
+  
+    socket.on('chatMessage', ({ message }) => {
+      const { userId, nickname } = socket.data;
+      io.to('publicRoom').emit('message', {
+        senderId: userId,
+        senderNickname: nickname,
+        message,
+      });
     });
-
-    // 연결 해제
+  
     socket.on('disconnect', () => {
-      console.log(`❌ 연결 해제: ${socket.id}`);
+      console.log('❌ 연결 해제:', socket.id);
     });
   });
 }

@@ -732,39 +732,51 @@ export default function ChatPage() {
 }
 */// 📦 ChatPage.jsx (튜닝 클라이언트 버전)
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 const ChatPage = () => {
-  const { roomId, senderId, senderNickname, receiverId, receiverNickname, word } = useParams();
   const [socket, setSocket] = useState(null);
-  const [message, setMessage] = useState('');
+  const [userInfo, setUserInfo] = useState(null); // ← JWT 디코딩 결과 or fetch 결과
   const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState('');
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!roomId || !senderId || !receiverId || !word) return;
+    // ✅ 페이지 진입 시 유저 정보 가져오기 (예: /api/me)
+    fetch('/api/me', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.user_id) return navigate('/login');
+        setUserInfo(data);
+      });
+  }, []);
 
-    const newSocket = io('https://telepathy.my', {
+  useEffect(() => {
+    if (!userInfo) return;
+
+    const socket = io('https://telepathy.my', {
       transports: ['websocket'],
       withCredentials: true,
     });
 
-    newSocket.emit('joinRoom', { roomId, userId: senderId });
-    setSocket(newSocket);
+    socket.emit('enterChat', { userId: userInfo.user_id, nickname: userInfo.nickname });
 
-    newSocket.on('message', (msg) => {
+    socket.on('message', (msg) => {
       setMessages(prev => [...prev, msg]);
     });
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [roomId, senderId, receiverId, word]);
+    setSocket(socket);
+
+    return () => socket.disconnect();
+  }, [userInfo]);
 
   const handleSend = () => {
     if (socket && message.trim()) {
-      socket.emit('chatMessage', { roomId, userId: senderId, message });
+      socket.emit('chatMessage', {
+        message,
+      });
       setMessage('');
     }
   };
@@ -775,11 +787,11 @@ const ChatPage = () => {
 
   return (
     <div style={{ padding: '1rem', maxWidth: 400, margin: '0 auto' }}>
-      <h3>💬 {senderNickname} ↔ {receiverNickname}</h3>
+      <h3>💬 익명 채팅방</h3>
       <div style={{ border: '1px solid #ccc', height: '300px', overflowY: 'scroll', padding: '0.5rem' }}>
         {messages.map((msg, idx) => (
-          <div key={idx} style={{ marginBottom: '0.5rem' }}>
-            <strong>{msg.userId === senderId ? '나' : receiverNickname}:</strong> {msg.message}
+          <div key={idx}>
+            <strong>{msg.senderNickname}:</strong> {msg.message}
           </div>
         ))}
         <div ref={messagesEndRef} />
