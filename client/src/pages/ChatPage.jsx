@@ -730,168 +730,102 @@ export default function ChatPage() {
     </div>
   );
 }
-*/
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './ChatPage.css';
-import { LogOut } from 'lucide-react';
-import { useWordSession } from '../contexts/WordSessionContext';
-import useSocket from '../hooks/useSocket';
+*/// 📦 ChatPage.jsx (튜닝 클라이언트 버전)
+import React, { useEffect, useState, useRef } from "react";
+import io from "socket.io-client";
 
-export default function ChatPage() {
-  const navigate = useNavigate();
-  const {
-    roomId,
-    partnerId,
-    partnerNickname,
-    word,
-  } = useParams();
+const socket = io("/", {
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 2000,
+  timeout: 5000,
+});
 
-  // 🔥 myId, myNickname은 localStorage에서 가져오도록 수정
-  const myId = localStorage.getItem('userId');
-  const myNickname = localStorage.getItem('nickname');
-
-  const { endSession } = useWordSession();
-  const [message, setMessage] = useState('');
-  const [chatEnded, setChatEnded] = useState(false);
-  const [isReadyToChat, setIsReadyToChat] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  const {
-    messages,
-    receiverInfo,
-    isTyping,
-    sendMessage,
-    sendTyping,
-    sendLeave,
-  } = useSocket({
-    roomId,
-    senderId: myId,
-    senderNickname: myNickname,
-    word,
-    onChatEnded: () => setChatEnded(true),
-  });
+export default function ChatPage({ userId, nickname }) {
+  const [matched, setMatched] = useState(false);
+  const [partner, setPartner] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const chatRef = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    socket.emit("register", { userId, nickname });
 
-  useEffect(() => {
-    if (receiverInfo?.receiverId === partnerId) {
-      setIsReadyToChat(true);
-    }
-  }, [receiverInfo, partnerId]);
-
-  const handleExitChat = async () => {
-    try {
-      await fetch('/api/match/end', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ word }),
-      });
-      sendLeave();
-    } catch (err) {
-      console.error('❌ 세션 종료 오류:', err);
-    } finally {
-      endSession();
-      navigate('/main');
-    }
-  };
-
-  const handleSendMessage = () => {
-    if (!message.trim() || !isReadyToChat) return;
-    const msgData = {
-      roomId,
-      senderId: myId,
-      senderNickname: myNickname,
-      receiverId: partnerId,
-      receiverNickname: partnerNickname,
-      word,
-      message,
-      timestamp: Date.now(),
-    };
-    sendMessage(msgData);
-    setMessage('');
-  };
-
-  const handleTyping = (e) => {
-    setMessage(e.target.value);
-    sendTyping();
-  };
-
-  const renderMessages = () => {
-    const rendered = [];
-    let lastDate = '';
-
-    messages.forEach((msg, idx) => {
-      const date = new Date(msg.timestamp).toLocaleDateString();
-      if (date !== lastDate) {
-        rendered.push(<div key={`date-${idx}`} className="chat-date-divider">{date}</div>);
-        lastDate = date;
-      }
-      rendered.push(
-        <div key={idx} className={`chat-message ${msg.senderId === myId ? 'self' : 'other'}`}>
-          {msg.message}
-        </div>
-      );
+    socket.on("matched", ({ roomId, partnerId, partnerNickname }) => {
+      setPartner({ id: partnerId, nickname: partnerNickname });
+      setMatched(true);
     });
 
-    if (isTyping) {
-      rendered.push(
-        <div key="typing-indicator" className="chat-message other">
-          <div className="chat-typing-indicator">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      );
-    }
+    socket.on("message", (msg) => {
+      setMessages((prev) => [...prev, { sender: "partner", text: msg }]);
+    });
 
-    return rendered;
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stopTyping", () => setIsTyping(false));
+
+    socket.on("partner-disconnected", () => {
+      alert("상대방이 연결을 종료했어요.");
+      setMatched(false);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    socket.emit("message", input, (ack) => {
+      if (ack?.success) {
+        setMessages((prev) => [...prev, { sender: "me", text: input }]);
+        setInput("");
+        socket.emit("stopTyping");
+      } else {
+        alert("전송 실패");
+      }
+    });
   };
 
+  const handleTyping = () => {
+    socket.emit("typing");
+    setTimeout(() => {
+      socket.emit("stopTyping");
+    }, 1000);
+  };
+
+  useEffect(() => {
+    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="chat-container" style={{ position: 'relative' }}>
-      <div className="chat-header">
-        채팅방 ({word})
-        <button className="exit-button" onClick={handleExitChat}><LogOut size={20} /></button>
-      </div>
-
-      <div className="chat-messages">
-        <div className="chat-info-banner">
-          <strong>{partnerNickname || '(상대방 로딩중)'}님과<br />연결되었습니다!</strong>
-          <br /><br />즐거운 대화를 나눠보세요 🎉
-        </div>
-        {!isReadyToChat && (
-          <div className="chat-wait-banner">상대방이 입장 중입니다...</div>
-        )}
-        {renderMessages()}
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className="chat-input-container">
-        <input
-          className="chat-input"
-          placeholder="메시지를 입력하세요."
-          value={message}
-          onChange={handleTyping}
-          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-          disabled={chatEnded || !isReadyToChat}
-        />
-        <button
-          className="chat-send-button"
-          onClick={handleSendMessage}
-          disabled={chatEnded || !isReadyToChat}
-        >
-          전송
-        </button>
-      </div>
-
-      {chatEnded && (
-        <div className="chat-ended-modal">
-          <p>상대방이 <br /> 대화를 종료했어요.</p>
-          <button className="exit-button-text" onClick={handleExitChat}>나가기</button>
-        </div>
+    <div className="chat-container">
+      {matched ? (
+        <>
+          <div className="chat-header">
+            {partner.nickname} 님과 연결됨
+            {isTyping && <span className="typing-indicator">상대가 입력 중...</span>}
+          </div>
+          <div className="chat-body">
+            {messages.map((msg, i) => (
+              <div key={i} className={msg.sender === "me" ? "my-msg" : "partner-msg"}>
+                {msg.text}
+              </div>
+            ))}
+            <div ref={chatRef} />
+          </div>
+          <div className="chat-input">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleTyping}
+              placeholder="메시지를 입력하세요"
+            />
+            <button onClick={handleSend}>전송</button>
+          </div>
+        </>
+      ) : (
+        <p>상대방을 찾는 중입니다...</p>
       )}
     </div>
   );
