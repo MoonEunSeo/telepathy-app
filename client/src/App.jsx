@@ -53,10 +53,6 @@ export default function App() {
         <Route path="/changepassword" element={<ChangePassword/>} /> 
         <Route path="/chatpage" element={<Chatpage />} />
         <Route
-          path="/chatpage/:roomId/:senderId/:senderNickname/:receiverId/:receiverNickname/:word"
-          element={<Chatpage/>}
-        />
-        <Route
           path="/chatpage2/:roomId/:myId/:myNickname/:partnerId/:partnerNickname/:word"
           element={<ChatPage2/>}
         />

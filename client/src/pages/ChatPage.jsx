@@ -731,54 +731,99 @@ export default function ChatPage() {
   );
 }
 */// 📦 ChatPage.jsx (튜닝 클라이언트 버전)
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { toast } from 'react-toastify';
 
 const ChatPage = () => {
   const [socket, setSocket] = useState(null);
-  const [userInfo, setUserInfo] = useState(null); // ← JWT 디코딩 결과 or fetch 결과
+  const [roomInfo, setRoomInfo] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ 페이지 진입 시 유저 정보 가져오기 (예: /api/me)
-    fetch('/api/me', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.user_id) return navigate('/login');
-        setUserInfo(data);
-      });
-  }, []);
 
-  useEffect(() => {
-    if (!userInfo) return;
-
+    const stored = localStorage.getItem('chatInfo');
+    if (!stored) {
+      toast.error('⚠️ 채팅 정보가 없습니다. 메인으로 이동합니다.');
+      navigate('/main');
+      return;
+    }
+  
+    const { roomId, myId, myNickname, partnerId, partnerNickname, word } = JSON.parse(stored);
+  
+    // 이 정보로 socket 연결 시작
     const socket = io('https://telepathy.my', {
       transports: ['websocket'],
       withCredentials: true,
     });
-
-    socket.emit('enterChat', { userId: userInfo.user_id, nickname: userInfo.nickname });
-
-    socket.on('message', (msg) => {
-      setMessages(prev => [...prev, msg]);
+  
+    socket.emit('joinRoomDirect', {
+      roomId,
+      myId,
+      myNickname,
+      partnerId,
+      partnerNickname,
+      word,
     });
 
-    setSocket(socket);
 
-    return () => socket.disconnect();
-  }, [userInfo]);
+    const initSocket = async () => {
+      try {
+        const res = await fetch('/api/me', { credentials: 'include' });
+        const { user_id, nickname, word, token } = await res.json();
+
+        if (!user_id || !word || !token) {
+          toast.error('사용자 정보가 불완전합니다.');
+          return navigate('/main');
+        }
+
+        const newSocket = io('https://telepathy.my', {
+          transports: ['websocket'],
+          withCredentials: true,
+        });
+
+        newSocket.emit('joinWordQueue', { token, word });
+
+        newSocket.on('matched', (info) => {
+          setRoomInfo(info);
+          toast.success('✨ 연결되었습니다!');
+        });
+
+        newSocket.on('receiveMessage', (data) => {
+          setMessages(prev => [...prev, data]);
+        });
+
+        newSocket.on('matchError', ({ message }) => {
+          toast.error(message);
+          navigate('/main');
+        });
+
+        setSocket(newSocket);
+
+        return () => newSocket.disconnect();
+      } catch (err) {
+        console.error('채팅 초기화 오류:', err);
+        navigate('/main');
+      }
+    };
+
+    initSocket();
+  }, [navigate]);
 
   const handleSend = () => {
-    if (socket && message.trim()) {
-      socket.emit('chatMessage', {
-        message,
-      });
-      setMessage('');
-    }
+    if (!message.trim() || !roomInfo || !socket) return;
+    const payload = {
+      roomId: roomInfo.roomId,
+      sender: roomInfo.myNickname,
+      content: message.trim(),
+    };
+    socket.emit('sendMessage', payload);
+    setMessages(prev => [...prev, payload]);
+    setMessage('');
   };
 
   useEffect(() => {
@@ -786,12 +831,17 @@ const ChatPage = () => {
   }, [messages]);
 
   return (
-    <div style={{ padding: '1rem', maxWidth: 400, margin: '0 auto' }}>
-      <h3>💬 익명 채팅방</h3>
-      <div style={{ border: '1px solid #ccc', height: '300px', overflowY: 'scroll', padding: '0.5rem' }}>
-        {messages.map((msg, idx) => (
-          <div key={idx}>
-            <strong>{msg.senderNickname}:</strong> {msg.message}
+    <div style={{ maxWidth: 400, margin: '0 auto', padding: '1rem' }}>
+      <h2>💬 채팅방</h2>
+      {roomInfo && (
+        <p style={{ marginBottom: '0.5rem' }}>
+          <strong>{roomInfo.partnerNickname}</strong> 님과 연결되었습니다.
+        </p>
+      )}
+      <div style={{ height: '300px', overflowY: 'scroll', border: '1px solid #ccc', padding: '0.5rem' }}>
+        {messages.map((msg, i) => (
+          <div key={i}>
+            <strong>{msg.sender}:</strong> {msg.content}
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -801,6 +851,7 @@ const ChatPage = () => {
           type="text"
           value={message}
           onChange={e => setMessage(e.target.value)}
+          placeholder="메시지를 입력하세요"
           style={{ flex: 1, padding: '0.5rem' }}
         />
         <button onClick={handleSend} style={{ marginLeft: '0.5rem' }}>전송</button>

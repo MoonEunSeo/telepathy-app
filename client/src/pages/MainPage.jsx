@@ -447,14 +447,21 @@ export default function MainPage() {
         }
         data = await res.json();
         if (data.matched) {
+          // ✅ localStorage에 채팅 정보 저장
+          localStorage.setItem('chatInfo', JSON.stringify({
+            roomId: data.roomId,
+            myId: data.senderId,
+            myNickname: data.senderNickname,
+            partnerId: data.receiverId,
+            partnerNickname: data.receiverNickname,
+            word: intent || selectedWord
+          }));
+        
           toast.success('✨ 연결되었습니다! 잠시 후 채팅으로 이동합니다.', { autoClose: 5000 });
+        
           clearInterval(interval);
           setTimeout(() => {
-            navigate(
-              //`/chatpage/${data.roomId}/${data.senderId}/${encodeURIComponent(data.senderNickname)}/${data.receiverId}/${encodeURIComponent(data.receiverNickname)}/${encodeURIComponent(intent || selectedWord)}`
-            //);
-
-            window.location.href = data.url); // ✅ 서버가 응답한 정확한 URL로 이동
+            navigate('/chatpage'); // ✅ URL에 아무 정보도 넘기지 않음
           }, 2000);
         }
       } catch (err) {
