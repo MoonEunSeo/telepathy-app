@@ -63,8 +63,6 @@ export default function LikePage() {
            data-ad-slot="1490398761"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>
-
-      <button className="like-button">광고 보기</button>
     </div>
   );
 }
