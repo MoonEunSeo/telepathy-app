@@ -15,6 +15,9 @@ const passwordRoutes = require('./src/routes/password.routes');
 const nicknameRoutes = require('./src/routes/nickname.routes');
 const withdrawRoutes = require('./src/routes/withdraw.routes');
 const balanceGameRoutes = require('./src/routes/balanceGame.routes');
+const reportRoutes = require('./src/routes/report.routes');
+const historyRoutes = require('./src/routes/history.routes');
+
 
 
 const app = express();
@@ -45,6 +48,8 @@ app.use('/api/password', passwordRoutes);
 app.use('/api/nickname', nicknameRoutes);
 app.use('/api/auth/withdraw', withdrawRoutes);
 app.use('/api/balance-game', balanceGameRoutes);
+app.use('/api/report', reportRoutes);
+app.use('/api/word-history', historyRoutes);
 
 // ✅ 서버단 리디렉션: 루트로 들어오면 /login으로 보낸다
 app.get(['/', '/index.html'], (req, res) => {

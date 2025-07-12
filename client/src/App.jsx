@@ -7,6 +7,7 @@ import VerifyCallback from './pages/VerifyCallback'
 import Verify_mvp from './pages/Verify_mvp';
 import Mainpage from './pages/MainPage';
 import Mypage from './pages/MyPage';
+import Mywords from './pages/MyWords';
 import Helppage from './pages/HelpPage';
 import Chatpage from './pages/ChatPage';
 import ChatPage2 from './pages/ChatPage2';
@@ -63,6 +64,7 @@ export default function App() {
         <Route path="/liked" element={<Likepage />} />
         <Route path="/main" element={<Mainpage />} />
         <Route path="/mypage" element={<Mypage />} />
+        <Route path="/mywords" element={<Mywords />} />
         <Route path="/helppage" element={<Helppage />} />
         </Route>
 

@@ -40,6 +40,7 @@ const MyPage = () => {
 
   const handleNavigateWords = () => {
     console.log('Go to Words Page');
+    navigate('/mywords');
   };
 
   const handleChangeProfile = () => {

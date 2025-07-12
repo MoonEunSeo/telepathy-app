@@ -1,5 +1,13 @@
 /* ChatPage.css */
 
+.judson-title {
+  font-size: 40px;
+  font-family: 'Judson', serif;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -11,22 +19,31 @@
 
 .chat-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 16px;
   font-weight: bold;
-  justify-content: space-between;
   font-size: 20px;
   background-color: #fffffff8;
   border-bottom: 1px solid #e0e0e0;
 }
 
+.chat-header-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .exit-button {
   background: none;
+  justify-content: space-between;
   border: none;
   font-size: 14px;
   color: #999;
   cursor: pointer;
   padding: 4px 8px;
   transition: color 0.2s ease;
+  margin-left: 10px;
 }
 
 .exit-button:hover {
@@ -238,4 +255,60 @@
 
 .exit-button-text:hover {
   background-color: #222;
+}
+
+/* 추가할 스타일 (예: ChatPage.css) */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.report-modal {
+  background: #f7f5f3;
+  padding: 24px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 360px;
+  font-family: 'Gowun Dodum', sans-serif;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.report-modal h3 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+.report-modal textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: none;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.report-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.report-buttons button {
+  padding: 8px 20px;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+}
+
+.report-buttons button:last-child {
+  background: #222;
+  color: white;
 }

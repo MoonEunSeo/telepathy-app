@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ChatPage.css';
-import { LogOut } from 'lucide-react';
+import { LogOut, AlertTriangle } from 'lucide-react';
 import { useWordSession } from '../contexts/WordSessionContext';
 import useSocket from '../hooks/useSocket';
+import ReportModal from '../components/ReportModal';
+import { toast } from 'react-toastify';
+
 
 export default function ChatPage() {
   const navigate = useNavigate();
@@ -12,6 +15,11 @@ export default function ChatPage() {
   const [chatEnded, setChatEnded] = useState(false);
   const [isReadyToChat, setIsReadyToChat] = useState(false);
   const messagesEndRef = useRef(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [pendingUnload, setPendingUnload] = useState(false);
+  
+
 
   // ✅ localStorage에서 정보 로드
   const chatInfo = JSON.parse(localStorage.getItem('chatInfo'));
@@ -23,6 +31,9 @@ export default function ChatPage() {
 
   const { roomId, myId, myNickname, partnerId: theirId, partnerNickname: theirNickname, word } = chatInfo;
 
+  console.log('chatInfo:', chatInfo);
+  console.log('내 ID (myId):', myId);
+
   const {
     messages,
     receiverInfo,
@@ -30,6 +41,7 @@ export default function ChatPage() {
     sendMessage,
     sendTyping,
     sendLeave,
+    socket,
   } = useSocket({
     roomId,
     senderId: myId,
@@ -37,6 +49,81 @@ export default function ChatPage() {
     word,
     onChatEnded: () => setChatEnded(true),
   });
+  
+  //신고처리함수
+  const handleSubmitReport = async ({ reasons, extra }) => {
+    try {
+      const response = await fetch('/api/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          reporterId: myId,
+          reportedId: theirId,
+          roomId: roomId,
+          reasons,
+          extraMessage: extra,
+        }),
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        toast.success('신고가 접수되었습니다.'); // ✅ 먼저 토스트 띄움
+        setShowReportModal(false); // ✅ 모달 닫기
+  
+        // ✅ 1초 후에 채팅방 나가기
+        setTimeout(() => {
+          handleExitChat(); // ← 네가 원래 쓰던 함수
+        }, 3000);
+  
+      } else {
+        toast.error(data.message || '신고 실패');
+      }
+    } catch (err) {
+      toast.error('서버 오류 발생');
+    }
+  };
+
+ // ChatPage.jsx useEffect 안에서 Chat history저장
+ useEffect(() => {
+  const saveHistory = async () => {
+    try {
+      if (!theirId || !word) {
+        console.warn('❌ 저장 불가: partnerId 또는 word 없음', chatInfo);
+        return;
+      }
+
+      const res = await fetch('/api/word-history/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          partnerId: theirId,
+          word,
+          userNickname: myNickname,
+          partnerNickname: theirNickname,
+        }),
+      });
+
+      const data = await res.json();
+      console.log('📦 히스토리 저장 응답:', data);
+
+      console.log('히스토리 저장용:', {
+        partnerId: theirId,
+        word,
+        userNickname: myNickname,
+        partnerNickname: theirNickname,
+      });
+    } catch (err) {
+      console.error('❌ 히스토리 저장 실패:', err);
+    }
+  };
+
+  saveHistory();
+}, [theirId, word]); // ✅ chatInfo 아닌 실제 필요한 변수 기준으로
+
 
   useEffect(() => {
     const checkSession = async () => {
@@ -66,7 +153,7 @@ export default function ChatPage() {
     }
   }, [receiverInfo, theirId]);
 
-  const handleExitChat = async () => {
+const handleExitChat = async () => {
     try {
       await fetch('/api/match/end', {
         method: 'POST',
@@ -82,6 +169,52 @@ export default function ChatPage() {
       navigate('/main');
     }
   };
+
+    //뒤로가기 닫기
+    /*useEffect(() => {
+      const handlePopState = (e) => {
+        console.log('[POPSTATE] 뒤로가기 감지됨');
+        // 히스토리 되돌림 차단
+        window.history.pushState(null, '', window.location.pathname);
+        setShowExitConfirm(true);
+      };
+    
+      // 진입 시 현재 위치를 history에 추가해서 pushState로 막을 수 있게 함
+      window.history.pushState(null, '', window.location.pathname);
+      window.addEventListener('popstate', handlePopState);
+    
+      return () => {
+        window.removeEventListener('popstate', handlePopState);
+      };
+    }, []);*/
+
+    
+    useEffect(() => {
+      // 🔙 뒤로가기 감지 → 커스텀 모달
+      const handlePopState = (e) => {
+        console.log('[POPSTATE] 뒤로가기 감지됨');
+        window.history.pushState(null, '', window.location.pathname); // 뒤로가기 무효화
+        setShowExitConfirm(true); // 감성 모달 오픈
+      };
+    
+      // 🔄 새로고침 / 창닫기 → 브라우저 기본 모달
+      const handleBeforeUnload = (e) => {
+        console.log('[BEFOREUNLOAD] 새로고침 또는 창닫기 감지됨');
+        e.preventDefault();
+        e.returnValue = ''; // 브라우저 기본 확인창 표시
+      };
+    
+      // 진입 시 현재 위치를 history에 추가해서 popstate 차단 가능하게
+      window.history.pushState(null, '', window.location.pathname);
+    
+      window.addEventListener('popstate', handlePopState);
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    
+      return () => {
+        window.removeEventListener('popstate', handlePopState);
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }, []);
 
   const handleSendMessage = () => {
     if (!message.trim() || !isReadyToChat) return;
@@ -137,11 +270,18 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="chat-container" style={{ position: 'relative' }}>
-      <div className="chat-header">
-        채팅방 ({word})
-        <button className="exit-button" onClick={handleExitChat}><LogOut size={20} /></button>
-      </div>
+        <div className="chat-container" style={{ position: 'relative' }}>
+        <div className="chat-header">
+          <div className="chat-title">채팅방 ({word})</div>
+          <div className="chat-header-icons">
+            <button className="exit-button" onClick={() => setShowReportModal(true)} title="신고하기">
+              <AlertTriangle size={22} />
+            </button>
+            <button className="exit-button" onClick={handleExitChat}>
+              <LogOut size={20} />
+            </button>
+          </div>
+        </div>
 
       <div className="chat-messages">
         <div className="chat-info-banner">
@@ -172,6 +312,34 @@ export default function ChatPage() {
         </button>
       </div>
 
+      {showExitConfirm && (
+  <div className="chat-ended-modal">
+    <p>정말 나가시겠어요?</p>
+    <button
+      className="exit-button-text"
+      onClick={() => {
+        setShowExitConfirm(false);
+        handleExitChat(); // ✅ 나가기 로직 실행
+      }}
+    >
+      네, 나갈래요
+    </button>
+    <button className="exit-button-text" onClick={() => setShowExitConfirm(false)}>
+      아니요
+    </button>
+  </div>
+)}
+
+      {showReportModal && (
+            <ReportModal
+      onClose={() => setShowReportModal(false)}
+      onSubmit={handleSubmitReport}
+      roomId={roomId}
+      reportedId={theirId}
+      reporterId={myId} // ✅ 이거 꼭 넣어야 함!
+    />
+    )}
+
       {chatEnded && (
         <div className="chat-ended-modal">
           <p>상대방이 <br /> 대화를 종료했어요.</p>
@@ -180,4 +348,4 @@ export default function ChatPage() {
       )}
     </div>
   );
-}
+};

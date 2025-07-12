@@ -95,10 +95,30 @@ function registerSocketHandlers(io) {
       socket.disconnect(true);
     });
 
+    /*
     socket.on('disconnect', () => {
       console.log(`🔴 Socket disconnected: senderId=${senderId}, roomId=${roomId}`);
     });
   });
+}*/
+
+    // ✅ 새로고침/닫기 시 상대방에게 종료 알림
+    socket.on('disconnect', () => {
+      console.log(`🔴 Socket disconnected: senderId=${senderId}, roomId=${roomId}`);
+
+      const clients = io.sockets.adapter.rooms.get(roomId);
+
+      // 방에 아직 다른 참가자가 남아 있으면, 그 사람에게 chatEnded 보내기
+      if (clients && clients.size === 1) {
+        const [remainingSocketId] = [...clients];
+        const remainingSocket = io.sockets.sockets.get(remainingSocketId);
+        if (remainingSocket) {
+          remainingSocket.emit('chatEnded');
+          console.log('📤 chatEnded 이벤트를 남은 유저에게 전송');
+        }
+      }
+    });
+  }); // <--- 이거 잊지 마!!
 }
 
 module.exports = { registerSocketHandlers };
