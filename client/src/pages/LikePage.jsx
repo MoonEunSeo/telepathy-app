@@ -27,6 +27,7 @@ export default function LikePage() {
 */
 
 import { useEffect } from 'react';
+import './LikePage.css';
 
 export default function LikePage() {
   useEffect(() => {
@@ -34,9 +35,9 @@ export default function LikePage() {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch (e) {
-        console.error('AdSense 로딩 에러:', e);
+        console.error('AdSense 에러:', e);
       }
-    }, 300); // 💡 약간의 지연으로 레이아웃 잡힌 뒤 실행
+    }, 300); // 렌더 완료 후 실행
 
     return () => clearTimeout(timeout);
   }, []);
@@ -59,15 +60,16 @@ export default function LikePage() {
 
       <p className="like-account">계좌 : 100-121-028199 (케이뱅크)</p>
 
-      {/* ✅ 광고: 가로길쭉 반응형 + 최소폭 지정 */}
-      <ins className="adsbygoogle"
-           style={{ display: 'block', width: '100%', minWidth: '320px', height: '100px' }}
-           data-ad-client="ca-pub-9633518507670143"
-           data-ad-slot="1490398761"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+      {/* ✅ 광고 감싸는 div로 스타일 안정 */}
+      <div style={{ minHeight: '100px', margin: '20px 0' }}>
+        <ins className="adsbygoogle"
+             style={{ display: 'block', width: '100%', minWidth: '320px', height: '100px' }}
+             data-ad-client="ca-pub-9633518507670143"
+             data-ad-slot="1490398761"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
 
-      <button className="like-button">광고 보기</button>
     </div>
   );
 }
