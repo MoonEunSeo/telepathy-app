@@ -26,16 +26,19 @@ export default function LikePage() {
 }
 */
 
-import React, { useEffect } from 'react';
-import './LikePage.css';
+import { useEffect } from 'react';
 
 export default function LikePage() {
   useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.error('AdSense 로딩 에러:', e);
-    }
+    const timeout = setTimeout(() => {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.error('AdSense 로딩 에러:', e);
+      }
+    }, 300); // 💡 약간의 지연으로 레이아웃 잡힌 뒤 실행
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
@@ -54,15 +57,17 @@ export default function LikePage() {
         아래의 계좌로 후원해주세요
       </p>
 
-      <p className="like-account">계좌 : 100-121-028199 (케이뱅크)</p> 
+      <p className="like-account">계좌 : 100-121-028199 (케이뱅크)</p>
 
-      {/* 👉 광고 삽입 */}
+      {/* ✅ 광고: 가로길쭉 반응형 + 최소폭 지정 */}
       <ins className="adsbygoogle"
-           style={{ display: 'block', margin: '20px 0' }}
+           style={{ display: 'block', width: '100%', minWidth: '320px', height: '100px' }}
            data-ad-client="ca-pub-9633518507670143"
            data-ad-slot="1490398761"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>
+
+      <button className="like-button">광고 보기</button>
     </div>
   );
 }
