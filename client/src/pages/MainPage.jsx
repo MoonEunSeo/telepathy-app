@@ -311,7 +311,7 @@ export default function MainPage() {
     startTime
   } = useWordSession();
 
-  // 추천 단어 애니메이션
+  // ✅ 추천 단어 애니메이션
   useEffect(() => {
     const interval = setInterval(() => {
       setRecommendClass("recommend-transition");
@@ -323,9 +323,9 @@ export default function MainPage() {
     return () => clearInterval(interval);
   }, []);
 
-  /** ✅ 조합 처리 (iOS 대응) */
+  /** ✅ 입력 처리 (iOS 대응) */
   const handleInputChange = (e) => {
-    setWord(e.target.value); // ✅ 필터링 없이 그대로 반영
+    setWord(e.target.value); // 필터링 없이 그대로 반영
     setError('');
   };
 
@@ -338,15 +338,24 @@ export default function MainPage() {
     setWord(onlyKorean.slice(0, 20));
   };
 
+  /** ✅ 단어 확인 버튼 클릭 */
   const handleWordSubmit = () => {
-    if (!word.trim()) return setError('단어를 입력해주세요.');
+    const filteredWord = word.replace(/[^가-힣]/g, '');
+    if (!filteredWord) {
+      setError('한글 단어만 입력해주세요.');
+      return;
+    }
     setShowModal(true);
   };
 
+  /** ✅ 매칭 시작 (API 성공 시에만 세션 시작) */
   const handleWordConfirm = async () => {
     const filteredWord = word.replace(/[^가-힣]/g, '');
-    startSession(filteredWord);
-    setShowModal(false);
+    if (!filteredWord) {
+      toast.error('❌ 한글만 입력할 수 있어요.');
+      return;
+    }
+
     try {
       const res = await fetch('/api/match/start', {
         method: 'POST',
@@ -355,13 +364,21 @@ export default function MainPage() {
         body: JSON.stringify({ word: filteredWord }),
       });
       const data = await res.json();
-      if (!data.success) toast.error('❌ 매칭 시작 실패');
+
+      if (data.success) {
+        startSession(filteredWord); // ✅ 성공 후 세션 시작
+        setShowModal(false);
+        toast.success('✨ 매칭을 시작합니다.');
+      } else {
+        toast.error('❌ 매칭 시작 실패');
+      }
     } catch (err) {
       console.error('세션 시작 오류:', err);
       toast.error('❌ 서버 오류로 매칭을 시작할 수 없습니다.');
     }
   };
 
+  /** ✅ 닉네임 저장 */
   const handleSaveNickname = async (nickname) => {
     try {
       const res = await fetch('/api/nickname/set-nickname', {
@@ -381,6 +398,7 @@ export default function MainPage() {
     }
   };
 
+  /** ✅ 닉네임 확인 */
   useEffect(() => {
     const checkNickname = async () => {
       try {
@@ -394,6 +412,7 @@ export default function MainPage() {
     checkNickname();
   }, []);
 
+  /** ✅ 매칭 상태 확인 */
   useEffect(() => {
     if (!sessionActive || !selectedWord) return;
     const interval = setInterval(async () => {
@@ -414,9 +433,9 @@ export default function MainPage() {
             partnerNickname: data.receiverNickname,
             word: selectedWord
           }));
-        
+
           toast.success('✨ 연결되었습니다! 잠시 후 채팅으로 이동합니다.', { autoClose: 5000 });
-        
+
           clearInterval(interval);
           setTimeout(() => {
             navigate('/chatpage');
@@ -451,7 +470,7 @@ export default function MainPage() {
         <p className="subtitle">누군가 지금,<br />이 단어를 기다리고 있어요.</p>
 
         <p className="recommend-word">
-          • 추천 단어 : 
+          • 추천 단어 :
           <span className={recommendClass}>
             「{recommendations[currentIdx]}」
           </span>
