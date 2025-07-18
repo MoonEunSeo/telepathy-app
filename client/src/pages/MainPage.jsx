@@ -311,7 +311,7 @@ export default function MainPage() {
     startTime
   } = useWordSession();
 
-  // 추천 단어 페이드 인 애니메이션
+  // 추천 단어 애니메이션
   useEffect(() => {
     const interval = setInterval(() => {
       setRecommendClass("recommend-transition");
@@ -323,15 +323,9 @@ export default function MainPage() {
     return () => clearInterval(interval);
   }, []);
 
-  /** ✅ iOS & 한글 조합 대응 */
+  /** ✅ 조합 처리 (iOS 대응) */
   const handleInputChange = (e) => {
-    const input = e.target.value;
-    if (isComposing) {
-      setWord(input); // 조합 중이면 그대로 표시
-      return;
-    }
-    const onlyKorean = input.replace(/[^가-힣]/g, ''); // 한글만 허용
-    setWord(onlyKorean.slice(0, 20));
+    setWord(e.target.value); // ✅ 필터링 없이 그대로 반영
     setError('');
   };
 
@@ -340,7 +334,7 @@ export default function MainPage() {
   const handleCompositionEnd = (e) => {
     setIsComposing(false);
     const input = e.target.value;
-    const onlyKorean = input.replace(/[^가-힣]/g, '');
+    const onlyKorean = input.replace(/[^가-힣]/g, ''); // ✅ 한글만 허용
     setWord(onlyKorean.slice(0, 20));
   };
 
@@ -350,14 +344,15 @@ export default function MainPage() {
   };
 
   const handleWordConfirm = async () => {
-    startSession(word);
+    const filteredWord = word.replace(/[^가-힣]/g, '');
+    startSession(filteredWord);
     setShowModal(false);
     try {
       const res = await fetch('/api/match/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ word }),
+        body: JSON.stringify({ word: filteredWord }),
       });
       const data = await res.json();
       if (!data.success) toast.error('❌ 매칭 시작 실패');

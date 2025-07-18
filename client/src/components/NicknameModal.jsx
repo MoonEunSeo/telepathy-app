@@ -108,26 +108,14 @@ import './NicknameModal.css';
 export default function NicknameModal({ onClose, onSave }) {
   const [nickname, setNickname] = useState('');
   const [confirmStep, setConfirmStep] = useState(false);
-  const [isComposing, setIsComposing] = useState(false);
 
   const handleInputChange = (e) => {
-    const input = e.target.value;
-
-    if (isComposing) {
-      setNickname(input); // 조합 중이면 그대로
-      return;
-    }
-
-    const filtered = input.replace(/[^가-힣a-zA-Z0-9]/g, ''); // ✅ 한글, 영어, 숫자 허용
-    setNickname(filtered.slice(0, 20));
+    setNickname(e.target.value); // ✅ 필터링 없이 그대로
   };
 
-  const handleCompositionStart = () => setIsComposing(true);
-
   const handleCompositionEnd = (e) => {
-    setIsComposing(false);
     const input = e.target.value;
-    const filtered = input.replace(/[^가-힣a-zA-Z0-9]/g, '');
+    const filtered = input.replace(/[^가-힣a-zA-Z0-9]/g, ''); // ✅ 한글, 영어, 숫자 허용
     setNickname(filtered.slice(0, 20));
   };
 
@@ -154,7 +142,6 @@ export default function NicknameModal({ onClose, onSave }) {
               type="text"
               value={nickname}
               onChange={handleInputChange}
-              onCompositionStart={handleCompositionStart}
               onCompositionEnd={handleCompositionEnd}
               placeholder="닉네임 (최대 20자, 한글/영문/숫자)"
               className="nickname-modal-input"
