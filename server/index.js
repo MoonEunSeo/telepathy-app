@@ -141,39 +141,51 @@ function registerSocketHandlers(io) {
 }
 
 module.exports = { registerSocketHandlers };*/
-
-// 📦 src/index.js
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const app = require('./app'); // app.js에서 export한 Express 앱
-const { registerSocketHandlers } = require('./src/config/chat.socket');
+const app = require('./app');
+const { registerSocketHandlers } = require('./src/config/chat.socket'); // ✅ 채팅 소켓 핸들러
 require('dotenv').config();
 
-// 글로벌 상태 (필요 시 유지)
-global.activeMatches = {};
-global.queue = {};
-
-// http 서버에 app 연결
 const server = createServer(app);
 
-// socket.io 초기화 (http 서버에 연결)
 const io = new Server(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? [
-          'https://telepathy.my',
-          'https://telepathy-app.onrender.com',
-        ]
+      ? ['https://telepathy.my', 'https://telepathy-app.onrender.com']
       : 'http://localhost:5179',
     credentials: true,
   },
-  allowEIO3: true // 구버전 클라이언트 대응
 });
 
-// 소켓 이벤트 등록
+let mainPageUsers = 0; // ✅ 메인페이지 접속자 카운트
+
+// ✅ 메인페이지 전용 소켓 이벤트
+io.on('connection', (socket) => {
+  console.log('🟢 새로운 클라이언트 연결됨');
+
+  socket.on('joinMainPage', () => {
+    mainPageUsers++;
+    io.emit('mainPageUsers', mainPageUsers);
+    console.log(`✅ MainPage 접속자: ${mainPageUsers}명`);
+  });
+
+  socket.on('leaveMainPage', () => {
+    mainPageUsers = Math.max(mainPageUsers - 1, 0);
+    io.emit('mainPageUsers', mainPageUsers);
+    console.log(`❌ MainPage 퇴장 → 접속자: ${mainPageUsers}명`);
+  });
+
+  socket.on('disconnect', () => {
+    mainPageUsers = Math.max(mainPageUsers - 1, 0);
+    io.emit('mainPageUsers', mainPageUsers);
+    console.log(`🔴 소켓 종료 → 접속자: ${mainPageUsers}명`);
+  });
+});
+
+// ✅ 채팅 관련 소켓 핸들러 연결
 registerSocketHandlers(io);
 
-// 서버 실행
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);

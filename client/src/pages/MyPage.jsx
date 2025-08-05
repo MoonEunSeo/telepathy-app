@@ -11,6 +11,8 @@ const MyPage = () => {
   const [username, setUsername] = useState('');
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawMessage, setWithdrawMessage] = useState('');
+  const [wordCount, setWordCount] = useState(0);
+  const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
 
   const navigate = useNavigate();
   const { isSessionActive, word } = useWordSession();
@@ -35,6 +37,25 @@ const MyPage = () => {
       }
     };
 
+    const fetchWordCount = async () => {
+      try {
+        const res = await fetch('/api/word-history', {
+          credentials: 'include',
+        });
+        const data = await res.json();
+  
+        if (Array.isArray(data.history)) {
+          setWordCount(data.history.length); // 👉 word 개수만 따로 저장
+        } else {
+          console.warn('⚠️ history가 배열이 아님:', data);
+          setWordCount(0);
+        }
+      } catch (err) {
+        console.error('❌ 단어 기록 불러오기 실패:', err.message);
+        setWordCount(0);
+      }
+    };
+    fetchWordCount();
     fetchProfile();
   }, []);
 
@@ -44,7 +65,7 @@ const MyPage = () => {
   };
 
   const handleChangeProfile = () => {
-    console.log('Change Profile Image');
+    setShowNotSupportedModal(true);
   };
 
   const handleChangePassword = () => {
@@ -116,7 +137,7 @@ const MyPage = () => {
         <hr />
         <p className="mypage-section-title">| 내 정보 |</p>
         <p className="mypage-text">ID: {username || '불러오는 중...'}</p>
-        <p className="mypage-text">텔레파시 횟수 : 5 번</p>
+        <p className="mypage-text">텔레파시 횟수 : {wordCount} 번</p>
         <button onClick={handleNavigateWords} className="mypage-button-full">
           {'>'} 누군가와 함께 떠올린 단어
         </button>
@@ -143,7 +164,26 @@ const MyPage = () => {
         회원탈퇴
       </button>
 
-      {/* ✅ 탈퇴 모달 */}
+      {/* 미지원기능모달 */}
+      {showNotSupportedModal && (
+  <div className="modal-backdrop">
+    <div className="modal-content">
+      <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
+        아직 지원하지 않는 기능이에요!
+      </p>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+        <button
+          className="login-button1"
+          onClick={() => setShowNotSupportedModal(false)}
+        >
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+      {/*탈퇴 모달 */}
       {showWithdrawModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
@@ -158,6 +198,8 @@ const MyPage = () => {
         </div>
       )}
     </div>
+
+    
   );
 };
 

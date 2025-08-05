@@ -1,4 +1,6 @@
 // contexts/IntentContext.jsx
+
+//IntentProvider랑 같이 쓰는 애
 import { createContext, useContext, useState } from 'react';
 
 const IntentContext = createContext();

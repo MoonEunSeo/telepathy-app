@@ -33,7 +33,6 @@ module.exports = router;*/
 
 // routes/auth.routes.js
 
-
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();

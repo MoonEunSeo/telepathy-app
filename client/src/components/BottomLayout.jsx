@@ -51,7 +51,7 @@ export default function BottomLayout() {
       url: 'https://gall.dcinside.com/mgallery/board/lists/?id=telepathy',
       title: '텔레파시 디시인사이드 갤러리',
     },
-    { icon: <Heart />, path: '/liked' },
+    { icon: <Heart />, path: '/likes' },
     { icon: <User />, path: '/mypage' },
   ];
 

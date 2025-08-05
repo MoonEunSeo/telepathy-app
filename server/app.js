@@ -17,6 +17,7 @@ const withdrawRoutes = require('./src/routes/withdraw.routes');
 const balanceGameRoutes = require('./src/routes/balanceGame.routes');
 const reportRoutes = require('./src/routes/report.routes');
 const historyRoutes = require('./src/routes/history.routes');
+const feedbackRoutes = require('./src/routes/feedback.routes');
 
 
 
@@ -50,6 +51,7 @@ app.use('/api/auth/withdraw', withdrawRoutes);
 app.use('/api/balance-game', balanceGameRoutes);
 app.use('/api/report', reportRoutes);
 app.use('/api/word-history', historyRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // ✅ 서버단 리디렉션: 루트로 들어오면 /login으로 보낸다
 app.get(['/', '/index.html'], (req, res) => {
