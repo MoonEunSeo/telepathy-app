@@ -64,6 +64,15 @@ app.get('/healthz', (req, res) => res.status(200).send('OK'));
 // ✅ 빌드된 Vite 정적 파일 서빙
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
+
+// ✅ sitemap.xml 요청은 index.html로 가로채지 않도록 예외 처리
+app.use('/sitemap.xml', express.static(path.join(__dirname, '../client/public')));
+
+// ✅ robots.txt 정적서빙
+app.use('/robots.txt', express.static(path.join(__dirname, '../client/public')));
+
+
+
 // ✅ SPA 핸들러 (라우트 미스매치 시 index.html 반환)
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
