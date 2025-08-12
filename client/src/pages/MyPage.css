@@ -179,3 +179,11 @@ body {
   .login-button1.cancel:hover {
     background-color: #d0d0d0;
   }
+
+  .focus-hours {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    opacity: 0.9;
+  }

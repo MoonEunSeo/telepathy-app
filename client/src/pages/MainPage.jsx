@@ -412,6 +412,7 @@ useEffect(() => {
     return () => clearInterval(interval);
   }, [sessionActive, selectedWord, navigate]);
 
+
   /** ✅ 피드백 모달 띄우기 (ChatPage에서 localStorage 저장값 체크) */
   useEffect(() => {
     const info = localStorage.getItem('feedbackInfo');
@@ -512,6 +513,9 @@ useEffect(() => {
             <img src={SearchIcon} alt="검색" />
           </button>
         </div>
+
+        <div className="focus-hours" aria-live="polite">
+  🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 자정(00:00)</strong></div>
 
         {error && <p className="error-message">{error}</p>}
 
