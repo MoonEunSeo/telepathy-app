@@ -231,8 +231,8 @@ export default function MainPage() {
 }
 */
 
-
-
+/*
+-----------위로 모달없이, 8~12시 텔파 집중시간 ------------
 import React, { useState, useEffect } from 'react';
 import { useWordSession } from '../contexts/WordSessionContext';
 import WordConfirmModal from '../components/WordConfirmModal';
@@ -270,7 +270,7 @@ export default function MainPage() {
     startTime
   } = useWordSession();
 
-/** ✅ 추천 단어 애니메이션 */
+// ✅ 추천 단어 애니메이션
 useEffect(() => {
   setRecommendClass("recommend-transition recommend-visible"); // ✅ 처음부터 visible
 
@@ -285,7 +285,7 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 
-  /** ✅ 입력 처리 (iOS 대응) */
+  //✅ 입력 처리 (iOS 대응)
   const handleInputChange = (e) => {
     setWord(e.target.value);
     setError('');
@@ -300,7 +300,7 @@ useEffect(() => {
     setWord(onlyKorean.slice(0, 20));
   };
 
-  /** ✅ 단어 확인 버튼 클릭 */
+  //✅ 단어 확인 버튼 클릭
   const handleWordSubmit = () => {
     const filteredWord = word.replace(/[^가-힣]/g, '');
     if (!filteredWord) {
@@ -310,7 +310,7 @@ useEffect(() => {
     setShowModal(true);
   };
 
-  /** ✅ 매칭 시작 (API 성공 시에만 세션 시작) */
+  //✅ 매칭 시작 (API 성공 시에만 세션 시작)
   const handleWordConfirm = async () => {
     const filteredWord = word.replace(/[^가-힣]/g, '');
     if (!filteredWord) {
@@ -340,7 +340,7 @@ useEffect(() => {
     }
   };
 
-  /** ✅ 닉네임 저장 */
+  // ✅ 닉네임 저장
   const handleSaveNickname = async (nickname) => {
     try {
       const res = await fetch('/api/nickname/set-nickname', {
@@ -360,7 +360,7 @@ useEffect(() => {
     }
   };
 
-  /** ✅ 닉네임 확인 */
+  //✅ 닉네임 확인
   useEffect(() => {
     const checkNickname = async () => {
       try {
@@ -374,7 +374,7 @@ useEffect(() => {
     checkNickname();
   }, []);
 
-  /** ✅ 매칭 상태 확인 */
+  // ✅ 매칭 상태 확인
   useEffect(() => {
     if (!sessionActive || !selectedWord) return;
     const interval = setInterval(async () => {
@@ -413,7 +413,7 @@ useEffect(() => {
   }, [sessionActive, selectedWord, navigate]);
 
 
-  /** ✅ 피드백 모달 띄우기 (ChatPage에서 localStorage 저장값 체크) */
+  // ✅ 피드백 모달 띄우기 (ChatPage에서 localStorage 저장값 체크)
   useEffect(() => {
     const info = localStorage.getItem('feedbackInfo');
     if (info) {
@@ -423,7 +423,7 @@ useEffect(() => {
     }
   }, []);
 
-  /** ✅ 피드백 제출 */
+  // ✅ 피드백 제출
   const handleSubmitFeedback = async () => {
     if (!selectedEmotion) {
       toast.error('감정을 선택해주세요!');
@@ -558,4 +558,167 @@ useEffect(() => {
       </div>
     </>
   );
-}
+} */
+  import React, { useState, useEffect } from 'react';
+  import { useWordSession } from '../contexts/WordSessionContext';
+  import { useNavigate } from 'react-router-dom';
+  import { HelpCircle } from 'lucide-react';
+  import { socket } from '../config/socket';
+  import './MainPage.css';
+  import { recommendations } from '../assets/recommendations';
+  
+  export default function MainPage() {
+    const navigate = useNavigate();
+    const [onlineCount, setOnlineCount] = useState(0);
+  
+    const [round, setRound] = useState(0);
+    const [wordSet, setWordSet] = useState([]);
+    const [remaining, setRemaining] = useState(30);
+    const [selectedWord, setSelectedWord] = useState('');
+    const [fadeClass, setFadeClass] = useState("fade-in");
+  
+    const { startSession, endSession } = useWordSession();
+  
+    // ✅ 유저 정보 state
+    const [profile, setProfile] = useState(null);
+  
+    // ✅ 유저 프로필 가져오기 (로그인 후 1회)
+    useEffect(() => {
+      const fetchProfile = async () => {
+        const res = await fetch('/api/nickname/profile', { credentials: 'include' });
+        const data = await res.json();
+        if (data.success) {
+          setProfile({ userId: data.id, username: data.username, nickname: data.nickname });
+        }
+      };
+      fetchProfile();
+    }, []);
+  
+    useEffect(() => {
+      if (!socket.connected) {
+        socket.connect();
+      }
+    
+      // ✅ 서버한테 온라인 카운트 다시 요청
+      socket.emit('getOnlineCount');
+    
+      socket.on('onlineCount', (count) => {
+        console.log("👥 현재 접속자 수:", count);
+        setOnlineCount(count);
+      });
+    
+      return () => {
+        socket.off('onlineCount');
+      };
+    }, []);
+  
+    // ✅ 매칭 이벤트 수신
+    useEffect(() => {
+      socket.on('matched', (data) => {
+        console.log('✨ 매칭 성공!', data);
+  
+        const chatInfo = {
+          roomId: data.roomId,
+          word: data.word,
+          round: data.round,
+          myId: data.senderId,
+          myUsername: data.senderUsername,
+          myNickname: data.senderNickname,
+          partnerId: data.receiverId,
+          partnerUsername: data.receiverUsername,
+          partnerNickname: data.receiverNickname,
+        };
+  
+        localStorage.setItem('chatInfo', JSON.stringify(chatInfo));
+        startSession(chatInfo);
+        navigate('/chatpage');
+      });
+  
+      return () => {
+        socket.off('matched');
+      };
+    }, [navigate, startSession]);
+  
+    // ✅ 라운드 타이머
+    useEffect(() => {
+      const updateRound = () => {
+        const now = Date.now();
+        const newRound = Math.floor(now / 30000);
+        const nextBoundary = Math.ceil(now / 30000) * 30000;
+        setRemaining(Math.floor((nextBoundary - now) / 1000));
+  
+        if (newRound !== round) {
+          setRound(newRound);
+  
+          setFadeClass("fade-out");
+          setTimeout(() => {
+            const shuffled = [...recommendations];
+            shuffled.sort(
+              (a, b) =>
+                ((a.charCodeAt(0) + newRound) % 97) -
+                ((b.charCodeAt(0) + newRound) % 97)
+            );
+            setWordSet(shuffled.slice(0, 4));
+            setSelectedWord('');
+            endSession();
+            setFadeClass("fade-in");
+          }, 300);
+        }
+      };
+  
+      updateRound();
+      const interval = setInterval(updateRound, 1000);
+      return () => clearInterval(interval);
+    }, [round, endSession]);
+  
+    // ✅ 단어 선택 → join_match emit
+    const handleWordSelect = (word) => {
+      if (!profile || selectedWord) return;
+      setSelectedWord(word);
+  
+      console.log("⭐ 버튼 클릭됨:", word);
+      console.log("⭐ 소켓 emit 직전:", { ...profile, word, round });
+  
+      socket.emit('join_match', {
+        userId: profile.userId,
+        username: profile.username,
+        nickname: profile.nickname,
+        word,
+        round,
+      });
+    };
+  
+    return (
+      <div className="login-container">
+        <div className="timer-display">{remaining}초</div>
+        <h1 className="title">Telepathy</h1>
+        <p className="subtitle">이번 라운드에서 단어를 선택하세요.</p>
+  
+        <div className={`word-set ${fadeClass}`}>
+          {wordSet.map((w) => (
+            <button
+              key={w}
+              className={`word-btn ${selectedWord === w ? 'selected' : ''}`}
+              onClick={() => handleWordSelect(w)}
+              disabled={!!selectedWord}
+            >
+              {w}
+            </button>
+          ))}
+        </div>
+  
+        <div className="focus-hours" aria-live="polite">
+          🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 자정(00:00)</strong>
+        </div>
+  
+        <div className="online-counter">
+          현재 접속자 수: <strong>{onlineCount}</strong>명
+        </div>
+  
+        <button className="help-icon" onClick={() => navigate('/helppage')}>
+          <HelpCircle />
+        </button>
+      </div>
+    );
+  }
+  

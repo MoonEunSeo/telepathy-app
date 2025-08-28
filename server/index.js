@@ -141,6 +141,9 @@ function registerSocketHandlers(io) {
 }
 
 module.exports = { registerSocketHandlers };*/
+
+
+/*
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const app = require('./app');
@@ -189,4 +192,63 @@ registerSocketHandlers(io);
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+});*/
+
+// server/index.js
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const cron = require('node-cron');
+const { flushRound } = require('./src/utils/flush');
+const app = require('./app');
+const { registerSocketHandlers } = require('./src/config/chat.socket');
+console.log("SUPABASE_URL =", process.env.SUPABASE_URL);
+
+const server = createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: [
+      'http://localhost:5179',
+      'http://localhost:5000',
+      'https://telepathy.my',
+      'https://telepathy-app.onrender.com'
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  transports: ['websocket'], // ✅ 프론트와 일치시킴
+  path: '/socket.io',
 });
+
+// server.js (또는 socket.js)
+let onlineUsers = 0;
+
+io.on('connection', (socket) => {
+  onlineUsers++;
+  console.log('✅ 유저 접속, 현재:', onlineUsers);
+
+  // 모든 클라이언트에 현재 접속자 수 전송
+  io.emit('onlineCount', onlineUsers);
+
+  socket.on('disconnect', () => {
+    onlineUsers--;
+    console.log('❌ 유저 종료, 현재:', onlineUsers);
+    io.emit('onlineCount', onlineUsers);
+  });
+});
+
+// ✅ 30초마다 flush 실행
+cron.schedule('*/30 * * * * *', () => {
+  flushRound();
+});
+
+// ✅ 채팅 관련 소켓 핸들러
+registerSocketHandlers(io);
+
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+});
+
+

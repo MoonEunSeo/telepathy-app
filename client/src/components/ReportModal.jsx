@@ -1,27 +1,29 @@
-// /src/components/ReportModal.jsx
+// 📦 src/components/ReportModal.jsx
 import React, { useState } from 'react';
 
-const ReportModal = ({ onClose, onSubmit, roomId, reportedId, reporterId }) => {
+const ReportModal = ({ onClose, onSubmit }) => {
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [extra, setExtra] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const toggleReason = (reason) => {
-    setSelectedReasons(prev =>
-      prev.includes(reason) ? prev.filter(r => r !== reason) : [...prev, reason]
+    setSelectedReasons((prev) =>
+      prev.includes(reason)
+        ? prev.filter((r) => r !== reason)
+        : [...prev, reason]
     );
   };
 
   const handleSubmit = () => {
-    if (selectedReasons.length === 0 && !extra.trim()) return;
+    if (selectedReasons.length === 0 && !extra.trim()) {
+      alert('신고 사유를 선택하거나 내용을 입력해주세요.');
+      return;
+    }
 
-    // 이제 roomId와 reportedId를 포함해서 넘겨줌
-    onSubmit({
-        reasons: selectedReasons,
-        extra,
-        roomId,
-        reportedId,
-        reporterId, // ✅
-      });
+    setLoading(true);
+    // ✅ 부모에게 값 전달
+    onSubmit({ reasons: selectedReasons, extra });
+    setLoading(false);
   };
 
   const reasonsList = [
@@ -59,7 +61,9 @@ const ReportModal = ({ onClose, onSubmit, roomId, reportedId, reporterId }) => {
         />
         <div className="report-buttons">
           <button onClick={onClose}>취소</button>
-          <button onClick={handleSubmit}>제출하기</button>
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? '제출 중...' : '제출하기'}
+          </button>
         </div>
       </div>
     </div>

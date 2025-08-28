@@ -245,7 +245,7 @@ router.post('/session-status', async (req, res) => {
 });
 module.exports = router;
 */
-
+/*
 // 📦 routes/match.routes.js
 const express = require('express');
 const router = express.Router();
@@ -519,6 +519,264 @@ router.post('/session-status', async (req, res) => {
       myNickname: myProfile.nickname,
       matchedUsername: matchedProfile ? matchedProfile.username : null,
       matchedNickname: matchedProfile ? matchedProfile.nickname : null
+    });
+  } catch (err) {
+    console.error('❌ /session-status 오류:', err);
+    res.status(500).json({ active: false });
+  }
+});
+
+module.exports = router;*/
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
+const { createClient } = require('@supabase/supabase-js');
+const { v4: uuidv4 } = require('uuid');
+const { recommendations } = require('../utils/recommendations');
+const { getCurrentRound } = require('../utils/round');
+require('dotenv').config();
+
+// ✅ Supabase 연결
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// ✅ 0. 현재 라운드 + 단어세트 API
+router.get('/current-round', (req, res) => {
+  const { round, remaining } = getCurrentRound();
+  const idx = round % recommendations.length;
+  const { topic, words } = recommendations[idx];
+
+  res.json({ round, remaining, topic, wordSet: words });
+});
+
+// ✅ 1. 단어 등록 (큐에 대기열 삽입)
+router.post('/start', async (req, res) => {
+  const token = req.cookies.token;
+  const { word, round } = req.body;
+
+  if (!word || !round) return res.status(400).json({ error: '단어 또는 라운드 누락' });
+  if (!token) return res.status(401).json({ error: '인증 필요' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.user_id;
+
+    // 유저 프로필 조회
+    const { data: profile } = await supabase
+      .from('users')
+      .select('username, nickname')
+      .eq('id', userId)
+      .single();
+
+    if (!profile) return res.status(500).json({ error: '프로필 조회 실패' });
+
+    // 기존 큐에서 삭제 후 다시 삽입
+    await supabase.from('telepathy_sessions_queue')
+      .delete()
+      .eq('user_id', userId)
+      .eq('round', round);
+
+    await supabase.from('telepathy_sessions_queue')
+      .insert([{
+        user_id: userId,
+        username: profile.username,
+        nickname: profile.nickname,
+        word,
+        round,
+        status: 'waiting'
+      }]);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('❌ /start 오류:', err);
+    res.status(500).json({ success: false });
+  }
+});
+
+// ✅ 2. 매칭 확인 (큐 → 매칭 시 로그에 기록)
+router.post('/check', async (req, res) => {
+  const token = req.cookies.token;
+  const { word, round } = req.body;
+
+  if (!token) return res.status(401).json({ success: false, message: '로그인 필요' });
+  if (!word || !round) return res.status(400).json({ success: false, message: '단어/라운드 누락' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.user_id;
+
+    // 내 세션 조회
+    const { data: mySession } = await supabase
+      .from('telepathy_sessions_queue')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('round', round)
+      .single();
+
+    if (mySession && mySession.status === 'matched' && mySession.room_id) {
+      return res.json({ matched: true, ...mySession });
+    }
+
+    // 후보자 검색
+    const { data: candidates } = await supabase
+      .from('telepathy_sessions_queue')
+      .select('*')
+      .eq('word', word)
+      .eq('round', round)
+      .eq('status', 'waiting')
+      .neq('user_id', userId);
+
+    if (candidates && candidates.length > 0) {
+      const partner = candidates[0];
+      const roomId = uuidv4();
+
+      // 두 유저 모두 큐 업데이트
+      await supabase.from('telepathy_sessions_queue').update({
+        status: 'matched',
+        room_id: roomId,
+        partner_id: partner.user_id,
+        partner_username: partner.username,
+        partner_nickname: partner.nickname
+      }).eq('id', mySession.id);
+
+      await supabase.from('telepathy_sessions_queue').update({
+        status: 'matched',
+        room_id: roomId,
+        partner_id: userId,
+        partner_username: mySession.username,
+        partner_nickname: mySession.nickname
+      }).eq('id', partner.id);
+
+      // 로그 테이블 기록
+      await supabase.from('telepathy_sessions_log').insert([
+        {
+          user_id: userId,
+          username: mySession.username,
+          nickname: mySession.nickname,
+          word,
+          round,
+          result: 'matched',
+          partner_id: partner.user_id,
+          partner_username: partner.username,
+          partner_nickname: partner.nickname,
+          room_id: roomId
+        },
+        {
+          user_id: partner.user_id,
+          username: partner.username,
+          nickname: partner.nickname,
+          word,
+          round,
+          result: 'matched',
+          partner_id: userId,
+          partner_username: mySession.username,
+          partner_nickname: mySession.nickname,
+          room_id: roomId
+        }
+      ]);
+
+      return res.json({
+        matched: true,
+        roomId,
+        senderId: userId,
+        senderUsername: mySession.username,
+        senderNickname: mySession.nickname,
+        receiverId: partner.user_id,
+        receiverUsername: partner.username,
+        receiverNickname: partner.nickname,
+        word
+      });
+    }
+
+    return res.json({ matched: false });
+  } catch (err) {
+    console.error('❌ /check 오류:', err);
+    res.status(500).json({ success: false });
+  }
+});
+
+// ✅ 3. 세션 종료
+router.post('/end', async (req, res) => {
+  const token = req.cookies.token;
+  const { roomId } = req.body; // 이제 round/word 필요 없음
+
+  if (!token || !roomId) {
+    return res.status(400).json({ success: false, message: "필수 값 누락" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.user_id;
+
+    // roomId로 현재 세션 찾기
+    const { data: mySession, error: sessionError } = await supabase
+      .from('telepathy_sessions_queue')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('room_id', roomId)
+      .single();
+
+    if (sessionError || !mySession) {
+      return res.status(404).json({ success: false, message: "세션 없음" });
+    }
+
+    // 큐 상태 ended로 변경 (optional)
+    await supabase.from('telepathy_sessions_queue')
+      .update({ status: 'ended' })
+      .match({ user_id: userId, room_id: roomId });
+
+    // 로그 테이블에 ended 기록
+    const { error: logError } = await supabase
+      .from('telepathy_sessions_log')
+      .insert([{
+        user_id: userId,
+        username: mySession.username,
+        nickname: mySession.nickname,
+        word: mySession.word,
+        round: mySession.round,
+        result: 'ended',
+        partner_id: mySession.partner_id,
+        partner_username: mySession.partner_username,
+        partner_nickname: mySession.partner_nickname,
+        room_id: mySession.room_id,   // ✅ 새 컬럼 기록
+        created_at: new Date()
+      }]);
+
+    if (logError) {
+      console.error("❌ 로그 저장 실패:", logError);
+      return res.status(500).json({ success: false, message: "로그 저장 실패" });
+    }
+
+    res.json({ success: true, message: "세션 종료 완료" });
+  } catch (err) {
+    console.error('❌ /end 오류:', err);
+    res.status(500).json({ success: false, message: "서버 오류" });
+  }
+});
+
+
+
+// ✅ 4. 세션 상태 확인
+router.post('/session-status', async (req, res) => {
+  const { word, round, userId } = req.body;
+  if (!word || !round || !userId) return res.status(400).json({ active: false });
+
+  try {
+    const { data } = await supabase.from('telepathy_sessions_queue')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('round', round)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!data) return res.json({ active: false });
+
+    return res.json({
+      active: data.status === 'matched' || data.status === 'waiting',
+      ...data
     });
   } catch (err) {
     console.error('❌ /session-status 오류:', err);

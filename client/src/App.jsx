@@ -1,5 +1,6 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useEffect } from 'react';
+import { socket } from './config/socket';
 
 // ✅ 페이지 컴포넌트
 import LoginPage from './pages/LoginPage';
@@ -26,6 +27,10 @@ import NotificationConsent from './pages/terms/NotificationConsent';
 
 import BottomLayout from './components/BottomLayout';
 import { IntentProvider } from './contexts/IntentContext';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function App() {
   const navigate = useNavigate();
@@ -85,6 +90,8 @@ export default function App() {
         {/* ✅ 404 페이지 (필요 시 추가 가능) */}
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>
+  <ToastContainer position="top-center" autoClose={2000} />
+
     </IntentProvider>
   );
 }
