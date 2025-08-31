@@ -559,6 +559,7 @@ useEffect(() => {
     </>
   );
 } */
+  import ClosedModal from '../components/ClosedModal';
   import React, { useState, useEffect } from 'react';
   import { useWordSession } from '../contexts/WordSessionContext';
   import { useNavigate } from 'react-router-dom';
@@ -566,6 +567,10 @@ useEffect(() => {
   import { socket } from '../config/socket';
   import './MainPage.css';
   import { recommendations } from '../assets/recommendations';
+  import NicknameModal from '../components/NicknameModal';
+  import { toast, ToastContainer } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
   
   export default function MainPage() {
     const navigate = useNavigate();
@@ -578,35 +583,96 @@ useEffect(() => {
     const [fadeClass, setFadeClass] = useState("fade-in");
   
     const { startSession, endSession } = useWordSession();
+
+    // 운영시간 모달 상태
+const [showClosedModal, setShowClosedModal] = useState(false);
+
+useEffect(() => {
+  const checkTime = async () => {
+    try {
+      const res = await fetch('/api/server-time');
+      const data = await res.json();
+
+      if (!data.isOpen) {
+        setShowClosedModal(true);
+      } else {
+        setShowClosedModal(false); // ✅ 운영시간 되면 자동 닫힘
+        setRound(data.round);
+        setRemaining(data.remaining);
+      }
+    } catch (err) {
+      console.error('서버 시간 확인 오류:', err);
+      // fallback: 클라이언트 기준
+      const hour = new Date().getHours();
+      if (hour < 20 || hour >= 24) setShowClosedModal(true);
+      else setShowClosedModal(false);
+    }
+  };
+
+  // 최초 실행 + 1분마다 확인
+  checkTime();
+  const interval = setInterval(checkTime, 10000);
+
+  return () => clearInterval(interval);
+}, []);
+    
   
     // ✅ 유저 정보 state
     const [profile, setProfile] = useState(null);
   
+    // ✅ 닉네임 모달 상태
+    const [showNicknameModal, setShowNicknameModal] = useState(false);
+  
     // ✅ 유저 프로필 가져오기 (로그인 후 1회)
     useEffect(() => {
       const fetchProfile = async () => {
-        const res = await fetch('/api/nickname/profile', { credentials: 'include' });
-        const data = await res.json();
-        if (data.success) {
-          setProfile({ userId: data.id, username: data.username, nickname: data.nickname });
+        try {
+          const res = await fetch('/api/nickname/profile', { credentials: 'include' });
+          const data = await res.json();
+          if (data.success) {
+            setProfile({ userId: data.id, username: data.username, nickname: data.nickname });
+            if (!data.nickname) setShowNicknameModal(true); // 닉네임 없으면 모달 열기
+          }
+        } catch (err) {
+          console.error('프로필 불러오기 오류:', err);
         }
       };
       fetchProfile();
     }, []);
   
-    useEffect(() => {
-      if (!socket.connected) {
-        socket.connect();
+    // ✅ 닉네임 저장
+    const handleSaveNickname = async (nickname) => {
+      try {
+        const res = await fetch('/api/nickname/set-nickname', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ nickname }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setProfile((prev) => ({ ...prev, nickname }));
+          setShowNicknameModal(false);
+          toast.success('닉네임이 저장되었습니다!');
+        } else {
+          toast.error('닉네임 저장 실패: ' + data.message);
+        }
+      } catch (err) {
+        console.error('닉네임 저장 오류:', err);
+        toast.error('서버 오류로 저장 실패');
       }
-    
-      // ✅ 서버한테 온라인 카운트 다시 요청
+    };
+  
+    // ✅ 온라인 카운트
+    useEffect(() => {
+      if (!socket.connected) socket.connect();
+  
       socket.emit('getOnlineCount');
-    
       socket.on('onlineCount', (count) => {
         console.log("👥 현재 접속자 수:", count);
         setOnlineCount(count);
       });
-    
+  
       return () => {
         socket.off('onlineCount');
       };
@@ -689,36 +755,45 @@ useEffect(() => {
     };
   
     return (
-      <div className="login-container">
-        <div className="timer-display">{remaining}초</div>
-        <h1 className="title">Telepathy</h1>
-        <p className="subtitle">이번 라운드에서 단어를 선택하세요.</p>
+      <>
+        {showNicknameModal && (
+          <NicknameModal onClose={() => setShowNicknameModal(false)} onSave={handleSaveNickname} />
+        )}
+
+        {showClosedModal && <ClosedModal />}
   
-        <div className={`word-set ${fadeClass}`}>
-          {wordSet.map((w) => (
-            <button
-              key={w}
-              className={`word-btn ${selectedWord === w ? 'selected' : ''}`}
-              onClick={() => handleWordSelect(w)}
-              disabled={!!selectedWord}
-            >
-              {w}
-            </button>
-          ))}
+        <div className="login-container">
+          <div className="timer-display">{remaining}초</div>
+          <h1 className="title">Telepathy</h1>
+          <p className="subtitle">이번 라운드에서 단어를 선택하세요.</p>
+  
+          <div className={`word-set ${fadeClass}`}>
+            {wordSet.map((w) => (
+              <button
+                key={w}
+                className={`word-btn ${selectedWord === w ? 'selected' : ''}`}
+                onClick={() => handleWordSelect(w)}
+                disabled={!!selectedWord}
+              >
+                {w}
+              </button>
+            ))}
+          </div>
+  
+          <div className="focus-hours" aria-live="polite">
+            🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
+          </div>
+  
+          <div className="online-counter">
+            현재 접속자 수: <strong>{onlineCount}</strong>명
+          </div>
+  
+          <button className="help-icon" onClick={() => navigate('/helppage')}>
+            <HelpCircle />
+          </button>
+  
+          <ToastContainer />
         </div>
-  
-        <div className="focus-hours" aria-live="polite">
-          🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 자정(00:00)</strong>
-        </div>
-  
-        <div className="online-counter">
-          현재 접속자 수: <strong>{onlineCount}</strong>명
-        </div>
-  
-        <button className="help-icon" onClick={() => navigate('/helppage')}>
-          <HelpCircle />
-        </button>
-      </div>
+      </>
     );
   }
-  

@@ -18,6 +18,11 @@ const balanceGameRoutes = require('./src/routes/balanceGame.routes');
 const reportRoutes = require('./src/routes/report.routes');
 const historyRoutes = require('./src/routes/history.routes');
 const feedbackRoutes = require('./src/routes/feedback.routes');
+const timeRoutes = require('./src/routes/time');
+const userRoutes = require('./src/routes/user.routes');
+const commentRoutes = require('./src/routes/comment.routes');
+
+
 const app = express();
 
 const CLIENT_ORIGIN =
@@ -49,6 +54,10 @@ app.use('/api/balance-game', balanceGameRoutes);
 app.use('/api/report', reportRoutes);
 app.use('/api/word-history', historyRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api', timeRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/comments', commentRoutes);
+
 
 // ✅ 서버단 리디렉션: 루트로 들어오면 /login으로 보낸다
 app.get(['/', '/index.html'], (req, res) => {
@@ -69,6 +78,7 @@ app.use('/sitemap.xml', express.static(path.join(__dirname, '../client/public'))
 app.use('/robots.txt', express.static(path.join(__dirname, '../client/public')));
 
 
+
 // ✅ SPA 핸들러 (라우트 미스매치 시 index.html 반환)
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
@@ -76,13 +86,5 @@ app.use((req, res) => {
 
 // ✅ 빌드된 assets 경로도 서빙
 app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')));
-
-
-// ✅ 정적 파일 & 기본 라우팅
-app.use(express.static(path.join(__dirname, '../client/dist')));
-app.get(['/', '/index.html'], (req, res) => res.redirect(302, '/login'));
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
 
 module.exports = app;

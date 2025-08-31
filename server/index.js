@@ -204,6 +204,7 @@ const app = require('./app');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
 console.log("SUPABASE_URL =", process.env.SUPABASE_URL);
 
+
 const server = createServer(app);
 
 const io = new Server(server, {
