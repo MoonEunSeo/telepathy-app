@@ -532,7 +532,6 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { createClient } = require('@supabase/supabase-js');
 const { v4: uuidv4 } = require('uuid');
-const { recommendations } = require('../utils/recommendations');
 const { getCurrentRound } = require('../utils/round');
 require('dotenv').config();
 
@@ -542,16 +541,13 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// ✅ 0. 현재 라운드 + 단어세트 API
+// ✅ 0. 현재 라운드 API (이제 단어세트는 프론트에서 처리)
 router.get('/current-round', (req, res) => {
   const { round, remaining } = getCurrentRound();
-  const idx = round % recommendations.length;
-  const { topic, words } = recommendations[idx];
-
-  res.json({ round, remaining, topic, wordSet: words });
+  res.json({ round, remaining });
 });
 
-// ✅ 1. 단어 등록 (큐에 대기열 삽입)
+// ✅ 1. 단어 등록 (큐에 대기열 upsert)
 router.post('/start', async (req, res) => {
   const token = req.cookies.token;
   const { word, round } = req.body;
@@ -572,30 +568,35 @@ router.post('/start', async (req, res) => {
 
     if (!profile) return res.status(500).json({ error: '프로필 조회 실패' });
 
-    // 기존 큐에서 삭제 후 다시 삽입
-    await supabase.from('telepathy_sessions_queue')
-      .delete()
-      .eq('user_id', userId)
-      .eq('round', round);
-
-    await supabase.from('telepathy_sessions_queue')
-      .insert([{
+    // upsert 사용 → (user_id, round) 고유키 충돌시 update
+    const { error } = await supabase
+      .from('telepathy_sessions_queue')
+      .upsert([{
         user_id: userId,
         username: profile.username,
         nickname: profile.nickname,
         word,
         round,
-        status: 'waiting'
-      }]);
+        status: 'waiting',
+        room_id: null,
+        partner_id: null,
+        partner_username: null,
+        partner_nickname: null,
+      }], { onConflict: ['round', 'user_id'] });
+
+    if (error) {
+      console.error("❌ /start upsert 오류:", error.message);
+      return res.status(500).json({ success: false, message: 'DB 오류' });
+    }
 
     res.json({ success: true });
   } catch (err) {
     console.error('❌ /start 오류:', err);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: '서버 오류' });
   }
 });
 
-// ✅ 2. 매칭 확인 (큐 → 매칭 시 로그에 기록)
+// ✅ 2. 매칭 확인
 router.post('/check', async (req, res) => {
   const token = req.cookies.token;
   const { word, round } = req.body;
@@ -632,7 +633,7 @@ router.post('/check', async (req, res) => {
       const partner = candidates[0];
       const roomId = uuidv4();
 
-      // 두 유저 모두 큐 업데이트
+      // 두 유저 모두 matched 처리
       await supabase.from('telepathy_sessions_queue').update({
         status: 'matched',
         room_id: roomId,
@@ -649,7 +650,7 @@ router.post('/check', async (req, res) => {
         partner_nickname: mySession.nickname
       }).eq('id', partner.id);
 
-      // 로그 테이블 기록
+      // 로그 기록
       await supabase.from('telepathy_sessions_log').insert([
         {
           user_id: userId,
@@ -700,7 +701,10 @@ router.post('/check', async (req, res) => {
 // ✅ 3. 세션 종료
 router.post('/end', async (req, res) => {
   const token = req.cookies.token;
-  const { roomId } = req.body; // 이제 round/word 필요 없음
+  const { roomId } = req.body;
+
+  console.log("📥 /end 요청 body:", req.body);   // ✅ body 값 확인
+  console.log("📥 /end token:", token);          // ✅ 쿠키 확인
 
   if (!token || !roomId) {
     return res.status(400).json({ success: false, message: "필수 값 누락" });
@@ -710,7 +714,9 @@ router.post('/end', async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.user_id;
 
-    // roomId로 현재 세션 찾기
+    console.log("✅ decoded userId:", userId, "roomId:", roomId);
+
+    // roomId로 세션 찾기
     const { data: mySession, error: sessionError } = await supabase
       .from('telepathy_sessions_queue')
       .select('*')
@@ -718,31 +724,39 @@ router.post('/end', async (req, res) => {
       .eq('room_id', roomId)
       .single();
 
+    console.log("🔍 mySession:", mySession);  // ✅ 조회된 세션
+    console.log("🔍 sessionError:", sessionError); // ✅ 에러 내용
+
     if (sessionError || !mySession) {
       return res.status(404).json({ success: false, message: "세션 없음" });
     }
 
-    // 큐 상태 ended로 변경 (optional)
-    await supabase.from('telepathy_sessions_queue')
+    // ended 처리
+    const { error: updateError } = await supabase.from('telepathy_sessions_queue')
       .update({ status: 'ended' })
       .match({ user_id: userId, room_id: roomId });
 
-    // 로그 테이블에 ended 기록
+    console.log("📝 ended update error:", updateError);
+
+    // 로그 기록
+ 
     const { error: logError } = await supabase
-      .from('telepathy_sessions_log')
-      .insert([{
-        user_id: userId,
-        username: mySession.username,
-        nickname: mySession.nickname,
-        word: mySession.word,
-        round: mySession.round,
-        result: 'ended',
-        partner_id: mySession.partner_id,
-        partner_username: mySession.partner_username,
-        partner_nickname: mySession.partner_nickname,
-        room_id: mySession.room_id,   // ✅ 새 컬럼 기록
-        created_at: new Date()
-      }]);
+    .from('telepathy_sessions_log')
+    .upsert({
+      user_id: userId,
+      username: mySession.username,
+      nickname: mySession.nickname,
+      word: mySession.word,
+      round: mySession.round,
+      result: 'ended',   // 🔹 기존 matched → ended 로 덮어씀
+      partner_id: mySession.partner_id,
+      partner_username: mySession.partner_username,
+      partner_nickname: mySession.partner_nickname,
+      room_id: mySession.room_id,
+      created_at: new Date()
+    }, { onConflict: ['round', 'user_id'] });   // 🔑 유니크키 기준으로 upsert
+
+    console.log("📝 logError:", logError);
 
     if (logError) {
       console.error("❌ 로그 저장 실패:", logError);
@@ -751,11 +765,10 @@ router.post('/end', async (req, res) => {
 
     res.json({ success: true, message: "세션 종료 완료" });
   } catch (err) {
-    console.error('❌ /end 오류:', err);
+    console.error('❌ /end 오류 (catch):', err);
     res.status(500).json({ success: false, message: "서버 오류" });
   }
 });
-
 
 
 // ✅ 4. 세션 상태 확인

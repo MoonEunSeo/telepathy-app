@@ -120,7 +120,7 @@ module.exports = { registerSocketHandlers };
 
 
 // 📦 src/config/chat.socket.js
-const { supabase } = require('./supabase');
+const supabase = require('./supabase.js');
 const { v4: uuidv4 } = require('uuid');
 
 function registerSocketHandlers(io) {
@@ -309,65 +309,38 @@ function registerSocketHandlers(io) {
       socket.to(roomId).emit('stopTyping');
     });
 
-    /**
+      /**
      * 📌 방 나가기
      */
+ // 📌 방 나가기
     socket.on('leaveRoom', async ({ roomId, userId }) => {
       console.log(`🚪 leaveRoom: userId=${userId}, roomId=${roomId}`);
-      socket.to(roomId).emit('chatEnded');
+      socket.to(roomId).emit('chatEnded');   // 상대방에게 알림
       socket.leave(roomId);
       socket.disconnect(true);
 
-      // 현재 세션 조회
-      const { data: mySession } = await supabase
-        .from('telepathy_sessions_queue')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('room_id', roomId)
-        .single();
-
-      // DB status ended 처리
+      // 🔹 DB 상태만 ended로 업데이트 (로그 기록은 하지 않음)
       await supabase.from('telepathy_sessions_queue')
         .update({ status: 'ended' })
         .match({ user_id: userId, room_id: roomId });
 
-      // 로그 기록 (상세히)
-      if (mySession) {
-        await supabase.from('telepathy_sessions_log').insert([{
-          user_id: userId,
-          username: mySession.username,
-          nickname: mySession.nickname,
-          word: mySession.word,
-          round: mySession.round,
-          result: 'ended',
-          partner_id: mySession.partner_id,
-          partner_username: mySession.partner_username,
-          partner_nickname: mySession.partner_nickname,
-          room_id: mySession.room_id,
-          created_at: new Date()
-        }]);
+      // ❌ 여기서 telepathy_sessions_log.insert 제거!
+    });
+      
+          // ✅ 여기만 남겨야 함 (중첩 제거)
+          socket.on('disconnecting', () => {
+            for (const roomId of socket.rooms) {
+              if (roomId === socket.id) continue;
+              socket.to(roomId).emit('chatEnded');
+              console.log(`📤 chatEnded → room=${roomId}`);
+            }
+          });
+      
+          socket.on('disconnect', () => {
+            console.log(`🔴 Socket disconnected: ${socket.id}`);
+            io.emit('onlineCount', io.engine.clientsCount);
+          });
+        });
       }
-    });
-
-    io.on('connection', (socket) => {
-      console.log('🟢 New socket connected:', socket.id);
-    
-      // ✅ 방 떠나기 전에 상대방에게 알려주기
-      socket.on('disconnecting', () => {
-        for (const roomId of socket.rooms) {
-          if (roomId === socket.id) continue; // 자기 개인방은 제외
-          socket.to(roomId).emit('chatEnded');
-          console.log(`📤 chatEnded → room=${roomId}`);
-        }
-      });
-    
-      // ✅ 실제로 연결 해제됐을 때
-      socket.on('disconnect', () => {
-        console.log(`🔴 Socket disconnected: ${socket.id}`);
-        io.emit('onlineCount', io.engine.clientsCount);
-      });
-    });
-  });
-}
 
 module.exports = { registerSocketHandlers };

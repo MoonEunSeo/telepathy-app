@@ -679,6 +679,7 @@ import { LogOut, AlertTriangle } from 'lucide-react';
 import { socket } from '../config/socket';
 import ReportModal from '../components/ReportModal';
 import { useWordSession } from '../contexts/WordSessionContext';
+
 import { toast } from 'react-toastify';
 
 export default function ChatPage() {
@@ -720,7 +721,15 @@ export default function ChatPage() {
     const handleChatMessage = (msg) => setMessages((prev) => [...prev, msg]);
     const handleTyping = () => setIsTyping(true);
     const handleStopTyping = () => setIsTyping(false);
-    const handleChatEnded = () => setChatEnded(true);
+
+    const handleChatEnded = () => {
+      if (!chatEnded) {   // 이미 종료 상태면 무시
+        setChatEnded(true);
+      }
+    };
+
+    
+
     const handleChatEndedByReport = () => setChatEnded(true);
 
     socket.on('chatMessage', handleChatMessage);
@@ -750,12 +759,10 @@ const endCurrentSession = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ word, round }),
+      body: JSON.stringify({ roomId }),   // word/round ❌ → roomId만 보내기
     });
 
-    socket.emit('leaveRoom', { userId: myId, roomId });
-    
-    // 🚨 소켓 완전히 리셋
+    socket.emit('leaveRoom', { userId: myId, roomId });  // 상대방 알림용
     socket.disconnect();
   } catch (err) {
     console.error('❌ 세션 종료 오류:', err);
@@ -847,10 +854,26 @@ const endCurrentSession = async () => {
     else socket.emit('stopTyping', { roomId });
   };
 
-  // ✅ 나가기 버튼
   const handleExitChat = async () => {
-    await endCurrentSession();
-    navigate('/main');
+    const chatInfo = JSON.parse(localStorage.getItem("chatInfo"));
+  
+    if (chatInfo) {
+      // 👉 MainPage에서 사용할 피드백 정보 저장
+      localStorage.setItem("feedbackInfo", JSON.stringify(chatInfo));
+    }
+  
+    try {
+      // ✅ 서버 세션 종료 (DB 반영)
+      await endCurrentSession();
+    } catch (err) {
+      console.error("세션 종료 실패:", err);
+    }
+  
+    // ✅ 클라이언트 세션 정리
+    localStorage.removeItem("chatInfo");
+  
+    // ✅ 메인으로 이동 → MainPage에서 피드백 모달 뜸
+    navigate("/main");
   };
 
   // ✅ 메시지 렌더링

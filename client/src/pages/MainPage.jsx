@@ -566,11 +566,10 @@ useEffect(() => {
   import { HelpCircle } from 'lucide-react';
   import { socket } from '../config/socket';
   import './MainPage.css';
-  import { recommendations } from '../assets/recommendations';
   import NicknameModal from '../components/NicknameModal';
   import { toast, ToastContainer } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
-
+  import { recommendations } from '../utils/recommendations';
   
   export default function MainPage() {
     const navigate = useNavigate();
@@ -582,48 +581,48 @@ useEffect(() => {
     const [selectedWord, setSelectedWord] = useState('');
     const [fadeClass, setFadeClass] = useState("fade-in");
   
-    const { startSession, endSession } = useWordSession();
-
+    // 감정 피드백 모달
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+    const [feedbackInfo, setFeedbackInfo] = useState(null);
+    const [selectedEmotion, setSelectedEmotion] = useState('');
+  
+    const { startSession } = useWordSession();
+  
     // 운영시간 모달 상태
-const [showClosedModal, setShowClosedModal] = useState(false);
-
-useEffect(() => {
-  const checkTime = async () => {
-    try {
-      const res = await fetch('/api/server-time');
-      const data = await res.json();
-
-      if (!data.isOpen) {
-        setShowClosedModal(true);
-      } else {
-        setShowClosedModal(false); // ✅ 운영시간 되면 자동 닫힘
-        setRound(data.round);
-        setRemaining(data.remaining);
-      }
-    } catch (err) {
-      console.error('서버 시간 확인 오류:', err);
-      // fallback: 클라이언트 기준
-      const hour = new Date().getHours();
-      if (hour < 20 || hour >= 24) setShowClosedModal(true);
-      else setShowClosedModal(false);
-    }
-  };
-
-  // 최초 실행 + 1분마다 확인
-  checkTime();
-  const interval = setInterval(checkTime, 10000);
-
-  return () => clearInterval(interval);
-}, []);
-    
+    const [showClosedModal, setShowClosedModal] = useState(false);
+  
+    // 운영시간 확인
+    useEffect(() => {
+      const checkTime = async () => {
+        try {
+          const res = await fetch('/api/server-time');
+          const data = await res.json();
+  
+          if (!data.isOpen) {
+            setShowClosedModal(true);
+          } else {
+            setShowClosedModal(false);
+            setRound(data.round);
+            setRemaining(data.remaining);
+          }
+        } catch (err) {
+          console.error('서버 시간 확인 오류:', err);
+          const hour = new Date().getHours();
+          if (hour < 20 || hour >= 24) setShowClosedModal(true);
+          else setShowClosedModal(false);
+        }
+      };
+  
+      checkTime();
+      const interval = setInterval(checkTime, 10000);
+      return () => clearInterval(interval);
+    }, []);
   
     // ✅ 유저 정보 state
     const [profile, setProfile] = useState(null);
-  
-    // ✅ 닉네임 모달 상태
     const [showNicknameModal, setShowNicknameModal] = useState(false);
   
-    // ✅ 유저 프로필 가져오기 (로그인 후 1회)
+    // ✅ 유저 프로필 가져오기
     useEffect(() => {
       const fetchProfile = async () => {
         try {
@@ -631,7 +630,7 @@ useEffect(() => {
           const data = await res.json();
           if (data.success) {
             setProfile({ userId: data.id, username: data.username, nickname: data.nickname });
-            if (!data.nickname) setShowNicknameModal(true); // 닉네임 없으면 모달 열기
+            if (!data.nickname) setShowNicknameModal(true);
           }
         } catch (err) {
           console.error('프로필 불러오기 오류:', err);
@@ -669,7 +668,6 @@ useEffect(() => {
   
       socket.emit('getOnlineCount');
       socket.on('onlineCount', (count) => {
-        console.log("👥 현재 접속자 수:", count);
         setOnlineCount(count);
       });
   
@@ -681,8 +679,6 @@ useEffect(() => {
     // ✅ 매칭 이벤트 수신
     useEffect(() => {
       socket.on('matched', (data) => {
-        console.log('✨ 매칭 성공!', data);
-  
         const chatInfo = {
           roomId: data.roomId,
           word: data.word,
@@ -705,45 +701,51 @@ useEffect(() => {
       };
     }, [navigate, startSession]);
   
-    // ✅ 라운드 타이머
+    // ✅ 서버와 라운드 동기화
     useEffect(() => {
-      const updateRound = () => {
-        const now = Date.now();
-        const newRound = Math.floor(now / 30000);
-        const nextBoundary = Math.ceil(now / 30000) * 30000;
-        setRemaining(Math.floor((nextBoundary - now) / 1000));
+      const syncFromServer = async () => {
+        try {
+          const res = await fetch('/api/match/current-round');
+          const data = await res.json();
   
-        if (newRound !== round) {
-          setRound(newRound);
-  
-          setFadeClass("fade-out");
-          setTimeout(() => {
-            const shuffled = [...recommendations];
-            shuffled.sort(
-              (a, b) =>
-                ((a.charCodeAt(0) + newRound) % 97) -
-                ((b.charCodeAt(0) + newRound) % 97)
+          if (data.round !== round) {
+            setFadeClass("fade-out");
+            setTimeout(() => {
+              const idx = data.round % recommendations.length;
+              setWordSet(recommendations[idx].words);
+              setRound(data.round);
+              setRemaining(data.remaining);
+              setSelectedWord('');
+              setFadeClass("fade-in");
+            }, 500);
+          } else {
+            setRemaining((prev) =>
+              Math.abs(prev - data.remaining) > 2 ? data.remaining : prev
             );
-            setWordSet(shuffled.slice(0, 4));
-            setSelectedWord('');
-            endSession();
-            setFadeClass("fade-in");
-          }, 300);
+          }
+        } catch (err) {
+          console.error("서버 동기화 실패:", err);
         }
       };
   
-      updateRound();
-      const interval = setInterval(updateRound, 1000);
-      return () => clearInterval(interval);
-    }, [round, endSession]);
+      syncFromServer();
+      const syncInterval = setInterval(syncFromServer, 5000);
+      return () => clearInterval(syncInterval);
+    }, [round]);
   
-    // ✅ 단어 선택 → join_match emit
+    // ✅ 클라이언트 카운트다운
+    useEffect(() => {
+      if (remaining <= 0) return;
+      const tick = setInterval(() => {
+        setRemaining((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+      return () => clearInterval(tick);
+    }, [remaining]);
+  
+    // ✅ 단어 선택
     const handleWordSelect = (word) => {
       if (!profile || selectedWord) return;
       setSelectedWord(word);
-  
-      console.log("⭐ 버튼 클릭됨:", word);
-      console.log("⭐ 소켓 emit 직전:", { ...profile, word, round });
   
       socket.emit('join_match', {
         userId: profile.userId,
@@ -754,12 +756,61 @@ useEffect(() => {
       });
     };
   
+    // ✅ 감정 피드백 모달 띄우기
+    useEffect(() => {
+      const info = localStorage.getItem('feedbackInfo');
+      if (info) {
+        setFeedbackInfo(JSON.parse(info));
+        setShowFeedbackModal(true);
+        localStorage.removeItem('feedbackInfo');
+      }
+    }, []);
+  
+    // ✅ 피드백 제출
+    const handleSubmitFeedback = async () => {
+      if (!selectedEmotion) {
+        toast.error('감정을 선택해주세요!');
+        return;
+      }
+      if (!feedbackInfo) return;
+  
+      const payload = {
+        userId: feedbackInfo.myId,
+        userUsername: feedbackInfo.myUsername,
+        userNickname: feedbackInfo.myNickname,
+        partnerId: feedbackInfo.partnerId,
+        partnerUsername: feedbackInfo.partnerUsername,
+        partnerNickname: feedbackInfo.partnerNickname,
+        word: feedbackInfo.word,
+        emotion: selectedEmotion,
+      };
+  
+      try {
+        const res = await fetch('/api/feedback/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast.success('감정 피드백이 저장되었습니다!');
+          setShowFeedbackModal(false);
+        } else {
+          toast.error('저장 실패: ' + data.message);
+        }
+      } catch (err) {
+        console.error('❌ 피드백 저장 오류:', err);
+        toast.error('서버 오류');
+      }
+    };
+  
     return (
       <>
         {showNicknameModal && (
           <NicknameModal onClose={() => setShowNicknameModal(false)} onSave={handleSaveNickname} />
         )}
-
+  
         {showClosedModal && <ClosedModal />}
   
         <div className="login-container">
@@ -780,6 +831,33 @@ useEffect(() => {
             ))}
           </div>
   
+          {showFeedbackModal && feedbackInfo && (
+            <div className="feedback-modal">
+              <div className="feedback-content">
+                <h2>Telepathy</h2>
+                <p>지금, 당신의 기분은 어떤가요?</p>
+                <div className="emotion-buttons">
+                  {['기뻐요', '괜찮아요', '슬퍼요', '행복해요', '화나요'].map((emo) => (
+                    <button
+                      key={emo}
+                      className={selectedEmotion === emo ? 'selected' : ''}
+                      onClick={() => setSelectedEmotion(emo)}
+                    >
+                      {emo}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className="submit-btn"
+                  onClick={handleSubmitFeedback}
+                  disabled={!selectedEmotion}  // ✅ 감정 선택 전엔 비활성화
+                >
+                  결정하기
+                </button>
+              </div>
+            </div>
+          )}
+  
           <div className="focus-hours" aria-live="polite">
             🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
           </div>
@@ -797,3 +875,4 @@ useEffect(() => {
       </>
     );
   }
+  
