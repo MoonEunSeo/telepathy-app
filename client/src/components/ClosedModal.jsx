@@ -103,7 +103,7 @@ export default function ClosedModal({ onClose, username, nickname }) {
             <button type="submit">작성</button>
           </form>
           <ul>
-            {comments.slice(0, 3).map((c) => (
+            {comments.slice(0, 2).map((c) => (
                 <li key={c.id}>
                 <strong>{c.nickname}</strong>: {c.content}
                 </li>
@@ -111,7 +111,7 @@ export default function ClosedModal({ onClose, username, nickname }) {
             </ul>
         </div>
 
-        <button className="close-btn" onClick={onClose}>닫기</button>
+         {/* 댓글창 <button className="close-btn" onClick={onClose}>닫기</button>  */}
       </div>
     </div>
   );
