@@ -12,8 +12,8 @@ router.get('/server-time', (req, res) => {
     const hourKST = (now.getUTCHours() + 9) % 24;
     const minuteKST = now.getUTCMinutes();
 
-    // ✅ 운영 시간: 오후 8시 ~ 새벽 2시
-    let isOpen = (hourKST >= 20 || hourKST < 4);
+    // ✅ 운영 시간: 오전7시 ~ 자정 12시
+    let isOpen = (hourKST >= 7 || hourKST < 24);
 
     // ✅ 라운드/남은시간
     const { round, remaining } = getCurrentRound();
