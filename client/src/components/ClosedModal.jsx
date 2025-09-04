@@ -76,18 +76,14 @@ export default function ClosedModal({ onClose, username, nickname }) {
     <div className="modal-overlay">
       <div className="modal-content letter-style">
         {/* 편지 영역 */}
-        <h2>📩 텔레파시 드림</h2>
+        <h2>📮마음이 통하는 연결, 텔레파시</h2>
         <p>
-          정말 너무 죄송합니다.<br/>
-          현재 유저 수가 적어 매칭이 원활하지 않습니다.<br/>
-          <strong>저녁 8시 ~ 새벽 2시</strong>에만 접속이 가능하도록 운영 중이에요.<br/>
-          8시에 와주시면 정말 감사하겠습니다.<br/>
-          유저가 많아지면 24시간 개방하겠습니다.<br/><br/>
-          사용자와 함께 성장하는 텔레파시가 되겠습니다.<br/>
-          (구구절절… 진짜 열심히 만들었는데… 사람이 너무 없어서…<br/>
-          너무 슬퍼요 ㅠㅠ 흑흑…)
+        <strong>Telepathy time coming soon</strong><br/>
+          20:00 ~ 02:00<br/>
+          <br/>
+          텔레파시는 오직 정해진 시간에만 사용할 수 있습니다.<br/>
+          오늘 밤, 텔레파시가 통하는 친구를 만나보세요.<br/>
         </p>
-
         {/* ✅ 유저 수 현황 컴포넌트 */}
         <UserStatus />
 
@@ -103,7 +99,7 @@ export default function ClosedModal({ onClose, username, nickname }) {
             <button type="submit">작성</button>
           </form>
           <ul>
-            {comments.slice(0, 2).map((c) => (
+            {comments.slice(0, 3).map((c) => (
                 <li key={c.id}>
                 <strong>{c.nickname}</strong>: {c.content}
                 </li>

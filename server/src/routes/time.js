@@ -4,6 +4,9 @@ const router = express.Router();
 // utils 불러오기
 const { getCurrentRound } = require('../utils/round');
 
+const OPEN_HOUR = 20;
+const CLOSE_HOUR = 2;
+
 router.get('/server-time', (req, res) => {
   try {
     const now = new Date();
@@ -12,8 +15,7 @@ router.get('/server-time', (req, res) => {
     const hourKST = (now.getUTCHours() + 9) % 24;
     const minuteKST = now.getUTCMinutes();
 
-    // ✅ 운영 시간: 오전7시 ~ 자정 12시
-    let isOpen = (hourKST >= 7 || hourKST < 24);
+    let isOpen = (hourKST >= OPEN_HOUR && hourKST < CLOSE_HOUR);
 
     // ✅ 라운드/남은시간
     const { round, remaining } = getCurrentRound();

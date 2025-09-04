@@ -816,7 +816,7 @@ useEffect(() => {
         <div className="login-container">
           <div className="timer-display">{remaining}초</div>
           <h1 className="title">Telepathy</h1>
-          <p className="subtitle">이번 라운드에서 단어를 선택하세요.</p>
+          <p className="subtitle">같은 단어를 선택한 사람과 연결돼요.</p>
   
           <div className={`word-set ${fadeClass}`}>
             {wordSet.map((w) => (
@@ -862,9 +862,12 @@ useEffect(() => {
             🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
           </div>
   
-          <div className="online-counter">
-            현재 접속자 수: <strong>{onlineCount}</strong>명
-          </div>
+          {/* ✅ 현재 접속자 수는 2명 이상일 때만 보이게 */}
+          {onlineCount >= 2 && (
+            <div className="online-counter">
+              현재 접속자 수: <strong>{onlineCount}</strong>명
+            </div>
+          )}
   
           <button className="help-icon" onClick={() => navigate('/helppage')}>
             <HelpCircle />
