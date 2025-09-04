@@ -7,6 +7,8 @@
     font-weight: normal;
     font-display: swap;
   }
+
+
   /* 배경 어둡게 */
 .modal-overlay {
   position: fixed;
@@ -34,18 +36,26 @@
   font-family: 'Gowun Dodum', sans-serif; /* 감성적인 폰트 */
 }
 
-/* 제목 */
+/* 큰 제목 (서비스명) */
+.modal-content h1 {
+  font-size: 3rem;      /* 32px 정도 */
+  font-weight: 700;
+  margin-bottom: -0.5rem;
+}
+
+/* sub제목 */
 .modal-content h2 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 0.8rem;
   color: #333333;
 }
 
-/* 설명문 */
+/* 안내 문구 */
 .modal-content p {
-  font-size: 1.0rem;
-  line-height: 1.5;
-  color: #555;
+  font-size: 0.95rem;   /* 15px */
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 1.5rem;
 }
 
 /* 유저 상태 */

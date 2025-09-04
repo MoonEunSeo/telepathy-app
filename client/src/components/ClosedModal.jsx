@@ -31,10 +31,46 @@ function UserStatus() {
   );
 }
 
+function getRemainingTime() {
+  const now = new Date();
+
+  // 한국 시간 기준
+  const hourKST = (now.getUTCHours() + 9) % 24;
+  const minuteKST = now.getUTCMinutes();
+  const secondKST = now.getUTCSeconds();
+
+  // 오늘 20:00 KST
+  const start = new Date(now);
+  start.setHours(20, 0, 0, 0);
+
+  // 내일 20:00 (이미 지났을 때 대비)
+  if (now >= start) {
+    start.setDate(start.getDate() + 1);
+  }
+
+  const diff = start - now;
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return { hours, minutes, seconds };
+}
+
+
 // 👉 메인 모달
 export default function ClosedModal({ onClose, username, nickname }) {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState('');
+
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRemainingTime(getRemainingTime());
+    }, 1000); // 1초마다 갱신
+    return () => clearInterval(interval);
+  }, []);
 
   // 댓글 불러오기
   const fetchComments = async () => {
@@ -76,16 +112,20 @@ export default function ClosedModal({ onClose, username, nickname }) {
     <div className="modal-overlay">
       <div className="modal-content letter-style">
         {/* 편지 영역 */}
-        <h2>📮마음이 통하는 연결, 텔레파시</h2>
+        <h1 className="title">Telepathy</h1>
+        <h2>마음이 통하는 연결, 텔레파시</h2>
         <p>
         <strong>Telepathy time coming soon</strong><br/>
-          20:00 ~ 02:00<br/>
+          저녁 8시 ~ 새벽 2시<br/>
           <br/>
           텔레파시는 오직 정해진 시간에만 사용할 수 있습니다.<br/>
           오늘 밤, 텔레파시가 통하는 친구를 만나보세요.<br/>
         </p>
-        {/* ✅ 유저 수 현황 컴포넌트 */}
-        <UserStatus />
+        {/* ✅ 유저 수 현황 컴포넌트 
+        <UserStatus />*/}
+
+<strong> Telepathy 시작까지 남은 시간</strong>
+⏳ {remainingTime.hours} : {remainingTime.minutes} : {remainingTime.seconds}<br/><br/>
 
         {/* 댓글창 */}
         <div className="comments">

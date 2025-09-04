@@ -15,7 +15,7 @@ router.get('/server-time', (req, res) => {
     const hourKST = (now.getUTCHours() + 9) % 24;
     const minuteKST = now.getUTCMinutes();
 
-    let isOpen = (hourKST >= OPEN_HOUR && hourKST < CLOSE_HOUR);
+    let isOpen = (hourKST >= OPEN_HOUR || hourKST < CLOSE_HOUR);
 
     // ✅ 라운드/남은시간
     const { round, remaining } = getCurrentRound();
