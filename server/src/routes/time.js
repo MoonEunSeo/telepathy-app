@@ -5,7 +5,7 @@ const router = express.Router();
 const { getCurrentRound } = require('../utils/round');
 
 const OPEN_HOUR = 20;
-const CLOSE_HOUR = 2;
+const CLOSE_HOUR = 5;
 
 router.get('/server-time', (req, res) => {
   try {
@@ -15,7 +15,8 @@ router.get('/server-time', (req, res) => {
     const hourKST = (now.getUTCHours() + 9) % 24;
     const minuteKST = now.getUTCMinutes();
 
-    let isOpen = (hourKST >= OPEN_HOUR || hourKST < CLOSE_HOUR);
+    //let isOpen = (hourKST >= OPEN_HOUR || hourKST < CLOSE_HOUR);
+    let isOpen = true;
 
     // ✅ 라운드/남은시간
     const { round, remaining } = getCurrentRound();
