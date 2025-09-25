@@ -563,13 +563,14 @@ useEffect(() => {
   import React, { useState, useEffect } from 'react';
   import { useWordSession } from '../contexts/WordSessionContext';
   import { useNavigate } from 'react-router-dom';
-  import { HelpCircle } from 'lucide-react';
+  import { HelpCircle, Megaphone } from 'lucide-react';
   import { socket } from '../config/socket';
   import './MainPage.css';
   import NicknameModal from '../components/NicknameModal';
   import { toast, ToastContainer } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
   import { recommendations } from '../utils/recommendations';
+  import MegaphoneInputModal from "../components/MegaphoneInputModal";
   
   export default function MainPage() {
     const navigate = useNavigate();
@@ -580,7 +581,133 @@ useEffect(() => {
     const [remaining, setRemaining] = useState(30);
     const [selectedWord, setSelectedWord] = useState('');
     const [fadeClass, setFadeClass] = useState("fade-in");
-  
+
+    // 확성기 관련 모달
+    const [showMegaphoneModal, setShowMegaphoneModal] = useState(false);
+    const [showFirstTimeModal, setShowFirstTimeModal] = useState(false);
+    const [hasMegaphone, setHasMegaphone] = useState(false);
+
+
+    // 버튼 클릭 핸들러
+    const handleMegaphoneClick = async () => {
+      const seen = localStorage.getItem("seenMegaphoneIntro");
+      if (!seen) {
+        // 처음이면 설명 모달만 띄움
+        setShowFirstTimeModal(true);
+        return;
+      }
+
+      // 이미 본 경우 → 바로 DB 조회 후 모달 실행
+      try {
+        const res = await fetch("/api/user/megaphone-count", {
+          credentials: "include",
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          const hasMegaphone = data.count > 0;
+          setShowMegaphoneModal(true);
+          setHasMegaphone(hasMegaphone);
+        } else {
+          console.error("메가폰 조회 실패:", data.message);
+        }
+      } catch (err) {
+        console.error("메가폰 조회 에러:", err);
+      }
+    };
+
+    // 설명 모달에서 "확인" 누를 때
+    const handleFirstTimeConfirm = async () => {
+      localStorage.setItem("seenMegaphoneIntro", "true");
+      setShowFirstTimeModal(false);
+
+      // 설명 모달 닫고 DB 조회 → 실제 모달 실행
+      try {
+        const res = await fetch("/api/user/megaphone-count", {
+          credentials: "include",
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          const hasMegaphone = data.count > 0;
+          setShowMegaphoneModal(true);
+          setHasMegaphone(hasMegaphone);
+        } else {
+          console.error("메가폰 조회 실패:", data.message);
+        }
+      } catch (err) {
+        console.error("메가폰 조회 에러:", err);
+      }
+    };
+
+      // === 결제 & 메시지 로직 ===
+  const handleMegaphoneSend = async (payload) => {
+    try {
+      if (typeof payload === "string" && payload.startsWith("megaphone_")) {
+        // 구매 모드
+        const skuTable = {
+          megaphone_1: { name: "확성기 1개", amount: 500, count: 1 },
+          megaphone_5: { name: "확성기 5개", amount: 2000, count: 5 },
+          megaphone_10: { name: "확성기 10개", amount: 3500, count: 10 },
+        };
+        const sku = skuTable[payload];
+        if (!sku) return;
+
+        const { IMP } = window;
+        IMP.init("imp17086516"); // PortOne 가맹점 코드
+
+        IMP.request_pay(
+          {
+            pg: "html5_inicis",
+            pay_method: "card",
+            merchant_uid: "order_" + new Date().getTime(),
+            name: sku.name,
+            amount: sku.amount,
+            buyer_email: profile?.username || "guest@telepathy.my",
+            buyer_name: profile?.nickname || "사용자",
+          },
+          async (rsp) => {
+            if (rsp.success) {
+              const res = await fetch("/api/payments/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                  imp_uid: rsp.imp_uid,
+                  merchant_uid: rsp.merchant_uid,
+                  item: payload,
+                }),
+              });
+              const data = await res.json();
+              if (data.success) {
+                toast.success(`구매 완료! 확성기 ${sku.count}개 지급됨 🎉`);
+                setHasMegaphone(true);
+              } else {
+                toast.error("검증 실패: " + data.message);
+              }
+            } else {
+              toast.error("결제 실패 또는 취소됨");
+            }
+          }
+        );
+      } else {
+        // 메시지 발사
+        socket.emit("megaphone:send", {
+          userId: profile.userId,
+          message: payload,
+        });
+        toast.success("메시지가 발사되었습니다!");
+      }
+    } catch (err) {
+      console.error("Megaphone 처리 오류:", err);
+      toast.error("오류가 발생했습니다.");
+    } finally {
+      setShowMegaphoneModal(false);
+    }
+  };
+
+
+    
     // 감정 피드백 모달
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [feedbackInfo, setFeedbackInfo] = useState(null);
@@ -812,6 +939,27 @@ useEffect(() => {
         )}
   
         {showClosedModal && <ClosedModal />}
+
+        {/* 처음 설명 모달 */}
+        {showFirstTimeModal && (
+              <div className="firsttime-modal">
+                <div className="modal-content">
+                  <h2>🔊 확성기 안내</h2>
+                  <p>1분간 접속한 다른 사람들에게 내가 입력한 값을 전달할 수 있어요!</p>
+                  <button onClick={handleFirstTimeConfirm}>확인</button>
+                </div>
+              </div>
+            )}
+
+            {/* 확성기 모달 */}
+                  {showMegaphoneModal && (
+        <MegaphoneInputModal
+          onClose={() => setShowMegaphoneModal(false)}
+          hasMegaphone={hasMegaphone}
+          onSend={handleMegaphoneSend}
+        />
+      )}
+
   
         <div className="login-container">
           <div className="timer-display">{remaining}초</div>
@@ -868,13 +1016,21 @@ useEffect(() => {
               현재 접속자 수: <strong>{onlineCount}</strong>명
             </div>
           )}
-  
-          <button className="help-icon" onClick={() => navigate('/helppage')}>
-            <HelpCircle />
+          
+            {/* 헬프 버튼 */}
+            <div className="icon-buttons">
+            <button className="help-icon" onClick={() => navigate('/helppage')}>
+              <HelpCircle />
+            </button>
+
+            {/* 확성기 버튼 */}
+            <button className="megaphone-button" onClick={handleMegaphoneClick}>
+            <Megaphone />
           </button>
-  
-          <ToastContainer />
-        </div>
+            </div>
+          </div>
+
+            <ToastContainer />
       </>
     );
   }

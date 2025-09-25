@@ -13,51 +13,62 @@ const MyPage = () => {
   const [withdrawMessage, setWithdrawMessage] = useState('');
   const [wordCount, setWordCount] = useState(0);
   const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
+  const [megaphoneCount, setMegaphoneCount] = useState(0);
+
 
   const navigate = useNavigate();
   const { isSessionActive, word } = useWordSession();
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('/api/nickname/profile', {
-          credentials: 'include',
-        });
+        const res = await fetch('/api/nickname/profile', { credentials: 'include' });
         const data = await res.json();
-
         if (data.success && data.nickname) {
           setNickname(data.nickname);
           setUsername(data.username);
           setUserId(data.userId);
-        } else {
-          console.warn('⚠️ 프로필 정보 불러오기 실패:', data.message);
         }
       } catch (err) {
         console.error('❌ 프로필 fetch 오류:', err);
       }
     };
-
+  
     const fetchWordCount = async () => {
       try {
-        const res = await fetch('/api/word-history', {
-          credentials: 'include',
-        });
+        const res = await fetch('/api/word-history', { credentials: 'include' });
         const data = await res.json();
-  
         if (Array.isArray(data.history)) {
-          setWordCount(data.history.length); // 👉 word 개수만 따로 저장
+          setWordCount(data.history.length);
         } else {
-          console.warn('⚠️ history가 배열이 아님:', data);
           setWordCount(0);
         }
       } catch (err) {
-        console.error('❌ 단어 기록 불러오기 실패:', err.message);
+        console.error('❌ 단어 기록 불러오기 실패:', err);
         setWordCount(0);
       }
     };
-    fetchWordCount();
+  
+    const fetchMegaphoneCount = async () => {
+      try {
+        const res = await fetch('/api/user/megaphone-count', { credentials: 'include' });
+        const data = await res.json();
+        if (data.success) {
+          setMegaphoneCount(data.count);
+        } else {
+          setMegaphoneCount(0);
+        }
+      } catch (err) {
+        console.error('❌ megaphone-count fetch 오류:', err);
+        setMegaphoneCount(0);
+      }
+    };
+  
+    // ✅ 세 가지 API 병렬 실행
     fetchProfile();
+    fetchWordCount();
+    fetchMegaphoneCount();
   }, []);
+
 
   const handleNavigateWords = () => {
     console.log('Go to Words Page');
@@ -138,6 +149,7 @@ const MyPage = () => {
         <p className="mypage-section-title">| 내 정보 |</p>
         <p className="mypage-text">ID: {username || '불러오는 중...'}</p>
         <p className="mypage-text">텔레파시 횟수 : {wordCount} 번</p>
+        <p className="mypage-text">보유 확성기 : {megaphoneCount} 개</p>
         <button onClick={handleNavigateWords} className="mypage-button-full">
           {'>'} 누군가와 함께 떠올린 단어
         </button>

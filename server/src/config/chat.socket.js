@@ -122,6 +122,7 @@ module.exports = { registerSocketHandlers };
 // 📦 src/config/chat.socket.js
 const supabase = require('./supabase.js');
 const { v4: uuidv4 } = require('uuid');
+const { filterMessage } = require("../utils/badwords");
 
 function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
@@ -134,6 +135,54 @@ function registerSocketHandlers(io) {
     socket.on('getOnlineCount', () => {
       socket.emit('onlineCount', io.engine.clientsCount);
     });
+
+     /**
+     * 📢 확성기 이벤트
+     */
+
+    socket.on("megaphone:send", async ({ userId, message }) => {
+      try {
+        // 닉네임 조회
+        const { data: user, error: userError } = await supabase
+          .from("users")
+          .select("nickname")
+          .eq("id", userId)
+          .single();
+
+        if (userError || !user) {
+          console.error("❌ 닉네임 조회 실패:", userError?.message);
+          return;
+        }
+
+        const nickname = user.nickname;
+
+        // 메시지 필터링
+        const cleanMessage = filterMessage(message);
+
+        // 확성기 차감
+        const { data: used, error: useError } = await supabase.rpc("use_megaphone", {
+          uid: userId
+        });
+
+        if (useError || !used) {
+          socket.emit("megaphone:failed", { message: "확성기가 부족합니다." });
+          return;
+        }
+
+        // 로그 저장 (필터링된 메시지)
+        await supabase.from("megaphone_logs").insert([
+          { user_id: userId, nickname, message: cleanMessage }
+        ]);
+
+        // 브로드캐스트
+        io.emit("megaphone:show", { nickname, message: cleanMessage });
+
+        console.log(`📢 [Megaphone] ${nickname}: ${cleanMessage}`);
+      } catch (err) {
+        console.error("❌ megaphone 처리 오류:", err.message);
+      }
+    });
+
 
     /**
      * 📌 매칭 요청 이벤트

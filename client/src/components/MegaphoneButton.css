@@ -1,0 +1,54 @@
+/* 📦 MegaphoneButton.css */
+
+/* 모달 배경 (화면 전체 덮기) */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4); /* 반투명 배경 */
+    display: flex;
+    align-items: center;   /* 세로 가운데 */
+    justify-content: center; /* 가로 가운데 */
+    z-index: 1000;
+  }
+  
+  /* 모달 박스 */
+  .modal-content {
+    background: #fff;
+    color: #333;
+    padding: 24px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    font-family: "Gowun Dodum", sans-serif;
+    line-height: 1.5;
+  }
+  
+  /* 제목 느낌 */
+  .modal-content h3 {
+    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  /* 버튼 */
+  .modal-content button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+  }
+  
+  .modal-content button:hover {
+    background: #4338ca;
+  }
+  

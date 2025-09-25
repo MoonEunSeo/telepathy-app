@@ -21,6 +21,7 @@ const feedbackRoutes = require('./src/routes/feedback.routes');
 const timeRoutes = require('./src/routes/time');
 const userRoutes = require('./src/routes/user.routes');
 const commentRoutes = require('./src/routes/comment.routes');
+const paymentsRoutes = require('./src/routes/payments.routes');
 
 
 const app = express();
@@ -55,8 +56,9 @@ app.use('/api/report', reportRoutes);
 app.use('/api/word-history', historyRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api', timeRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/payments', paymentsRoutes);
 
 
 // ✅ 서버단 리디렉션: 루트로 들어오면 /login으로 보낸다
@@ -76,8 +78,6 @@ app.use('/sitemap.xml', express.static(path.join(__dirname, '../client/public'))
 
 // ✅ robots.txt 정적서빙
 app.use('/robots.txt', express.static(path.join(__dirname, '../client/public')));
-
-
 
 // ✅ SPA 핸들러 (라우트 미스매치 시 index.html 반환)
 app.use((req, res) => {
