@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
       <h3>제8조 [개인정보 보호책임자]</h3>
       <ul>
         <li>이름: 문은서</li>
-        <li>이메일: <a href="mailto:rlashfod0202@gmail.com">rlashfod0202@gmail.com</a></li>
+        <li>이메일: <a href="mailto:telepathy.cs@gmail.com">telepathy.cs@gmail.com</a></li>
       </ul>
 
       <hr />

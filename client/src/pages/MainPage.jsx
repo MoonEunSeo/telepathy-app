@@ -587,6 +587,7 @@ useEffect(() => {
     const [showFirstTimeModal, setShowFirstTimeModal] = useState(false);
     const [hasMegaphone, setHasMegaphone] = useState(false);
 
+    const [showBizInfo, setShowBizInfo] = useState(false);
 
     // 버튼 클릭 핸들러
     const handleMegaphoneClick = async () => {
@@ -1009,6 +1010,21 @@ useEffect(() => {
           <div className="focus-hours" aria-live="polite">
             🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
           </div>
+          <footer>
+  <button onClick={() => setShowBizInfo(!showBizInfo)}>
+    ⓒ Telepathy | 고객센터/사업자 정보
+  </button>
+
+          {showBizInfo && (
+            <div className="biz-info">
+              <p>상호명 : 넥스트커넥트 | 대표자 : 이수현</p>
+              <p>사업자등록번호 : 316-22-01911</p>
+              <p>주소 : (06978) 서울 동작구 상도로55길 8, 404호</p>
+              <p>대표 이메일 : telepathy.cs@gmail.com</p>
+              <p>※ 통신판매업 신고 준비 중</p>
+            </div>
+          )}
+        </footer>
   
           {/* ✅ 현재 접속자 수는 2명 이상일 때만 보이게 */}
           {onlineCount >= 2 && (

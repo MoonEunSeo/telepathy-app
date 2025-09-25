@@ -441,3 +441,24 @@
   z-index: 99;  
   color: #757575;
 }
+
+footer {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-top: 10px;
+  padding: 5px;
+}
+.hidden { display: none; }
+footer button {
+  font-size: 12px;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+footer div {
+  font-size: 12px;
+  color: #999;
+  margin-top: 10px;
+}
