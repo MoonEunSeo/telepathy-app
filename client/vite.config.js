@@ -13,6 +13,17 @@ export default defineConfig({
         secure: false,
       },
     },
+    configure: (proxy, options) => {
+      proxy.on('error', (err, req, res) => {
+        console.error('프록시 에러:', err);
+      });
+      proxy.on('proxyReq', (proxyReq, req, res) => {
+        console.log('🔁 Proxy 요청 중:', req.url);
+      });
+      proxy.on('proxyRes', (proxyRes, req, res) => {
+        console.log('✅ Proxy 응답 완료:', req.url);
+      });
+    }
   },
 });
 

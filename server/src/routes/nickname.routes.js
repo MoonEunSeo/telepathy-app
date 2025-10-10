@@ -67,6 +67,7 @@ router.post('/set-nickname', async (req, res) => {
 });
 
 // ✅ GET /profile → 유저 닉네임 조회용
+/*
 router.get('/profile', async (req, res) => {
   const token = req.cookies.token;
 
@@ -100,6 +101,56 @@ router.get('/profile', async (req, res) => {
     console.error('❌ 닉네임 프로필 조회 실패:', err);
     res.status(500).json({ success: false, message: '서버 오류' });
   }
+});*/
+
+// ✅ GET /profile → 유저 닉네임 조회용
+router.get('/profile', async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: '토큰 없음' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.user_id;
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, username, nickname')
+      .eq('id', userId)
+      .maybeSingle();
+
+    console.log('🧪 Supabase 조회결과:', { data, error });
+
+    // ⚠️ Supabase 오류 또는 데이터 없음 처리
+    if (error) {
+      console.error('❌ Supabase error:', error);
+      return res
+        .status(500)
+        .json({ success: false, message: 'Supabase 조회 실패', detail: error.message });
+    }
+
+    if (!data) {
+      return res
+        .status(404)
+        .json({ success: false, message: '유저 데이터를 찾을 수 없습니다.' });
+    }
+
+    // ✅ 정상 응답
+    return res.json({
+      success: true,
+      userId: data.id,
+      username: data.username,
+      nickname: data.nickname,
+    });
+  } catch (err) {
+    console.error('❌ 닉네임 프로필 조회 실패:', err.message);
+    return res
+      .status(500)
+      .json({ success: false, message: err.message || '서버 오류' });
+  }
 });
+
 
 module.exports = router;
