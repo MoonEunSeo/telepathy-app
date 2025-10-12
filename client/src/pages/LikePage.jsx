@@ -48,45 +48,31 @@ export default function LikePage() {
   );
 }*/
 
+/*
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import WordSetForm from "../components/WordSetForm";
+import tossQr from "../assets/toss_qr.jpg";
 
 const LikesPage = () => {
-  // ✅ 모든 Hook은 컴포넌트 최상단에서 선언
   const [currentUser, setCurrentUser] = useState(null);
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("idle"); // idle → pending → checking → paid
   const [timer, setTimer] = useState(20);
-  const [tossLink, setTossLink] = useState(null);
   const [loading, setLoading] = useState(true);
+  const amount = 1000;
 
-  const amount = 1000; // 후원 금액 예시
-
-  // [1] 사용자 정보 불러오기
+  // ✅ 사용자 정보 불러오기
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch("/api/nickname/profile", { credentials: "include" });
-  
-        // ✅ 응답 상태 먼저 확인
-        if (!res.ok) {
-          const text = await res.text(); // 혹시나 응답이 문자열일 수도 있으니 대비
-          console.error("❌ 서버 응답 오류:", res.status, text);
-          setLoading(false);
-          return;
-        }
-  
         const data = await res.json();
-        console.log("✅ profile data:", data);
-  
         if (data.success && (data.id || data.userId)) {
           setCurrentUser({
             id: data.id || data.userId,
             nickname: data.nickname,
             username: data.username,
           });
-        } else {
-          console.warn("⚠️ 로그인 정보 없음:", data);
         }
       } catch (err) {
         console.error("❌ 사용자 정보 불러오기 실패:", err);
@@ -94,94 +80,90 @@ const LikesPage = () => {
         setLoading(false);
       }
     };
-  
     fetchProfile();
   }, []);
 
-// [2] 결제 시작 핸들러
-const handleStartPayment = async () => {
-  if (!currentUser) return;
+  // ✅ 결제 생성 (DB에 pending 상태 삽입)
+  const handleStartPayment = async () => {
+    if (!currentUser) return;
 
-  try {
-    const res = await axios.post(
-      `/api/sp_payments/create`,
-      {
-        user_id: currentUser.id,
-        name: currentUser.nickname,
-        amount,
-      },
-      { withCredentials: true }
-    );
-
-    setStatus("pending");
-
-    if (res.data.tossLink) {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      setTossLink(res.data.tossLink);
-
-      // ✅ 모바일일 때만 새 탭 열기
-      if (isMobile) {
-        window.open(res.data.tossLink, "_blank");
-      }
-    }
-
-    setTimer(20);
-  } catch (err) {
-    console.error("❌ 결제 생성 오류:", err);
-  }
-};
-// [3] 결제 상태 체크
-useEffect(() => {
-  if (status !== "pending" || !currentUser) return;
-
-  const interval = setInterval(async () => {
     try {
-      const res = await axios.get(
-        `/api/sp_payments/status/${currentUser.id}`,
-        { withCredentials: true } // ✅ 여기도 포함!
+      await axios.post(
+        `/api/sp_payments/create`,
+        {
+          user_id: currentUser.id,
+          name: currentUser.nickname,
+          amount,
+        },
+        { withCredentials: true }
       );
 
-      if (res.data.status === "paid") {
-        setStatus("paid");
-        clearInterval(interval);
+      // 모바일/PC 구분
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      setStatus("pending");
+
+      if (isMobile) {
+        // ✅ 모바일: 토스 앱으로 바로 이동
+        const mobileTossLink = `supertoss://send?amount=${amount}&bank=${encodeURIComponent(
+          "케이뱅크"
+        )}&accountNo=100121028199&origin=qr`;
+        window.location.href = mobileTossLink;
+
+        // 사용자가 앱 다녀온 후 페이지 복귀 시 자동 확인
+        setTimeout(() => setStatus("checking"), 2000);
       }
     } catch (err) {
-      console.error("❌ 상태 확인 실패:", err);
+      console.error("❌ 결제 생성 오류:", err);
     }
+  };
 
-    setTimer((t) => (t > 0 ? t - 1 : 0));
-  }, 1000);
+  // ✅ 입금확인 버튼 클릭 → 20초 타이머 시작
+  const handleCheckDeposit = () => {
+    setStatus("checking");
+    setTimer(20);
+  };
 
-  return () => clearInterval(interval);
-}, [status, currentUser]);
+  // ✅ 결제 상태 체크
+  useEffect(() => {
+    if (status !== "checking" || !currentUser) return;
 
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`/api/sp_payments/status/${currentUser.id}`, {
+          withCredentials: true,
+        });
 
-  // ✅ [4] 로딩 중
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "40px" }}>
-        <h3>잠시만요... 사용자 정보를 불러오는 중이에요 ⏳</h3>
-      </div>
-    );
-  }
+        if (res.data.status === "paid") {
+          setStatus("paid");
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error("❌ 상태 확인 실패:", err);
+      }
 
-  // ✅ [5] 로그인 안 된 경우
-  if (!currentUser) {
+      setTimer((t) => (t > 0 ? t - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [status, currentUser]);
+
+  // ✅ [1] 로딩 중
+  if (loading) return <h3 style={{ textAlign: "center" }}>로딩 중입니다 ⏳</h3>;
+
+  // ✅ [2] 로그인 필요
+  if (!currentUser)
     return (
       <div style={{ textAlign: "center", marginTop: "40px" }}>
         <h3>로그인 후 이용 가능한 서비스예요 🔒</h3>
-        <a href="/login" className="toss-link">
-          로그인하러 가기
-        </a>
+        <a href="/login">로그인하러 가기</a>
       </div>
     );
-  }
 
-  // ✅ [6] 기본 후원 안내 상태
+  // ✅ [3] 초기 상태
   if (status === "idle") {
     return (
       <div style={{ textAlign: "center", marginTop: "80px" }}>
-        <h1 style={{ fontFamily: "Gowun Dodum", color: "#2c2c2c" }}>Telepathy</h1>
+        <h1 style={{ fontFamily: "Gowun Dodum" }}>Telepathy</h1>
         <p style={{ fontFamily: "Gowun Dodum", fontSize: "17px", marginTop: "10px" }}>
           텔레파시의 단어세트를 직접 만들어보세요!
           <br />
@@ -205,56 +187,53 @@ useEffect(() => {
     );
   }
 
- // ✅ [7] 입금 대기 중
-if (status === "pending" && timer > 0) {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  
-  const mobileTossLink = `tossapp://transfer?bankCode=090&accountNo=100121028199&amount=${amount}&message=${encodeURIComponent(
-    `텔레파시 단어세트 (${name})`
-  )}`;
-
-  return (
-    <div style={{ textAlign: "center", marginTop: "80px" }}>
-      <h3 style={{ fontFamily: "Gowun Dodum" }}>입금 대기 중이에요 💸</h3>
-
-      {isMobile ? (
-        // ✅ 모바일: 토스 앱으로 바로 연결
-        <a
-          href={mobileTossLink}
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            display: "inline-block",
-            marginTop: "10px",
-            color: "#007aff",
-            textDecoration: "none",
-            fontWeight: "bold",
-          }}
-        >
-          👉 토스로 바로 송금하기
-        </a>
-      ) : (
-        // 💻 PC: 안내 메시지 표시
-        <div
-          style={{
-            marginTop: "10px",
-            color: "#999",
-            fontFamily: "Gowun Dodum",
-          }}
-        >
-          모바일 환경에서만 송금이 가능합니다 📱  
-          <br />
-          휴대폰으로 <b>텔레파시</b>를 열고 송금 버튼을 눌러주세요.
+  // ✅ [4] 입금 안내 (PC 전용)
+  if (status === "pending") {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      return (
+        <div style={{ textAlign: "center", marginTop: "80px" }}>
+          <h3>토스 앱으로 이동 중입니다... 📱</h3>
+          <p>입금 후 이 페이지로 돌아오시면 자동으로 확인이 시작돼요.</p>
         </div>
-      )}
+      );
+    }
 
-      <p style={{ marginTop: "10px", fontFamily: "Gowun Dodum" }}>
-        {timer}초 남았습니다 ⏳
-      </p>
-    </div>
-  );
-}
-  // ✅ [8] 입금 완료 → 단어 세트 입력 폼 표시
+    return (
+      <div style={{ textAlign: "center", marginTop: "80px" }}>
+        <h3>입금 안내 💸</h3>
+        <p>📱 휴대폰 토스 앱으로 아래 QR을 스캔해주세요.</p>
+        <img src={tossQr} alt="Toss QR" style={{ width: "300px", marginTop: "10px" }} />
+        <p style={{ marginTop: "8px" }}>케이뱅크 100-121-028199 (텔레파시)</p>
+        <button
+          onClick={handleCheckDeposit}
+          style={{
+            marginTop: "20px",
+            backgroundColor: "#ffb347",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "8px",
+            fontFamily: "Gowun Dodum",
+            cursor: "pointer",
+          }}
+        >
+          입금 확인하기 ⏱
+        </button>
+      </div>
+    );
+  }
+
+  // ✅ [5] 입금 확인 중 (타이머)
+  if (status === "checking" && timer > 0) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "80px" }}>
+        <h3 style={{ fontFamily: "Gowun Dodum" }}>입금 확인 중입니다 ⏳</h3>
+        <p style={{ marginTop: "10px", fontFamily: "Gowun Dodum" }}>{timer}초 남았습니다</p>
+      </div>
+    );
+  }
+
+  // ✅ [6] 입금 완료
   if (status === "paid") {
     return (
       <div style={{ marginTop: "60px" }}>
@@ -263,12 +242,12 @@ if (status === "pending" && timer > 0) {
     );
   }
 
-  // ✅ [9] 타이머 만료 시 재시도 안내
+  // ✅ [7] 만료
   return (
     <div style={{ textAlign: "center", marginTop: "80px" }}>
       <h3>입금 시간이 만료되었어요 😢</h3>
       <button
-        onClick={handleStartPayment}
+        onClick={() => setStatus("idle")}
         style={{
           marginTop: "10px",
           backgroundColor: "#ffb347",
@@ -279,6 +258,227 @@ if (status === "pending" && timer > 0) {
           cursor: "pointer",
         }}
       >
+        다시 시도하기
+      </button>
+    </div>
+  );
+};
+
+export default LikesPage;
+*/
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import WordSetForm from "../components/WordSetForm";
+import tossQr from "../assets/toss_qr.jpg";
+import "./LikePage.css"; // ✅ CSS 적용
+
+const LikesPage = () => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [status, setStatus] = useState("idle"); // idle → pending → checking → paid
+  const [timer, setTimer] = useState(20);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // ✅ 입금 완료 모달 상태
+  const amount = 1000;
+
+  /** ✅ [1] 사용자 정보 불러오기 */
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/nickname/profile", { credentials: "include" });
+        const data = await res.json();
+
+        if (data.success && (data.id || data.userId)) {
+          setCurrentUser({
+            id: data.id || data.userId,
+            nickname: data.nickname,
+            username: data.username,
+          });
+        }
+      } catch (err) {
+        console.error("❌ 사용자 정보 불러오기 실패:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  /** ✅ [2] 결제 생성 → 모바일/PC 분기 */
+  const handleStartPayment = async () => {
+    if (!currentUser) return;
+
+    try {
+      await axios.post(
+        `/api/sp_payments/create`,
+        {
+          user_id: currentUser.id,
+          name: currentUser.nickname,
+          amount,
+        },
+        { withCredentials: true }
+      );
+
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      setStatus("pending");
+
+      if (isMobile) {
+        // ✅ 모바일: 토스 앱으로 바로 이동
+        const mobileTossLink = `supertoss://send?amount=${amount}&bank=${encodeURIComponent(
+          "케이뱅크"
+        )}&accountNo=100121028199&origin=qr`;
+        window.location.href = mobileTossLink;
+
+        // 사용자가 앱 다녀온 후 복귀 시 자동 확인
+        setTimeout(() => setStatus("checking"), 2000);
+      }
+    } catch (err) {
+      console.error("❌ 결제 생성 오류:", err);
+    }
+  };
+
+  /** ✅ [3] PC: 입금확인 버튼 → 타이머 시작 */
+  const handleCheckDeposit = () => {
+    setStatus("checking");
+    setTimer(20);
+  };
+
+  /** ✅ [4] 결제 상태 체크 */
+  useEffect(() => {
+    if (status !== "checking" || !currentUser) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`/api/sp_payments/status/${currentUser.id}`, {
+          withCredentials: true,
+        });
+
+        if (res.data.status === "paid") {
+          clearInterval(interval);
+          setStatus("paid");
+          setShowModal(true); // ✅ 모달 오픈
+        }
+      } catch (err) {
+        console.error("❌ 상태 확인 실패:", err);
+      }
+
+      setTimer((t) => (t > 0 ? t - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [status, currentUser]);
+
+  /** ✅ [5] 모달 닫기 */
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  // ========== 렌더링 구간 ==========
+
+  /** 로딩 중 */
+  if (loading) return <h3 style={{ textAlign: "center" }}>로딩 중입니다 ⏳</h3>;
+
+  /** 로그인 필요 */
+  if (!currentUser)
+    return (
+      <div className="like-container">
+        <h3>로그인 후 이용 가능한 서비스예요 🔒</h3>
+        <a href="/login" className="like-button">
+          로그인하러 가기
+        </a>
+      </div>
+    );
+
+  /** 기본 (idle) 상태 */
+  if (status === "idle") {
+    return (
+      <div className="like-container">
+        <h1 className="like-title">
+          <span style={{ color: "#d18f92" }}>Tele</span>
+          <span style={{ color: "#3a3020" }}>pathy</span>
+        </h1>
+
+        <p className="like-description">
+          텔레파시의 단어세트를 직접 만들어보세요!
+          <br />
+          당신이 원하는 단어로 연결되는 짜릿함을 느껴보세요💫
+        </p>
+
+        <button onClick={handleStartPayment} className="like-button">
+          계좌이체하기 💸
+        </button>
+      </div>
+    );
+  }
+
+  /** 입금 안내 */
+  if (status === "pending") {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      return (
+        <div className="like-container">
+          <h3>토스 앱으로 이동 중입니다... 📱</h3>
+          <p>입금 후 이 페이지로 돌아오시면 자동으로 확인이 시작돼요.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="like-container">
+        <h3>입금 안내 💸</h3>
+        <p>📱 휴대폰 토스 앱으로 아래 QR을 스캔해주세요.</p>
+        <p> 아직 미완성 기능이에요! 입금하시면 환불이 어려우니 입금하시면 안돼요!!!!!!</p>
+        <img src={tossQr} alt="Toss QR" style={{ width: "300px", marginTop: "10px" }} />
+        <p style={{ marginTop: "8px" }}>케이뱅크 100-121-028199 (텔레파시)</p>
+
+        <button onClick={handleCheckDeposit} className="like-button" style={{ marginTop: "20px" }}>
+          입금 확인하기 ⏱
+        </button>
+      </div>
+    );
+  }
+
+  /** 입금 확인 중 */
+  if (status === "checking" && timer > 0) {
+    return (
+      <div className="like-container">
+        <h3>입금 확인 중입니다 ⏳</h3>
+        <p style={{ marginTop: "10px" }}>{timer}초 남았습니다</p>
+      </div>
+    );
+  }
+
+  /** 입금 완료 */
+  if (status === "paid") {
+    return (
+      <>
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-box">
+              <h3>입금이 확인되었어요! 🎉</h3>
+              <p>나만의 단어 세트를<br />만들어볼까요?</p>
+              <button onClick={handleCloseModal} className="modal-button">
+                만들러 가기 ✨
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!showModal && (
+          <div className="like-container" style={{ marginTop: "60px" }}>
+            <WordSetForm currentUser={currentUser} />
+          </div>
+        )}
+      </>
+    );
+  }
+
+  /** 만료 */
+  return (
+    <div className="like-container">
+      <h3>입금 시간이 만료되었어요 😢</h3>
+      <button onClick={() => setStatus("idle")} className="like-button" style={{ marginTop: "20px" }}>
         다시 시도하기
       </button>
     </div>
