@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 
   try {
     // ✅ 2. 입금내역 파싱
-    const match = text.match(/입금\s*([\d,]+)원\s*(.*)/);
+    const match = (text || "").match(/입금\s*([\d,]+)원\s*(.*)/);
     const amount = match ? parseInt(match[1].replace(/,/g, '')) : null;
     const sender = match ? match[2].trim().replace(/\s+$/, '') : null;
 
