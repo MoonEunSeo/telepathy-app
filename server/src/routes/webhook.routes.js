@@ -16,7 +16,18 @@ const supabase = createClient(
  */
 router.post('/', async (req, res) => {
   const { key } = req.query;
-  const { title, text, app } = req.body;
+  const { title, text, app, message, data } = req.body;
+
+  // body가 어떤 형식이든 일단 텍스트를 확보
+  const rawText =
+    text ||
+    message ||
+    data?.text ||
+    data?.message ||
+    "(본문 없음)";
+  
+  console.log(`📩 [${app || 'unknown'}] 수신 → ${title || '(제목 없음)'} / ${rawText}`);
+  
 
   // ✅ 1. 보안키 검사
   if (key !== process.env.WEBHOOK_SECRET) {
