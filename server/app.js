@@ -137,6 +137,9 @@ app.use(cookieParser());
 // 📦 라우트 모듈 등록
 // ================================
 const authRoutes = require('./src/routes/auth.routes');
+const webhookRouter = require('./src/routes/webhook.routes');
+const depositRoutes = require('./src/routes/deposit.routes');
+const sp_paymentsRoutes = require('./src/routes/sp_payments.routes');
 const verifyRoutes = require('./src/routes/verify.routes');
 const verifyMvpRoutes = require('./src/routes/verify-mvp.routes');
 const matchRoutes = require('./src/routes/match.routes');
@@ -152,11 +155,14 @@ const timeRoutes = require('./src/routes/time');
 const userRoutes = require('./src/routes/user.routes');
 const commentRoutes = require('./src/routes/comment.routes');
 const paymentsRoutes = require('./src/routes/payments.routes');
-const sp_paymentsRoutes = require('./src/routes/sp_payments.routes');
-const depositRoutes = require('./src/routes/deposit.routes');
+
+
 
 // ✅ API 라우트 연결
 app.use('/api/auth', authRoutes);
+app.use('/api/deposit', depositRoutes);
+app.use('/api/webhook', webhookRouter);
+app.use('/api/sp_payments', sp_paymentsRoutes);
 app.use('/api/verify', verifyRoutes);
 app.use('/api/verify-mvp', verifyMvpRoutes);
 app.use('/api/match', matchRoutes);
@@ -172,8 +178,8 @@ app.use('/api', timeRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/payments', paymentsRoutes);
-app.use('/api/sp_payments', sp_paymentsRoutes); // ✅ 올바르게 수정
-app.use('/api/deposit', depositRoutes);
+
+
 
 // ================================
 // 📦 정적 파일 및 기본 라우트 처리
