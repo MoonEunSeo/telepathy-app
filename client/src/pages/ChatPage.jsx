@@ -975,11 +975,13 @@ const endCurrentSession = async () => {
 
       {/* ✅ 상대방 종료 알림 */}
       {chatEnded && (
-        <div className="chat-ended-modal">
-          <p>상대방이 대화를 종료했어요.</p>
-          <button className="exit-button-text" onClick={handleExitChat}>
-            나가기
-          </button>
+        <div className="chat-ended-overlay">
+          <div className="chat-ended-banner">
+            <p>상대방이 대화를 종료했어요.</p>
+            <button className="exit-button-text" onClick={handleExitChat}>
+              나가기
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -17,7 +17,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABAS
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-console.log("SUPABASE_URL:", supabaseUrl);
-console.log("SUPABASE_KEY length:", supabaseKey?.length);
+//console.log("SUPABASE_URL:", supabaseUrl);
+//console.log("SUPABASE_KEY length:", supabaseKey?.length);
 
 module.exports = supabase; // ✅ 객체 그대로 export

@@ -1,66 +1,74 @@
-// 📩 server/src/routes/webhook.routes.js
+// server/src/routes/webhook.routes.js
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-// ✅ Supabase 클라이언트 초기화
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-/**
- * 📩 MacroDroid → POST https://telepathy.my/api/webhook?key=YOUR_SECRET_KEY
- * body = { title: "", text: "", app: "" }
- */
+// ✅ MacroDroid webhook
 router.post('/', async (req, res) => {
   const { key } = req.query;
   const { title, text, app, message, data } = req.body;
 
-  // body가 어떤 형식이든 일단 텍스트를 확보
-  const rawText =
-    text ||
-    message ||
-    data?.text ||
-    data?.message ||
-    "(본문 없음)";
-  
-  console.log(`📩 [${app || 'unknown'}] 수신 → ${title || '(제목 없음)'} / ${rawText}`);
-  
-
-  // ✅ 1. 보안키 검사
   if (key !== process.env.WEBHOOK_SECRET) {
     console.warn('🚫 잘못된 Webhook 접근 (key mismatch)');
     return res.status(403).json({ ok: false, message: 'Forbidden' });
   }
 
-  console.log(`📩 [${app}] 알림 수신 → ${title || '(제목 없음)'} / ${text}`);
+  const rawText =
+    text ||
+    message ||
+    data?.text ||
+    data?.message ||
+    '(본문 없음)';
+
+  console.log(`📩 [${app || 'unknown'}] 수신 → ${title || '(제목 없음)'} / ${rawText}`);
 
   try {
-    // ✅ 2. 입금내역 파싱
-    const match = (text || "").match(/입금\s*([\d,]+)원\s*(.*)/);
-    const amount = match ? parseInt(match[1].replace(/,/g, '')) : null;
-    const sender = match ? match[2].trim().replace(/\s+$/, '') : null;
+    // ✅ 1. 최근 중복 webhook 방지 (같은 텍스트 5분 내 중복)
+    const { data: existing } = await supabase
+      .from('payment_webhooks')
+      .select('id, created_at')
+      .eq('text', rawText)
+      .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString());
 
-    // ✅ 3. webhook 로그 저장
+    if (existing?.length > 0) {
+      console.warn('⚠️ 중복 webhook 감지 → skip');
+      return res.json({ ok: true, skipped: true });
+    }
+
+    // ✅ 2. 입금내역 파싱 (다양한 형태 대응)
+    const match = rawText.match(/입금.*?([\d,]+)\s*원\s*(.+)?/);
+    const amount = match ? parseInt(match[1].replace(/,/g, '')) : null;
+    const sender = match ? match[2]?.trim().replace(/\s+$/, '') : null;
+
+    // ✅ 3. webhook 로그 원본 저장
     const { data: webhookData, error: webhookErr } = await supabase
       .from('payment_webhooks')
       .insert([
         {
           app,
           title,
-          text,
+          text: rawText,
+          raw_body: req.body,
           parsed_amount: amount,
           parsed_sender: sender,
         },
       ])
       .select();
 
-    if (webhookErr) console.error('❌ webhook 로그 저장 실패:', webhookErr);
-    else console.log('🧾 webhook 로그 저장 완료:', webhookData[0].id);
+    if (webhookErr) {
+      console.error('❌ webhook 로그 저장 실패:', webhookErr.message);
+      throw webhookErr;
+    }
 
-    // ✅ 4. 금액 일치하는 pending 결제 찾기
+    console.log('🧾 webhook 저장 완료:', webhookData[0].id);
+
+    // ✅ 4. 금액 매칭된 결제 찾기
     if (amount) {
       const { data: payments, error: selectErr } = await supabase
         .from('sp_payments')
@@ -72,11 +80,11 @@ router.post('/', async (req, res) => {
 
       if (selectErr) throw selectErr;
 
-      if (payments && payments.length > 0) {
+      if (payments?.length > 0) {
         const payment = payments[0];
-        console.log(`💰 매칭된 결제 발견: ${payment.user_id} (${amount}원)`);
+        console.log(`💰 매칭된 결제 발견: user=${payment.user_id} (${amount}원)`);
 
-        // ✅ 5. 상태를 paid로 변경
+        // ✅ 상태 갱신
         const { error: updateErr } = await supabase
           .from('sp_payments')
           .update({
@@ -85,21 +93,23 @@ router.post('/', async (req, res) => {
           })
           .eq('id', payment.id);
 
-        if (updateErr) console.error('❌ 결제 상태 업데이트 실패:', updateErr);
-        else console.log(`✅ 결제 ${payment.id} → paid 갱신 완료`);
+        if (updateErr) throw updateErr;
 
-        // ✅ 6. webhook 로그에도 matched_payment_id 업데이트
-        if (webhookData?.[0]?.id) {
-          await supabase
-            .from('payment_webhooks')
-            .update({ matched_payment_id: payment.id })
-            .eq('id', webhookData[0].id);
-        }
+        // ✅ webhook 로그에 매칭정보 추가
+        await supabase
+          .from('payment_webhooks')
+          .update({
+            matched_payment_id: payment.id,
+            matched_user_id: payment.user_id,
+          })
+          .eq('id', webhookData[0].id);
+
+        console.log(`✅ 결제 ${payment.id} → paid 업데이트 완료`);
       } else {
-        console.log('⚠️ 일치하는 pending 결제 없음 (amount:', amount, ')');
+        console.log(`⚠️ 일치하는 pending 결제 없음 (${amount}원)`);
       }
     } else {
-      console.log('⚠️ 금액 파싱 실패 →', text);
+      console.log('⚠️ 금액 파싱 실패 →', rawText);
     }
 
     res.json({ ok: true });

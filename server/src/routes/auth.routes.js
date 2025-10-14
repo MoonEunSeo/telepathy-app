@@ -212,14 +212,14 @@ router.post('/login', async (req, res) => {
 // ================================
 router.get('/check', (req, res) => {
   const token = req.cookies.token;
-  console.log('🔍 받은 쿠키:', token?.slice(0, 30) + '...');
-  console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET);
+  //console.log('🔍 받은 쿠키:', token?.slice(0, 30) + '...');
+  //console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET);
 
   if (!token) return res.json({ loggedIn: false });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('✅ 토큰 해석 성공:', decoded);
+    //console.log('✅ 토큰 해석 성공:', decoded);
     return res.json({ loggedIn: true, user: decoded });
   } catch (err) {
     console.error('❌ JWT 검증 실패:', err.message);

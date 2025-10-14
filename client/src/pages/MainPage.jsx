@@ -757,8 +757,18 @@ useEffect(() => {
           const res = await fetch('/api/nickname/profile', { credentials: 'include' });
           const data = await res.json();
           if (data.success) {
-            setProfile({ userId: data.id, username: data.username, nickname: data.nickname });
+            setProfile({
+                userId: data.user_id || data.id || data.userId, // ✅ 양쪽 다 커버
+                username: data.username,
+                nickname: data.nickname
+              });
             if (!data.nickname) setShowNicknameModal(true);
+            console.log("🎯 profile 응답:", data);
+            console.log("🎯 세팅된 profile:", {
+              userId: data.user_id || data.id || data.userId,
+              username: data.username,
+              nickname: data.nickname
+            });
           }
         } catch (err) {
           console.error('프로필 불러오기 오류:', err);
@@ -871,7 +881,7 @@ useEffect(() => {
     }, [remaining]);
   
     // ✅ 단어 선택
-    const handleWordSelect = (word) => {
+    /*const handleWordSelect = (word) => {
       if (!profile || selectedWord) return;
       setSelectedWord(word);
   
@@ -882,7 +892,32 @@ useEffect(() => {
         word,
         round,
       });
-    };
+    };*/
+    // ✅ 단어 선택
+      const handleWordSelect = (word) => {
+        // ✅ 프로필이나 userId가 비어있으면 실행 막기
+        if (!profile || !profile.userId) {
+          toast.error("❌ 사용자 정보가 아직 불러와지지 않았어요. 잠시 후 다시 시도해주세요!");
+          console.log("🚨 profile 누락 또는 userId 없음:", profile);
+          return;
+        }
+
+        // ✅ 이미 단어 선택했으면 중복 방지
+        if (selectedWord) return;
+
+        setSelectedWord(word);
+
+        const payload = {
+          userId: profile.userId,
+          username: profile.username,
+          nickname: profile.nickname,
+          word,
+          round,
+        };
+
+        console.log("📤 join_match emit payload:", payload);
+        socket.emit('join_match', payload);
+      };
   
     // ✅ 감정 피드백 모달 띄우기
     useEffect(() => {

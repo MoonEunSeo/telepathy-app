@@ -203,10 +203,10 @@ const { Server } = require('socket.io');
 const cron = require('node-cron');
 const { flushRound } = require('./src/utils/flush');
 const { registerSocketHandlers } = require('./src/config/chat.socket');
-const webhookRouter = require('./src/routes/webhook.routes'); // ✅ 새로 추가된 Webhook 라우트
+
 const app = require('./app');
 
-console.log('✅ SUPABASE_URL =', process.env.SUPABASE_URL);
+//console.log('✅ SUPABASE_URL =', process.env.SUPABASE_URL);
 
 // ✅ HTTP 서버 생성
 const server = createServer(app);
@@ -251,8 +251,6 @@ cron.schedule('*/30 * * * * *', () => {
   flushRound();
 });
 
-// ✅ Webhook 라우트 등록
-app.use('/api/webhook', webhookRouter);
 
 // ✅ 포트 설정 및 서버 실행
 const PORT = process.env.PORT || 5000;

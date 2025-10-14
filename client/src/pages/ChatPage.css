@@ -1,18 +1,10 @@
 /* ----------------- 기본 레이아웃 ----------------- */
-.judson-title {
-  font-size: 40px;
-  font-family: 'Judson', serif;
-  color: #333333;
-  text-align: center;
-  margin-bottom: 40px;
-}
-
 .chat-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #fff;
   font-family: 'Gowun Dodum', sans-serif;
 }
 
@@ -64,28 +56,7 @@
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* 날짜 구분선 */
-.chat-date-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #888;
-  font-size: 13px;
-  margin: 20px 0;
-  position: relative;
-}
-
-.chat-date-divider::before,
-.chat-date-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background-color: #eee;
-  margin: 0 12px;
-  border-radius: 99px;
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ----------------- 메시지 ----------------- */
@@ -168,18 +139,7 @@
   text-align: right;
 }
 
-.chat-header-subtitle {
-  font-size: 13px;
-  color: #666;
-}
-
 /* 타이핑 인디케이터 */
-.chat-typing-indicator {
-  display: inline-block;
-  margin: 5px;
-  text-align: center;
-}
-
 .typing-dots {
   display: flex;
   justify-content: center;
@@ -204,37 +164,33 @@
   100% { opacity: 0.2; }
 }
 
-/* ----------------- 모달 ----------------- */
+/* ----------------- 공통 모달 오버레이 ----------------- */
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
 }
 
+/* ----------------- 나가기 확인 모달 ----------------- */
 .chat-ended-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* 기본 중앙 정렬 */
   background: #fff;
   border-radius: 20px;
   padding: 24px 32px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   text-align: center;
   width: 300px;
-  animation: fadeIn 0.25s ease-out;  /* ✅ 여기서도 translate 포함됨 */
-  z-index: 1000;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  animation: fadeInUp 0.25s ease-out;
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 .chat-ended-modal p {
   margin-bottom: 40px;
@@ -258,26 +214,19 @@
   transition: all 0.2s;
 }
 
-/* 모달 버튼 */
 .exit-button-text.confirm {
   background-color: #ff6b6b;
-  font-family: 'Gowun Dodum', sans-serif;
-  font-size: 16px;
   color: #fff;
+  font-size: 16px;
 }
-.exit-button-text.confirm:hover {
-  background-color: #e85b5b;
-}
+.exit-button-text.confirm:hover { background-color: #e85b5b; }
 
 .exit-button-text.cancel {
   background-color: #f3f3f3;
-  font-family: 'Gowun Dodum', sans-serif;
-  font-size: 16px;
   color: #333;
+  font-size: 16px;
 }
-.exit-button-text.cancel:hover {
-  background-color: #e1e1e1;
-}
+.exit-button-text.cancel:hover { background-color: #e1e1e1; }
 
 /* ----------------- 신고 모달 ----------------- */
 .report-modal {
@@ -291,9 +240,12 @@
 }
 
 .report-modal h3 {
-  margin-top: 0;
-  font-size: 18px;
-  margin-bottom: 12px;
+  font-family: 'Judson', serif; /* 강조 */
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 24px;
+  color: #000;
+  letter-spacing: 0.5px;
 }
 
 .report-modal textarea {
@@ -326,4 +278,59 @@
 .report-buttons button:last-child {
   background: #222;
   color: #fff;
+}
+/* ----------------- 상대방 종료 모달 (중앙 정렬 + 블러 오버레이) ----------------- */
+.chat-ended-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeInOverlay 0.3s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.chat-ended-banner {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 36px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+  text-align: center;
+  width: 250px;
+  animation: fadeInUpModal 0.3s ease-out;
+  font-family: 'Gowun Dodum', sans-serif;
+}
+
+@keyframes fadeInUpModal {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-ended-banner p {
+  margin-bottom: 28px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chat-ended-banner .exit-button-text {
+  background: #000;
+  color: #fff;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.chat-ended-banner .exit-button-text:hover {
+  background: #222;
+  transform: translateY(-1px);
 }

@@ -1,3 +1,5 @@
+
+//deposit.routes.js
 const express = require('express');
 const router = express.Router();
 const  supabase  = require('../config/supabase');
@@ -5,7 +7,7 @@ const { parseDepositMessage } = require('../utils/parseDeposit');
 
 router.post('/webhook', async (req, res) => {
   console.log('🔍 Raw body:', req.body);
-  next();
+  
   try {
     const { message } = req.body;
 

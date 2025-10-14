@@ -189,7 +189,7 @@ function registerSocketHandlers(io) {
      * data = { userId, username, nickname, word, round }
      */
     socket.on('join_match', async (data) => {
-      console.log("📥 서버에서 join_match 수신:", data);
+      //console.log("📥 서버에서 join_match 수신:", data);
       const { userId, username, nickname, word, round } = data;
 
       // 1. 현재 유저를 큐에 등록 (waiting)
