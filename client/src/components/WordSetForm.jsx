@@ -65,7 +65,7 @@ export default function WordSetForm({ currentUser }) {
 
   const handleSave = async () => {
     try {
-      await axios.post(`${API_BASE}/sp_payment/update-refund`, {
+      await axios.post(`${API_BASE}/sp_payments/update-refund`, {
         user_id: currentUser.id,
         refund_bank: refundBank,
         refund_account: refundAccount,
