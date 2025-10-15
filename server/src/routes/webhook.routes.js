@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
     console.log('✅ webhook 로그 저장 완료');
 
     // ✅ 매칭된 결제 찾기
-    if (FinalAmount) {
+    if (finalAmount) {
       const { data: payments, error: selectErr } = await supabase
         .from('sp_payments')
         .select('*')
