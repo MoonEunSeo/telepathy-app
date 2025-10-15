@@ -508,18 +508,31 @@ const LikesPage = () => {
   const amount = 1000;
 
   /** ✅ [1] 사용자 정보 불러오기 */
+  const [myWordSets, setMyWordSets] = useState([]); // ✅ 안전한 초기값 설정
+
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileAndWordsets = async () => {
       try {
         const res = await fetch("/api/nickname/profile", { credentials: "include" });
         const data = await res.json();
-
+  
         if (data.success && (data.id || data.userId)) {
-          setCurrentUser({
+          const user = {
             id: data.id || data.userId,
             nickname: data.nickname,
             username: data.username,
-          });
+          };
+          setCurrentUser(user);
+  
+          // ✅ 프로필이 성공적으로 불러와졌다면 즉시 단어세트 조회 실행
+          try {
+            const wordRes = await axios.get(`/api/wordsets/mine/${user.id}`, { withCredentials: true });
+            if (wordRes.data.success && Array.isArray(wordRes.data.wordsets)) {
+              setMyWordSets(wordRes.data.wordsets);
+            }
+          } catch (err) {
+            console.error("❌ 단어세트 조회 실패:", err);
+          }
         }
       } catch (err) {
         console.error("❌ 사용자 정보 불러오기 실패:", err);
@@ -527,9 +540,10 @@ const LikesPage = () => {
         setLoading(false);
       }
     };
-    fetchProfile();
+  
+    fetchProfileAndWordsets();
   }, []);
-
+  
     /** ✅ [2] 내 단어세트 불러오기 */
     useEffect(() => {
       if (!currentUser) return;
