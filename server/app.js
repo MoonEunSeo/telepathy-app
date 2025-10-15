@@ -129,7 +129,7 @@ app.use(
   })
 );
 
-app.options('*', cors()); 
+app.options(/.*/, cors());
 //app.options(new RegExp(".*"), cors());
 
 // ✅ 공통 미들웨어
