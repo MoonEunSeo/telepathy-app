@@ -162,7 +162,7 @@ const paymentsRoutes = require('./src/routes/payments.routes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/deposit', depositRoutes);
-app.use('/api/webhook', webhookRouter);
+app.use('/api/webhook', express.text({ type: '*/*' }), webhookRouter);
 app.use('/api/sp_payments', sp_paymentsRoutes);
 app.use('/api/verify', verifyRoutes);
 app.use('/api/verify-mvp', verifyMvpRoutes);
@@ -190,9 +190,6 @@ app.get(['/', '/index.html'], (req, res) => {
   res.redirect(302, '/login');
 });
 
-// 📦 webhook 라우트만 text 허용
-const webhookRouter = require('./src/routes/webhook.routes');
-app.use('/api/webhook', express.text({ type: '*/*' }), webhookRouter);
 
 // ✅ 헬스체크
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
