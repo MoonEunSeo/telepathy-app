@@ -133,7 +133,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.options("*", cors());
+//app.options("*", cors()); 구버전
+app.options(new RegExp(".*"), cors());
 
 // ================================
 // 📦 라우트 모듈 등록
