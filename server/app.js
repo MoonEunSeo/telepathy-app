@@ -129,7 +129,7 @@ app.use(
   })
 );
 
-app.options(/.*/, cors());
+app.options('/api/*', cors());
 //app.options(new RegExp(".*"), cors());
 
 // ✅ 공통 미들웨어
@@ -195,7 +195,6 @@ app.get(['/', '/index.html'], (req, res) => {
   res.redirect(302, '/login');
 });
 
-
 // ✅ 헬스체크
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
 
@@ -203,16 +202,19 @@ app.get('/healthz', (req, res) => res.status(200).send('OK'));
 const distPath = path.join(__dirname, '../client/dist');
 app.use(express.static(distPath));
 
+// ✅ assets 폴더 정적 서빙
+app.use('/assets', express.static(path.join(distPath, 'assets')));
+
 // ✅ sitemap.xml, robots.txt 등은 index.html로 리디렉션되지 않게 예외 처리
 app.use('/sitemap.xml', express.static(path.join(__dirname, '../client/public')));
 app.use('/robots.txt', express.static(path.join(__dirname, '../client/public')));
+
+
 
 // ✅ SPA 라우팅 처리 (404나 미스매치 시 index.html 반환)
 app.use((req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
-// ✅ assets 폴더 정적 서빙
-app.use('/assets', express.static(path.join(distPath, 'assets')));
 
 module.exports = app;
