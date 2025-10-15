@@ -131,7 +131,6 @@ app.use(
 
 // ✅ 공통 미들웨어
 app.use(express.json());
-app.use(express.text({ type: '*/*' }));
 app.use(cookieParser());
 
 // ================================
@@ -190,6 +189,10 @@ app.use('/api/payments', paymentsRoutes);
 app.get(['/', '/index.html'], (req, res) => {
   res.redirect(302, '/login');
 });
+
+// 📦 webhook 라우트만 text 허용
+const webhookRouter = require('./src/routes/webhook.routes');
+app.use('/api/webhook', express.text({ type: '*/*' }), webhookRouter);
 
 // ✅ 헬스체크
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
