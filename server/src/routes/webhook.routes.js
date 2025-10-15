@@ -12,11 +12,11 @@ const supabase = createClient(
 /**
  * ✅ 케이뱅크 입금 알림 전용 파서
  */
-function parseKbankDeposit(text) {
+function parseKbankDeposit(text, appName = '') {
   const result = {
     sender: null,
     amount: null,
-    bank: '케이뱅크',
+    bank: appName || null ,
   };
 
   const amountMatch = text.match(
@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
     }
 
     const rawText = text || '(본문 없음)';
-    let { sender: parsedSender, amount: parsedAmount, bank } = parseKbankDeposit(rawText);
+    let { sender: parsedSender, amount: parsedAmount, bank } = parseKbankDeposit(rawText, app);
     
     // 🧩 JSON에 sender/amount 직접 포함되어 있을 경우 우선 적용
     const finalSender = sender || Sender || parsedSender || null;
@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
     console.log('✅ webhook 로그 저장 완료');
 
     // ✅ 매칭된 결제 찾기
-    if (amount) {
+    if (FinalAmount) {
       const { data: payments, error: selectErr } = await supabase
         .from('sp_payments')
         .select('*')
