@@ -55,7 +55,7 @@ export default function WordSetForm({ currentUser }) {
 
 import { useState } from "react";
 import axios from "axios";
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = import.meta.env.VITE_REALSITE;
 import "./WordSetForm.css"
 
 export default function WordSetForm({ currentUser }) {
@@ -65,7 +65,7 @@ export default function WordSetForm({ currentUser }) {
 
   const handleSave = async () => {
     try {
-      await axios.post(`${API_BASE}/sp_payments/update-refund`, {
+      await axios.post(`${API_BASE}/api/sp_payments/update-refund`, {
         user_id: currentUser.id,
         refund_bank: refundBank,
         refund_account: refundAccount,

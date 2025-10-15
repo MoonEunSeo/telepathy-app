@@ -129,12 +129,14 @@ app.use(
   })
 );
 
+app.options('*', cors()); 
+//app.options(new RegExp(".*"), cors());
+
 // ✅ 공통 미들웨어
 app.use(express.json());
 app.use(cookieParser());
 
-//app.options("*", cors()); 구버전
-app.options(new RegExp(".*"), cors());
+
 
 // ================================
 // 📦 라우트 모듈 등록
