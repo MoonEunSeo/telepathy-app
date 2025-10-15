@@ -134,22 +134,28 @@ export default function WordSetForm({ currentUser }) {
   );
 }
 */
-
-// WordSetForm.jsx (변경/추가 부분)
+// ✅ WordSetForm.jsx
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const API_BASE = import.meta.env.VITE_REALSITE;
 
+// 🔒 정규식 필터
 const KOREAN_WORD_REGEX = /^[가-힣]{1,6}$/; // 한글만, 1~6자
 const BANK_REGEX = /^[가-힣A-Za-z\s]{2,20}$/; // 은행명: 한글/영문/공백 2~20자
-const ACCOUNT_REGEX = /^\d{4,20}$/; // 계좌번호: 숫자만 4~20자리 (원하면 min 줄일 수 있음)
+const ACCOUNT_REGEX = /^\d{4,20}$/; // 계좌번호: 숫자만 4~20자리
 
 export default function WordSetForm({ currentUser }) {
+  const navigate = useNavigate();
+
+  const [isComposing, setIsComposing] = useState(false); // ✅ iOS 한글 조합 방어
   const [words, setWords] = useState(["", "", "", ""]);
   const [refundBank, setRefundBank] = useState("");
   const [refundAccount, setRefundAccount] = useState("");
   const [errors, setErrors] = useState({});
 
+  // ✅ 유효성 검사 함수
   const validateField = (key, value) => {
     switch (key) {
       case "word":
@@ -163,60 +169,65 @@ export default function WordSetForm({ currentUser }) {
     }
   };
 
+  // ✅ 단어 입력 처리
   const handleWordChange = (i, v) => {
-    // 강제 자르기: 한글 외 문자 제거 + 6자까지
+    if (isComposing) return; // 한글 조합 중일 때 입력 차단
     const filtered = v.replace(/[^가-힣]/g, "").slice(0, 6);
     const newWords = [...words];
     newWords[i] = filtered;
     setWords(newWords);
-
-    setErrors(prev => ({ ...prev, [`w${i}`]: validateField("word", filtered) }));
+    setErrors((prev) => ({ ...prev, [`w${i}`]: validateField("word", filtered) }));
   };
 
+  // ✅ 은행명 입력 처리
   const handleBankChange = (v) => {
-    // 은행명에서 특수문자 제거(허용 문자만 남김)
     const filtered = v.replace(/[^가-힣A-Za-z\s]/g, "").slice(0, 20);
     setRefundBank(filtered);
-    setErrors(prev => ({ ...prev, bank: validateField("bank", filtered) }));
+    setErrors((prev) => ({ ...prev, bank: validateField("bank", filtered) }));
   };
 
+  // ✅ 계좌번호 입력 처리
   const handleAccountChange = (v) => {
-    // 숫자만 필터 + 20자리 제한
     const filtered = v.replace(/\D/g, "").slice(0, 20);
     setRefundAccount(filtered);
-    setErrors(prev => ({ ...prev, account: validateField("account", filtered) }));
+    setErrors((prev) => ({ ...prev, account: validateField("account", filtered) }));
   };
 
+  // ✅ 전체 폼 유효성 검사
   const isFormValid = useMemo(() => {
-    // 단어들 중 하나라도 비어있거나 에러가 있으면 false
-    const wordsValid = words.every(w => KOREAN_WORD_REGEX.test(w));
+    const wordsValid = words.every((w) => KOREAN_WORD_REGEX.test(w));
     const bankValid = BANK_REGEX.test(refundBank);
     const accValid = ACCOUNT_REGEX.test(refundAccount);
     return wordsValid && bankValid && accValid;
   }, [words, refundBank, refundAccount]);
 
+  // ✅ 저장 처리
   const handleSave = async () => {
-    // 추가 프론트 재검증(서버는 최종 보호)
     if (!isFormValid) {
       alert("입력값을 다시 확인해주세요.");
       return;
     }
 
     try {
-      const res = await axios.post(`${API_BASE}/api/sp_payments/update-refund`, {
-        user_id: currentUser.id,
-        refund_bank: refundBank,
-        refund_account: refundAccount,
-        wordset: words,
-      }, { withCredentials: true });
+      const res = await axios.post(
+        `${API_BASE}/api/sp_payments/update-refund`,
+        {
+          user_id: currentUser.id,
+          refund_bank: refundBank,
+          refund_account: refundAccount,
+          wordset: words,
+        },
+        { withCredentials: true }
+      );
 
       if (res.data?.ok) {
-        alert("저장되었습니다 🌷");
-        // 확인 누르면 LikePage로 이동시키려면 window.location or useNavigate 사용
-        //window.location.href = "/likes";
-        navigate('/likes');
+        alert("저장되었습니다 🌷\n이제 메인으로 돌아갑니다!");
+        setTimeout(() => navigate("/likes"), 1000);
+        setWords(["", "", "", ""]);
+        setRefundBank("");
+        setRefundAccount("");
       } else {
-        alert("⚠️ 저장에 실패했습니다: " + (res.data?.message || "알 수 없는 이유"));
+        alert("⚠️ 저장 실패: " + (res.data?.message || "알 수 없는 이유"));
         console.warn("서버 응답:", res.data);
       }
     } catch (err) {
@@ -225,9 +236,12 @@ export default function WordSetForm({ currentUser }) {
     }
   };
 
+  // ✅ UI 렌더링
   return (
     <div className="wordset-section">
       <h2>✨ 단어세트를 만들어볼까요?</h2>
+
+      {/* 단어 입력 구역 */}
       <div className="word-inputs">
         {words.map((w, i) => (
           <div key={i} style={{ marginBottom: 8 }}>
@@ -236,9 +250,9 @@ export default function WordSetForm({ currentUser }) {
               value={w}
               placeholder={`단어 ${i + 1} (한글 1~6자)`}
               onChange={(e) => handleWordChange(i, e.target.value)}
-              onCompositionStart={() => setComposing(true)}
+              onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={(e) => {
-                setComposing(false);
+                setIsComposing(false);
                 handleWordChange(i, e.target.value);
               }}
             />
@@ -249,6 +263,7 @@ export default function WordSetForm({ currentUser }) {
         ))}
       </div>
 
+      {/* 환불 계좌 입력 구역 */}
       <div className="account-section">
         <h3>💸 환불계좌 정보</h3>
         <div className="account-inputs">

@@ -17,6 +17,7 @@ import MyWords from './pages/MyWords';
 import LikePage from './pages/LikePage';
 import HelpPage from './pages/HelpPage';
 import ChatPage from './pages/ChatPage';
+import WordSetPage from './pages/WordSetPage'
 
 import TermsPage from './pages/TermsPage';
 import ServiceAgreement from './pages/terms/ServiceAgreement';
@@ -77,6 +78,7 @@ export default function App() {
           <Route path="/mywords" element={<MyWords />} />
           <Route path="/likes" element={<LikePage />} />
           <Route path="/helppage" element={<HelpPage />} />
+          <Route path="/wordset" element={<WordSetPage />} />
         </Route>
 
         {/* ✅ 약관 & 정책 페이지 */}

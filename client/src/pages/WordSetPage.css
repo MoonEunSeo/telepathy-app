@@ -1,0 +1,19 @@
+.wordset-page {
+    max-width: 400px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .wordset-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .wordset-description {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+  }
+  
