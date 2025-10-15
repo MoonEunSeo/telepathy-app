@@ -237,53 +237,43 @@
   outline: none;
 }
 
-/* ✅ 환불계좌 입력 섹션 */
-.account-section {
-  margin-top: 20px;
+.wordset-section {
+  margin-top: 50px;
+  text-align: center;
 }
 
-.account-section h3 {
-  font-size: 20px;
-  margin-bottom: 18px;
+.wordset-title {
+  font-family: 'Gowun Dodum';
+  font-size: 18px;
+  margin-bottom: 10px;
   color: #3a3020;
 }
 
-.account-inputs {
+.wordset-list {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
-  margin-bottom: 30px;
 }
 
-.account-inputs input {
-  border: 1.5px solid #d8c5aa;
-  border-radius: 10px;
-  padding: 8px 12px;
-  width: 180px;
-  font-family: "Gowun Dodum";
-  background-color: #fffdf8;
-  transition: 0.2s;
+.wordset-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.account-inputs input:focus {
-  border-color: #ffb347;
-  box-shadow: 0 0 5px rgba(255, 179, 71, 0.4);
+.wordset-button {
+  background-color: #fff8f2;
+  border: 1px solid #d8c3a5;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: 'Gowun Dodum';
+  font-size: 14px;
+  color: #3a3020;
 }
 
-.save-button {
-  background-color: #ffb347;
-  color: white;
-  border: none;
-  padding: 10px 30px;
-  border-radius: 9999px;
-  font-size: 16px;
-  font-family: "Gowun Dodum";
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease;
-}
-
-.save-button:hover {
-  background-color: #ffa726;
-  transform: scale(1.05);
+.wordset-status {
+  font-size: 13px;
+  color: #999;
+  font-family: 'Gowun Dodum';
 }

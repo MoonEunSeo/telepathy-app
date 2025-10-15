@@ -530,26 +530,48 @@ const LikesPage = () => {
     fetchProfile();
   }, []);
 
-  /** ✅ [2] 입금하기 버튼 클릭 → 실명 확인 & 모달 표시 */
+    /** ✅ [2] 내 단어세트 불러오기 */
+    useEffect(() => {
+      if (!currentUser) return;
+  
+      const fetchWordSets = async () => {
+        try {
+          const res = await axios.get(`/api/wordsets/mine/${currentUser.id}`, { withCredentials: true });
+          if (res.data.success && Array.isArray(res.data.wordsets)) {
+            setMyWordSets(res.data.wordsets);
+          }
+        } catch (err) {
+          console.error("❌ 단어세트 조회 실패:", err);
+        }
+      };
+  
+      fetchWordSets();
+    }, [currentUser]);
+
+  /** ✅ [3] 입금하기 버튼 클릭 → 실명 확인 & 모달 표시 */
   const handleDepositClick = async () => {
     if (!currentUser) return;
-
+  
     try {
+      // 🔍 user 테이블에서 실명 조회
       const res = await axios.get(`/api/users/${currentUser.id}`, { withCredentials: true });
       const savedName = res.data?.real_name;
-
+  
       if (savedName) {
+        console.log("✅ 실명 이미 등록됨:", savedName);
         setRealName(savedName);
-        handleStartPayment(savedName);
+        handleStartPayment(savedName); // 바로 결제 프로세스 실행
       } else {
-        setShowNameModal(true);
+        console.log("⚠️ 실명 없음 → 입력 필요");
+        setShowNameModal(true); // 실명 입력 모달 오픈
       }
     } catch (err) {
       console.error("❌ 실명 조회 실패:", err);
+      alert("서버에서 사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
     }
   };
 
-  /** ✅ [3] 실명 입력 모달 → 저장 후 결제 시작 */
+  /** ✅ [4] 실명 입력 모달 → 저장 후 결제 시작 */
   const handleSaveNameAndStart = async () => {
     if (!realName.trim()) return alert("실명을 입력해주세요!");
 
@@ -567,7 +589,7 @@ const LikesPage = () => {
     }
   };
 
-  /** ✅ [4] 결제 생성 (공통 로직) */
+  /** ✅ [5] 결제 생성 (공통 로직) */
   const handleStartPayment = async (finalName) => {
     try {
       await axios.post(
@@ -595,13 +617,13 @@ const LikesPage = () => {
     }
   };
 
-  /** ✅ [5] PC에서 입금확인 버튼 클릭 */
+  /** ✅ [6] PC에서 입금확인 버튼 클릭 */
   const handleCheckDeposit = () => {
     setStatus("checking");
     setTimer(20);
   };
 
-  /** ✅ [6] 20초 동안 결제 상태 주기적 확인 */
+  /** ✅ [7] 20초 동안 결제 상태 주기적 확인 */
   useEffect(() => {
     if (status !== "checking" || !currentUser) return;
 
@@ -634,10 +656,10 @@ const LikesPage = () => {
     };
   }, [status, currentUser]);
 
-  /** ✅ [7] 모달 닫기 */
+  /** ✅ [8] 모달 닫기 */
   const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
-  /** ✅ [8] 기본 로딩 / 로그인 체크 */
+  /** ✅ [9] 기본 로딩 / 로그인 체크 */
   if (loading) return <h3 style={{ textAlign: "center" }}>로딩 중입니다 ⏳</h3>;
   if (!currentUser)
     return (
@@ -689,9 +711,27 @@ const LikesPage = () => {
             </div>
           </div>
         )}
+
+        {/* ✅ 내가 만든 단어세트 구역 */}
+        {myWordSets.length > 0 && (
+          <div className="wordset-section">
+            <h4 className="wordset-title">내가 신청한 단어세트</h4>
+            <div className="wordset-list">
+              {myWordSets.map((set, i) => (
+                <div key={i} className="wordset-item">
+                  <button className="wordset-button">
+                    {set.words?.join(", ") || "단어 없음"}
+                  </button>
+                  <span className="wordset-status">- 처리중</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
+    
 
   /** 💬 [2] 입금 안내 */
   if (status === "pending") {
@@ -766,6 +806,7 @@ const LikesPage = () => {
     );
   }
 };
+
 
 export default LikesPage;
 

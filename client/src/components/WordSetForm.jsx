@@ -75,6 +75,7 @@ export default function WordSetForm({ currentUser }) {
       // ✅ 서버 응답 검사
       if (res.data?.ok) {
         alert("저장되었습니다 🌷");
+        navigate("/likes"); 
       } else {
         alert("⚠️ 저장에 실패했습니다: " + (res.data?.message || "알 수 없는 이유"));
         console.warn("서버 응답:", res.data);
