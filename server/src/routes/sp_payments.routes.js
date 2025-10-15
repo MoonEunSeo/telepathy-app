@@ -69,5 +69,25 @@ router.post('/create', async (req, res) => {
         res.status(500).json({ error: err.message || "서버 내부 오류" });
       }
     });
+// ✅ routes/sp_payments.routes.js
+router.get('/status/:user_id', async (req, res) => {
+  try {
+    const { user_id } = req.params;
 
+    const { data, error } = await supabase
+      .from('sp_payments')
+      .select('status')
+      .eq('user_id', user_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+
+    res.json({ status: data?.status || 'none' });
+  } catch (err) {
+    console.error('❌ 상태 조회 실패:', err);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
 module.exports = router;

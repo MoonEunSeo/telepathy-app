@@ -11,19 +11,14 @@ const supabase = createClient(
 
 /**
  * ✅ 케이뱅크 입금 알림 전용 파서
- * 예시:
- *   "입금 1,000원 문은서 | MY입출금통장(8199)"
- *   "케이뱅크 입금 20,000원 홍길동 | MY입출금통장(1111)"
- *   "입금액: 500,000원 김수진 | MY입출금통장(9001)"
  */
 function parseKbankDeposit(text) {
   const result = {
     sender: null,
     amount: null,
-    bank: '케이뱅크' // ✅ 항상 케이뱅크에서 오는 웹훅이므로 고정
+    bank: '케이뱅크',
   };
 
-  // 💰 금액 추출
   const amountMatch = text.match(
     /입금\s*([\d,]+)\s*원|입금액\s*[:\s]*([\d,]+)\s*원|([\d,]+)\s*원\s*입금/
   );
@@ -32,7 +27,6 @@ function parseKbankDeposit(text) {
     result.amount = parseInt(amountStr.replace(/,/g, ''), 10);
   }
 
-  // 🙋‍♀️ 송금인 추출
   const senderMatch = text.match(/([가-힣A-Za-z0-9]+)\s*\|/);
   if (senderMatch) {
     result.sender = senderMatch[1];
@@ -44,18 +38,26 @@ function parseKbankDeposit(text) {
 // ✅ MacroDroid Webhook (POST)
 router.post('/', async (req, res) => {
   try {
-    const { key } = req.query;
-    const { title, text, app } = req.body;
+    // ⚠️ text/plain으로 들어오는 경우 대비
+    let body = req.body;
+    if (typeof body === 'string' && body.trim().startsWith('{')) {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        console.warn('⚠️ JSON 파싱 실패:', e.message);
+      }
+    }
 
-    // ✅ Webhook 보안 키 검증
+    const { key } = req.query;
+    const { title, text, app } = body || {};
+
+    // ✅ 보안키 확인
     if (key !== process.env.WEBHOOK_SECRET) {
       console.warn('🚫 잘못된 Webhook 접근 (key mismatch)');
       return res.status(403).json({ ok: false, message: 'Forbidden' });
     }
 
     const rawText = text || '(본문 없음)';
-
-    // ✅ 케이뱅크 입금 내역 파싱
     const { sender, amount, bank } = parseKbankDeposit(rawText);
 
     console.log('📩 [Webhook 수신]');
@@ -66,7 +68,7 @@ router.post('/', async (req, res) => {
     console.log(' ├─ Amount:', amount ? amount + '원' : '(없음)');
     console.log(' └─ Bank:', bank);
 
-    // ✅ webhook 로그 저장 (중복 검사 제거)
+    // ✅ webhook 로그 저장
     const { error: webhookErr } = await supabase.from('payment_webhooks').insert([
       {
         app,
@@ -74,7 +76,7 @@ router.post('/', async (req, res) => {
         text: rawText,
         parsed_sender: sender,
         parsed_amount: amount,
-        parsed_bank: bank, // ⚠️ Supabase에 parsed_bank 컬럼 없으면 주석 처리
+        // parsed_bank: bank, // ← Supabase에 없으면 주석처리
         raw_body: req.body,
       },
     ]);
@@ -82,7 +84,7 @@ router.post('/', async (req, res) => {
     if (webhookErr) throw webhookErr;
     console.log('✅ webhook 로그 저장 완료');
 
-    // ✅ 매칭된 결제 찾기 (상태가 pending이고 금액 일치하는 경우)
+    // ✅ 매칭된 결제 찾기
     if (amount) {
       const { data: payments, error: selectErr } = await supabase
         .from('sp_payments')
@@ -98,7 +100,6 @@ router.post('/', async (req, res) => {
         const payment = payments[0];
         console.log(`💰 매칭된 결제 발견: user=${payment.user_id} (${amount}원)`);
 
-        // ✅ 결제 상태 갱신
         const { error: updateErr } = await supabase
           .from('sp_payments')
           .update({

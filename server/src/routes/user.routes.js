@@ -36,6 +36,39 @@ router.get("/megaphone-count", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ [추가 1] 실명 조회
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('real_name')
+      .eq('id', id)
+      .single();
 
+    if (error) throw error;
+    res.json({ real_name: data?.real_name || null });
+  } catch (err) {
+    console.error('❌ 실명 조회 실패:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ [추가 2] 실명 업데이트
+router.post('/update-realname', async (req, res) => {
+  const { user_id, real_name } = req.body;
+  try {
+    const { error } = await supabase
+      .from('users')
+      .update({ real_name })
+      .eq('id', user_id);
+
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    console.error('❌ 실명 저장 실패:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
