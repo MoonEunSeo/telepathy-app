@@ -42,6 +42,8 @@ router.post('/', async (req, res) => {
     let body = req.body;
     if (typeof body === 'string' && body.trim().startsWith('{')) {
       try {
+        // ✅ 줄바꿈, 탭, 특수제어문자 제거
+        body = body.replace(/[\r\n\t]/g, ' ').replace(/\s{2,}/g, ' ');
         body = JSON.parse(body);
       } catch (e) {
         console.warn('⚠️ JSON 파싱 실패:', e.message);
