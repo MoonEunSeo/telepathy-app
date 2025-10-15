@@ -3,6 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const  supabase  = require('../config/supabase');
+const CryptoJS = require('crypto-js');
+
 require('dotenv').config();
 
 // ✅ 방어코드 추가 (디버깅용)
@@ -94,8 +96,9 @@ router.get('/status/:user_id', async (req, res) => {
 router.post('/update-refund', async (req, res) => {
   try {
     const { user_id, refund_bank, refund_account, wordset } = req.body;
-
+    console.log("📩 [요청 수신] /update-refund:", req.body); // ① 요청이 실제 서버에 도달했는지
     if (!user_id) {
+      console.warn("⚠️ user_id 누락");
       return res.status(400).json({ ok: false, message: "user_id가 필요합니다." });
     }
 
@@ -110,7 +113,9 @@ router.post('/update-refund', async (req, res) => {
       ? CryptoJS.AES.encrypt(refund_account, secretKey).toString()
       : null;
 
-    // ✅ 가장 최근 결제 내역을 기준으로 업데이트
+      console.log("🔒 암호화된 계좌:", encryptedAccount); // ② 암호화가 실제로 성공했는지
+
+    // ✅ 가장 최근 결제 내역 찾기
     const { data: recentPayment, error: selectErr } = await supabase
       .from('sp_payments')
       .select('id')
@@ -120,14 +125,14 @@ router.post('/update-refund', async (req, res) => {
       .single();
 
     if (selectErr || !recentPayment) {
-      console.warn('⚠️ 최근 결제 내역 없음');
+      console.warn("⚠️ 결제 내역 없음:", selectErr);
       return res.status(404).json({ ok: false, message: '결제 내역을 찾을 수 없습니다.' });
     }
 
-    const paymentId = recentPayment.id;
+    console.log("💳 업데이트 대상 paymentId:", recentPayment.id);
 
-    // ✅ 환불정보 업데이트
-    const { error: updateErr } = await supabase
+    // ✅ 업데이트 시도
+    const { data: updateData, error: updateErr } = await supabase
       .from('sp_payments')
       .update({
         refund_bank,
@@ -135,14 +140,19 @@ router.post('/update-refund', async (req, res) => {
         wordset_text: wordsetText,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', paymentId);
+      .eq('id', recentPayment.id)
+      .select();
 
-    if (updateErr) throw updateErr;
+    if (updateErr) {
+      console.error("❌ Supabase 업데이트 실패:", updateErr.message);
+      return res.status(500).json({ ok: false, error: updateErr.message });
+    }
 
-    console.log(`✅ 환불정보 저장 완료: user=${user_id}`);
+    console.log("✅ 업데이트 완료 데이터:", updateData); // ③ 실제 DB에 반영된 내용
+
     res.json({ ok: true, message: '환불정보 및 단어세트 저장 완료' });
   } catch (err) {
-    console.error('💥 /update-refund 오류:', err);
+    console.error("💥 /update-refund 예외:", err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });
