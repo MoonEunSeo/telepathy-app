@@ -195,9 +195,9 @@ server.listen(PORT, () => {
 });*/
 
 // server/index.js//
-
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const express = require('express');
+const cors = require('cors');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const cron = require('node-cron');
@@ -206,7 +206,18 @@ const { registerSocketHandlers } = require('./src/config/chat.socket');
 
 const app = require('./app');
 
-//console.log('✅ SUPABASE_URL =', process.env.SUPABASE_URL);
+// ✅ CORS 설정 (이거 추가!)
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5179',
+      'https://telepathy.my',
+      'https://telepathy-app.onrender.com',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  })
+);
 
 // ✅ HTTP 서버 생성
 const server = createServer(app);
@@ -216,7 +227,6 @@ const io = new Server(server, {
   cors: {
     origin: [
       'http://localhost:5179',
-      'http://localhost:5000',
       'https://telepathy.my',
       'https://telepathy-app.onrender.com',
     ],
@@ -229,11 +239,9 @@ const io = new Server(server, {
 
 // ✅ WebSocket 연결 수 카운트
 let onlineUsers = 0;
-
 io.on('connection', (socket) => {
   onlineUsers++;
   console.log('🟢 유저 접속, 현재 인원:', onlineUsers);
-
   io.emit('onlineCount', onlineUsers);
 
   socket.on('disconnect', () => {
@@ -250,7 +258,6 @@ registerSocketHandlers(io);
 cron.schedule('*/30 * * * * *', () => {
   flushRound();
 });
-
 
 // ✅ 포트 설정 및 서버 실행
 const PORT = process.env.PORT || 5000;
