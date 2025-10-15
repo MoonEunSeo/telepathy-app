@@ -76,13 +76,15 @@ router.post('/', async (req, res) => {
     console.log(' └─ Bank:', bank);
 
     // ✅ webhook 로그 저장
+    const safeAmount = Number.isFinite(finalAmount) ? finalAmount : null;
+
     const { error: webhookErr } = await supabase.from('payment_webhooks').insert([{
       app,
       title,
       text: rawText,
-      parsed_sender: finalSender,
-      parsed_amount: finalAmount,
-      parsed_bank: bank,
+      parsed_sender: finalSender || null,
+      parsed_amount: safeAmount,
+      parsed_bank: bank || null,
       raw_body: req.body,
     }]);
 
