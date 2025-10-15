@@ -55,7 +55,8 @@ export default function WordSetForm({ currentUser }) {
 
 import { useState } from "react";
 import axios from "axios";
-const API_BASE = "https://your-server-url.com";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+import "./WordSetForm.css"
 
 export default function WordSetForm({ currentUser }) {
   const [words, setWords] = useState(["", "", "", ""]);
