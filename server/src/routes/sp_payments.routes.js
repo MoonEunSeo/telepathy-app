@@ -11,6 +11,9 @@ require('dotenv').config();
 //console.log("🧩 Supabase 객체 확인:", typeof supabase, supabase !== undefined ? "정상" : "❌ undefined");
 //console.log("🧪 Supabase Key 존재?:", process.env.SUPABASE_KEY ? "✅ 있음" : "❌ 없음");
 
+// ============================================
+// 🪙 [1] 결제 생성
+// ============================================
 router.post('/create', async (req, res) => {
   try {
     const { user_id, name, amount } = req.body;
@@ -29,7 +32,9 @@ router.post('/create', async (req, res) => {
     }
 
     // ✅ DB 삽입
-    const { data, error } = await supabase.from('sp_payments').insert([
+    const { data, error } = await supabase
+      .from('sp_payments')
+      .insert([
         {
           user_id,
           name,
@@ -37,41 +42,44 @@ router.post('/create', async (req, res) => {
           status: 'pending',
           created_at: new Date().toISOString(),
         },
-      ]).select();
-      
-      if (error) {
-        console.error('❌ Supabase DB insert 실패:', error.message);
-        return res.status(500).json({ error: error.message });
-      }
-      
-      console.log('✅ DB 삽입 성공:', data);
-    // ✅ Toss 링크 및 수동 계좌 안내
+      ])
+      .select();
+
+    if (error) {
+      console.error('❌ Supabase DB insert 실패:', error.message);
+      return res.status(500).json({ error: error.message });
+    }
+
+    console.log('✅ DB 삽입 성공:', data);
+
     // ✅ Toss 송금 딥링크 생성
     const bankCode = '090'; // 케이뱅크
     const accountNo = '100121028199';
     const encodedMsg = encodeURIComponent(`텔레파시 단어세트 (${name})`);
 
     const tossLink = `tossapp://transfer?bankCode=${bankCode}&accountNo=${accountNo}&amount=${amount}&message=${encodedMsg}`;
-      
+
     const bankInfo = {
-          bank: '케이뱅크',
-          account: '100-121-028199',
-          holder: '텔레파시',
-        };
+      bank: '케이뱅크',
+      account: '100-121-028199',
+      holder: '텔레파시',
+    };
 
-        res.json({
-          success: true,
-          tossLink,
-          bankInfo,
-          message: `아래 계좌로 ${amount}원을 송금해주세요 💸`,
-        });
-
-      } catch (err) {
-        console.error("🔥 /create 라우트 내부 오류:", err);
-        res.status(500).json({ error: err.message || "서버 내부 오류" });
-      }
+    res.json({
+      success: true,
+      tossLink,
+      bankInfo,
+      message: `아래 계좌로 ${amount}원을 송금해주세요 💸`,
     });
-// ✅ routes/sp_payments.routes.js
+  } catch (err) {
+    console.error("🔥 /create 라우트 내부 오류:", err);
+    res.status(500).json({ error: err.message || "서버 내부 오류" });
+  }
+});
+
+// ============================================
+// 🧾 [2] 결제 상태 조회
+// ============================================
 router.get('/status/:user_id', async (req, res) => {
   try {
     const { user_id } = req.params;
@@ -93,10 +101,14 @@ router.get('/status/:user_id', async (req, res) => {
   }
 });
 
+// ============================================
+// 💸 [3] 환불정보 & 단어세트 업데이트
+// ============================================
 router.post('/update-refund', async (req, res) => {
   try {
     const { user_id, refund_bank, refund_account, wordset } = req.body;
-    console.log("📩 [요청 수신] /update-refund:", req.body); // ① 요청이 실제 서버에 도달했는지
+    console.log("📩 [요청 수신] /update-refund:", req.body);
+
     if (!user_id) {
       console.warn("⚠️ user_id 누락");
       return res.status(400).json({ ok: false, message: "user_id가 필요합니다." });
@@ -113,7 +125,7 @@ router.post('/update-refund', async (req, res) => {
       ? CryptoJS.AES.encrypt(refund_account, secretKey).toString()
       : null;
 
-      console.log("🔒 암호화된 계좌:", encryptedAccount); // ② 암호화가 실제로 성공했는지
+    console.log("🔒 암호화된 계좌:", encryptedAccount);
 
     // ✅ 가장 최근 결제 내역 찾기
     const { data: recentPayment, error: selectErr } = await supabase
@@ -148,13 +160,18 @@ router.post('/update-refund', async (req, res) => {
       return res.status(500).json({ ok: false, error: updateErr.message });
     }
 
-    console.log("✅ 업데이트 완료 데이터:", updateData); // ③ 실제 DB에 반영된 내용
+    if (!updateData || updateData.length === 0) {
+      console.warn("⚠️ 업데이트된 행이 없습니다 (조건 불일치)");
+      return res.status(404).json({ ok: false, message: "DB에 반영되지 않았습니다." });
+    }
 
-    res.json({ ok: true, message: '환불정보 및 단어세트 저장 완료' });
+    console.log("✅ 업데이트 완료 데이터:", updateData);
+    res.json({ ok: true, message: "환불정보 및 단어세트 저장 완료" });
   } catch (err) {
     console.error("💥 /update-refund 예외:", err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
+// ✅ 마지막엔 항상 이렇게 닫아야 함!
 module.exports = router;

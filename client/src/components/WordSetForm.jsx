@@ -65,13 +65,20 @@ export default function WordSetForm({ currentUser }) {
 
   const handleSave = async () => {
     try {
-      await axios.post(`${API_BASE}/api/sp_payments/update-refund`, {
+      const res = await axios.post(`${API_BASE}/api/sp_payments/update-refund`, {
         user_id: currentUser.id,
         refund_bank: refundBank,
         refund_account: refundAccount,
         wordset: words,
       });
-      alert("저장되었습니다 🌷");
+  
+      // ✅ 서버 응답 검사
+      if (res.data?.ok) {
+        alert("저장되었습니다 🌷");
+      } else {
+        alert("⚠️ 저장에 실패했습니다: " + (res.data?.message || "알 수 없는 이유"));
+        console.warn("서버 응답:", res.data);
+      }
     } catch (err) {
       console.error("저장 중 오류:", err);
       alert("저장 중 오류가 발생했습니다 😢");
