@@ -90,4 +90,61 @@ router.get('/status/:user_id', async (req, res) => {
     res.status(500).json({ status: 'error', message: err.message });
   }
 });
+
+router.post('/update-refund', async (req, res) => {
+  try {
+    const { user_id, refund_bank, refund_account, wordset } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ ok: false, message: "user_id가 필요합니다." });
+    }
+
+    // ✅ 단어 배열 → 쉼표로 연결
+    const wordsetText = Array.isArray(wordset)
+      ? wordset.filter(Boolean).join(', ')
+      : null;
+
+    // ✅ 계좌번호 암호화 (AES)
+    const secretKey = process.env.ACCOUNT_SECRET_KEY || "telepathy-key";
+    const encryptedAccount = refund_account
+      ? CryptoJS.AES.encrypt(refund_account, secretKey).toString()
+      : null;
+
+    // ✅ 가장 최근 결제 내역을 기준으로 업데이트
+    const { data: recentPayment, error: selectErr } = await supabase
+      .from('sp_payments')
+      .select('id')
+      .eq('user_id', user_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (selectErr || !recentPayment) {
+      console.warn('⚠️ 최근 결제 내역 없음');
+      return res.status(404).json({ ok: false, message: '결제 내역을 찾을 수 없습니다.' });
+    }
+
+    const paymentId = recentPayment.id;
+
+    // ✅ 환불정보 업데이트
+    const { error: updateErr } = await supabase
+      .from('sp_payments')
+      .update({
+        refund_bank,
+        refund_account: encryptedAccount,
+        wordset_text: wordsetText,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', paymentId);
+
+    if (updateErr) throw updateErr;
+
+    console.log(`✅ 환불정보 저장 완료: user=${user_id}`);
+    res.json({ ok: true, message: '환불정보 및 단어세트 저장 완료' });
+  } catch (err) {
+    console.error('💥 /update-refund 오류:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 module.exports = router;
