@@ -49,7 +49,8 @@ router.post('/', async (req, res) => {
     }
 
     const { key } = req.query;
-    const { title, text, app } = body || {};
+    const { title, text, app, sender, Sender, amount, Amount } = body || {};
+    //const { title, text, app } = body || {};
 
     // ✅ 보안키 확인
     if (key !== process.env.WEBHOOK_SECRET) {
@@ -58,28 +59,30 @@ router.post('/', async (req, res) => {
     }
 
     const rawText = text || '(본문 없음)';
-    const { sender, amount, bank } = parseKbankDeposit(rawText);
+    let { sender: parsedSender, amount: parsedAmount, bank } = parseKbankDeposit(rawText);
+    
+    // 🧩 JSON에 sender/amount 직접 포함되어 있을 경우 우선 적용
+    const finalSender = sender || Sender || parsedSender || null;
+    const finalAmount = Number(amount || Amount || parsedAmount || 0) || null;
 
     console.log('📩 [Webhook 수신]');
     console.log(' ├─ App:', app || '(unknown)');
     console.log(' ├─ Title:', title || '(제목 없음)');
     console.log(' ├─ Text:', rawText);
-    console.log(' ├─ Sender:', sender || '(없음)');
-    console.log(' ├─ Amount:', amount ? amount + '원' : '(없음)');
+    console.log(' ├─ Sender:', finalSender || '(없음)');
+    console.log(' ├─ Amount:', finalAmount ? finalAmount + '원' : '(없음)');
     console.log(' └─ Bank:', bank);
 
     // ✅ webhook 로그 저장
-    const { error: webhookErr } = await supabase.from('payment_webhooks').insert([
-      {
-        app,
-        title,
-        text: rawText,
-        parsed_sender: sender,
-        parsed_amount: amount,
-        // parsed_bank: bank, // ← Supabase에 없으면 주석처리
-        raw_body: req.body,
-      },
-    ]);
+    const { error: webhookErr } = await supabase.from('payment_webhooks').insert([{
+      app,
+      title,
+      text: rawText,
+      parsed_sender: finalSender,
+      parsed_amount: finalAmount,
+      parsed_bank: bank,
+      raw_body: req.body,
+    }]);
 
     if (webhookErr) throw webhookErr;
     console.log('✅ webhook 로그 저장 완료');
