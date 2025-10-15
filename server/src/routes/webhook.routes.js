@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
       title,
       text: rawText,
       parsed_sender: finalSender || null,
-      parsed_amount: safeAmount,
+      parsed_amount: safeAmount ?? null,
       parsed_bank: bank || null,
       raw_body: req.body,
     }]);
@@ -97,7 +97,7 @@ router.post('/', async (req, res) => {
         .from('sp_payments')
         .select('*')
         .eq('status', 'pending')
-        .eq('amount', amount)
+        .eq('amount', finalAmount)
         .order('created_at', { ascending: false })
         .limit(1);
 
