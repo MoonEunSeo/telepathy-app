@@ -243,25 +243,28 @@ export default function WordSetForm({ currentUser }) {
 
       {/* 단어 입력 구역 */}
       <div className="word-inputs">
-        {words.map((w, i) => (
-          <div key={i} style={{ marginBottom: 8 }}>
-            <input
-              type="text"
-              value={w}
-              placeholder={`단어 ${i + 1} (한글 1~6자)`}
-              onChange={(e) => handleWordChange(i, e.target.value)}
-              onCompositionStart={() => setIsComposing(true)}
-              onCompositionEnd={(e) => {
-                setIsComposing(false);
-                handleWordChange(i, e.target.value);
-              }}
-            />
-            <div style={{ color: "red", fontSize: 12 }}>
-              {errors[`w${i}`] || ""}
-            </div>
-          </div>
-        ))}
-      </div>
+  {words.map((w, i) => (
+    <div key={i} className="mb-3">
+      <input
+        type="text"
+        value={w}
+        placeholder={`단어 ${i + 1} (한글 1~6자)`}
+        onChange={(e) => handleWordChange(i, e.target.value)}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={(e) => {
+          setIsComposing(false);
+          handleWordChange(i, e.target.value);
+        }}
+        maxLength={6}
+        pattern="[가-힣]{1,6}"
+        className="w-full rounded-xl border border-[#F5EAD5] bg-[#FFFBF6] px-4 py-3 text-center text-[#5A4633] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#EBC78D] placeholder-[#C6B49E] transition"
+      />
+      {errors[`w${i}`] && (
+        <p className="text-red-500 text-xs mt-1">{errors[`w${i}`]}</p>
+      )}
+    </div>
+  ))}
+</div>
 
       {/* 환불 계좌 입력 구역 */}
       <div className="account-section">
