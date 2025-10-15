@@ -131,6 +131,7 @@ app.use(
 
 // ✅ 공통 미들웨어
 app.use(express.json());
+app.use(express.text({ type: '*/*' }));
 app.use(cookieParser());
 
 // ================================
@@ -156,9 +157,10 @@ const userRoutes = require('./src/routes/user.routes');
 const commentRoutes = require('./src/routes/comment.routes');
 const paymentsRoutes = require('./src/routes/payments.routes');
 
-
-
+// ==============================
 // ✅ API 라우트 연결
+// ==============================
+
 app.use('/api/auth', authRoutes);
 app.use('/api/deposit', depositRoutes);
 app.use('/api/webhook', webhookRouter);
@@ -178,7 +180,6 @@ app.use('/api', timeRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/payments', paymentsRoutes);
-
 
 
 // ================================

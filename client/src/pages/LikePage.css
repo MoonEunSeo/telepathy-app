@@ -46,7 +46,6 @@
   }
   
 
-  /* ✅ 입금 확인 모달 전체 배경 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -61,7 +60,6 @@
   animation: fadeIn 0.3s ease forwards;
 }
 
-/* ✅ 모달 본체 */
 .modal-box {
   background: #fff;
   border-radius: 16px;
@@ -74,7 +72,7 @@
   animation: scaleUp 0.3s ease forwards;
 }
 
-/* ✅ 텍스트 */
+
 .modal-box h3 {
   font-size: 20px;
   margin-bottom: 10px;
@@ -87,7 +85,7 @@
   line-height: 1.6;
 }
 
-/* ✅ 버튼 */
+
 .modal-button {
   background-color: #ffb347;
   color: white;
@@ -105,7 +103,7 @@
   transform: scale(1.05);
 }
 
-/* ✅ 애니메이션 */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -123,5 +121,75 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+
+/* ✅ 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-box h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #3a3020;
+}
+
+.modal-input {
+  width: 85%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Gowun Dodum";
+  font-size: 16px;
+}
+
+.modal-button {
+  background-color: #ffb347;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-family: "Gowun Dodum";
+  margin: 8px;
+  cursor: pointer;
+}
+
+.modal-cancel {
+  background-color: #ccc;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-family: "Gowun Dodum";
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
