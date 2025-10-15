@@ -129,7 +129,8 @@ app.use(
   })
 );
 
-app.options('/api/*', cors());
+app.options(/.*/, cors());
+//app.options(/api\/.*/, cors());
 //app.options(new RegExp(".*"), cors());
 
 // ✅ 공통 미들웨어
