@@ -784,7 +784,7 @@ if (status === "pending") {
         <img src={tossQr} alt="Toss QR" />
       </div>
 
-      <p className="deposit-account">케이뱅크 100-121-028199 (텔레파시)</p>
+      <p className="deposit-account">케이뱅크 100-121-028199 (문*서)</p>
 
       <button
         onClick={handleCheckDeposit}
@@ -802,8 +802,17 @@ if (status === "pending") {
 
 // 💬 [3] 입금 확인 중
 if (status === "checking" && timer > 0) {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   return (
-    <div className="deposit-container">
+    <div className="like-container">
+      {/* ✅ PC일 때만 QR 표시 */}
+      {!isMobile && (
+        <div className="qr-card">
+          <img src={tossQr} alt="Toss QR" />
+        </div>
+      )}
+
       <h3 className="deposit-title">입금 확인 중입니다 ⏳</h3>
       <p className="deposit-text">{timer}초 남았습니다</p>
     </div>
