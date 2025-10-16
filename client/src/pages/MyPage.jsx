@@ -79,6 +79,10 @@ const MyPage = () => {
     window.open("https://forms.gle/8w9meqD1YnP9qjnM8", "_blank");
   };
 
+  const handleOpenFAQ = () => {
+    window.open("https://jet-koi-be0.notion.site/28efb29d9d4680739120e18eb77eb511", "_blank");
+  };
+
   const handleChangePassword = () => {
     navigate('/changepassword');
   };
@@ -148,8 +152,7 @@ const MyPage = () => {
         <hr />
         <p className="mypage-section-title">| 내 정보 |</p>
         <p className="mypage-text">ID: {username || '불러오는 중...'}</p>
-        <p className="mypage-text">텔레파시 횟수 : {wordCount} 번</p>
-        <p className="mypage-text">보유 확성기 : {megaphoneCount} 개</p>
+        <p className="mypage-text">텔레파시 횟수 : {wordCount} 번 / 보유 확성기 : {megaphoneCount} 개</p>
         <button onClick={handleNavigateWords} className="mypage-button-full">
           {'>'} 누군가와 함께 떠올린 단어
         </button>
@@ -162,6 +165,9 @@ const MyPage = () => {
           <button onClick={handlePaymentInquiry} className="mypage-button">
         결제 문의
       </button>
+              <button onClick={handleOpenFAQ} className="mypage-button">
+          자주묻는질문
+        </button>
           <button onClick={handleChangePassword} className="mypage-button">
             비밀번호 변경
           </button>
