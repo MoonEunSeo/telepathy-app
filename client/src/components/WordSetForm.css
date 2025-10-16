@@ -1,52 +1,136 @@
+/* ✅ 전체 컨테이너 */
+.wordset-section {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background-color: #fffdf8;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(58, 48, 32, 0.08);
+  text-align: center;
+  font-family: "Gowun Dodum";
+}
+
+.wordset-section h2 {
+  font-size: 22px;
+  color: #3a3020;
+  margin-bottom: 22px;
+}
+
+/* ✅ 단어 입력 섹션 */
+.word-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+/* ✅ search-box 스타일 */
+.search-box {
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  border: 1.5px solid #f5ead5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background-color: #fffbf6;
+  text-align: center;
+  color: #5a4633;
+  font-size: 16px;
+  font-family: "Gowun Dodum";
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #c6b49e;
+}
+
+.search-input:focus {
+  border-color: #ebc78d;
+  box-shadow: 0 0 6px rgba(235, 199, 141, 0.5);
+  outline: none;
+}
+
+/* ✅ 에러 문구 */
+.word-inputs p {
+  margin-top: 4px;
+  color: #d24b4b;
+  font-size: 12px;
+}
+
 /* ✅ 환불계좌 입력 섹션 */
 .account-section {
-    margin-top: 20px;
+  margin-top: 20px;
+}
+
+.account-section h3 {
+  font-size: 20px;
+  margin-bottom: 18px;
+  color: #3a3020;
+}
+
+.account-inputs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.account-inputs input {
+  border: 1.5px solid #f5ead5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  width: 180px;
+  font-family: "Gowun Dodum";
+  background-color: #fffbf6;
+  color: #5a4633;
+  transition: all 0.2s ease;
+}
+
+.account-inputs input:focus {
+  border-color: #ebc78d;
+  box-shadow: 0 0 5px rgba(235, 199, 141, 0.4);
+}
+
+/* ✅ 저장 버튼 */
+.save-button {
+  background-color: #ffb347;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-family: "Gowun Dodum";
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.save-button:hover {
+  background-color: #ffa726;
+  transform: scale(1.05);
+}
+
+.save-button:disabled {
+  background-color: #e0c6a1;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ✅ 반응형 (모바일 대응) */
+@media (max-width: 480px) {
+  .wordset-section {
+    padding: 24px 16px;
+    border-radius: 16px;
   }
-  
-  .account-section h3 {
-    font-size: 20px;
-    margin-bottom: 18px;
-    color: #3a3020;
-  }
-  
-  .account-inputs {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
-  }
-  
+
   .account-inputs input {
-    border: 1.5px solid #F5EAD5;
-    border-radius: 10px;
-    padding: 10px 14px;
-    width: 180px;
-    font-family: "Gowun Dodum";
-    background-color: #FFFBF6;
-    color: #5A4633;
-    transition: all 0.2s ease;
+    width: 100%;
   }
-  
-  .account-inputs input:focus {
-    border-color: #EBC78D;
-    box-shadow: 0 0 5px rgba(235, 199, 141, 0.4);
-  }
-  
+
   .save-button {
-    background-color: #ffb347;
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 9999px;
-    font-size: 16px;
-    font-family: "Gowun Dodum";
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.15s ease;
+    width: 100%;
+    padding: 12px 0;
   }
-  
-  .save-button:hover {
-    background-color: #ffa726;
-    transform: scale(1.05);
-  }
-  
+}

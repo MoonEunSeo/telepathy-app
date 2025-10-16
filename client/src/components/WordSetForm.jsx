@@ -141,15 +141,14 @@ import axios from "axios";
 
 const API_BASE = import.meta.env.VITE_REALSITE;
 
-// 🔒 정규식 필터
-const KOREAN_WORD_REGEX = /^[가-힣]{1,6}$/; // 한글만, 1~6자
-const BANK_REGEX = /^[가-힣A-Za-z\s]{2,20}$/; // 은행명: 한글/영문/공백 2~20자
-const ACCOUNT_REGEX = /^\d{4,20}$/; // 계좌번호: 숫자만 4~20자리
+const KOREAN_WORD_REGEX = /^[가-힣]{1,6}$/;
+const BANK_REGEX = /^[가-힣A-Za-z\s]{2,20}$/;
+const ACCOUNT_REGEX = /^\d{4,20}$/;
 
 export default function WordSetForm({ currentUser }) {
   const navigate = useNavigate();
 
-  const [isComposing, setIsComposing] = useState(false); // ✅ iOS 한글 조합 방어
+  const [isComposing, setIsComposing] = useState(false);
   const [words, setWords] = useState(["", "", "", ""]);
   const [refundBank, setRefundBank] = useState("");
   const [refundAccount, setRefundAccount] = useState("");
@@ -159,38 +158,60 @@ export default function WordSetForm({ currentUser }) {
   const validateField = (key, value) => {
     switch (key) {
       case "word":
-        return KOREAN_WORD_REGEX.test(value) ? "" : "한글 1~6자만 입력 가능합니다.";
+        return KOREAN_WORD_REGEX.test(value)
+          ? ""
+          : "한글 1~6자만 입력 가능합니다.";
       case "bank":
-        return BANK_REGEX.test(value) ? "" : "은행명은 한글/영문 2~20자만 허용됩니다.";
+        return BANK_REGEX.test(value)
+          ? ""
+          : "은행명은 한글/영문 2~20자만 허용됩니다.";
       case "account":
-        return ACCOUNT_REGEX.test(value) ? "" : "계좌번호는 숫자만 (4~20자리) 입력하세요.";
+        return ACCOUNT_REGEX.test(value)
+          ? ""
+          : "계좌번호는 숫자만 (4~20자리) 입력하세요.";
       default:
         return "";
     }
   };
 
-  // ✅ 단어 입력 처리
-  const handleWordChange = (i, v) => {
-    if (isComposing) return; // 한글 조합 중일 때 입력 차단
-    const filtered = v.replace(/[^가-힣]/g, "").slice(0, 6);
-    const newWords = [...words];
-    newWords[i] = filtered;
-    setWords(newWords);
-    setErrors((prev) => ({ ...prev, [`w${i}`]: validateField("word", filtered) }));
+  // ✅ 단어 입력 처리 (SearchBox 스타일 iOS 대응)
+  const handleWordInputChange = (i, e) => {
+    setWords((prev) => {
+      const updated = [...prev];
+      updated[i] = e.target.value;
+      return updated;
+    });
+    setErrors((prev) => ({ ...prev, [`w${i}`]: "" }));
   };
 
-  // ✅ 은행명 입력 처리
+  const handleCompositionStart = () => setIsComposing(true);
+
+  const handleCompositionEnd = (i, e) => {
+    setIsComposing(false);
+    const input = e.target.value;
+    const onlyKorean = input.replace(/[^가-힣]/g, "").slice(0, 6);
+    setWords((prev) => {
+      const updated = [...prev];
+      updated[i] = onlyKorean;
+      return updated;
+    });
+    setErrors((prev) => ({
+      ...prev,
+      [`w${i}`]: validateField("word", onlyKorean),
+    }));
+  };
+
+  // ✅ 은행명 / 계좌 입력
   const handleBankChange = (v) => {
     const filtered = v.replace(/[^가-힣A-Za-z\s]/g, "").slice(0, 20);
     setRefundBank(filtered);
-    setErrors((prev) => ({ ...prev, bank: validateField("bank", filtered) }));
+    setErrors((p) => ({ ...p, bank: validateField("bank", filtered) }));
   };
 
-  // ✅ 계좌번호 입력 처리
   const handleAccountChange = (v) => {
     const filtered = v.replace(/\D/g, "").slice(0, 20);
     setRefundAccount(filtered);
-    setErrors((prev) => ({ ...prev, account: validateField("account", filtered) }));
+    setErrors((p) => ({ ...p, account: validateField("account", filtered) }));
   };
 
   // ✅ 전체 폼 유효성 검사
@@ -203,10 +224,7 @@ export default function WordSetForm({ currentUser }) {
 
   // ✅ 저장 처리
   const handleSave = async () => {
-    if (!isFormValid) {
-      alert("입력값을 다시 확인해주세요.");
-      return;
-    }
+    if (!isFormValid) return alert("입력값을 다시 확인해주세요.");
 
     try {
       const res = await axios.post(
@@ -221,14 +239,10 @@ export default function WordSetForm({ currentUser }) {
       );
 
       if (res.data?.ok) {
-        alert("저장되었습니다 🌷\n이제 메인으로 돌아갑니다!");
-        setTimeout(() => navigate("/likes"), 1000);
-        setWords(["", "", "", ""]);
-        setRefundBank("");
-        setRefundAccount("");
+        alert("저장되었습니다 🌷");
+        navigate("/likes");
       } else {
         alert("⚠️ 저장 실패: " + (res.data?.message || "알 수 없는 이유"));
-        console.warn("서버 응답:", res.data);
       }
     } catch (err) {
       console.error("저장 중 오류:", err);
@@ -236,35 +250,35 @@ export default function WordSetForm({ currentUser }) {
     }
   };
 
-  // ✅ UI 렌더링
+  // ✅ UI
   return (
     <div className="wordset-section">
       <h2>✨ 단어세트를 만들어볼까요?</h2>
 
       {/* 단어 입력 구역 */}
       <div className="word-inputs">
-  {words.map((w, i) => (
-    <div key={i} className="mb-3">
-      <input
-        type="text"
-        value={w}
-        placeholder={`단어 ${i + 1} (한글 1~6자)`}
-        onChange={(e) => handleWordChange(i, e.target.value)}
-        onCompositionStart={() => setIsComposing(true)}
-        onCompositionEnd={(e) => {
-          setIsComposing(false);
-          handleWordChange(i, e.target.value);
-        }}
-        maxLength={6}
-        pattern="[가-힣]{1,6}"
-        className="w-full rounded-xl border border-[#F5EAD5] bg-[#FFFBF6] px-4 py-3 text-center text-[#5A4633] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#EBC78D] placeholder-[#C6B49E] transition"
-      />
-      {errors[`w${i}`] && (
-        <p className="text-red-500 text-xs mt-1">{errors[`w${i}`]}</p>
-      )}
-    </div>
-  ))}
-</div>
+        {words.map((w, i) => (
+          <div key={i} className="mb-3 search-box">
+            <input
+              type="text"
+              className="search-input w-full rounded-xl border border-[#F5EAD5] bg-[#FFFBF6] px-4 py-3 text-center text-[#5A4633] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#EBC78D] placeholder-[#C6B49E] transition"
+              placeholder={`단어 ${i + 1} (한글 1~6자)`}
+              value={w}
+              onChange={(e) => handleWordInputChange(i, e)}
+              onCompositionStart={handleCompositionStart}
+              onCompositionEnd={(e) => handleCompositionEnd(i, e)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && e.preventDefault()
+              }
+            />
+            {errors[`w${i}`] && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors[`w${i}`]}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
 
       {/* 환불 계좌 입력 구역 */}
       <div className="account-section">

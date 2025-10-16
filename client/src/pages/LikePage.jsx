@@ -492,7 +492,7 @@ export default LikesPage;*/
 import React, { useState, useEffect } from "react";
 import "./LikePage.css";
 import axios from "axios";
-import WordSetForm from "../components/WordSetForm";
+//import WordSetForm from "../components/WordSetForm";
 import tossQr from "../assets/toss_qr.jpg";
 
 
@@ -507,7 +507,7 @@ const LikesPage = () => {
   const [realName, setRealName] = useState("");
   const amount = 1000;
 
-  /** ✅ [1] 사용자 정보 불러오기 */
+  // ✅ [1] 사용자 정보 불러오기
   const [myWordSets, setMyWordSets] = useState([]); // ✅ 안전한 초기값 설정
 
   useEffect(() => {
@@ -544,7 +544,7 @@ const LikesPage = () => {
     fetchProfileAndWordsets();
   }, []);
   
-    /** ✅ [2] 내 단어세트 불러오기 */
+    // ✅ [2] 내 단어세트 불러오기 
     useEffect(() => {
       if (!currentUser) return;
   
@@ -562,13 +562,13 @@ const LikesPage = () => {
       fetchWordSets();
     }, [currentUser]);
 
-  /** ✅ [3] 입금하기 버튼 클릭 → 실명 확인 & 모달 표시 */
+  // ✅ [3] 입금하기 버튼 클릭 → 실명 확인 & 모달 표시 
   const handleDepositClick = async () => {
     if (!currentUser) return;
   
     try {
       // 🔍 user 테이블에서 실명 조회
-      const res = await axios.get(`/api/users/${currentUser.id}`, { withCredentials: true });
+      const res = await axios.get(`/api/user/${currentUser.id}`, { withCredentials: true });
       const savedName = res.data?.real_name;
   
       if (savedName) {
@@ -585,13 +585,13 @@ const LikesPage = () => {
     }
   };
 
-  /** ✅ [4] 실명 입력 모달 → 저장 후 결제 시작 */
+  // ✅ [4] 실명 입력 모달 → 저장 후 결제 시작 
   const handleSaveNameAndStart = async () => {
     if (!realName.trim()) return alert("실명을 입력해주세요!");
 
     try {
       await axios.post(
-        `/api/users/update-realname`,
+        `/api/user/update-realname`,
         { user_id: currentUser.id, real_name: realName },
         { withCredentials: true }
       );
@@ -603,7 +603,7 @@ const LikesPage = () => {
     }
   };
 
-  /** ✅ [5] 결제 생성 (공통 로직) */
+  //✅ [5] 결제 생성 (공통 로직)
   const handleStartPayment = async (finalName) => {
     try {
       await axios.post(
@@ -631,13 +631,13 @@ const LikesPage = () => {
     }
   };
 
-  /** ✅ [6] PC에서 입금확인 버튼 클릭 */
+  // ✅ [6] PC에서 입금확인 버튼 클릭
   const handleCheckDeposit = () => {
     setStatus("checking");
     setTimer(20);
   };
 
-  /** ✅ [7] 20초 동안 결제 상태 주기적 확인 */
+  // ✅ [7] 20초 동안 결제 상태 주기적 확인 
   useEffect(() => {
     if (status !== "checking" || !currentUser) return;
 
@@ -670,10 +670,10 @@ const LikesPage = () => {
     };
   }, [status, currentUser]);
 
-  /** ✅ [8] 모달 닫기 */
+  // ✅ [8] 모달 닫기 
   const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
-  /** ✅ [9] 기본 로딩 / 로그인 체크 */
+  // ✅ [9] 기본 로딩 / 로그인 체크
   if (loading) return <h3 style={{ textAlign: "center" }}>로딩 중입니다 ⏳</h3>;
   if (!currentUser)
     return (
@@ -685,7 +685,7 @@ const LikesPage = () => {
 
   // ======================= 렌더링 =======================
 
-  /** 💬 [1] 초기 상태 */
+  //💬 [1] 초기 상태 
   if (status === "idle") {
     return (
       <div className="like-container">
@@ -702,7 +702,7 @@ const LikesPage = () => {
           계좌이체하기 💸
         </button>
 
-        {/* ✅ 실명 입력 모달 */}
+        // ✅ 실명 입력 모달
         {showNameModal && (
           <div className="modal-overlay">
             <div className="modal-box">
@@ -726,7 +726,7 @@ const LikesPage = () => {
           </div>
         )}
 
-        {/* ✅ 내가 만든 단어세트 구역 */}
+        // ✅ 내가 만든 단어세트 구역 
         {myWordSets.length > 0 && (
           <div className="wordset-section">
             <h4 className="wordset-title">내가 신청한 단어세트</h4>
@@ -747,7 +747,7 @@ const LikesPage = () => {
   }
     
 
-  /** 💬 [2] 입금 안내 */
+  //💬 [2] 입금 안내 
   if (status === "pending") {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile)
@@ -774,7 +774,7 @@ const LikesPage = () => {
     );
   }
 
-  /** 💬 [3] 입금 확인 중 */
+  //💬 [3] 입금 확인 중
   if (status === "checking" && timer > 0) {
     return (
       <div className="like-container">
@@ -784,7 +784,7 @@ const LikesPage = () => {
     );
   }
 
-  /** 💬 [4] 입금 완료 */
+  // 💬 [4] 입금 완료 
   if (status === "paid") {
     return (
       <>
@@ -793,22 +793,20 @@ const LikesPage = () => {
             <div className="modal-box">
               <h3>입금이 확인되었어요! 🎉</h3>
               <p>나만의 단어 세트를<br />만들어볼까요?</p>
-              <button onClick={handleCloseSuccessModal} className="modal-button">
+              <button
+                onClick={() => (window.location.href = "/wordset")}
+                className="modal-button"
+              >
                 만들러 가기 ✨
               </button>
             </div>
-          </div>
-        )}
-        {!showSuccessModal && (
-          <div className="like-container" style={{ marginTop: "60px" }}>
-            <WordSetForm currentUser={currentUser} />
           </div>
         )}
       </>
     );
   }
 
-  /** 💬 [5] 만료 */
+  // 💬 [5] 만료
   if (status === "expired") {
     return (
       <div className="like-container">
