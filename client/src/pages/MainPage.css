@@ -1,34 +1,34 @@
+/* ✅ 타이머 박스 */
 .word-timer {
-    background-color: #f5c5c5;
-    padding: 6px 0;
-    font-size: 14px;
-    color: #fff;
-    text-align: center;
-    max-width: 350px;
-    width: 100%;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    font-weight: 200;
-  }
+  background-color: #f5c5c5;
+  padding: 6px 14px;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  width: auto;
+  border-radius: 6px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
   
 /* ✅ 타이머 전체 그룹 */
 .word-timer-group {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 6vh; /* 살짝 위로 */
+  margin-top: -20px; /* 위로 과하게 띄워졌던 부분 조정 */
   color: #3a3020;
-  font-weight: bold;
   text-align: center;
 }
   
 /* ✅ 타이머 숫자 */
 .word-timer-time {
-  font-size: clamp(22px, 5vw, 32px);
+  font-size: clamp(24px, 5vw, 30px);
   font-weight: 600;
-  margin-top: 6px;
+  margin: 6px 0 8px;
+  text-align: center;
+  color: #3a3020;
 }
 
   .timer-display {
@@ -247,7 +247,7 @@
   background: #f9f6f1;
   border-radius: 16px;
   padding: 24px 20px;
-  width: 320px;
+  width: 300px;
   text-align: center;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   font-family: 'Gowun Dodum', sans-serif;
@@ -348,15 +348,17 @@
   font-weight: bold;
   z-index: 999;
 }
-/* 단어 버튼 묶음 */
+/* ✅ 단어 버튼 묶음 */
+
 .word-set {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  margin: 20px auto;
+  margin-top: 20px;    /* 상단 여백 */
+  margin-bottom: 40px; /* 하단 여백 */
   width: 90%;
   max-width: 320px;
-  transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .word-set.fade-in {
@@ -374,7 +376,7 @@
   background: #f5f5f5;
   border: 1.8px solid #ddd;
   border-radius: 10px;
-  padding: 12px 8px;
+  padding: 14px 10px;  /* 살짝 여유 */
   font-size: clamp(14px, 4vw, 16px);
   font-weight: 500;
   color: #333;
@@ -404,35 +406,36 @@
   cursor: not-allowed;
 }
 
-
-/* 전체 레이아웃 */
-.login-container {
+.telepathy-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 5vh 20px; /* 상하 여백을 뷰포트 기준으로 */
+  justify-content: center; /* ✅ 세로 중앙 배치 */
+  min-height: 80vh; /* ✅ 화면 전체 기준으로 높이 설정 */
+  padding: 8vh 0 6vh;   /* ✅ 상하 여백 균등하게 */
+  box-sizing: border-box;
+}
+/* ✅ 제목 */
+.title {
+  font-family: "Judson", serif;
+  font-size: clamp(34px, 6vw, 42px);
+  color: #2f241a;
+  font-weight: 700;
+  margin: 0 0 10px;
 }
 
-/* 서브 타이틀 */
+/* ✅ 부제목 */
 .subtitle {
-  margin: 10px 0 16px;
+  margin: 6px 0 20px;
   text-align: center;
-  font-size: clamp(15px, 3.6vw, 18px);
-  color: #666;
+  font-size: clamp(15px, 3.5vw, 18px);
+  color: #6a5c4a;
   line-height: 1.4;
+  opacity: 0.85;
+  max-width: 80%;
 }
 
-.focus-hours {
-  position: fixed;          /* ✅ 항상 고정 */
-  bottom: 80px;             /* 화면 하단에서 20px 위 */
-  left: 50%;                /* 가운데 정렬 */
-  transform: translateX(-50%);
-  font-size: 14px;
-  padding: 6px 14px;
-  z-index: 99;  
-  color: #757575;
-}
+
 
 footer {
   font-size: 12px;
@@ -455,27 +458,100 @@ footer div {
   margin-top: 10px;
 }
 
+/* ✅ Telepathy 집중 운영시간 (하단 중앙 고정) */
+.focus-hours {
+  position: fixed;
+  bottom: 100px; /* ✅ PC에서는 footer 위로 띄우기 */
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Gowun Dodum", sans-serif;
+  font-weight: 400;
+  text-align: center;
+  color: #6e5b48;
+  opacity: 0.9;
+  line-height: 1.6;
+  z-index: 90;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
 
-/* 반응형 */
-@media (max-width: 420px) {
+@media (min-width: 1025px) {
+
+  /* 타이머 */
+  .word-timer-time {
+    font-size: clamp(28px, 2vw, 36px);
+  }
+
+  /* 제목 */
   .title {
-    font-size: 38px;
+    font-size: clamp(42px, 3vw, 54px);
   }
-  .word-set {
-    gap: 10px;
-    width: 92%;
+
+  /* 부제목 */
+  .subtitle {
+    font-size: clamp(18px, 1.5vw, 22px);
+    margin-top: 10px;
+    margin-bottom: 28px;
   }
+
+  /* 단어 버튼 */
   .word-btn {
-    padding: 10px;
-    font-size: 14px;
+    font-size: 18px;
+    padding: 16px 14px;
+    border-radius: 12px;
+    width: 160px;
   }
 
-  .word-timer-group {
-    margin-top: 5vh;
+  /* 단어 세트 여백 */
+  .word-set {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    gap: 20px;
   }
 
-  .focus-hours {
-    bottom: 40px;
+  /* footer */
+  footer {
     font-size: 13px;
+    margin-top: 16px;
   }
+
+  /* 제외 */
+  .online-counter,
+  .help-icon,
+  .megaphone-button {
+    transform: scale(1);
+  }
+}
+
+
+/* ✅ 태블릿 (768px ~ 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .focus-hours {
+    bottom: 105px; /* ✅ 기존 55px → 105px */
+    font-size: 13px;
+    color: #6b5847;
+  }
+}
+
+/* ✅ 모바일 (가로 767px 이하) */
+@media (max-width: 767px) {
+  .focus-hours {
+    bottom: 140px; /* ✅ 기존 90px → 140px */
+    font-size: 9px !important;  /* ✅ 기존보다 조금 더 작게 */
+    color: #7d6a58;
+  }
+}
+
+/* ✅ 초소형 모바일 (가로 360px 이하) */
+@media (max-width: 360px) {
+  .focus-hours {
+    bottom: 150px;
+    font-size: 11.6px;
+  }
+}
+
+/* ✅ 강조 포인트 (시간 부분) */
+.focus-hours span {
+  color: #e1b45d;
+  font-weight: 500;
 }

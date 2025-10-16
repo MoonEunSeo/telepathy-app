@@ -175,7 +175,7 @@ export default function WordSetForm({ currentUser }) {
     }
   };
 
-  // ✅ 단어 입력 처리 (SearchBox 스타일 iOS 대응)
+  // ✅ 단어 입력 처리
   const handleWordInputChange = (i, e) => {
     setWords((prev) => {
       const updated = [...prev];
@@ -202,7 +202,7 @@ export default function WordSetForm({ currentUser }) {
     }));
   };
 
-  // ✅ 은행 입력 (iOS 대응)
+  // ✅ 은행명 입력 (iOS 대응)
   const [isBankComposing, setIsBankComposing] = useState(false);
 
   const handleBankChange = (e) => {
@@ -265,28 +265,24 @@ export default function WordSetForm({ currentUser }) {
   // ✅ UI
   return (
     <div className="wordset-section">
-      <h2>✨ 단어세트를 만들어볼까요?</h2>
+      <h3>✨ 단어세트를 만들어볼까요?</h3>
 
       {/* 단어 입력 구역 */}
       <div className="word-inputs">
         {words.map((w, i) => (
-          <div key={i} className="mb-3 search-box">
+          <div key={i} className="mb-3">
             <input
               type="text"
-              className="search-input"
+              className="wordset-input"
               placeholder={`단어 ${i + 1} (한글 1~6자)`}
               value={w}
               onChange={(e) => handleWordInputChange(i, e)}
               onCompositionStart={handleCompositionStart}
               onCompositionEnd={(e) => handleCompositionEnd(i, e)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && e.preventDefault()
-              }
+              onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
             />
             {errors[`w${i}`] && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors[`w${i}`]}
-              </p>
+              <p className="text-red-500 text-xs mt-1">{errors[`w${i}`]}</p>
             )}
           </div>
         ))}
@@ -294,32 +290,39 @@ export default function WordSetForm({ currentUser }) {
 
       {/* 환불 계좌 입력 구역 */}
       <div className="word-inputs">
-        <h3>💸 환불계좌 정보</h3>
-        <div className="mb-3 search-box">
-            <input
-            type="text"
-            className="search-input"
-            placeholder="은행명 (예: 국민)"
-            value={refundBank}
-            onChange={handleBankChange}
-            onCompositionStart={handleBankCompositionStart}
-            onCompositionEnd={handleBankCompositionEnd}
-            inputMode="text"
-            lang="ko"
-            autoCapitalize="off"
-            autoCorrect="off"
-          />
-            <input
-             type="text"
-             className="search-input"
-             placeholder="계좌번호 (숫자만)"
-             value={refundAccount}
-             onChange={(e) => handleAccountChange(e.target.value)}
-             inputMode="numeric"
-             pattern="\d*"
-             autoComplete="off"
-           />
-        </div>
+  <h3>💸 환불계좌 정보</h3>
+  <div className="refund-section">
+    <select
+      className="wordset-select"
+      value={refundBank}
+      onChange={(e) => setRefundBank(e.target.value)}
+    >
+      <option value="">은행 선택</option>
+      <option value="국민은행">국민은행</option>
+      <option value="신한은행">신한은행</option>
+      <option value="우리은행">우리은행</option>
+      <option value="하나은행">하나은행</option>
+      <option value="기업은행">기업은행</option>
+      <option value="농협은행">농협은행</option>
+      <option value="카카오뱅크">카카오뱅크</option>
+      <option value="케이뱅크">케이뱅크</option>
+      <option value="SC제일은행">SC제일은행</option>
+      <option value="토스뱅크">토스뱅크</option>
+      <option value="새마을금고">새마을금고</option>
+      <option value="신협">신협</option>
+    </select>
+    <input
+      type="text"
+      className="wordset-input"
+      placeholder="계좌번호 (숫자만)"
+      value={refundAccount}
+      onChange={(e) => handleAccountChange(e.target.value)}
+      inputMode="numeric"
+      pattern="\d*"
+      autoComplete="off"
+    />
+  </div>
+
         <div style={{ color: "red", fontSize: 12 }}>
           {errors.bank || errors.account || ""}
         </div>

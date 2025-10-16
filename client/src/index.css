@@ -5,18 +5,21 @@ body {
   background-color: #f9f6f1;
 }
 
+
+/* 수정 */
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 100px;
+  margin-top: 120px;
 }
 
+
 .auth-input {
-  width: 350px;
+  width: 300px;
   padding: 12px;
   font-size: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   border-radius: 6px;
   border: 1px solid #ccc;
   box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
@@ -24,10 +27,10 @@ body {
 }
 
 .login-button {
-  width: 350px;
+  width: 300px;
   padding: 12px;
   font-size: 16px;
-  margin-bottom: 10px;
+
   border-radius: 6px;
   border: 1px solid #ccc;
   box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
@@ -77,9 +80,10 @@ body {
 
 .modal-content {
   background-color: white;
-  padding: 40px;
+  padding: 20px;
   border-radius: 10px;
-  width: 350px;
+  width: 300px !important;
+  max-width: 85% !important;
   font-family: 'Gowun Dodum';
   display: flex;
   flex-direction: column;
@@ -91,8 +95,8 @@ body {
 .next-button {
   background-color: black;
   color: white;
-  font-size: 16px;
-  padding: 12px 20px;       /* ✅ 높이 맞춤 */
+  font-size: 15px;
+  padding: 12px 20px;     
   margin: 10px 5px;
   border: none;
   border-radius: 4px;
@@ -124,7 +128,7 @@ body {
 .check-button {
   height: 48px;
   padding: 12px;
-  font-size: 14px;
+  font-size: 18px;
   border-radius: 6px;
   border: none;
   background-color: black;

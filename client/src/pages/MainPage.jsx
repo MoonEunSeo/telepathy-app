@@ -997,7 +997,7 @@ useEffect(() => {
       )}
 
   
-        <div className="login-container">
+        <div className="telepathy-container">
           <div className="timer-display">{remaining}초</div>
           <h1 className="title">Telepathy</h1>
           <p className="subtitle">같은 단어를 선택한 사람과 연결돼요.</p>
