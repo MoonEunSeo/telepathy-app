@@ -201,9 +201,20 @@ export default function WordSetForm({ currentUser }) {
     }));
   };
 
-  // ✅ 은행명 / 계좌 입력
-  const handleBankChange = (v) => {
-    const filtered = v.replace(/[^가-힣A-Za-z\s]/g, "").slice(0, 20);
+  // ✅ 은행 입력 (iOS 대응)
+  const [isBankComposing, setIsBankComposing] = useState(false);
+
+  const handleBankChange = (e) => {
+    if (isBankComposing) return;
+    const filtered = e.target.value.replace(/[^가-힣A-Za-z\s]/g, "").slice(0, 20);
+    setRefundBank(filtered);
+    setErrors((p) => ({ ...p, bank: validateField("bank", filtered) }));
+  };
+
+  const handleBankCompositionStart = () => setIsBankComposing(true);
+  const handleBankCompositionEnd = (e) => {
+    setIsBankComposing(false);
+    const filtered = e.target.value.replace(/[^가-힣A-Za-z\s]/g, "").slice(0, 20);
     setRefundBank(filtered);
     setErrors((p) => ({ ...p, bank: validateField("bank", filtered) }));
   };
@@ -288,7 +299,9 @@ export default function WordSetForm({ currentUser }) {
             type="text"
             placeholder="은행명 (예: 국민)"
             value={refundBank}
-            onChange={(e) => handleBankChange(e.target.value)}
+            onChange={handleBankChange}
+            onCompositionStart={handleBankCompositionStart}
+            onCompositionEnd={handleBankCompositionEnd}
           />
           <input
             type="text"
