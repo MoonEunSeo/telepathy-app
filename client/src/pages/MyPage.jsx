@@ -75,8 +75,8 @@ const MyPage = () => {
     navigate('/mywords');
   };
 
-  const handleChangeProfile = () => {
-    setShowNotSupportedModal(true);
+  const handlePaymentInquiry = () => {
+    window.open("https://forms.gle/8w9meqD1YnP9qjnM8", "_blank");
   };
 
   const handleChangePassword = () => {
@@ -159,9 +159,9 @@ const MyPage = () => {
       <div className="mypage-section">
         <p className="mypage-section-title">| 계정 |</p>
         <div className="mypage-button-group">
-          <button onClick={handleChangeProfile} className="mypage-button">
-            프로필 사진 변경
-          </button>
+          <button onClick={handlePaymentInquiry} className="mypage-button">
+        결제 문의
+      </button>
           <button onClick={handleChangePassword} className="mypage-button">
             비밀번호 변경
           </button>

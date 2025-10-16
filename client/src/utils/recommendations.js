@@ -112,10 +112,10 @@ export const recommendations = [
     topic: "신체부위1",
     words: ["머리", "어깨", "무릎", "발"]
   },
-  {
+  /*{
     topic: "신체부위2",
     words: ["가슴", "엉덩이", "골반", "다리"]
-  },
+  },*/
   {
     topic: "신체부위3",
     words: ["팔꿈치", "종아리", "손가락", "귀"]
@@ -220,10 +220,10 @@ export const recommendations = [
     topic: "놀이공원2",
     words: ["바이킹", "롤러코스터", "관람차", "후룸라이드"]
   },
-  {
+  /*{
     topic: "언더웨어",
     words: ["캘빈클라인", "유니클로", "게스", "아디다스"]
-  },
+  },*/
   {
     topic: "지금뭐해",
     words: ["누워있어", "잠이안와", "배고파", "졸려"]
@@ -248,10 +248,10 @@ export const recommendations = [
     topic: "향수",
     words: ["플로럴", "우디", "오리엔탈", "프레쉬"]
   },
-  {
+  /*{
     topic: "낮밤",
     words: ["낮져밤이", "낮이밤져", "낮이밤이", "낮져밤져"]
-  },
+  },*/
   {
     topic: "MBTI1",
     words: ["ENXX", "INXX", "ISXX", "ESXX"]

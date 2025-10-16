@@ -689,27 +689,30 @@ const LikesPage = () => {
   if (status === "idle") {
     return (
       <div className="like-container">
-        <h1 className="like-title">
-          <span style={{ color: "#d18f92" }}>Tele</span>
-          <span style={{ color: "#3a3020" }}>pathy</span>
-        </h1>
-        <p className="like-description">
-          텔레파시의 단어세트를 직접 만들어보세요!
-          <br />
-          당신이 원하는 단어로 연결되는 짜릿함을 느껴보세요💫
-        </p>
-        <button onClick={handleDepositClick} className="like-button">
-          계좌이체하기 💸
-        </button>
-        <p style={{
-        color: "red",
-        fontSize: "0.9rem",
-        marginTop: "8px",
-        lineHeight: "1.4",
-      }}>
-        ⚠️ 입금자명(실명)과 결제 정보의 이름 또는 송금 금액이 일치하지 않으면<br />
-        결제가 자동으로 승인되지 않으며, 환불 대상에서도 제외됩니다.
-      </p>
+        <h1 className="like-title">Telepathy</h1>
+<p className="like-description">
+  텔레파시에 등장하는 단어들을 직접 만들어보세요!<br />
+  당신이 원하는 단어로 연결되는 짜릿함을 느껴보세요💫
+</p>
+<button onClick={handleDepositClick} className="like-button">
+  단어세트 직접 만들기 🐈‍⬛
+</button>
+
+<p className="like-info">
+  1,000원에 4개 단어 1세트를 추가 할 수 있습니다.<br /><br />
+  부적절한 단어(종교,정치,19,욕설 등)는 검토 후 반영이 <br />
+  거부 될 수 있으며 결제 금액은 입력하신 계좌로 환불됩니다.<br /><br />
+  텔레파시 반영까지는 최대 24시간이 소요됩니다.
+</p>
+
+<p className="like-warning">
+  ⚠️ 입금자명(실명)과 결제 정보가 일치하지 않으면<br />
+  결제가 승인되지 않으며 환불 대상에서도 제외됩니다.
+</p>
+
+<p className="like-info">
+결제 오류가 발생했나요? 마이페이지 > 결제문의에서 알려주세요!🙏
+</p>
 
         {/* ✅ 실명 입력 모달 */}
         {showNameModal && (
@@ -755,77 +758,93 @@ const LikesPage = () => {
     );
   }
     
-
-  //💬 [2] 입금 안내 
-  if (status === "pending") {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile)
-      return (
-        <div className="like-container">
-          <h3>토스 앱으로 이동 중입니다... 📱</h3>
-          <p>입금 후 이 페이지로 돌아오시면 자동으로 확인이 시작돼요.</p>
-        </div>
-      );
-
+// 💬 [2] 입금 안내 
+if (status === "pending") {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile)
     return (
-      <div className="like-container">
-        <h3>입금 안내 💸</h3>
-        <p>📱 휴대폰 토스 앱으로 아래 QR을 스캔해주세요.</p>
-        <p style={{ color: "red" }}>
-          ⚠️ 테스트 중 기능이에요. 실제 입금하지 마세요!
+      <div
+        className="like-container"
+        style={{ justifyContent: "center", minHeight: "100vh" }}
+      >
+        <h3 className="deposit-title">토스 앱으로 이동 중입니다... 📱</h3>
+        <p className="deposit-text">
+          입금 후 이 페이지로 돌아오시면 자동으로 확인이 시작돼요.
         </p>
-        <img src={tossQr} alt="Toss QR" style={{ width: "300px", marginTop: "10px" }} />
-        <p style={{ marginTop: "8px" }}>케이뱅크 100-121-028199 (텔레파시)</p>
-        <button onClick={handleCheckDeposit} className="like-button" style={{ marginTop: "20px" }}>
-          입금 확인하기 ⏱
-        </button>
       </div>
     );
-  }
 
-  //💬 [3] 입금 확인 중
-  if (status === "checking" && timer > 0) {
-    return (
-      <div className="like-container">
-        <h3>입금 확인 중입니다 ⏳</h3>
-        <p style={{ marginTop: "10px" }}>{timer}초 남았습니다</p>
+  return (
+    <div className="like-container">
+      <h3 className="deposit-title">입금 안내</h3>
+      <p className="deposit-text">📱 휴대폰 토스 앱으로 아래 QR을 스캔해주세요.</p>
+      <p className="deposit-warning">⚠️ 테스트 중 기능이에요. 실제 입금하지 마세요!</p>
+
+      <div className="qr-card">
+        <img src={tossQr} alt="Toss QR" />
       </div>
-    );
-  }
 
-  // 💬 [4] 입금 완료 
-  if (status === "paid") {
-    return (
-      <>
-        {showSuccessModal && (
-          <div className="modal-overlay">
-            <div className="modal-box">
-              <h3>입금이 확인되었어요! 🎉</h3>
-              <p>나만의 단어 세트를<br />만들어볼까요?</p>
-              <button
-                onClick={() => (window.location.href = "/wordset")}
-                className="modal-button"
-              >
-                만들러 가기 ✨
-              </button>
-            </div>
+      <p className="deposit-account">케이뱅크 100-121-028199 (텔레파시)</p>
+
+      <button
+        onClick={handleCheckDeposit}
+        className="deposit-button"
+      >
+        입금 확인하기 ⏱
+      </button>
+    </div>
+  );
+}
+
+// 💬 [3] 입금 확인 중
+if (status === "checking" && timer > 0) {
+  return (
+    <div className="deposit-container">
+      <h3 className="deposit-title">입금 확인 중입니다 ⏳</h3>
+      <p className="deposit-text">{timer}초 남았습니다</p>
+    </div>
+  );
+}
+
+// 💬 [4] 입금 완료 
+if (status === "paid") {
+  return (
+    <>
+      {showSuccessModal && (
+        <div className="modal-overlay">
+          <div className="qr-card">
+            <h3 className="deposit-title">입금이 확인되었어요! 🎉</h3>
+            <p className="deposit-text">
+              나만의 단어 세트를<br />만들어볼까요?
+            </p>
+            <button
+              onClick={() => (window.location.href = "/wordset")}
+              className="deposit-button"
+            >
+              만들러 가기 ✨
+            </button>
           </div>
-        )}
-      </>
-    );
-  }
+        </div>
+      )}
+    </>
+  );
+}
 
-  // 💬 [5] 만료
-  if (status === "expired") {
-    return (
-      <div className="like-container">
-        <h3>입금 시간이 만료되었어요 😢</h3>
-        <button onClick={() => setStatus("idle")} className="like-button" style={{ marginTop: "20px" }}>
-          다시 시도하기
-        </button>
-      </div>
-    );
-  }
+// 💬 [5] 만료
+if (status === "expired") {
+  return (
+    <div className="deposit-container">
+      <h3 className="deposit-title">입금 시간이 만료되었어요 😢</h3>
+      <button
+        onClick={() => setStatus("idle")}
+        className="deposit-button"
+      >
+        다시 시도하기
+      </button>
+    </div>
+  );
+}
+
 };
 
 

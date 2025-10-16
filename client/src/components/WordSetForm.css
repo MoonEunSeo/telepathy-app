@@ -124,3 +124,117 @@
     transform: translateY(0);
   }
 }
+
+
+/* ========================= */
+/* 💸 입금 안내 페이지 스타일 */
+/* ========================= */
+
+.deposit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #fdfaf6;
+  font-family: "Gowun Dodum", sans-serif;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* 제목 */
+.deposit-title {
+  font-family: "Judson", serif;
+  font-size: 32px;
+  color: #3a2d23;
+  margin-bottom: 16px;
+  position: relative;
+}
+.deposit-title::after {
+  content: "💸";
+  margin-left: 6px;
+}
+
+/* 안내 문구 */
+.deposit-text {
+  font-size: 16px;
+  color: #5b5146;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+/* 경고문 */
+.deposit-warning {
+  font-size: 15px;
+  color: #c94f4f;
+  font-weight: 600;
+  margin-bottom: 26px;
+  background: rgba(255, 225, 225, 0.6);
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #f0bdbd;
+  display: inline-block;
+}
+
+/* QR 카드 */
+.qr-card {
+  background: #fff;
+  padding: 24px 24px 16px;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+.qr-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+.qr-card img {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+}
+
+/* 계좌 정보 */
+.deposit-account {
+  font-size: 15px;
+  color: #3a2d23;
+  margin-top: 14px;
+  font-weight: 500;
+}
+
+/* 입금 확인 버튼 */
+.deposit-button {
+  background: linear-gradient(90deg, #3a2d23 0%, #000 100%);
+  color: white;
+  padding: 14px 70px;
+  border: none;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  margin-top: 30px;
+}
+.deposit-button:hover {
+  background: linear-gradient(90deg, #4a3a25 0%, #1b1715 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 등장 애니메이션 */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.deposit-container > * {
+  opacity: 0;
+  animation: fadeUp 1s ease forwards;
+}
+.deposit-title { animation-delay: 0.1s; }
+.deposit-text { animation-delay: 0.25s; }
+.deposit-warning { animation-delay: 0.4s; }
+.qr-card { animation-delay: 0.6s; }
+.deposit-account { animation-delay: 0.8s; }
+.deposit-button { animation-delay: 1s; }
