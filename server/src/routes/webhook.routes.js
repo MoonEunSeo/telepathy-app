@@ -121,20 +121,37 @@ if (finalAmount) {
 
     if (matched) {
       console.log(`💰 입금자명 일치 → user=${matched.user_id}, depositor=${finalSender}`);
-
+    
       const { error: updateErr } = await supabase
         .from('sp_payments')
         .update({
           status: 'paid',
           confirmed_at: new Date().toISOString(),
+          actual_depositor: finalSender, // ✅ 실제 입금자명 기록
         })
         .eq('id', matched.id);
-
+    
       if (updateErr) throw updateErr;
       console.log(`✅ 결제 ${matched.id} → paid 상태로 업데이트 완료`);
     } else {
       console.warn(`🚨 입금자명 불일치: sender=${finalSender}, 금액=${finalAmount}`);
-
+    
+      // ✅ 불일치하더라도, actual_depositor 기록 남기기
+      const pendingPayment = payments[0];
+      if (pendingPayment) {
+        const { error: mismatchUpdateErr } = await supabase
+          .from('sp_payments')
+          .update({
+            actual_depositor: finalSender, // ✅ 실제 입금자명 저장
+            mismatch_flag: true,           // ✅ 불일치 여부 표시 (선택사항)
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', pendingPayment.id);
+    
+        if (mismatchUpdateErr) console.error("⚠️ 불일치 입금자 기록 실패:", mismatchUpdateErr.message);
+        else console.log(`📌 불일치 입금자 기록 완료 (${finalSender})`);
+      }
+    
       // ⛔️ 이름 불일치 로그 남기기
       await supabase.from('payment_webhooks').insert([
         {

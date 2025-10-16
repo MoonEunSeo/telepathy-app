@@ -701,6 +701,15 @@ const LikesPage = () => {
         <button onClick={handleDepositClick} className="like-button">
           계좌이체하기 💸
         </button>
+        <p style={{
+        color: "red",
+        fontSize: "0.9rem",
+        marginTop: "8px",
+        lineHeight: "1.4",
+      }}>
+        ⚠️ 입금자명(실명)과 결제 정보의 이름 또는 송금 금액이 일치하지 않으면<br />
+        결제가 자동으로 승인되지 않으며, 환불 대상에서도 제외됩니다.
+      </p>
 
         {/* ✅ 실명 입력 모달 */}
         {showNameModal && (
