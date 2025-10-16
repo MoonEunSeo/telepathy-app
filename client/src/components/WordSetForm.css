@@ -62,46 +62,6 @@
   font-size: 12px;
 }
 
-/* ✅ 환불계좌 입력 섹션 */
-.account-section {
-  margin-top: 20px;
-}
-
-.account-section h3 {
-  font-size: 20px;
-  margin-bottom: 18px;
-  color: #3a3020;
-}
-
-.account-inputs {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 25px;
-}
-
-.account-inputs input {
-  border: 1.5px solid #EBC78D;
-  border-radius: 10px;
-  padding: 10px 14px;
-  width: 180px;
-  font-family: "Gowun Dodum";
-  background-color: #FFF8E7;
-  color: #4B392A;
-  transition: all 0.2s ease;
-}
-
-.account-inputs input::placeholder {
-  color: #C2A874;
-}
-
-.account-inputs input:focus {
-  border-color: #D9A84E;
-  box-shadow: 0 0 6px rgba(233, 190, 90, 0.4);
-  background-color: #FFF2D8;
-}
-
 /* ✅ 저장 버튼 */
 .save-button {
   background-color: #ffb347;
@@ -133,9 +93,6 @@
     border-radius: 16px;
   }
 
-  .account-inputs input {
-    width: 100%;
-  }
 
   .save-button {
     width: 100%;

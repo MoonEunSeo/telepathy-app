@@ -272,7 +272,7 @@ export default function WordSetForm({ currentUser }) {
           <div key={i} className="mb-3 search-box">
             <input
               type="text"
-              className="search-input w-full rounded-xl border border-[#F5EAD5] bg-[#FFFBF6] px-4 py-3 text-center text-[#5A4633] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#EBC78D] placeholder-[#C6B49E] transition"
+              className="search-input"
               placeholder={`단어 ${i + 1} (한글 1~6자)`}
               value={w}
               onChange={(e) => handleWordInputChange(i, e)}
@@ -295,20 +295,29 @@ export default function WordSetForm({ currentUser }) {
       <div className="account-section">
         <h3>💸 환불계좌 정보</h3>
         <div className="account-inputs">
-          <input
+            <input
             type="text"
+            className="account-input"
             placeholder="은행명 (예: 국민)"
             value={refundBank}
             onChange={handleBankChange}
             onCompositionStart={handleBankCompositionStart}
             onCompositionEnd={handleBankCompositionEnd}
+            inputMode="text"
+            lang="ko"
+            autoCapitalize="off"
+            autoCorrect="off"
           />
-          <input
-            type="text"
-            placeholder="계좌번호 (숫자만)"
-            value={refundAccount}
-            onChange={(e) => handleAccountChange(e.target.value)}
-          />
+            <input
+             type="text"
+             className="account-input"
+             placeholder="계좌번호 (숫자만)"
+             value={refundAccount}
+             onChange={(e) => handleAccountChange(e.target.value)}
+             inputMode="numeric"
+             pattern="\d*"
+             autoComplete="off"
+           />
         </div>
         <div style={{ color: "red", fontSize: 12 }}>
           {errors.bank || errors.account || ""}
