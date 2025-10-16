@@ -702,7 +702,7 @@ const LikesPage = () => {
           계좌이체하기 💸
         </button>
 
-        // ✅ 실명 입력 모달
+        {/* ✅ 실명 입력 모달 */}
         {showNameModal && (
           <div className="modal-overlay">
             <div className="modal-box">
@@ -726,7 +726,7 @@ const LikesPage = () => {
           </div>
         )}
 
-        // ✅ 내가 만든 단어세트 구역 
+         {/* ✅ 내가만든 단어세트구역 */}
         {myWordSets.length > 0 && (
           <div className="wordset-section">
             <h4 className="wordset-title">내가 신청한 단어세트</h4>
