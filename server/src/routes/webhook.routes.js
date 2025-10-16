@@ -75,21 +75,23 @@ router.post('/', async (req, res) => {
     console.log(' ├─ Amount:', finalAmount ? finalAmount + '원' : '(없음)');
     console.log(' └─ Bank:', bank);
 
-    // ✅ webhook 로그 저장
-    const safeAmount = Number.isFinite(finalAmount) ? finalAmount : null;
+// ✅ webhook 로그 저장
+const safeAmount = Number.isFinite(finalAmount) ? finalAmount : null;
 
-    await supabase.from('payment_webhooks').insert([{
-      app,
-      title,
-      text: rawText,
-      parsed_sender: finalSender || null,
-      parsed_amount: safeAmount ?? null,
-      parsed_bank: bank || null,
-      raw_body: JSON.stringify(req.body),
-    }]);
+const { error: webhookErr } = await supabase.from('payment_webhooks').insert([
+  {
+    app,
+    title,
+    text: rawText,
+    parsed_sender: finalSender || null,
+    parsed_amount: safeAmount ?? null,
+    parsed_bank: bank || null,
+    raw_body: JSON.stringify(req.body),
+  },
+]);
 
-    if (webhookErr) throw webhookErr;
-    console.log('✅ webhook 로그 저장 완료');
+if (webhookErr) throw webhookErr;
+console.log('✅ webhook 로그 저장 완료');
 
 // ✅ 매칭된 결제 찾기
 if (finalAmount) {
