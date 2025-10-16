@@ -500,7 +500,7 @@ import tossQr from "../assets/toss_qr.jpg";
 const LikesPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [status, setStatus] = useState("idle"); // idle → pending → checking → paid → expired
-  const [timer, setTimer] = useState(20);
+  const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
@@ -634,10 +634,10 @@ const LikesPage = () => {
   // ✅ [6] PC에서 입금확인 버튼 클릭
   const handleCheckDeposit = () => {
     setStatus("checking");
-    setTimer(20);
+    setTimer(60);
   };
 
-  // ✅ [7] 20초 동안 결제 상태 주기적 확인 
+  // ✅ [7] 60초 동안 결제 상태 주기적 확인 
   useEffect(() => {
     if (status !== "checking" || !currentUser) return;
 
@@ -662,7 +662,7 @@ const LikesPage = () => {
     // 타이머 만료 처리
     const timeout = setTimeout(() => {
       setStatus((prev) => (prev === "paid" ? prev : "expired"));
-    }, 20000);
+    }, 60000);
 
     return () => {
       clearInterval(interval);
@@ -711,7 +711,7 @@ const LikesPage = () => {
 </p>
 
 <p className="like-info">
-결제 오류가 발생했나요? 마이페이지 > 결제문의에서 알려주세요!🙏
+결제 오류가 발생했나요? 마이페이지 → 결제문의에서 알려주세요!🙏
 </p>
 
         {/* ✅ 실명 입력 모달 */}
@@ -778,8 +778,8 @@ if (status === "pending") {
     <div className="like-container">
       <h3 className="deposit-title">입금 안내</h3>
       <p className="deposit-text">📱 휴대폰 토스 앱으로 아래 QR을 스캔해주세요.</p>
-      <p className="deposit-warning">⚠️ 테스트 중 기능이에요. 실제 입금하지 마세요!</p>
-
+      {/* <p className="deposit-warning">⚠️ 테스트 중 기능이에요. 실제 입금하지 마세요!</p>*/}
+      <p className="deposit-warning">⚠️아래 입금 확인하기 버튼을 누르신 후 60초 안에 결제를 완료해주세요.</p>
       <div className="qr-card">
         <img src={tossQr} alt="Toss QR" />
       </div>
@@ -792,6 +792,10 @@ if (status === "pending") {
       >
         입금 확인하기 ⏱
       </button>
+
+            <p className="like-info">
+      결제 오류가 발생했나요? 마이페이지 → 결제문의에서 알려주세요!🙏
+      </p>
     </div>
   );
 }

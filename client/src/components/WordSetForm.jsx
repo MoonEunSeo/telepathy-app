@@ -251,7 +251,7 @@ export default function WordSetForm({ currentUser }) {
       );
 
       if (res.data?.ok) {
-        alert("저장되었습니다 🌷");
+        alert("감사합니다! 24시간 안에 반영될거예요 😎");
         navigate("/likes");
       } else {
         alert("⚠️ 저장 실패: " + (res.data?.message || "알 수 없는 이유"));
