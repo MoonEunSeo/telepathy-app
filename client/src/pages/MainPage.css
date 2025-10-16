@@ -11,21 +11,25 @@
     font-weight: 200;
   }
   
-  .word-timer-group {
-    position: absolute;
-    color: #3a3020;
-    text-align: center;
-    font-weight: bold;
-    max-width: 350px;
-    width: 100%;
-    border-radius: 6px;
-  }
+/* ✅ 타이머 전체 그룹 */
+.word-timer-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6vh; /* 살짝 위로 */
+  color: #3a3020;
+  font-weight: bold;
+  text-align: center;
+}
   
-  .word-timer-time {
-    margin-top: 4px;
-    font-size: 24px;
-  }
-
+/* ✅ 타이머 숫자 */
+.word-timer-time {
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 600;
+  margin-top: 6px;
+}
 
   .timer-display {
     font-size: 24px;   /* ✅ 폰트 크기 키우기 */
@@ -464,5 +468,14 @@ footer div {
   .word-btn {
     padding: 10px;
     font-size: 14px;
+  }
+
+  .word-timer-group {
+    margin-top: 5vh;
+  }
+
+  .focus-hours {
+    bottom: 40px;
+    font-size: 13px;
   }
 }

@@ -138,6 +138,7 @@ export default function WordSetForm({ currentUser }) {
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./WordSetForm.css";
 
 const API_BASE = import.meta.env.VITE_REALSITE;
 
@@ -292,12 +293,12 @@ export default function WordSetForm({ currentUser }) {
       </div>
 
       {/* 환불 계좌 입력 구역 */}
-      <div className="account-section">
+      <div className="word-inputs">
         <h3>💸 환불계좌 정보</h3>
-        <div className="account-inputs">
+        <div className="mb-3 search-box">
             <input
             type="text"
-            className="account-input"
+            className="search-input"
             placeholder="은행명 (예: 국민)"
             value={refundBank}
             onChange={handleBankChange}
@@ -310,7 +311,7 @@ export default function WordSetForm({ currentUser }) {
           />
             <input
              type="text"
-             className="account-input"
+             className="search-input"
              placeholder="계좌번호 (숫자만)"
              value={refundAccount}
              onChange={(e) => handleAccountChange(e.target.value)}
