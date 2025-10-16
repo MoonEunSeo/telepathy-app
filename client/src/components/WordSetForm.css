@@ -1,52 +1,4 @@
-.wordset-select {
-  flex: 1;
-  border: 1.5px solid #EBC78D;
-  border-radius: 12px;
-  padding: 12px 14px;
-  background-color: #FFF8E7;
-  color: #4B392A;
-  font-size: 16px;
-  font-family: "Gowun Dodum";
-  text-align: center;
-  transition: all 0.2s ease;
-  appearance: none; /* 기본 화살표 제거 */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23C2A874' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
 
-/* ✅ 단어세트 입력 필드 전용 */
-.wordset-input {
-  width: 100%;
-  border: 1.5px solid #EBC78D;
-  border-radius: 12px;
-  padding: 12px 16px;
-  background-color: #FFF8E7;
-  text-align: center;
-  color: #4B392A;
-  font-size: 16px;
-  font-family: "Gowun Dodum";
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-.wordset-input::placeholder {
-  color: #C2A874;
-}
-
-.wordset-input:focus {
-  background-color: #FFF2D8;
-  border-color: #D9A84E;
-  box-shadow: 0 0 6px rgba(233, 190, 90, 0.5);
-  outline: none;
-}
-
-
-/* ✅ 에러 문구 */
-.word-inputs p {
-  margin-top: 4px;
-  color: #d24b4b;
-  font-size: 12px;
-}
 
 /* ✅ 저장 버튼 */
 .save-button {
@@ -85,7 +37,7 @@
 }
 
 /* ✅ 은행 선택 드롭다운 */
-.wordset-select {
+.refund-section .wordset-select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
