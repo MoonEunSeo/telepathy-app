@@ -235,6 +235,7 @@ router.post("/create", async (req, res) => {
         {
           user_id,
           name,
+          expected_depositor: name, // ✅ 이 사람 이름으로 입금될 예정
           amount,
           status: "pending",
           created_at: new Date().toISOString(),

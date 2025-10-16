@@ -78,58 +78,86 @@ router.post('/', async (req, res) => {
     // ✅ webhook 로그 저장
     const safeAmount = Number.isFinite(finalAmount) ? finalAmount : null;
 
-    const { error: webhookErr } = await supabase.from('payment_webhooks').insert([{
+    await supabase.from('payment_webhooks').insert([{
       app,
       title,
       text: rawText,
       parsed_sender: finalSender || null,
       parsed_amount: safeAmount ?? null,
       parsed_bank: bank || null,
-      raw_body: req.body,
+      raw_body: JSON.stringify(req.body),
     }]);
 
     if (webhookErr) throw webhookErr;
     console.log('✅ webhook 로그 저장 완료');
 
-    // ✅ 매칭된 결제 찾기
-    if (finalAmount) {
-      const { data: payments, error: selectErr } = await supabase
-        .from('sp_payments')
-        .select('*')
-        .eq('status', 'pending')
-        .eq('amount', finalAmount)
-        .order('created_at', { ascending: false })
-        .limit(1);
+// ✅ 매칭된 결제 찾기
+if (finalAmount) {
+  const { data: payments, error: selectErr } = await supabase
+    .from('sp_payments')
+    .select('*')
+    .eq('status', 'pending')
+    .eq('amount', finalAmount)
+    .order('created_at', { ascending: false })
+    .limit(5); // 동일 금액 여러명 대비
 
-      if (selectErr) throw selectErr;
+  if (selectErr) throw selectErr;
 
-      if (payments?.length > 0) {
-        const payment = payments[0];
-        console.log(`💰 매칭된 결제 발견: user=${payment.user_id} (${amount}원)`);
+  if (payments?.length > 0) {
+    let matched = null;
 
-        const { error: updateErr } = await supabase
-          .from('sp_payments')
-          .update({
-            status: 'paid',
-            confirmed_at: new Date().toISOString(),
-          })
-          .eq('id', payment.id);
+    // ✅ 입금자명 비교 (expected_depositor 기준)
+    for (const p of payments) {
+      const expected = (p.expected_depositor || p.name || '').trim();
+      const actual = (finalSender || '').trim();
 
-        if (updateErr) throw updateErr;
-
-        console.log(`✅ 결제 ${payment.id} → paid 상태로 업데이트 완료`);
-      } else {
-        console.log(`⚠️ 일치하는 pending 결제 없음 (${amount}원)`);
+      if (expected && actual && expected === actual) {
+        matched = p;
+        break;
       }
-    } else {
-      console.log('⚠️ 금액 파싱 실패 →', rawText);
     }
 
-    res.json({ ok: true });
-  } catch (err) {
-    console.error('💥 Webhook 처리 중 오류:', err);
-    res.status(500).json({ ok: false, error: err.message });
+    if (matched) {
+      console.log(`💰 입금자명 일치 → user=${matched.user_id}, depositor=${finalSender}`);
+
+      const { error: updateErr } = await supabase
+        .from('sp_payments')
+        .update({
+          status: 'paid',
+          confirmed_at: new Date().toISOString(),
+        })
+        .eq('id', matched.id);
+
+      if (updateErr) throw updateErr;
+      console.log(`✅ 결제 ${matched.id} → paid 상태로 업데이트 완료`);
+    } else {
+      console.warn(`🚨 입금자명 불일치: sender=${finalSender}, 금액=${finalAmount}`);
+
+      // ⛔️ 이름 불일치 로그 남기기
+      await supabase.from('payment_webhooks').insert([
+        {
+          app,
+          title,
+          text: rawText,
+          parsed_sender: finalSender,
+          parsed_amount: finalAmount,
+          parsed_bank: bank,
+          match_status: 'name_mismatch',
+          created_at: new Date().toISOString(),
+        },
+      ]);
+    }
+  } else {
+    console.log(`⚠️ 일치하는 pending 결제 없음 (${finalAmount}원)`);
   }
-});
+} else {
+  console.log('⚠️ 금액 파싱 실패 →', rawText);
+}
+res.json({ ok: true });
+} catch (err) {
+  console.error('💥 Webhook 처리 중 오류:', err);
+  res.status(500).json({ ok: false, error: err.message });
+}
+}); 
 
 module.exports = router;

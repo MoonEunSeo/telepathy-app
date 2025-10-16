@@ -67,18 +67,17 @@ export default function WordSetPage() {
   // ✅ 정상 사용자라면 단어세트 입력 폼 표시
   return (
     <div className="wordset-page">
-      <h1 className="wordset-title">
-        <span style={{ color: "#d18f92" }}>나만의</span> 단어세트 만들기 ✨
-      </h1>
-      <p className="wordset-description">
-        당신만의 감정을 담은 <br />네 개의 단어를 입력해보세요.
-        <br />
-        동일한 단어를 입력한 사람과의 <br />연결이 시작됩니다 💫
-      </p>
+  <h1 className="wordset-title">
+    <span>나만의</span> 단어세트 만들기 ✨
+  </h1>
+  <p className="wordset-description">
+    당신만의 감정을 담은 네 개의 단어를 입력해보세요. <br />
+    동일한 단어를 입력한 사람과의 연결이 시작됩니다 ✨
+  </p>
 
-      <div style={{ marginTop: "30px" }}>
-        <WordSetForm currentUser={currentUser} />
-      </div>
-    </div>
+  <div className="wordset-card">
+    <WordSetForm currentUser={currentUser} />
+  </div>
+</div>
   );
 }

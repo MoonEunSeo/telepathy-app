@@ -1,19 +1,58 @@
+/* ✅ WordSetPage.css — 원래 구조 복원 */
 .wordset-page {
-    max-width: 400px;
-    margin: 60px auto;
-    text-align: center;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #fdf9f3;
+  text-align: center;
+  padding: 80px 20px; /* 💛 위아래 여백 복원 */
+  box-sizing: border-box;
+}
+
+.wordset-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1e120b;
+  margin-bottom: 12px;
+  font-family: "Gowun Dodum", sans-serif;
+}
+
+.wordset-title span {
+  color: #d18f92;
+}
+
+.wordset-description {
+  font-size: 1rem;
+  color: #5b4636;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  font-family: "Gowun Dodum", sans-serif;
+}
+
+/* ✅ 카드 스타일 (WordSetForm 바깥 감싸는 div에 적용) */
+.wordset-card {
+  background-color: #fffdf9;
+  border-radius: 24px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  padding: 40px 28px;
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+/* ✅ 반응형 */
+@media (max-width: 480px) {
+  .wordset-page {
+    padding: 60px 16px;
   }
-  
-  .wordset-title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    margin-bottom: 10px;
+
+  .wordset-card {
+    padding: 28px 20px;
   }
-  
+
   .wordset-description {
-    font-size: 0.95rem;
-    color: #555;
-    line-height: 1.4;
+    margin-bottom: 28px;
   }
-  
+}
