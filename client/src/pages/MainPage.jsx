@@ -1043,7 +1043,7 @@ useEffect(() => {
           )}
   
           <div className="focus-hours" aria-live="polite">
-            🕗 텔레파시 집중 운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
+           텔레파시 집중운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
           </div>
           <footer>
   <button onClick={() => setShowBizInfo(!showBizInfo)}>
