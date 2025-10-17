@@ -682,6 +682,8 @@ import { useWordSession } from '../contexts/WordSessionContext';
 
 import { toast } from 'react-toastify';
 
+
+
 export default function ChatPage() {
   const navigate = useNavigate();
   const {
@@ -887,103 +889,110 @@ const endCurrentSession = async () => {
       </div>
     ));
 
-  return (
-    <div className="chat-container">
-      <div className="chat-header">
-        <div className="chat-title">채팅방 ({word})</div>
-        <div className="chat-header-icons">
-          <button
-            className="exit-button"
-            onClick={() => setShowReportModal(true)}
-            title="신고하기"
-          >
-            <AlertTriangle size={22} />
-          </button>
-          <button
-            className="exit-button"
-            onClick={() => setShowExitConfirm(true)}
-          >
-            <LogOut size={20} />
-          </button>
-        </div>
-      </div>
-
-      <div className="chat-messages">
-        <div className="chat-info-banner">
-          <strong>{partnerNickname}님과 같은 단어를 떠올렸어요!</strong>
-          <br />
-          즐거운 대화 되세요.
-        </div>
-        {renderMessages()}
-        {isTyping && (
-          <div className="chat-message other">
-            <div className="chat-typing-indicator typing-dots">
-              <span></span><span></span><span></span>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className="chat-input-container">
-        <input
-          className="chat-input"
-          placeholder="메시지를 입력하세요."
-          value={message}
-          onChange={handleTyping}
-          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-          disabled={chatEnded}
-        />
-        <button
-          className="chat-send-button"
-          onClick={handleSendMessage}
-          disabled={chatEnded}
-        >
-          전송
-        </button>
-      </div>
-
-      {/* ✅ 나가기 확인 모달 */}
-      {showExitConfirm && (
-        <div className="modal-overlay">
-          <div className="chat-ended-modal">
-            <p>정말 나가시겠어요?</p>
-            <div className="modal-buttons">
+    return (
+      <div data-page="chatpage"> {/* 🎃 할로윈 모드용 페이지 식별자 */}
+        <div className="chat-container">
+          {/* 🔹 채팅 헤더 */}
+          <div className="chat-header">
+            <div className="chat-title">채팅방 ({word})</div>
+            <div className="chat-header-icons">
               <button
-                className="exit-button-text confirm"
-                onClick={handleExitChat}
+                className="exit-button"
+                onClick={() => setShowReportModal(true)}
+                title="신고하기"
               >
-                네, 나갈래요
+                <AlertTriangle size={22} />
               </button>
               <button
-                className="exit-button-text cancel"
-                onClick={() => setShowExitConfirm(false)}
+                className="exit-button"
+                onClick={() => setShowExitConfirm(true)}
               >
-                아니요
+                <LogOut size={20} />
               </button>
             </div>
           </div>
-        </div>
-      )}
-
-      {showReportModal && (
-        <ReportModal
-        onClose={() => setShowReportModal(false)}
-        onSubmit={handleSubmitReport}   // 부모(ChatPage)에서 정의한 함수
-      />
-      )}
-
-      {/* ✅ 상대방 종료 알림 */}
-      {chatEnded && (
-        <div className="chat-ended-overlay">
-          <div className="chat-ended-banner">
-            <p>상대방이 대화를 종료했어요.</p>
-            <button className="exit-button-text" onClick={handleExitChat}>
-              나가기
+    
+          {/* 🔹 메시지 영역 */}
+          <div className="chat-messages">
+            <div className="chat-info-banner">
+              <strong>{partnerNickname}님과 같은 단어를 떠올렸어요!</strong>
+              <br />
+              즐거운 대화 되세요.
+            </div>
+            {renderMessages()}
+            {isTyping && (
+              <div className="chat-message other">
+                <div className="chat-typing-indicator typing-dots">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+    
+          {/* 🔹 입력 영역 */}
+          <div className="chat-input-container">
+            <input
+              className="chat-input"
+              placeholder="메시지를 입력하세요."
+              value={message}
+              onChange={handleTyping}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              disabled={chatEnded}
+            />
+            <button
+              className="chat-send-button"
+              onClick={handleSendMessage}
+              disabled={chatEnded}
+            >
+              전송
             </button>
           </div>
+    
+          {/* 🔹 나가기 확인 모달 */}
+          {showExitConfirm && (
+            <div className="modal-overlay">
+              <div className="chat-ended-modal">
+                <p>정말 나가시겠어요?</p>
+                <div className="modal-buttons">
+                  <button
+                    className="exit-button-text confirm"
+                    onClick={handleExitChat}
+                  >
+                    네, 나갈래요
+                  </button>
+                  <button
+                    className="exit-button-text cancel"
+                    onClick={() => setShowExitConfirm(false)}
+                  >
+                    아니요
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+    
+          {/* 🔹 신고 모달 */}
+          {showReportModal && (
+            <ReportModal
+              onClose={() => setShowReportModal(false)}
+              onSubmit={handleSubmitReport}
+            />
+          )}
+    
+          {/* 🔹 상대방 종료 알림 */}
+          {chatEnded && (
+            <div className="chat-ended-overlay">
+              <div className="chat-ended-banner">
+                <p>상대방이 대화를 종료했어요.</p>
+                <button className="exit-button-text" onClick={handleExitChat}>
+                  나가기
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+    
 }

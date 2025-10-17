@@ -134,90 +134,113 @@ const MyPage = () => {
   };
 
   return (
-    <div className="mypage-container">
-      {isSessionActive && word && (
-        <div className="mypage-current-word">
-          지금 연결 중인 단어 : {word}
-        </div>
-      )}
-
-      <h1 className="mypage-title">Telepathy</h1>
-
-      
-      <img className="mypage-profile-image" src={profileImage} alt="프로필" />
-
-      <div className="mypage-nickname">{nickname || '닉네임 로딩중...'}</div>
-
-      <div className="mypage-section">
-        <hr />
-        <p className="mypage-section-title">| 내 정보 |</p>
-        <p className="mypage-text">ID: {username || '불러오는 중...'}</p>
-        <p className="mypage-text">텔레파시 횟수 : {wordCount} 번 / 보유 확성기 : {megaphoneCount} 개</p>
-        <button onClick={handleNavigateWords} className="mypage-button-full">
-          {'>'} 누군가와 함께 떠올린 단어
-        </button>
-      </div>
-
-      <hr />
-      <div className="mypage-section">
-        <p className="mypage-section-title">| 계정 |</p>
-        <div className="mypage-button-group">
-          <button onClick={handlePaymentInquiry} className="mypage-button">
-        결제 문의
-      </button>
+    <>
+      <main data-page="mypage" className="mypage-container">
+        <div className="mypage-inner">
+          {isSessionActive && word && (
+            <div className="mypage-current-word">
+              지금 연결 중인 단어 : {word}
+            </div>
+          )}
+  
+          <h1 className="mypage-title">Telepathy</h1>
+  
+          <img className="mypage-profile-image" src={profileImage} alt="프로필" />
+  
+          <div className="mypage-nickname">{nickname || '닉네임 로딩중...'}</div>
+  
+          <div className="mypage-section">
+            <hr />
+            <p className="mypage-section-title">| 내 정보 |</p>
+            <p className="mypage-text">ID: {username || '불러오는 중...'}</p>
+            <p className="mypage-text">
+              텔레파시 횟수 : {wordCount} 번 / 보유 확성기 : {megaphoneCount} 개
+            </p>
+            <button onClick={handleNavigateWords} className="mypage-button-full">
+              {'>'} 누군가와 함께 떠올린 단어
+            </button>
+          </div>
+  
+          <hr />
+          <div className="mypage-section">
+            <p className="mypage-section-title">| 계정 |</p>
+            <div className="mypage-button-group">
+              <button onClick={handlePaymentInquiry} className="mypage-button">
+                결제 문의
+              </button>
               <button onClick={handleOpenFAQ} className="mypage-button">
-          자주묻는질문
-        </button>
-          <button onClick={handleChangePassword} className="mypage-button">
-            비밀번호 변경
-          </button>
-          <button onClick={handleChangeLogout} className="mypage-button">
-            로그아웃
+                자주묻는질문
+              </button>
+              <button onClick={handleChangePassword} className="mypage-button">
+                비밀번호 변경
+              </button>
+              <button onClick={handleChangeLogout} className="mypage-button">
+                로그아웃
+              </button>
+            </div>
+          </div>
+  
+          <hr />
+          <button onClick={handleWithdraw} className="mypage-withdraw-button">
+            회원탈퇴
           </button>
         </div>
-      </div>
-
-      <hr />
-      <button onClick={handleWithdraw} className="mypage-withdraw-button">
-        회원탈퇴
-      </button>
-
+      </main>
+  
       {/* 미지원기능모달 */}
       {showNotSupportedModal && (
-  <div className="modal-backdrop">
-    <div className="modal-content">
-      <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
-        아직 지원하지 않는 기능이에요!
-      </p>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-        <button
-          className="login-button1"
-          onClick={() => setShowNotSupportedModal(false)}
-        >
-          확인
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-      {/*탈퇴 모달 */}
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
+              아직 지원하지 않는 기능이에요!
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '16px',
+              }}
+            >
+              <button
+                className="login-button1"
+                onClick={() => setShowNotSupportedModal(false)}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+  
+      {/* 탈퇴 모달 */}
       {showWithdrawModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
             <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
               {withdrawMessage}
             </p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '16px' }}>
-              <button className="login-button1" onClick={confirmWithdraw}>탈퇴하기</button>
-              <button className="login-button1 cancel" onClick={() => setShowWithdrawModal(false)}>취소</button>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '10px',
+                marginTop: '16px',
+              }}
+            >
+              <button className="login-button1" onClick={confirmWithdraw}>
+                탈퇴하기
+              </button>
+              <button
+                className="login-button1 cancel"
+                onClick={() => setShowWithdrawModal(false)}
+              >
+                취소
+              </button>
             </div>
           </div>
         </div>
       )}
-    </div>
-
-    
+    </>
   );
 };
 

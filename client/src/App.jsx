@@ -17,7 +17,7 @@ import MyWords from './pages/MyWords';
 import LikePage from './pages/LikePage';
 import HelpPage from './pages/HelpPage';
 import ChatPage from './pages/ChatPage';
-import WordSetPage from './pages/WordSetPage'
+import WordSetPage from './pages/WordSetPage';
 
 import TermsPage from './pages/TermsPage';
 import ServiceAgreement from './pages/terms/ServiceAgreement';
@@ -33,21 +33,21 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+// 🎃 [1️⃣ 추가] 10월 31일 할로윈 모드 자동 활성화
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ✅ 로그인 상태 체크 useEffect
   useEffect(() => {
     fetch('/api/auth/check', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         if (data.loggedIn) {
-          // ✅ 로그인 상태에서 로그인/회원가입 페이지 접근 시 메인으로 이동
           if (location.pathname === '/login' || location.pathname === '/register') {
             navigate('/main');
           }
         } else {
-          // ✅ 비로그인 상태에서 보호된 페이지 접근 시 로그인 페이지로 이동
           const protectedRoutes = ['/main', '/mypage', '/mywords', '/likes', '/chatpage'];
           if (protectedRoutes.includes(location.pathname)) {
             navigate('/login');
@@ -55,6 +55,28 @@ export default function App() {
         }
       });
   }, [navigate, location.pathname]);
+// 🎃 [할로윈 모드 자동 활성화]
+useEffect(() => {
+  const today = new Date();
+  const isHalloween = today.getMonth() === 9 && today.getDate() >= 17 && today.getDate() <= 31;
+
+  if (isHalloween) {
+    // ✅ Halloween.css를 비동기 로드 (딱 한 번만)
+    import('./pages/Halloween.css')
+      .then(() => {
+        document.body.classList.add('halloween-mode');
+        console.log('🎃 Halloween theme activated!');
+      })
+      .catch((err) => console.error('Halloween theme failed to load:', err));
+  } else {
+    document.body.classList.remove('halloween-mode');
+  }
+
+  // ✅ cleanup (다른 날엔 자동 해제)
+  return () => {
+    document.body.classList.remove('halloween-mode');
+  };
+}, []); // 의존성 없음 → 앱 최초 렌더링 1회 실행
 
   return (
     <IntentProvider>
@@ -88,12 +110,12 @@ export default function App() {
         <Route path="/terms/youth-protection" element={<YouthPolicy />} />
         <Route path="/terms/improve-consent" element={<ImproveConsent />} />
         <Route path="/terms/notification-consent" element={<NotificationConsent />} />
-
-        {/* ✅ 404 페이지 (필요 시 추가 가능) */}
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>
-  <ToastContainer position="top-center" autoClose={2000} />
 
+              {/* ✅ 404 페이지 (필요 시 추가 가능) */}
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
+
+      <ToastContainer position="top-center" autoClose={2000} />
     </IntentProvider>
   );
 }

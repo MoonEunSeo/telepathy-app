@@ -3,14 +3,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* ✅ 중앙정렬 → 위쪽 정렬로 변경 */
-  padding: 80px 20px 120px; /* ✅ 상단여백 넉넉히, 하단은 네비게이터와 간격 확보 */
+  justify-content: flex-start;
+  padding: 80px 20px calc(100px + env(safe-area-inset-bottom)); /* ✅ 하단 여백 + 안전영역 */
   background: linear-gradient(180deg, #fcf9f4 0%, #f8f5f0 100%);
   font-family: "Gowun Dodum", sans-serif;
   text-align: center;
-  min-height: calc(100vh - 60px); /* ✅ 네비게이터 높이만큼 여백 확보 */
+  min-height: 100vh; /* ✅ vh 그대로 */
   box-sizing: border-box;
-  overflow-y: auto; /* ✅ 모바일에서 스크롤 가능 */
+  overflow-y: auto;
 }
 
 /* 타이틀 */

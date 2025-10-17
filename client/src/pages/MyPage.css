@@ -1,189 +1,237 @@
-/* MyPage.css */
-
+/* 🪶 기본 폰트 설정 */
 body {
-    font-family: 'Gowun Dodum', sans-serif;
+  font-family: 'Gowun Dodum', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🧭 페이지 컨테이너 */
+.mypage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 80vh;
+  background-color: #f9f6f1;
+  color: #333;
+  padding: 20px 16px 80px; /* 하단 네비게이션 높이 고려 */
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* 🌙 현재 연결 단어 표시 */
+.mypage-current-word {
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  background-color: #f5c5c5;
+  padding: 6px 0;
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
+
+/* 🏷️ 제목 */
+.mypage-title {
+  font-family: 'Judson', serif;
+  font-size: 42px;
+  font-weight: bold;
+  margin: 10px 0 15px;
+  text-align: center;
+}
+
+/* 👤 프로필 이미지 */
+.mypage-profile-image {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 🪪 닉네임 */
+.mypage-nickname {
+  font-family: 'Gowun Batang', sans-serif;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+/* 📄 구분선 */
+.mypage-container hr {
+  border: none;
+  border-top: 1px solid rgba(255, 240, 200, 0.6);
+  width: 100%;
+  border-radius: 9999px;
+  margin: 12px 0;
+  box-shadow: 0 0 3px rgba(255, 200, 120, 0.3);
+}
+
+/* 📂 섹션 */
+.mypage-section {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.mypage-section-title {
+  font-family: 'Gowun Batang', sans-serif;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+/* 🧾 정보 텍스트 */
+.mypage-text {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* 🎯 전체 버튼 */
+.mypage-button-full {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 230px;
+}
+
+.mypage-button-full:hover {
+  background-color: #fafafa;
+}
+
+/* 🧩 단일 버튼 */
+.mypage-button {
+  font-family: 'Gowun Dodum', sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.mypage-button:hover {
+  color: #000;
+}
+
+/* 🧭 버튼 그룹 */
+.mypage-button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+/* 🧨 회원탈퇴 버튼 */
+.mypage-withdraw-button {
+  margin-top: 20px;
+  font-family: 'Gowun Dodum', sans-serif;
+  color: #d84f4f;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ⚫ 모달 버튼 */
+.login-button1 {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  width: 180px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-button1:hover {
+  background-color: #333;
+}
+
+.login-button1.cancel {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.login-button1.cancel:hover {
+  background-color: #d0d0d0;
+}
+
+/* 🕓 기타 텍스트 */
+.focus-hours {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* 📱 모바일 여백 압축 버전 */
+@media (max-width: 480px) {
+  .mypage-container {
+    padding: 10px 12px 60px !important; /* ⬆️ 상단 10px / 하단 60px으로 살짝 압축 */
+  }
+
+  .mypage-title {
+    margin: 4px 0 15px !important;
+  }
+
+  .mypage-profile-image {
+    width: 90px !important;
+    height: 90px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .mypage-nickname {
+    margin-bottom: 15px !important;
+  }
+
+  .mypage-section {
+    margin-bottom: 15px !important;
+  }
+
+  .mypage-section-title {
+    margin-bottom: 4px !important;
+  }
+
+  .mypage-button-group {
+    gap: 6px !important; /* 버튼 간격 살짝 좁히기 */
+    margin-top: 15px !important;
+  }
+
+  .mypage-button-full {
+    margin-top: 6px !important;
+    padding: 8px 10px !important;
+  }
+
+  .mypage-withdraw-button {
+    margin-top: 12px !important;
   }
 
   .mypage-container hr {
-    border: none;
-    border-top: 1px solid #e7e7e7;
-    width: 400px;
-    border-radius: 9999px;
-    align-content: center;
-    margin-bottom: 5px;
-  }  
-  
-  .mypage-container {
-    display: flex;
-    height: max-content;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 80vh;
-    background-color: #f9f6f1;
-    color: #333;
-    padding: 20px 16px 24px;
-    box-sizing: border-box;
+    margin: 8px 0 !important;
+    width: 100% !important;
   }
-  
-  .mypage-current-word {
-    width: 100%;
-    text-align: center;
-    font-size: 14px;
-    color: #fff;
-    background-color: #f5c5c5;
-    padding: 6px 0;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    max-width: 350px;
-  }
-  
-  .mypage-title {
-    font-family: 'Judson', serif;
-    font-size: 48px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    align-items: center;
-  }
-  
-  .mypage-profile-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 15px;
-    border: 1px solid #e5e5e5;
-  }
-  
-  .mypage-nickname {
-    font-family: 'Gowun Batang', sans-serif;
-    font-weight: bold;
-    font-size: 24px;
-    margin-bottom: 15px;
-    text-align:center;
-  }
-  
-  .mypage-section {
-    width: 100%;
-    text-align:center;
-    margin-bottom: 15px;
-    font-size: 14px;
-    line-height: 1.8;
-  }
-  
-  .mypage-section-title {
-    font-family: 'Gowun Batang', sans-serif;
-    font-weight: bold;
-    margin-bottom: 8px;
-    text-align:center;
-    font-size: 18px;
-  }
-  
-  .mypage-text {
-    margin-bottom: 15px;
-    text-align:center;
-    font-size: 14px;
-  }
-
-  .mypage-button-full{
-    margin-top: 8px;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    text-align:center;
-    max-width: 230px;
-    width: 100%;
-  }
-  
-  .mypage-button {
-    font-family: 'Gowun Dodum', sans-serif;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
-    text-align:center;
-    width: 100%;
-    max-width: 195px;
-    font-size: 14px;
-    font: weight 500px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    align-items: center;
-    color: #333;
-  }
-  
-
-  .mypage-button-full:hover {
-    background-color: #fafafa;
-    
-  }
-  
-  .mypage-button-group {
-    display: flex;
-    flex-direction:column;
-    align-items: center;
-    gap: 10px; /* 버튼 간격 넉넉히 */
-    margin-top: 16px;
-    width: 100%; /* 부모는 화면 전체 너비 */
 }
 
 
-  .full-width {
-    width: 100%;
-    margin-top: 8px;
-    align-items: center;
-  }
-  
-  .mypage-withdraw-button {
-    margin-top: 20px;
-    font-family: 'Gowun Dodum', sans-serif;
-    color: #d84f4f;
-    font-weight: bold;
-    font-size: 14px;
-    text-decoration: underline;
-    background: none;
-    border: none;
-    cursor: pointer;
-    align-items: center;
-  }
-  
-  
-  .login-button1 {
-    background-color: #000;      /* 예: 검정 배경 */
-    color: #fff;                 /* ✅ 텍스트 흰색으로 명확히 지정 */
-    border: none;
-    padding: 15px 20px;
-    width: 200px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border: none; /* ✅ 버튼 border가 입력창과 다르면 폭이 어긋남 */
-    line-height: 1.2;
-  }
-  
-  
-  .login-button1:hover {
-    background-color: #333;      /* 살짝 어둡게 */
-  }
-  
-  .login-button1.cancel {
-    background-color: #e0e0e0;   /* 회색 배경 */
-    color: #333;                 /* ✅ 검정 텍스트 */
-  }
-  
-  .login-button1.cancel:hover {
-    background-color: #d0d0d0;
-  }
-
-  .focus-hours {
-    margin-top: 8px;
-    text-align: center;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    opacity: 0.9;
-  }

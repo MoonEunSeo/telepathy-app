@@ -345,7 +345,7 @@ export const recommendations = [
   { topic: "탕수육", words: ["부먹", "찍먹", "반부먹반찍먹", "볶먹"], paid: 0 },
   { topic: "치킨", words: ["BBQ", "교촌치킨", "BHC", "굽네치킨"], paid: 0 },
   { topic: "피자", words: ["도미노피자", "파파존스", "노모어피자", "피자헛"], paid: 0 },
-   //결제한 녀석 4
+  //결제한 녀석 4
   { topic: "이수현", words: ["포르쉐","아우디","페라리","케이지엠"], paid: 1 },
   { topic: "햄버거", words: ["맥도날드", "롯데리아", "버거킹", "맘스터치"], paid: 0 },
   { topic: "국내여행지", words: ["강릉", "부산", "제주", "여수"], paid: 0 },
@@ -355,6 +355,8 @@ export const recommendations = [
   { topic: "에겐테토", words: ["에겐녀", "에겐남", "테토남", "테토녀"], paid: 0 },
   { topic: "콘텐츠유형", words: ["틱톡", "릴스", "쇼츠", "롱폼"], paid: 0 },
   { topic: "OTT", words: ["넷플릭스", "티빙", "쿠팡플레이", "웨이브"], paid: 0 },
+  //결제한 녀석 5
+  { topic: "이진서", words: ["엄지공주","신데렐라","백설공주","라푼젤"], paid: 1 },
   { topic: "경제수준", words: ["노숙자", "거지", "절약러", "부자"], paid: 0 },
   { topic: "재태크", words: ["부동산", "국내주식", "해외주식", "거지"], paid: 0 },
   { topic: "아이스크림", words: ["아이스크림할인점", "배스킨라빈스", "요아정", "설빙"], paid: 0 },
@@ -363,6 +365,8 @@ export const recommendations = [
   { topic: "과자1", words: ["홈런볼", "칸쵸", "씨리얼", "비쵸비"], paid: 0 },
   { topic: "과자2", words: ["포카칩", "눈을감자", "프링글스", "포스틱"], paid: 0 },
   { topic: "장르", words: ["스릴러", "로맨스코미디", "SF", "히어로"], paid: 0 },
+  //결제한 녀석 6
+  { topic: "문은서", words: ["동물, 인간, 식물, 무생물"], paid: 1 },
   { topic: "SNS", words: ["인스타", "트위터", "스레드", "라인"], paid: 0 },
   { topic: "성별", words: ["여자", "남자", "여자같은남자", "남자같은여자"], paid: 0 },
   { topic: "스킨십", words: ["손잡기", "포옹", "뽀뽀", "밀어내기"], paid: 0 },
@@ -382,6 +386,4 @@ export const recommendations = [
   { topic: "나이대", words: ["직장인", "학생", "아재", "잼민쓰"], paid: 0 },
 
   // 결제 단어 세트
-
-  { topic: "이진서", words: ["엄지공주","신데렐라","백설공주","라푼젤"], paid: 1 },
 ];

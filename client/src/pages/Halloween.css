@@ -1,0 +1,1141 @@
+/* 🌙 Halloween Theme CSS - Telepathy Halloween Edition */
+
+/* 🧙‍♀️ 전체 테마 배경 */
+body.halloween-mode {
+    background: url('../assets/Halloween.svg') no-repeat center center fixed !important;
+    background-size: cover !important;
+    color: #fff !important;
+    transition: background 0.5s ease-in-out;
+  }
+  
+  /* 🎨 모든 요소 투명화 (단, 예외는 아래에서 복원됨) */
+  body.halloween-mode * {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+  }
+  
+  /* 🧡 메인 타이틀 / 서브타이틀 */
+  body.halloween-mode .login-title,
+  body.halloween-mode .title {
+    color: #ffcc00 !important;
+    text-shadow: 0 2px 10px rgba(255, 150, 0, 0.7);
+  }
+  
+  body.halloween-mode .login-subtitle,
+  body.halloween-mode .subtitle {
+    color: #ffe6b3 !important;
+  }
+  
+  /* 🎃 버튼 스타일 (공통) */
+  body.halloween-mode button,
+  body.halloween-mode .login-button,
+  body.halloween-mode .agree-button,
+  body.halloween-mode .next-button {
+    background: linear-gradient(135deg, #ff6600, #cc3300) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 10px rgba(255, 100, 0, 0.4);
+    transition: all 0.2s ease;
+  }
+  
+  body.halloween-mode button:hover,
+  body.halloween-mode .login-button:hover,
+  body.halloween-mode .agree-button:hover,
+  body.halloween-mode .next-button:hover,
+  body.halloween-mode .check-button:hover {
+    background: linear-gradient(135deg, #ff7b1a, #e04100) !important;
+    transform: translateY(-2px);
+  }
+  
+  /* ✨ 버튼에 호박빛 애니메이션 */
+  @keyframes pumpkin-glow {
+    0% { filter: brightness(0.9); }
+    50% { filter: brightness(1.3); }
+    100% { filter: brightness(0.9); }
+  }
+  
+  body.halloween-mode .login-button,
+  body.halloween-mode .next-button {
+    animation: pumpkin-glow 3s infinite ease-in-out;
+  }
+  
+  /* 🕯️ 모달/피드백 박스 */
+  body.halloween-mode .modal-content,
+  body.halloween-mode .feedback-content {
+    background: rgba(40, 20, 10, 0.8) !important;
+    color: #ffe6b3 !important;
+    box-shadow: 0 6px 18px rgba(255, 100, 0, 0.3);
+    border: 1px solid rgba(255, 150, 0, 0.4);
+    border-radius: 10px;
+  }
+  
+  /* ⏳ 타이머 */
+  body.halloween-mode .word-timer {
+    background-color: rgba(255, 102, 0, 0.85) !important;
+    color: white !important;
+  }
+  
+  body.halloween-mode .word-timer-time {
+    color: #ffe6b3 !important;
+  }
+  
+  /* 🧙 단어 버튼 */
+  body.halloween-mode .word-btn {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border: 1.5px solid rgba(255, 200, 100, 0.4) !important;
+    box-shadow: 0 2px 6px rgba(255, 150, 50, 0.3);
+    border-radius: 8px;
+  }
+  
+  body.halloween-mode .word-btn:hover {
+    background: rgba(255, 150, 0, 0.25) !important;
+    transform: translateY(-2px);
+  }
+  
+  /* 🕸️ 모달 배경 어둡게 */
+  body.halloween-mode .modal-overlay {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(6px);
+  }
+  
+  /* 🕯️ 하단 문구 (운영시간 등) */
+  body.halloween-mode .focus-hours {
+    color: #ffe6b3 !important;
+    text-shadow: 0 1px 6px rgba(255, 100, 0, 0.6);
+  }
+  
+  /* 🧊 네비게이터 & 하단 영역 복원 */
+  body.halloween-mode footer,
+  body.halloween-mode .bottom-layout,
+  body.halloween-mode .nav-container {
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: #333 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(6px);
+  }
+  
+  /* 🧊 네비게이터 아이콘 색 복원 */
+  body.halloween-mode .bottom-layout svg,
+  body.halloween-mode .bottom-layout path {
+    fill: #333 !important;
+    color: #333 !important;
+  }
+  
+  /* 🧊 사업자 정보 텍스트만 흰색 유지 */
+  body.halloween-mode footer p,
+  body.halloween-mode footer a {
+    color: #fff !important;
+    background: transparent !important;
+  }
+  
+/* 🧾 Halloween 모드에서 사업자 정보의 주황빛 완전 제거 */
+body.halloween-mode footer,
+body.halloween-mode footer *,
+body.halloween-mode .biz-info,
+body.halloween-mode .biz-info *,
+body.halloween-mode .focus-hours {
+  color: #2f2f2f !important; /* 기본 텍스트용 진한 회색 */
+  background: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  transition: none !important;
+}
+
+/* 링크나 버튼 hover 시에도 색상 변화 차단 */
+body.halloween-mode footer a:hover,
+body.halloween-mode footer button:hover,
+body.halloween-mode .biz-info a:hover {
+  color: #2f2f2f !important;
+  background: none !important;
+  text-decoration: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transition: none !important;
+}
+
+
+  /* 🪄 부드러운 전체 전환 */
+  body.halloween-mode * {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* 🧡 메인 단어 버튼 색상 강제 적용 */
+  body.halloween-mode .word-btn,
+  body.halloween-mode .intent-button {
+    background: linear-gradient(135deg, #ff6600, #cc3300) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 3px 8px rgba(255, 100, 0, 0.5);
+    border-radius: 10px !important;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  body.halloween-mode .word-btn:hover,
+  body.halloween-mode .intent-button:hover {
+    background: linear-gradient(135deg, #ff8533, #e04a00) !important;
+    transform: translateY(-2px);
+  }
+  
+  /* 🧡 버튼 내 글씨는 항상 흰색 유지 */
+  body.halloween-mode .word-btn span,
+  body.halloween-mode .intent-button span {
+    color: #fff !important;
+  }
+  
+  /* 🧡 select 드롭다운 (할로윈 모드 리뉴얼) */
+  body.halloween-mode select {
+    background: linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9)) !important;
+    color: #ffdc91 !important; /* 부드러운 금빛 글씨 */
+    border: 1.5px solid rgba(255, 160, 60, 0.5) !important;
+    border-radius: 10px !important;
+    padding: 8px 12px !important;
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(255, 150, 0, 0.25);
+    appearance: none !important;
+    background-image: url('../assets/select-arrow.svg'),
+                      linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9));
+    background-repeat: no-repeat;
+    background-position: right 10px center, center;
+    background-size: 12px, cover;
+    transition: all 0.25s ease-in-out;
+  }
+  
+  body.halloween-mode select:hover,
+  body.halloween-mode select:focus {
+    background: linear-gradient(145deg, rgba(75, 40, 15, 0.95), rgba(45, 25, 10, 0.95)) !important;
+    border-color: rgba(255, 190, 100, 0.7) !important;
+    box-shadow: 0 0 8px rgba(255, 180, 80, 0.4);
+    color: #fff3cf !important;
+  }
+  
+  body.halloween-mode select option {
+    background: rgba(45, 25, 10, 0.96) !important;
+    color: #ffecb3 !important;
+    border: none !important;
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size: 14px;
+  }
+  
+  /* ✅ 네비게이터 및 MyPage 제외 영역 설정 */
+  body.halloween-mode .bottom-layout .nav-item,
+  body.halloween-mode .bottom-layout a {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  body.halloween-mode .bottom-layout .active,
+  body.halloween-mode .bottom-layout .selected {
+    background: none !important;
+  }
+  
+  /* 🎃 Halloween 제외 대상 - 네비게이터 완전 복원 */
+  body.halloween-mode .bottom-nav-container,
+  body.halloween-mode .bottom-nav-button,
+  body.halloween-mode .bottom-nav-button.active,
+  body.halloween-mode .bottom-nav-container svg,
+  body.halloween-mode .bottom-nav-container path {
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: inherit !important;
+    fill: inherit !important;
+  }
+  
+  /* ✅ 네비게이터 hover 시 색상 변화 완전 차단 */
+  body.halloween-mode .bottom-nav-button:hover,
+  body.halloween-mode .bottom-nav-button:focus,
+  body.halloween-mode .bottom-nav-button:active {
+    background: none !important;
+    color: #9ca3af !important;
+    transform: none !important;
+  }
+  
+  /* ✅ active(현재 페이지) 색상 복원 */
+  body.halloween-mode .bottom-nav-button.active {
+    color: #000000 !important;
+  }
+  
+  /* ✅ 네비 전체 영역 흰색 톤 유지 */
+  body.halloween-mode .bottom-nav-container {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  /* ✅ 아이콘 색상 복원 */
+  body.halloween-mode .bottom-nav-container svg {
+    color: inherit !important;
+    fill: currentColor !important;
+    background: none !important;
+  }
+  
+  /* ✅ footer 복원 */
+  body.halloween-mode footer,
+  body.halloween-mode footer button,
+  body.halloween-mode footer .biz-info,
+  body.halloween-mode .focus-hours {
+    background: none !important;
+    color: #3a3020 !important;
+    text-shadow: none !important;
+    border: none !important;
+  }
+  
+  body.halloween-mode footer strong,
+  body.halloween-mode .focus-hours strong {
+    color: #e1b45d !important;
+  }
+  
+  body.halloween-mode .biz-info p {
+    color: #3a3020 !important;
+  }
+  
+  /* 🌕 hover 시 달빛 효과 */
+  body.halloween-mode .bottom-nav-button:hover svg {
+    filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* 🎃 MyPage는 Halloween 테마 제외 */
+  body.halloween-mode [data-page="mypage"],
+  body.halloween-mode [data-page="mypage"] * {
+    background: none !important;
+    background-color: initial !important;
+    color: initial !important;
+    box-shadow: initial !important;
+    border: initial !important;
+    text-shadow: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  
+  /* ✅ MyPage 내부 원래 톤 복원 */
+  body.halloween-mode [data-page="mypage"] button {
+    background: initial !important;
+    color: initial !important;
+    border: initial !important;
+    box-shadow: initial !important;
+  }
+  
+  body.halloween-mode [data-page="mypage"] h1,
+  body.halloween-mode [data-page="mypage"] h2,
+  body.halloween-mode [data-page="mypage"] h3,
+  body.halloween-mode [data-page="mypage"] p {
+    color: initial !important;
+  }
+  
+  /* 🧙‍♀️ MyPage 구분선 */
+  body.halloween-mode .mypage-container hr {
+    border: none;
+    width: 100%;
+    border-top: 1.5px solid rgba(255, 230, 180, 0.6) !important;
+    align-self: center;
+  }
+  
+  .mypage-container hr {
+    border: none;
+    width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    align-self: center;
+  }
+/*---------------------------------------*/
+/* 🎃 Halloween 모드 - ChatPage 전용 (Elegant Night Ver.) */
+/*---------------------------------------*/
+body.halloween-mode [data-page="chatpage"] {
+    position: relative;
+    background: transparent !important;
+    overflow: hidden;
+  }
+  
+  /* 🕯️ 어두운 반투명 컨테이너 */
+  body.halloween-mode [data-page="chatpage"]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 10, 5, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 0;
+  }
+  
+  /* 전체 컨테이너 */
+  body.halloween-mode [data-page="chatpage"] .chat-container {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* ---------------- 헤더 ---------------- */
+  body.halloween-mode [data-page="chatpage"] .chat-header {
+    background: rgba(35, 20, 10, 0.85) !important;
+    color: #f9e4b7 !important;
+    border-bottom: 1px solid rgba(255, 200, 150, 0.15);
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .chat-title {
+    color: #f5c978 !important;
+    text-shadow: 0 1px 6px rgba(255, 210, 130, 0.3);
+  }
+  
+  /* 신고 / 나가기 버튼 */
+  body.halloween-mode [data-page="chatpage"] .exit-button {
+    background: linear-gradient(135deg, #ff9940, #cc6a1c) !important;
+    color: #fffaf2 !important;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 3px 8px rgba(255, 150, 80, 0.3);
+    transition: all 0.25s ease-in-out;
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .exit-button:hover {
+    background: linear-gradient(135deg, #ffae66, #e0772b) !important;
+    transform: translateY(-2px);
+  }
+  
+  /* ---------------- 메시지 영역 ---------------- */
+  body.halloween-mode [data-page="chatpage"] .chat-messages {
+    background: transparent !important;
+    color: #f9e4b7 !important;
+  }
+  
+  /* 💬 상대방 말풍선 */
+  body.halloween-mode [data-page="chatpage"] .chat-message.other {
+    background: rgba(80, 60, 40, 0.65) !important;
+    color: #f9e4b7 !important;
+    border: 1px solid rgba(255, 200, 150, 0.25);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2px);
+  }
+  
+  /* ✨ 내 말풍선 */
+  body.halloween-mode [data-page="chatpage"] .chat-message.self {
+    background: linear-gradient(135deg, #ffb45e, #e67a2c) !important;
+    color: #fffaf2 !important;
+    border: none !important;
+    box-shadow: 0 3px 10px rgba(255, 180, 90, 0.3);
+    backdrop-filter: blur(1px);
+  }
+  
+  /* 시스템 메시지 */
+  body.halloween-mode [data-page="chatpage"] .chat-info-banner {
+    background: rgba(80, 60, 40, 0.5);
+    color: #f5c978 !important;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  /* ---------------- 입력 영역 ---------------- */
+  body.halloween-mode [data-page="chatpage"] .chat-input-container {
+    background: rgba(35, 20, 10, 0.8) !important;
+    border-top: 1px solid rgba(255, 200, 150, 0.15);
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .chat-input {
+    background: rgba(50, 35, 20, 0.7) !important;
+    color: #f5deb3 !important;
+    border: 1px solid rgba(200, 150, 100, 0.35);
+    border-radius: 20px;
+    padding: 12px 14px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .chat-input:focus {
+    background: rgba(60, 40, 25, 0.85) !important;
+    box-shadow: 0 0 6px rgba(240, 200, 130, 0.4);
+    outline: none !important;
+  }
+  
+  /* 🧡 전송 버튼 */
+  body.halloween-mode [data-page="chatpage"] .chat-send-button {
+    background: linear-gradient(135deg, #ff9940, #cc6a1c) !important;
+    color: #fffaf2 !important;
+    border: none !important;
+    border-radius: 24px;
+    box-shadow: 0 3px 8px rgba(255, 150, 80, 0.3);
+    transition: all 0.25s ease-in-out;
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .chat-send-button:hover {
+    background: linear-gradient(135deg, #ffae66, #e0772b) !important;
+    transform: translateY(-2px);
+  }
+  
+  /* ---------------- 타이핑 인디케이터 ---------------- */
+  body.halloween-mode [data-page="chatpage"] .typing-dots span {
+    background-color: #f2c078 !important;
+    opacity: 0.9;
+  }
+ 
+  
+/* ------------------------------- */
+/* 🌕 Halloween 신고 모달 리디자인 */
+/* ------------------------------- */
+body.halloween-mode [data-page="chatpage"] .report-modal {
+    background: radial-gradient(circle at top, rgba(45, 30, 15, 0.95), rgba(25, 15, 8, 0.95)) !important;
+    border: 1.5px solid rgba(255, 190, 120, 0.25) !important;
+    border-radius: 20px !important;
+    color: #f8e9d0 !important;
+    box-shadow:
+      0 6px 18px rgba(0, 0, 0, 0.6),
+      inset 0 0 10px rgba(255, 180, 80, 0.08);
+    font-family: 'Gowun Dodum', sans-serif !important;
+    backdrop-filter: blur(10px) !important;
+    padding: 32px 28px !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    animation: modalGlow 0.4s ease-out;
+  }
+  
+  /* ✨ 부드러운 등장 */
+  @keyframes modalGlow {
+    from { opacity: 0; transform: translateY(15px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  
+  
+/* 🔠 타이틀 크기 & 강조 */
+body.halloween-mode [data-page="chatpage"] .report-modal h1 {
+    font-size: 40px !important;  
+    font-family: 'Judson', serif !important;        /* 기존 26~28px → 약간 키움 */
+    margin-bottom: 16px !important;
+    text-align: center !important;
+    color: #ffce73 !important;
+    text-shadow: 0 2px 12px rgba(255, 180, 100, 0.35);
+  }
+  
+  /* 설명 텍스트 */
+  body.halloween-mode [data-page="chatpage"] .report-modal p {
+    text-align: center !important;
+    color: #f2dbb8 !important;
+    margin-bottom: 20px !important;
+    font-size: 15px !important;
+  }
+  
+  /* 체크박스 영역 */
+  body.halloween-mode [data-page="chatpage"] .report-modal label {
+    display: block !important;
+    margin: 10px 0 !important;
+    color: #f4ddaa !important;
+    font-size: 15px !important;
+    padding-left: 5px;
+    transition: color 0.25s ease;
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .report-modal label:hover {
+    color: #ffd58a !important;
+    transform: translateX(3px);
+  }
+  
+  /* 입력 영역 */
+  body.halloween-mode [data-page="chatpage"] .report-modal textarea {
+    background: rgba(45, 30, 15, 0.8) !important;
+    color: #ffeccf !important;
+    border: 1.5px solid rgba(255, 200, 150, 0.25) !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    width: 85% !important;                  /* 90%보다 살짝 줄여서 시각적으로 중앙감 강조 */
+    min-height: 70px !important;            /* 줄임 */
+    margin: 12px auto 0 auto !important;    /* auto margin으로 수평 정렬 */
+    display: block !important;              /* ✨ 핵심: 중앙 정렬 되게 함 */
+    font-size: 14px !important;
+    resize: none !important;
+    transition: all 0.25s ease;
+  }
+
+  body.halloween-mode [data-page="chatpage"] .report-modal textarea:focus {
+    background: rgba(55, 35, 20, 0.9) !important;
+    border-color: rgba(255, 190, 120, 0.5) !important;
+    box-shadow: 0 0 10px rgba(255, 180, 100, 0.25);
+    outline: none !important;
+  }
+  
+  /* 버튼 영역 */
+  body.halloween-mode [data-page="chatpage"] .report-buttons {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: 26px !important;
+    gap: 10px;
+  }
+  
+  /* 공통 버튼 */
+  body.halloween-mode [data-page="chatpage"] .report-buttons button {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 15px;
+    border-radius: 999px !important;
+    border: none !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+  }
+  
+  /* 취소 버튼 */
+  body.halloween-mode [data-page="chatpage"] .report-buttons button:first-child {
+    background: rgba(70, 50, 30, 0.85) !important;
+    color: #f4dab3 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  }
+  body.halloween-mode [data-page="chatpage"] .report-buttons button:first-child:hover {
+    background: rgba(90, 65, 40, 0.9) !important;
+  }
+  
+  /* 제출 버튼 */
+  body.halloween-mode [data-page="chatpage"] .report-buttons button:last-child {
+    background: linear-gradient(135deg, #ffc67d, #e98d3b) !important;
+    color: #fffaf2 !important;
+    box-shadow: 0 4px 12px rgba(255, 180, 100, 0.35);
+  }
+  body.halloween-mode [data-page="chatpage"] .report-buttons button:last-child:hover {
+    background: linear-gradient(135deg, #ffd08a, #ee9848) !important;
+    transform: translateY(-2px);
+  }
+  
+  /* 모달 내부 그림자 여백 */
+  body.halloween-mode [data-page="chatpage"] .modal-overlay {
+    background: rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(10px);
+  }
+  
+/* ------------------------------- */
+/* 🎃 감정 피드백 모달              */
+/* ------------------------------- */
+/* 🎃 대화 종료 배너 (chat-ended-overlay / chat-ended-banner) */
+body.halloween-mode [data-page="chatpage"] .chat-ended-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 999 !important;
+    backdrop-filter: blur(6px) !important;
+    animation: fadeIn 0.4s ease-in-out !important;
+  }
+  
+/* ✅ 실제 박스 크기 줄이기 */
+body.halloween-mode [data-page="chatpage"] .chat-ended-banner {
+    background: rgba(28, 18, 10, 0.9) !important;
+    color: #f8e6c1 !important;
+    border-radius: 16px !important;
+    padding: 24px 20px !important;
+    text-align: center !important;
+    box-shadow: 0 8px 20px rgba(255, 150, 60, 0.25) !important;
+    border: 1px solid rgba(255, 200, 150, 0.15) !important;
+  
+    width: 70% !important;     /* ✅ 여기에만 width 제한 */
+    max-width: 300px !important;
+    min-width: 240px !important;
+  
+    animation: modalRise 0.4s ease-out !important;
+  }
+  /* 텍스트 */
+  body.halloween-mode [data-page="chatpage"] .chat-ended-banner p {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: #ffde9e !important;
+    margin-bottom: 16px !important;
+    text-shadow: 0 0 6px rgba(255, 180, 80, 0.2) !important;
+  }
+  
+  /* 나가기 버튼 */
+  body.halloween-mode [data-page="chatpage"] .exit-button-text {
+    background: linear-gradient(135deg, #ff9940, #cc6a1c) !important;
+    color: #fffaf2 !important;
+    font-weight: 600 !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 10px 0 !important;
+    width: 60% !important;
+    box-shadow: 0 4px 10px rgba(255, 150, 80, 0.25) !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease-in-out !important;
+  }
+  
+  body.halloween-mode [data-page="chatpage"] .exit-button-text:hover {
+    background: linear-gradient(135deg, #ffb86a, #e27f32) !important;
+    transform: translateY(-2px) !important;
+  }
+  
+  /* 애니메이션 */
+  @keyframes modalRise {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+/* ------------------------------- */
+/* 🎃 Halloween 모드 - 나가기 확인 모달 */
+/* ------------------------------- */
+body.halloween-mode [data-page="chatpage"] .chat-ended-modal {
+    background: radial-gradient(circle at top, rgba(35, 20, 10, 0.95), rgba(20, 12, 6, 0.95)) !important;
+    color: #f8e6c1 !important;
+    border-radius: 18px !important;
+    padding: 28px 20px !important;
+    text-align: center !important;
+    width: 80% !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+    border: 1px solid rgba(255, 200, 150, 0.15) !important;
+    box-shadow: 0 8px 22px rgba(255, 150, 60, 0.25) !important;
+    animation: modalRise 0.4s ease-out !important;
+  }
+  
+  /* 텍스트 */
+  body.halloween-mode [data-page="chatpage"] .chat-ended-modal p {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: #ffdda2 !important;
+    margin-bottom: 20px !important;
+    letter-spacing: 0.3px !important;
+    text-shadow: 0 0 8px rgba(255, 200, 120, 0.2);
+  }
+  
+  /* 버튼 영역 */
+  body.halloween-mode [data-page="chatpage"] .modal-buttons {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 14px !important;
+  }
+  
+  /* 공통 버튼 스타일 */
+  body.halloween-mode [data-page="chatpage"] .exit-button-text {
+    flex: 1;
+    min-width: 110px;
+    border-radius: 999px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    padding: 10px 0 !important;
+    border: none !important;
+    color: #fffaf2 !important;
+    transition: all 0.25s ease-in-out !important;
+    box-shadow: 0 4px 10px rgba(255, 180, 80, 0.25);
+  }
+  
+  /* ✅ 네, 나갈래요 버튼 */
+  body.halloween-mode [data-page="chatpage"] .exit-button-text.confirm {
+    background: linear-gradient(135deg, #ff9d3f, #d86a18) !important;
+  }
+  body.halloween-mode [data-page="chatpage"] .exit-button-text.confirm:hover {
+    background: linear-gradient(135deg, #ffb361, #e27f2b) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 14px rgba(255, 190, 100, 0.35);
+  }
+  
+  /* 🕯️ 아니요 버튼 */
+  body.halloween-mode [data-page="chatpage"] .exit-button-text.cancel {
+    background: rgba(70, 50, 30, 0.8) !important;
+    color: #f5deb3 !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  }
+  body.halloween-mode [data-page="chatpage"] .exit-button-text.cancel:hover {
+    background: rgba(90, 65, 40, 0.85) !important;
+    transform: translateY(-2px) !important;
+  }
+  
+  /* 등장 애니메이션 */
+  @keyframes modalRise {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+
+
+/* ------------------------------- */
+/* 🎃 Halloween 감정 피드백 모달 (고급 버전) */
+/* ------------------------------- */
+body.halloween-mode .feedback-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 999 !important;
+    backdrop-filter: blur(6px) !important;
+    animation: fadeIn 0.4s ease-in-out !important;
+  }
+  
+  /* 중앙 박스 */
+  body.halloween-mode .feedback-content {
+    background: radial-gradient(circle at top, rgba(35, 22, 10, 0.95), rgba(20, 12, 6, 0.95)) !important;
+    color: #f8e6c1 !important;
+    border-radius: 22px !important;
+    padding: 32px 24px !important;
+    width: 85% !important;
+    max-width: 340px !important;
+    text-align: center !important;
+    box-shadow:
+      0 8px 20px rgba(255, 160, 80, 0.25),
+      inset 0 0 15px rgba(255, 160, 80, 0.05) !important;
+    border: 1px solid rgba(255, 200, 150, 0.12) !important;
+    animation: modalRise 0.4s ease-out !important;
+  }
+  
+  /* 타이틀 */
+  body.halloween-mode .feedback-content h2 {
+    font-family: 'Judson', serif !important;
+    font-size: 40px !important;
+    margin-bottom: 14px !important;
+    color: #ffcf74 !important;
+    text-shadow: 0 2px 12px rgba(255, 200, 120, 0.35);
+    letter-spacing: 0.3px;
+  }
+  
+  /* 설명 문구 */
+  body.halloween-mode .feedback-content p {
+    color: #f5dcb0 !important;
+    margin-bottom: 24px !important;
+    font-size: 15px !important;
+    letter-spacing: 0.2px;
+  }
+  
+  /* 감정 버튼 그룹 */
+  body.halloween-mode .emotion-buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-bottom: 26px !important;
+  }
+  
+  /* 감정 버튼 */
+  body.halloween-mode .emotion-buttons button {
+    background: linear-gradient(160deg, #ffae4a 0%, #e8681c 100%) !important;
+    color: #fffaf2 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 11px 20px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    line-height: 1.1 !important; /* 텍스트 약간 위로 올림 */
+    box-shadow:
+      0 4px 12px rgba(255, 160, 70, 0.3),
+      inset 0 0 6px rgba(255, 220, 150, 0.1) !important;
+    transition: all 0.25s ease-in-out !important;
+  }
+  
+  /* hover 시 달빛 반사 효과 */
+  body.halloween-mode .emotion-buttons button:hover {
+    background: linear-gradient(160deg, #ffc56a 0%, #e46c1c 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow:
+      0 5px 15px rgba(255, 190, 100, 0.35),
+      inset 0 0 10px rgba(255, 220, 170, 0.2) !important;
+  }
+  
+  /* 선택된 감정 강조 */
+  body.halloween-mode .emotion-buttons button.selected {
+    background: linear-gradient(145deg, #ffd289 0%, #f1902f 100%) !important;
+    box-shadow:
+      0 0 15px rgba(255, 200, 120, 0.4),
+      inset 0 0 10px rgba(255, 220, 160, 0.25) !important;
+    transform: scale(1.05) !important;
+  }
+  
+  /* 결정하기 버튼 */
+  body.halloween-mode .submit-btn {
+    background: linear-gradient(135deg, #ffae4a, #e97b26) !important;
+    color: #fffaf2 !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 12px 0 !important;
+    width: 72% !important;
+    box-shadow: 0 4px 15px rgba(255, 170, 80, 0.3) !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease-in-out !important;
+    letter-spacing: 0.5px !important;
+  }
+  
+  body.halloween-mode .submit-btn:hover {
+    background: linear-gradient(135deg, #ffc56a, #f1902f) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 18px rgba(255, 180, 100, 0.35) !important;
+  }
+  
+  /* 비활성화 상태 */
+  body.halloween-mode .submit-btn:disabled {
+    background: rgba(100, 70, 40, 0.4) !important;
+    color: rgba(255, 230, 200, 0.6) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* 애니메이션 */
+  @keyframes modalRise {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+
+  /* ------------------------------- */
+/* 🎃 Halloween 모드 - Toast 알림 */
+/* ------------------------------- */
+body.halloween-mode .Toastify__toast {
+    background: rgba(255, 255, 255, 0.15) !important;  /* ✨ 연한 반투명 흰색 */
+    backdrop-filter: blur(6px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #fffaf2 !important;
+    box-shadow: 0 4px 12px rgba(255, 200, 150, 0.15) !important;
+    border-radius: 12px !important;
+    font-family: 'Gowun Dodum', sans-serif !important;
+    letter-spacing: 0.2px !important;
+    font-size: 15px !important;
+  }
+  
+  /* ✅ 성공 토스트 */
+  body.halloween-mode .Toastify__toast--success {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-left: 4px solid #6eff8d !important;          /* 부드러운 초록빛 */
+    color: #eaffea !important;
+  }
+  
+  /* ⚠️ 에러 토스트 */
+  body.halloween-mode .Toastify__toast--error {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-left: 4px solid #ff6f6f !important;          /* 따뜻한 붉은빛 */
+    color: #ffe6e6 !important;
+  }
+  
+  /* 🕯️ 토스트 닫기 버튼 */
+  body.halloween-mode .Toastify__close-button {
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: all 0.2s ease;
+  }
+  body.halloween-mode .Toastify__close-button:hover {
+    color: #fff !important;
+  }
+  
+  /* ⏳ 프로그레스 바 (toast 밑줄) */
+  body.halloween-mode .Toastify__progress-bar {
+    background: rgba(255, 200, 120, 0.6) !important;
+    height: 3px !important;
+    border-radius: 10px !important;
+  }
+  
+  /* ------------------------------------------ */
+/* 🎃 Halloween Toast 닫기 버튼 리디자인 */
+/* ------------------------------------------ */
+body.halloween-mode .Toastify__close-button {
+    position: absolute !important;
+    top: 6px !important;
+    right: 6px !important;
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.18) !important; /* 연한 흰색 반투명 */
+    color: #ff9f4a !important;                        /* 🧡 따뜻한 주황빛 */
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(255, 150, 50, 0.25);
+    border: 1px solid rgba(255, 200, 150, 0.3) !important;
+    transition: all 0.25s ease-in-out !important;
+    cursor: pointer !important;
+  }
+  
+  /* ✨ hover 시 달빛 반짝 효과 */
+  body.halloween-mode .Toastify__close-button:hover {
+    background: rgba(255, 200, 150, 0.25) !important;
+    color: #fff5e0 !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 8px rgba(255, 180, 100, 0.4);
+  }
+  
+/* --------------------------------------------- */
+/* 🎃 Halloween 모드 - 확성기 모달 전역 적용 */
+/* --------------------------------------------- */
+body.halloween-mode .modal {
+    background: rgba(0, 0, 0, 0.55) !important;
+    backdrop-filter: blur(8px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1000 !important;
+  }
+  
+  /* 내부 박스 (Megaphone 모달 통합 스타일) */
+  body.halloween-mode .modal p {
+    background: radial-gradient(circle at 40% 20%, rgba(35, 20, 10, 0.96), rgba(20, 12, 6, 0.9)) !important;
+    border-radius: 20px !important;
+    border: 1.5px solid rgba(255, 200, 150, 0.2) !important;
+    color: #ffeecd !important;
+    padding: 26px 20px !important;
+    max-width: 340px !important;
+    width: 85% !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    box-shadow:
+      0 8px 22px rgba(255, 150, 60, 0.25),
+      inset 0 0 10px rgba(255, 180, 100, 0.08);
+    animation: modalRise 0.4s ease-out !important;
+  }
+  
+  /* 버튼들 */
+  body.halloween-mode .modal button {
+    background: linear-gradient(135deg, #ff8b2f, #d65f1a) !important;
+    color: #fffaf2 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin: 8px !important;
+    box-shadow: 0 4px 12px rgba(255, 180, 80, 0.25);
+    transition: all 0.25s ease-in-out;
+  }
+  
+  /* hover 효과 */
+  body.halloween-mode .modal button:hover {
+    background: linear-gradient(135deg, #ff9f52, #e07126) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(255, 190, 100, 0.35);
+  }
+  
+  /* 마지막 버튼(닫기용) */
+  body.halloween-mode .modal button:last-child {
+    background: rgba(60, 40, 25, 0.8) !important;
+    color: #f4dab3 !important;
+  }
+  body.halloween-mode .modal button:last-child:hover {
+    background: rgba(90, 65, 40, 0.9) !important;
+  }
+  
+  /* 등장 애니메이션 */
+  @keyframes modalRise {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  /* ------------------------------------------ */
+/* 🎃 Halloween 모드 - 확성기 모달 스타일 */
+/* ------------------------------------------ */
+body.halloween-mode .megaphone-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 85% !important;
+    max-width: 380px !important;
+    background: radial-gradient(circle at 40% 20%, rgba(35, 20, 10, 0.96), rgba(20, 12, 6, 0.9)) !important;
+    border: 1.5px solid rgba(255, 200, 150, 0.25) !important;
+    border-radius: 20px !important;
+    box-shadow:
+      0 6px 20px rgba(255, 150, 60, 0.25),
+      inset 0 0 10px rgba(255, 180, 100, 0.08) !important;
+    padding: 28px 24px !important;
+    color: #ffeecd !important;
+    text-align: center !important;
+    z-index: 1000 !important;
+    backdrop-filter: blur(8px) !important;
+    animation: modalRise 0.4s ease-out !important;
+  }
+  
+  /* 타이틀 */
+  body.halloween-mode .megaphone-modal h2 {
+    color: #ffce73 !important;
+    font-size: 28px !important;
+    margin-bottom: 12px !important;
+    font-family: "Judson", serif !important;
+    text-shadow: 0 2px 10px rgba(255, 180, 100, 0.4) !important;
+  }
+  
+  /* 설명 문구 */
+  body.halloween-mode .megaphone-modal p {
+    color: #f5dcb0 !important;
+    font-size: 15px !important;
+    margin-bottom: 18px !important;
+  }
+  
+  /* 입력창 (textarea) */
+  body.halloween-mode .megaphone-modal textarea {
+    width: 100% !important;
+    min-height: 80px !important;
+    background: rgba(45, 30, 15, 0.85) !important;
+    color: #fff8e1 !important;
+    border: 1.5px solid rgba(255, 190, 130, 0.3) !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+    resize: none !important;
+    font-size: 14px !important;
+    font-family: "Gowun Dodum", sans-serif !important;
+    transition: all 0.25s ease;
+  }
+  
+  body.halloween-mode .megaphone-modal textarea:focus {
+    background: rgba(55, 35, 20, 0.95) !important;
+    border-color: rgba(255, 180, 100, 0.5) !important;
+    box-shadow: 0 0 10px rgba(255, 160, 80, 0.25) !important;
+    outline: none !important;
+  }
+  
+  /* 버튼 (공통) */
+  body.halloween-mode .megaphone-modal button {
+    background: linear-gradient(135deg, #ff8b2f, #d65f1a) !important;
+    color: #fffaf2 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin: 6px !important;
+    box-shadow: 0 4px 12px rgba(255, 180, 80, 0.25);
+    transition: all 0.25s ease-in-out;
+  }
+  
+  /* 버튼 hover */
+  body.halloween-mode .megaphone-modal button:hover {
+    background: linear-gradient(135deg, #ff9f52, #e07126) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(255, 190, 100, 0.35);
+  }
+  
+  /* 구매 옵션 버튼 구분 */
+  body.halloween-mode .megaphone-modal .purchase-options button {
+    background: linear-gradient(135deg, #ff9f3a, #e26b1c) !important;
+    min-width: 100px !important;
+  }
+  
+  /* 닫기 버튼 */
+  body.halloween-mode .megaphone-modal .close-btn {
+    background: rgba(60, 40, 25, 0.85) !important;
+    color: #f4dab3 !important;
+    font-weight: 500 !important;
+    border-radius: 999px !important;
+    padding: 8px 20px !important;
+    margin-top: 12px !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  }
+  
+  body.halloween-mode .megaphone-modal .close-btn:hover {
+    background: rgba(90, 65, 40, 0.9) !important;
+  }
+  
+  /* 애니메이션 */
+  @keyframes modalRise {
+    from { opacity: 0; transform: translate(-50%, -45%) scale(0.96); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  
