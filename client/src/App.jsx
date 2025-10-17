@@ -58,7 +58,7 @@ export default function App() {
 // 🎃 [할로윈 모드 자동 활성화]
 useEffect(() => {
   const today = new Date();
-  const isHalloween = today.getMonth() === 9 && today.getDate() >= 17 && today.getDate() <= 31;
+  const isHalloween = today.getMonth() === 9 && today.getDate() >= 28 && today.getDate() <= 31;
 
   if (isHalloween) {
     // ✅ Halloween.css를 비동기 로드 (딱 한 번만)
