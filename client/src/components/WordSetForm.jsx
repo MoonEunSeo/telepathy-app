@@ -266,7 +266,6 @@ export default function WordSetForm({ currentUser }) {
   return (
     <div className="wordset-section">
       <h3>✨ 단어세트를 만들어볼까요?</h3>
-
       {/* 단어 입력 구역 */}
       <div className="word-inputs">
         {words.map((w, i) => (
@@ -289,39 +288,41 @@ export default function WordSetForm({ currentUser }) {
       </div>
 
       {/* 환불 계좌 입력 구역 */}
+      <h3>💸 환불계좌 정보</h3>
       <div className="word-inputs">
-  <h3>💸 환불계좌 정보</h3>
-  <div className="refund-section">
-    <select
-      className="wordset-select"
-      value={refundBank}
-      onChange={(e) => setRefundBank(e.target.value)}
-    >
-      <option value="">은행 선택</option>
-      <option value="국민은행">국민은행</option>
-      <option value="신한은행">신한은행</option>
-      <option value="우리은행">우리은행</option>
-      <option value="하나은행">하나은행</option>
-      <option value="기업은행">기업은행</option>
-      <option value="농협은행">농협은행</option>
-      <option value="카카오뱅크">카카오뱅크</option>
-      <option value="케이뱅크">케이뱅크</option>
-      <option value="SC제일은행">SC제일은행</option>
-      <option value="토스뱅크">토스뱅크</option>
-      <option value="새마을금고">새마을금고</option>
-      <option value="신협">신협</option>
-    </select>
-    <input
-      type="text"
-      className="wordset-input"
-      placeholder="계좌번호 (숫자만)"
-      value={refundAccount}
-      onChange={(e) => handleAccountChange(e.target.value)}
-      inputMode="numeric"
-      pattern="\d*"
-      autoComplete="off"
-    />
-  </div>
+          <div className="refund-section">
+            <select
+              className="wordset-select"
+              value={refundBank}
+              onChange={(e) => setRefundBank(e.target.value)}
+              >
+
+              <option value="">은행 선택</option>
+              <option value="국민은행">국민은행</option>
+              <option value="신한은행">신한은행</option>
+              <option value="우리은행">우리은행</option>
+              <option value="하나은행">하나은행</option>
+              <option value="기업은행">기업은행</option>
+              <option value="농협은행">농협은행</option>
+              <option value="카카오뱅크">카카오뱅크</option>
+              <option value="케이뱅크">케이뱅크</option>
+              <option value="SC제일은행">SC제일은행</option>
+              <option value="토스뱅크">토스뱅크</option>
+              <option value="새마을금고">새마을금고</option>
+              <option value="신협">신협</option>
+            </select>
+
+          <input
+            type="text"
+            className="wordset-input refund-input"
+            placeholder="계좌번호 (숫자만)"
+            value={refundAccount}
+            onChange={(e) => handleAccountChange(e.target.value)}
+            inputMode="numeric"
+            pattern="\d*"
+            autoComplete="off"
+          />
+        </div>
 
         <div style={{ color: "red", fontSize: 12 }}>
           {errors.bank || errors.account || ""}

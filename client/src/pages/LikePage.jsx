@@ -805,7 +805,7 @@ if (status === "checking" && timer > 0) {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   return (
-    <div className="like-container">
+    <div className="deposit-container">
       {/* ✅ PC일 때만 QR 표시 */}
       {!isMobile && (
         <div className="qr-card">

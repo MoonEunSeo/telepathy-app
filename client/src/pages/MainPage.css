@@ -406,6 +406,43 @@
   cursor: not-allowed;
 }
 
+/* 🌙 유료(paid) 세트용 버튼 – 부드러운 몽환 스타일 */
+.word-btn.paid {
+  background: linear-gradient(145deg, rgba(255, 243, 247, 0.85), rgba(255, 228, 236, 0.9));
+  border: 1.8px solid rgba(255, 195, 215, 0.55);
+  color: #a84b6c;
+  font-weight: 550;
+  box-shadow:
+    0 2px 8px rgba(255, 190, 210, 0.25),
+    0 0 12px rgba(255, 210, 220, 0.15),
+    inset 0 0 8px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+/* hover 시 – 은은하게 빛나는 느낌 */
+.word-btn.paid:hover {
+  background: linear-gradient(145deg, rgba(255, 234, 240, 0.9), rgba(255, 218, 230, 0.95));
+  border-color: rgba(255, 150, 180, 0.6);
+  color: #954566;
+  transform: translateY(-3px);
+  box-shadow:
+    0 4px 12px rgba(255, 175, 195, 0.3),
+    0 0 20px rgba(255, 210, 220, 0.25),
+    inset 0 0 10px rgba(255, 255, 255, 0.25);
+}
+
+/* 선택된 상태 – 살짝 더 따뜻하게 glow */
+.word-btn.paid.selected {
+  background: linear-gradient(160deg, #ffc2d1, #ff9eb6);
+  border-color: #ff85a1;
+  color: white;
+  font-weight: 600;
+  box-shadow:
+    0 0 16px rgba(255, 155, 175, 0.5),
+    inset 0 0 12px rgba(255, 255, 255, 0.25);
+  transform: scale(1.04);
+}
 .telepathy-container {
   display: flex;
   flex-direction: column;

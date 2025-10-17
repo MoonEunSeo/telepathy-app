@@ -571,6 +571,8 @@ useEffect(() => {
   import 'react-toastify/dist/ReactToastify.css';
   import { recommendations } from '../utils/recommendations';
   import MegaphoneInputModal from "../components/MegaphoneInputModal";
+
+ // import useRandomSequence from '../hooks/useRandomSequence'; //단어셔플
   
   export default function MainPage() {
     const navigate = useNavigate();
@@ -588,6 +590,9 @@ useEffect(() => {
     const [hasMegaphone, setHasMegaphone] = useState(false);
 
     const [showBizInfo, setShowBizInfo] = useState(false);
+
+    //셔플에 필요한 애 (wordset포함)
+    //const { getNextWordSet } = useRandomSequence();
 
     // 버튼 클릭 핸들러
     const handleMegaphoneClick = async () => {
@@ -849,8 +854,17 @@ useEffect(() => {
           if (data.round !== round) {
             setFadeClass("fade-out");
             setTimeout(() => {
+              // 순차구조처리
               const idx = data.round % recommendations.length;
               setWordSet(recommendations[idx].words);
+              /* 랜덤처리 (순환X)const randomIdx = Math.floor(Math.random() * recommendations.length);
+              setWordSet(recommendations[randomIdx].words); */
+              
+              //셔플 처리
+              /*
+              const nextWords = getNextWordSet();
+              setWordSet(nextWords);*/
+          
               setRound(data.round);
               setRemaining(data.remaining);
               setSelectedWord('');
@@ -996,8 +1010,7 @@ useEffect(() => {
         />
       )}
 
-  
-        <div className="telepathy-container">
+  {/*<div className="telepathy-container">
           <div className="timer-display">{remaining}초</div>
           <h1 className="title">Telepathy</h1>
           <p className="subtitle">같은 단어를 선택한 사람과 연결돼요.</p>
@@ -1013,7 +1026,27 @@ useEffect(() => {
                 {w}
               </button>
             ))}
-          </div>
+          </div>*/}
+
+      <div className="telepathy-container">
+                <div className="timer-display">{remaining}초</div>
+                <h1 className="title">Telepathy</h1>
+                <p className="subtitle">같은 단어를 선택한 사람과 연결돼요.</p>
+        
+        <div className={`word-set ${fadeClass}`}>
+          {wordSet.map((w) => (
+            <button
+              key={w}
+              className={`word-btn 
+                ${selectedWord === w ? 'selected' : ''} 
+                ${recommendations[round % recommendations.length].paid ? 'paid' : ''}`}
+              onClick={() => handleWordSelect(w)}
+              disabled={!!selectedWord}
+            >
+              {w}
+            </button>
+          ))}
+        </div>
   
           {showFeedbackModal && feedbackInfo && (
             <div className="feedback-modal">
