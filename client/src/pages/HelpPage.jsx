@@ -108,7 +108,7 @@ export default function HelpPage() {
         <p>🔦 이 앱에 대한 개선 아이디어가 있으신가요?</p>
         <p>텔레파시는 당신의 의견이 필요해요.</p>
         <p>
-          Contact : <span className={styles.card}>rlashfod2020@gmail.com</span>
+          Contact : <span className={styles.card}>telepathy.cs@gmail.com</span>
         </p>
         <div className={styles.centered}>
         <k>당신의 낭만적인 연결을, 텔레파시에서 느껴보세요.</k>
