@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './MyWords.css';
+
 
 export default function MyWords() {
   const [wordHistory, setWordHistory] = useState([]);

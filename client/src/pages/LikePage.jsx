@@ -490,7 +490,7 @@ export default LikesPage;*/
 
 
 import React, { useState, useEffect } from "react";
-import "./LikePage.css";
+
 import axios from "axios";
 //import WordSetForm from "../components/WordSetForm";
 import tossQr from "../assets/toss_qr.jpg";

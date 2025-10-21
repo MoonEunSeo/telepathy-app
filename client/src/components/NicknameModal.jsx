@@ -103,7 +103,6 @@ export default function NicknameModal({ onClose, onSave }) {
 */
 
 import React, { useState } from 'react';
-import './NicknameModal.css';
 
 export default function NicknameModal({ onClose, onSave }) {
   const [nickname, setNickname] = useState('');

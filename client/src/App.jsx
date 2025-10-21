@@ -28,17 +28,60 @@ import NotificationConsent from './pages/terms/NotificationConsent';
 
 import BottomLayout from './components/BottomLayout';
 import { IntentProvider } from './contexts/IntentContext';
-
 import { ToastContainer } from 'react-toastify';
+import { ThemeProvider, useTheme } from "./themes/themes/ThemeContext"; // ✅ 추가
+
 import 'react-toastify/dist/ReactToastify.css';
+import './index.css';
+
+// --------------------------------------------------
+// 🎁 날짜 기반 테마 자동 설정 Hook
+// --------------------------------------------------
+function useSeasonalTheme() {
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+
+    let selectedTheme = "default";
+    let cssToLoad = new URL(`./themes/themes/default.css`, import.meta.url).href;
+
+    if (month === 10 && day >= 18 && day <= 31) {
+      selectedTheme = "halloween";
+      cssToLoad = new URL(`./themes/themes/halloween.css`, import.meta.url).href;
+    } else if (month === 12 && day >= 1 && day <= 31) {
+      selectedTheme = "christmas";
+      cssToLoad = new URL(`./themes/themes/christmas.css`, import.meta.url).href;
+    }
+
+    // ✅ 기존 스타일 초기화
+    document.body.className = "";
+    const oldThemeStyle = document.getElementById("theme-style");
+    if (oldThemeStyle) oldThemeStyle.remove();
+
+    // ✅ 새 스타일 추가
+    const link = document.createElement("link");
+    link.id = "theme-style";
+    link.rel = "stylesheet";
+    link.href = cssToLoad;
+    document.head.insertBefore(link, document.head.firstChild);
 
 
-// 🎃 [1️⃣ 추가] 10월 31일 할로윈 모드 자동 활성화
-export default function App() {
+    // ✅ body 클래스 추가
+    document.body.classList.add(`${selectedTheme}-mode`);
+    setTheme(selectedTheme);
+  }, [setTheme]);
+}
+// --------------------------------------------------
+// 🎯 App 구성
+// --------------------------------------------------
+function AppRoutes() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ 로그인 상태 체크 useEffect
+  // ✅ 로그인 상태 확인
   useEffect(() => {
     fetch('/api/auth/check', { credentials: 'include' })
       .then(res => res.json())
@@ -55,31 +98,12 @@ export default function App() {
         }
       });
   }, [navigate, location.pathname]);
-// 🎃 [할로윈 모드 자동 활성화]
-useEffect(() => {
-  const today = new Date();
-  const isHalloween = today.getMonth() === 9 && today.getDate() >= 28 && today.getDate() <= 31;
 
-  if (isHalloween) {
-    // ✅ Halloween.css를 비동기 로드 (딱 한 번만)
-    import('./pages/Halloween.css')
-      .then(() => {
-        document.body.classList.add('halloween-mode');
-        console.log('🎃 Halloween theme activated!');
-      })
-      .catch((err) => console.error('Halloween theme failed to load:', err));
-  } else {
-    document.body.classList.remove('halloween-mode');
-  }
-
-  // ✅ cleanup (다른 날엔 자동 해제)
-  return () => {
-    document.body.classList.remove('halloween-mode');
-  };
-}, []); // 의존성 없음 → 앱 최초 렌더링 1회 실행
+  // ✅ 날짜 기반 테마 적용
+  useSeasonalTheme();
 
   return (
-    <IntentProvider>
+    <>
       <Routes>
         {/* ✅ 인증 관련 */}
         <Route path="/login" element={<LoginPage />} />
@@ -112,10 +136,20 @@ useEffect(() => {
         <Route path="/terms/notification-consent" element={<NotificationConsent />} />
       </Routes>
 
-              {/* ✅ 404 페이지 (필요 시 추가 가능) */}
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
-
       <ToastContainer position="top-center" autoClose={2000} />
-    </IntentProvider>
+    </>
+  );
+}
+
+// --------------------------------------------------
+// 🧙‍♀️ 최종 내보내기
+// --------------------------------------------------
+export default function App() {
+  return (
+    <ThemeProvider>
+      <IntentProvider>
+        <AppRoutes />
+      </IntentProvider>
+    </ThemeProvider>
   );
 }

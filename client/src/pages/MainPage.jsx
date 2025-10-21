@@ -565,7 +565,7 @@ useEffect(() => {
   import { useNavigate } from 'react-router-dom';
   import { HelpCircle, Megaphone } from 'lucide-react';
   import { socket } from '../config/socket';
-  import './MainPage.css';
+  
   import NicknameModal from '../components/NicknameModal';
   import { toast, ToastContainer } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
@@ -818,6 +818,25 @@ useEffect(() => {
         socket.off('onlineCount');
       };
     }, []);
+
+    // ✅ 랜덤 가짜 인원 추가 로직
+useEffect(() => {
+  let fakeOffset = Math.floor(Math.random() * 3); // 초깃값 0~2명 랜덤
+  setOnlineCount((prev) => prev + fakeOffset);
+
+  const randomize = () => {
+    // 1~5분 사이 랜덤 시간 설정
+    const nextInterval = Math.floor(Math.random() * (5 * 60 * 1000 - 60 * 1000)) + 60 * 1000;
+    // 1~4명 랜덤 증감 (더하거나 줄어들 수도 있음)
+    const change = Math.floor(Math.random() * 5) - 1; // -1~+3 범위
+    setOnlineCount((prev) => Math.max(1, prev + change)); // 최소 1명 이상
+    // 다음 랜덤 타이머 재귀 설정
+    setTimeout(randomize, nextInterval);
+  };
+
+  const timer = setTimeout(randomize, 3000); // 초기 3초 후 시작
+  return () => clearTimeout(timer);
+}, []);
   
     // ✅ 매칭 이벤트 수신
     useEffect(() => {
@@ -881,7 +900,7 @@ useEffect(() => {
       };
   
       syncFromServer();
-      const syncInterval = setInterval(syncFromServer, 5000);
+      const syncInterval = setInterval(syncFromServer, 1000);
       return () => clearInterval(syncInterval);
     }, [round]);
   
@@ -1101,17 +1120,19 @@ useEffect(() => {
             </div>
           )}
           
-            {/* 헬프 버튼 */}
+            {/* 🎃 왼쪽 하단 아이콘 버튼 묶음 */}
             <div className="icon-buttons">
-            <button className="help-icon" onClick={() => navigate('/helppage')}>
-              <HelpCircle />
-            </button>
+              {/* 헬프 버튼 */}
+              <button className="help-icon" onClick={() => navigate('/helppage')}>
+                <HelpCircle />
+              </button>
 
-            {/* 확성기 버튼 */}
-            <button className="megaphone-button" onClick={handleMegaphoneClick}>
-            <Megaphone />
-          </button>
+              {/* 확성기 버튼 */}
+              <button className="megaphone-button" onClick={handleMegaphoneClick}>
+                <Megaphone />
+              </button>
             </div>
+
           </div>
 
             <ToastContainer />

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import WordSetForm from "../components/WordSetForm";
 import axios from "axios";
-import "./WordSetPage.css";
+
 
 export default function WordSetPage() {
   const [currentUser, setCurrentUser] = useState(null);

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './ClosedModal.css';
 
 // 👉 유저 수 상태 컴포넌트
 function UserStatus() {

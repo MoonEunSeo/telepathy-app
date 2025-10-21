@@ -1,3 +1,5 @@
+/* 🧭 moved from: src\themes\base\NicknameModal.css */
+/* 🧭 moved from: src\components\NicknameModal.css */
 .nickname-modal-backdrop {
   position: fixed;
   top: 0;
@@ -76,3 +78,5 @@
 .nickname-highlight {
   color: #e5625e;
 }
+
+

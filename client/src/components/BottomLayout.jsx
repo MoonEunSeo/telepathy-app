@@ -37,7 +37,6 @@ export default function BottomLayout() {
 
 import { Home, MessageSquareHeart, Heart, User } from 'lucide-react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
-import './BottomLayout.css';
 
 export default function BottomLayout() {
   const navigate = useNavigate();
@@ -45,13 +44,13 @@ export default function BottomLayout() {
 
   const navItems = [
     { icon: <Home />, path: '/main' },
+    { icon: <Heart />, path: '/likes' },
     {
       icon: <MessageSquareHeart />,
       external: true,
       url: 'https://gall.dcinside.com/mgallery/board/lists/?id=telepathy',
       title: '텔레파시 디시인사이드 갤러리',
     },
-    { icon: <Heart />, path: '/likes' },
     { icon: <User />, path: '/mypage' },
   ];
 

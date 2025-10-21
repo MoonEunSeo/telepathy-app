@@ -1,3 +1,5 @@
+/* 🧭 moved from: src\themes\base\MyPage.css */
+/* 🧭 moved from: src\pages\MyPage.css */
 /* 🪶 기본 폰트 설정 */
 body {
   font-family: 'Gowun Dodum', sans-serif;
@@ -232,6 +234,33 @@ body {
     margin: 8px 0 !important;
     width: 100% !important;
   }
+}
+
+
+/*  모달 버튼 영역 정렬 수정 */
+.modal-content > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; /* 두 개 이상일 때 줄바꿈 가능 */
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 버튼이 두 개일 때도 모달 안에서 균형 잡히도록 */
+.modal-content .login-button1 {
+  flex: 1 1 45%; /* 두 개일 때 반반 자동 */
+  max-width: 140px;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.modal-content .login-button1.cancel {
+  flex: 1 1 45%;
+  max-width: 140px;
 }
 
 

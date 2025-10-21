@@ -1,4 +1,4 @@
-import './TermsTemplate.css';
+
 
 export default function YouthPolicy() {
     return (

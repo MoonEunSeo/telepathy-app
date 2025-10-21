@@ -674,7 +674,6 @@ export default function ChatPage() {
   );
 }*/import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ChatPage.css';
 import { LogOut, AlertTriangle } from 'lucide-react';
 import { socket } from '../config/socket';
 import ReportModal from '../components/ReportModal';

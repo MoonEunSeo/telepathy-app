@@ -1,3 +1,5 @@
+/* 🧭 moved from: src\themes\base\TermsTemplate.css */
+/* 🧭 moved from: src\pages\terms\TermsTemplate.css */
 .terms-container {
     max-width: 460px;
     margin: 0 auto;
@@ -47,3 +49,4 @@
   .styled-table tbody tr:last-child td {
     border-bottom: none;
   }
+

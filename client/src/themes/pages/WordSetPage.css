@@ -1,3 +1,5 @@
+/* 🧭 moved from: src\themes\base\WordSetPage.css */
+/* 🧭 moved from: src\pages\WordSetPage.css */
 /* ✅ WordSetPage.css — 원래 구조 복원 */
 .wordset-page {
   display: flex;
@@ -172,3 +174,5 @@
 .qr-card { animation-delay: 0.6s; }
 .deposit-account { animation-delay: 0.8s; }
 .deposit-button { animation-delay: 1s; }
+
+

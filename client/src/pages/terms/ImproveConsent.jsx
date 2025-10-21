@@ -1,4 +1,3 @@
-import './TermsTemplate.css';
 
 export default function ImproveConsent() {
     return (

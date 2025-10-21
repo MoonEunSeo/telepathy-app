@@ -1,3 +1,5 @@
+/* 🧭 moved from: src\themes\base\ChatPage.css */
+/* 🧭 moved from: src\pages\ChatPage.css */
 /* ----------------- 기본 레이아웃 ----------------- */
 .chat-container {
   display: flex;
@@ -334,3 +336,5 @@
   background: #222;
   transform: translateY(-1px);
 }
+
+

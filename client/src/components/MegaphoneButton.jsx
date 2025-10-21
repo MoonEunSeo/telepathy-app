@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { Megaphone } from "lucide-react";
-import "./MegaphoneButton.css";
-import MegaphoneInputModal from "./MegaphoneButton.css";
 
 const MegaphoneButton = ({ socket, megaphoneCount }) => {
   const [showIntro, setShowIntro] = useState(false);

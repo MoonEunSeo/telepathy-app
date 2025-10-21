@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useModal } from '../contexts/ModalContext';
 
 const termsList = [
   { id: 'service', label: '(필수) 서비스 약관 동의', required: true },

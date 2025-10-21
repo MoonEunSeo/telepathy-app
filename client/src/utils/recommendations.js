@@ -366,7 +366,7 @@ export const recommendations = [
   { topic: "과자2", words: ["포카칩", "눈을감자", "프링글스", "포스틱"], paid: 0 },
   { topic: "장르", words: ["스릴러", "로맨스코미디", "SF", "히어로"], paid: 0 },
   //결제한 녀석 6
-  { topic: "문은서", words: ["동물, 인간, 식물, 무생물"], paid: 1 },
+  { topic: "문은서", words: ["동물", "인간", "식물", "무생물"], paid: 1 },
   { topic: "SNS", words: ["인스타", "트위터", "스레드", "라인"], paid: 0 },
   { topic: "성별", words: ["여자", "남자", "여자같은남자", "남자같은여자"], paid: 0 },
   { topic: "스킨십", words: ["손잡기", "포옹", "뽀뽀", "밀어내기"], paid: 0 },

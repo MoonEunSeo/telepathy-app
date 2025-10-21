@@ -1,5 +1,4 @@
 import React from 'react';
-import '../index.css';
 
 export default function WordConfirmModal({ word, onConfirm, onCancel }) {
   return (

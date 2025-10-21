@@ -138,7 +138,6 @@ export default function WordSetForm({ currentUser }) {
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./WordSetForm.css";
 
 const API_BASE = import.meta.env.VITE_REALSITE;
 

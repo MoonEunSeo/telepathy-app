@@ -1,3 +1,5 @@
+/* 🧭 moved from: src\themes\base\MegaphoneInputModal.css */
+/* 🧭 moved from: src\components\MegaphoneInputModal.css */
 /* 전체 오버레이 */
 .megaphone-backdrop {
     position: fixed;
@@ -99,3 +101,4 @@
     background: #dc2626;
   }
   
+

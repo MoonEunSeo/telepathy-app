@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWordSession } from '../contexts/WordSessionContext';
 import WordTimer from '../components/WordTimer';
 import profileImage from '../assets/profile_image.png';
-import './MyPage.css';
+
 
 const MyPage = () => {
   const [nickname, setNickname] = useState('');

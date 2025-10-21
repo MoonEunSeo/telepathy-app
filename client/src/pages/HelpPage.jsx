@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./HelpPage.module.css";
 import FrameIcon from '../assets/sasinamu.svg';
 import Telpa from '../assets/telpa.svg';
 import Want_to from '../assets/want_to.svg';
@@ -9,9 +8,17 @@ import Emotion from '../assets/Emotion_Feedback.svg'
 import Alert from '../assets/alert.svg'
 import Searchbar from '../assets/searchbar.svg'
 import Remember from '../assets/remember.svg'
+import styles from "../themes/base/HelpPage.module.css"; 
 
+import { useEffect } from 'react';
 
 export default function HelpPage() {
+
+  useEffect(() => {
+    // 페이지 들어올 때 할로윈 모드 제거
+    document.body.classList.remove('halloween-mode');
+  }, []);
+
   const navigate = useNavigate();
 
   return (

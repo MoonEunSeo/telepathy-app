@@ -1,4 +1,4 @@
-import './TermsTemplate.css';
+
 
 export default function ServiceAgreement() {
   return (

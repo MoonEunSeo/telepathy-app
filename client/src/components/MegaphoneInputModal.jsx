@@ -49,7 +49,6 @@ export default function MegaphoneModal({ onClose, onSend, hasMegaphone }) {
 }*/
 
 import React, { useState } from "react";
-import "./MegaphoneInputModal.css";
 
 export default function MegaphoneInputModal({ onClose, hasMegaphone, onSend }) {
   const [message, setMessage] = useState("");
