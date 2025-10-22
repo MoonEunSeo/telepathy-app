@@ -48,7 +48,7 @@ function useSeasonalTheme() {
     let selectedTheme = "default";
     let cssToLoad = new URL(`./themes/themes/default.css`, import.meta.url).href;
 
-    if (month === 10 && day >= 18 && day <= 31) {
+    if (month === 10 && day >= 23 && day <= 31) {
       selectedTheme = "halloween";
       cssToLoad = new URL(`./themes/themes/halloween.css`, import.meta.url).href;
     } else if (month === 12 && day >= 1 && day <= 31) {
