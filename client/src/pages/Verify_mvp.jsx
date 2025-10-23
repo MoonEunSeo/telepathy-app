@@ -319,6 +319,8 @@ export default function Verify_mvp() {
   };
 
   return (
+    <div data-page="verify-mvp">
+      {/* 🎃 할로윈 모드용 페이지 식별자 */}
     <div className="login-container">
       <h2 className="login-title">본인인증</h2>
 
@@ -366,7 +368,7 @@ export default function Verify_mvp() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                   <input
-                    className="auth-input"
+                    className="verify-input"
                     placeholder="인증번호 6자리"
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value)}
@@ -407,6 +409,6 @@ export default function Verify_mvp() {
           </div>
         </div>
       )}
-    </div>
+   </div></div>
   );
 }

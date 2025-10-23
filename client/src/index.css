@@ -2,8 +2,6 @@
 /* Base */
 @import './themes/base/BottomLayout.css';
 @import './themes/base/ClosedModal.css';
-@import './themes/base/common.css';
-@import './themes/base/default.css';
 @import './themes/base/HelpPage.module.css';
 @import './themes/base/index.css';
 @import './themes/base/MegaphoneButton.css';

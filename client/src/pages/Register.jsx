@@ -82,6 +82,8 @@ export default function Register() {
   };
 
   return (
+    <div data-page="register">
+      {/* 🎃 할로윈 모드용 페이지 식별자 */}
     <div className="login-container">
       <p className="login-subtitle">바로 지금,<br />우리는 같은 단어를 떠올렸어요</p>
       <h1 className="login-title">회원가입</h1>
@@ -127,6 +129,7 @@ export default function Register() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
