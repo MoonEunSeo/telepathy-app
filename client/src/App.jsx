@@ -141,6 +141,8 @@ function AppRoutes() {
       });
   }, [navigate, location.pathname]);
 
+  // ✅ 날짜 기반 테마 적용
+  useSeasonalTheme();
 
   return (
     <>

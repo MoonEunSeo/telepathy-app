@@ -66,7 +66,7 @@ export default function LoginPage() {
           {/* 회원가입 */}
           <p className="auth-footer-question">
             계정이 없으신가요?{' '}
-            <span className="bold-link" onClick={() => setIsOpen(true)}>
+            <span className="bold-link" onClick={() => navigate('/register')}>
               회원가입
             </span>
           </p>
