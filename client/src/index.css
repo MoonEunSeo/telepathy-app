@@ -6,6 +6,7 @@
 @import './themes/base/MegaphoneButton.css';
 @import './themes/base/MegaphoneInputModal.css';
 @import './themes/base/MyWords.css';
+@import './themes/base/index.css';
 @import './themes/base/NicknameModal.css';
 @import './themes/base/TermsTemplate.css';
 @import './themes/base/WordSetForm.css';
@@ -17,6 +18,7 @@
 @import './themes/pages/MyPage.css';
 @import './themes/pages/ChatPage.css';
 @import './themes/pages/WordSetPage.css';
+
 
 /* Themes */
 /* @import '../themes/christmas.css';
