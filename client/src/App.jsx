@@ -187,7 +187,6 @@ function AppRoutes() {
 // 🧙‍♀️ 최종 내보내기
 // --------------------------------------------------
 export default function App() {
-  useSeasonalTheme();
   return (
     <ThemeProvider>
       <IntentProvider>
