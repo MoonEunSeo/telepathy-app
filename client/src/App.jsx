@@ -141,8 +141,6 @@ function AppRoutes() {
       });
   }, [navigate, location.pathname]);
 
-  // ✅ 날짜 기반 테마 적용
-  useSeasonalTheme();
 
   return (
     <>
@@ -187,6 +185,7 @@ function AppRoutes() {
 // 🧙‍♀️ 최종 내보내기
 // --------------------------------------------------
 export default function App() {
+  useSeasonalTheme();
   return (
     <ThemeProvider>
       <IntentProvider>
