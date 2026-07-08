@@ -6,7 +6,7 @@
     left: 0;
     right: 0;
     height: 56px;
-    background-color: white;
+    background-color: var(--color-surface);
     border-top: 1px solid #e5e7eb; /* gray-200 */
     display: flex;
     justify-content: space-around;
@@ -26,7 +26,7 @@
   }
   
   .bottom-nav-button.active {
-    color: #000000; /* active = 검정 */
+    color: var(--color-accent); /* active = 검정 */
   }
   
 

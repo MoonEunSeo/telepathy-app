@@ -3,7 +3,7 @@
 .terms-container {
     max-width: 460px;
     margin: 0 auto;
-    background-color: #f9f6f1;
+    background-color: var(--color-bg);
     padding: 24px;
     font-family: 'Gowun Batang', serif;
     line-height: 1.7;
@@ -18,7 +18,7 @@
   
   .terms-container hr {
     border: none;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--color-border-strong);
     margin: 24px 0;
   }
 

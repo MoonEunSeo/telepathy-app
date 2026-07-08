@@ -11,12 +11,12 @@
     font-size: 1.1rem;
     font-weight: bold;
     margin-bottom: 4px;
-    color: #333;
+    color: var(--color-text);
   }
-  
+
   .my-words-subtitle {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--color-text-secondary);
     margin-bottom: 20px;
   }
   
@@ -27,7 +27,7 @@
   }
   
   .word-card {
-    background-color: #ffffff;
+    background-color: var(--color-surface);
     border-radius: 18px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     padding: 16px;
@@ -45,29 +45,29 @@
     font-size: 1rem;
     font-weight: bold;
     margin-bottom: 4px;
-    color: #222;
+    color: var(--color-text-strong);
   }
-  
+
   .nickname {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--color-text-secondary);
     margin-bottom: 4px;
   }
-  
+
   .date {
     font-size: 0.75rem;
-    color: #aaa;
+    color: var(--color-text-faint);
     text-align: right;
   }
-  
+
   .empty-msg {
     margin-top: 20px;
     font-size: 0.85rem;
-    color: #aaa;
+    color: var(--color-text-faint);
   }
-  
+
   .divider-line {
   border: none;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--color-border-strong);
   margin: 24px 0;}
 

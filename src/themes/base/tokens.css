@@ -23,6 +23,7 @@
   /* ===== Text (텍스트) ===== */
   --color-text: #333333;           /* 기본 본문 */
   --color-text-strong: #222222;    /* 강조 텍스트 */
+  --color-text-secondary: #555555; /* muted보다 진한 보조 텍스트 (#555·#666 통합) */
   --color-text-muted: #888888;     /* 보조 텍스트 */
   --color-text-subtle: #999999;    /* 라벨·footer */
   --color-text-faint: #aaaaaa;     /* 힌트·읽음 표시 */
@@ -54,6 +55,18 @@
   /* ===== Chat bubble (상대방 말풍선) ===== */
   --color-bubble-other-bg: #f5f3ef;
   --color-bubble-other-text: #222222;
+
+  /* ===== Warm paper palette (기본 테마의 웜톤 정체성) =====
+   * 아래 값들은 여러 파일에서 "동일한 값"으로 반복되던 것을 그대로
+   * 승격한 것 (값 변경 없는 순수 중앙화). */
+  --color-text-warm: #3a2d23;              /* 웜 다크브라운 제목/본문 */
+  --color-text-warm-soft: #5b4636;         /* 웜 브라운 설명 텍스트 */
+  --color-warm-input-bg: #fffaf5;          /* 웜 입력창 배경 */
+  --color-warm-input-bg-focus: #fff8ef;    /* 웜 입력창 포커스 배경 */
+  --color-warm-input-border: #e2d3c1;      /* 웜 입력창 테두리 */
+  --color-warm-input-border-focus: #d3b896;/* 웜 입력창 포커스 테두리 */
+  --color-warm-input-text: #4a3b2e;        /* 웜 입력창 텍스트 */
+  --color-danger-warm: #c94f4f;            /* 웜 계열 경고 레드 (입금 경고 등) */
 
   /* ===== Overlays & Shadows (오버레이·그림자) ===== */
   --overlay: rgba(0, 0, 0, 0.4);

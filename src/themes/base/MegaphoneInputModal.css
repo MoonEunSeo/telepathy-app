@@ -17,7 +17,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #fff;
+    background: var(--color-surface);
     border-radius: 16px;
     padding: 24px 28px;
     width: 360px;
@@ -55,7 +55,7 @@
   .megaphone-modal p {
     font-size: 14px;
     margin-bottom: 20px;
-    color: #555;
+    color: var(--color-text-secondary);
   }
   
   /* 구매 버튼 그룹 */
@@ -69,8 +69,8 @@
   .purchase-options button {
     flex: 1;
     background: #f3f4f6;
-    color: #333;
-    border: 1px solid #ddd;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     font-weight: 600;
     font-size: 14px;
