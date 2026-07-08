@@ -1,0 +1,340 @@
+/* 🧭 moved from: src\themes\base\ChatPage.css */
+/* 🧭 moved from: src\pages\ChatPage.css */
+/* ----------------- 기본 레이아웃 ----------------- */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: #fff;
+  font-family: 'Gowun Dodum', sans-serif;
+}
+
+/* ----------------- 헤더 ----------------- */
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #fffffff8;
+  border-bottom: 1px solid #eaeaea;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.chat-header-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exit-button {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 6px 10px;
+  transition: all 0.2s;
+}
+
+.exit-button:hover {
+  color: #ff6b6b;
+}
+
+/* ----------------- 메시지 영역 ----------------- */
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------- 메시지 ----------------- */
+.chat-message {
+  max-width: 65%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.chat-message.self {
+  align-self: flex-end;
+  background-color: #000;
+  color: #fff;
+  border-bottom-right-radius: 6px;
+}
+
+.chat-message.other {
+  align-self: flex-start;
+  background-color: #F5F3EF;
+  color: #222;
+  border-bottom-left-radius: 6px;
+}
+
+/* ----------------- 입력 영역 ----------------- */
+.chat-input-container {
+  display: flex;
+  padding: 12px 16px;
+  border-top: 1px solid #eee;
+  background-color: #fff;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  outline: none;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+.chat-input:focus {
+  border-color: #999;
+}
+
+.chat-send-button {
+  margin-left: 8px;
+  padding: 12px 18px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.chat-send-button:hover {
+  background-color: #222;
+}
+
+.chat-input:disabled,
+.chat-send-button:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ----------------- 상태 표시 ----------------- */
+.chat-read-indicator {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* 타이핑 인디케이터 */
+.typing-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  margin: 0 3px;
+  background-color: #999;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0% { opacity: 0.2; }
+  20% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+/* ----------------- 공통 모달 오버레이 ----------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+}
+
+/* ----------------- 나가기 확인 모달 ----------------- */
+.chat-ended-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 32px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  text-align: center;
+  width: 300px;
+  animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-ended-modal p {
+  margin-bottom: 40px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.exit-button-text {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.exit-button-text.confirm {
+  background-color: #ff6b6b;
+  color: #fff;
+  font-size: 16px;
+}
+.exit-button-text.confirm:hover { background-color: #e85b5b; }
+
+.exit-button-text.cancel {
+  background-color: #f3f3f3;
+  color: #333;
+  font-size: 16px;
+}
+.exit-button-text.cancel:hover { background-color: #e1e1e1; }
+
+/* ----------------- 신고 모달 ----------------- */
+.report-modal {
+  background: #fdfdfd;
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  font-family: 'Gowun Dodum', sans-serif;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.report-modal h3 {
+  font-family: 'Judson', serif; /* 강조 */
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 24px;
+  color: #000;
+  letter-spacing: 0.5px;
+}
+
+.report-modal textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: none;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.report-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.report-buttons button {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.report-buttons button:last-child {
+  background: #222;
+  color: #fff;
+}
+/* ----------------- 상대방 종료 모달 (중앙 정렬 + 블러 오버레이) ----------------- */
+.chat-ended-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeInOverlay 0.3s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.chat-ended-banner {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 36px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+  text-align: center;
+  width: 250px;
+  animation: fadeInUpModal 0.3s ease-out;
+  font-family: 'Gowun Dodum', sans-serif;
+}
+
+@keyframes fadeInUpModal {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-ended-banner p {
+  margin-bottom: 28px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chat-ended-banner .exit-button-text {
+  background: #000;
+  color: #fff;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.chat-ended-banner .exit-button-text:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+

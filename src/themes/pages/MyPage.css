@@ -1,0 +1,266 @@
+/* 🧭 moved from: src\themes\base\MyPage.css */
+/* 🧭 moved from: src\pages\MyPage.css */
+/* 🪶 기본 폰트 설정 */
+body {
+  font-family: 'Gowun Dodum', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🧭 페이지 컨테이너 */
+.mypage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 80vh;
+  background-color: #f9f6f1;
+  color: #333;
+  padding: 20px 16px 80px; /* 하단 네비게이션 높이 고려 */
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* 🌙 현재 연결 단어 표시 */
+.mypage-current-word {
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  background-color: #f5c5c5;
+  padding: 6px 0;
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
+
+/* 🏷️ 제목 */
+.mypage-title {
+  font-family: 'Judson', serif;
+  font-size: 42px;
+  font-weight: bold;
+  margin: 10px 0 15px;
+  text-align: center;
+}
+
+/* 👤 프로필 이미지 */
+.mypage-profile-image {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 🪪 닉네임 */
+.mypage-nickname {
+  font-family: 'Gowun Batang', sans-serif;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+/* 📄 구분선 */
+.mypage-container hr {
+  border: none;
+  border-top: 1px solid rgba(255, 240, 200, 0.6);
+  width: 100%;
+  border-radius: 9999px;
+  margin: 12px 0;
+  box-shadow: 0 0 3px rgba(255, 200, 120, 0.3);
+}
+
+/* 📂 섹션 */
+.mypage-section {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.mypage-section-title {
+  font-family: 'Gowun Batang', sans-serif;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+/* 🧾 정보 텍스트 */
+.mypage-text {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* 🎯 전체 버튼 */
+.mypage-button-full {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 230px;
+}
+
+.mypage-button-full:hover {
+  background-color: #fafafa;
+}
+
+/* 🧩 단일 버튼 */
+.mypage-button {
+  font-family: 'Gowun Dodum', sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.mypage-button:hover {
+  color: #000;
+}
+
+/* 🧭 버튼 그룹 */
+.mypage-button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+/* 🧨 회원탈퇴 버튼 */
+.mypage-withdraw-button {
+  margin-top: 20px;
+  font-family: 'Gowun Dodum', sans-serif;
+  color: #d84f4f;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ⚫ 모달 버튼 */
+.login-button1 {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  width: 180px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-button1:hover {
+  background-color: #333;
+}
+
+.login-button1.cancel {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.login-button1.cancel:hover {
+  background-color: #d0d0d0;
+}
+
+/* 🕓 기타 텍스트 */
+.focus-hours {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* 📱 모바일 여백 압축 버전 */
+@media (max-width: 480px) {
+  .mypage-container {
+    padding: 10px 12px 60px !important; /* ⬆️ 상단 10px / 하단 60px으로 살짝 압축 */
+  }
+
+  .mypage-title {
+    margin: 4px 0 15px !important;
+  }
+
+  .mypage-profile-image {
+    width: 90px !important;
+    height: 90px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .mypage-nickname {
+    margin-bottom: 15px !important;
+  }
+
+  .mypage-section {
+    margin-bottom: 15px !important;
+  }
+
+  .mypage-section-title {
+    margin-bottom: 4px !important;
+  }
+
+  .mypage-button-group {
+    gap: 6px !important; /* 버튼 간격 살짝 좁히기 */
+    margin-top: 15px !important;
+  }
+
+  .mypage-button-full {
+    margin-top: 6px !important;
+    padding: 8px 10px !important;
+  }
+
+  .mypage-withdraw-button {
+    margin-top: 12px !important;
+  }
+
+  .mypage-container hr {
+    margin: 8px 0 !important;
+    width: 100% !important;
+  }
+}
+
+
+/*  모달 버튼 영역 정렬 수정 */
+.modal-content > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; /* 두 개 이상일 때 줄바꿈 가능 */
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 버튼이 두 개일 때도 모달 안에서 균형 잡히도록 */
+.modal-content .login-button1 {
+  flex: 1 1 45%; /* 두 개일 때 반반 자동 */
+  max-width: 140px;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.modal-content .login-button1.cancel {
+  flex: 1 1 45%;
+  max-width: 140px;
+}
+
+

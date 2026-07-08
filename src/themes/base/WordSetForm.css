@@ -1,0 +1,174 @@
+/* 🧭 moved from: src\themes\base\WordSetForm.css */
+/* 🧭 moved from: src\components\WordSetForm.css */
+
+
+/* ✅ 저장 버튼 */
+.save-button {
+  background-color: #ffb347;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-family: "Gowun Dodum";
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.save-button:hover {
+  background-color: #ffa726;
+  transform: scale(1.05);
+}
+
+.save-button:disabled {
+  background-color: #e0c6a1;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ✅ 환불계좌 구역 */
+.refund-section {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* 높이 동일하게 맞춤 */
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* ✅ 은행 선택 드롭다운 */
+.refund-section .wordset-select {
+  padding-left: 4px;
+  flex: 0 0 110px;
+  height: 42px;
+  background-color: #fffaf5;
+  border: 1.6px solid #e2d3c1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #4a3b2e;
+  font-family: "Gowun Dodum", sans-serif;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  line-height: 42px; /* 세로 텍스트 중앙 */
+}
+
+.wordset-select:hover,
+.wordset-select:focus {
+  border-color: #d3b896;
+  background-color: #fff8ef;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ✅ 옵션 목록 스타일 */
+.wordset-select option {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 6px 8px;
+  color: #3a2f24;
+  background-color: #fffefb;
+}
+
+/* ✅ 단어 입력 구역 */
+.word-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px; /* 🔥 입력칸 사이 여백 */
+  margin-bottom: 30px; /* 단어 입력 전체와 아래 섹션 사이 여백 */
+}
+
+/* ✅ 계좌번호 입력 */
+.refund-section .wordset-input {
+  flex: 1;
+  height: 42px;
+  background-color: #fffaf5;
+  border: 1.6px solid #e2d3c1;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: #4a3b2e;
+  font-family: "Gowun Dodum", sans-serif;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  line-height: normal;
+}
+
+.refund-section .wordset-input:focus {
+  border-color: #d3b896;
+  background-color: #fff8ef;
+}
+
+/* ✅ 공통 단어 입력칸 */
+.wordset-input {
+  width: 320px;
+  background-color: #fffaf5;
+  border: 1.6px solid #e2d3c1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 15px;
+  color: #4a3b2e;
+  font-family: "Gowun Dodum", sans-serif;
+  height: 42px;
+  line-height: normal;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.wordset-input:focus {
+  border-color: #d3b896;
+  background-color: #fff8ef;
+}
+
+/* ✅ 환불 계좌 입력칸 */
+.refund-input {
+  flex: 1;
+  min-width: 150px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1.6px solid #e2d3c1;
+  background-color: #fffaf5;
+  font-size: 15px;
+  font-family: "Gowun Dodum", sans-serif;
+  color: #4a3b2e;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.refund-input:focus {
+  border-color: #d3b896;
+  background-color: #fff8ef;
+}
+
+/* ✅ 모바일 대응 */
+@media (max-width: 480px) {
+  .refund-section {
+    flex-direction: column;
+    gap: 8px;
+    max-width: 260px;
+  }
+  .refund-section .wordset-select,
+  .refund-section .wordset-input {
+    width: 100%;
+  }
+}
+
+/* ✅ 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
