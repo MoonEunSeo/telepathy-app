@@ -1,0 +1,99 @@
+/* =============================================================
+ * 🎨 Design Tokens — 단일 진실 공급원 (Single Source of Truth)
+ * -------------------------------------------------------------
+ * 하드코딩된 색상 대신 여기 정의된 시맨틱 토큰(var(--color-*))을
+ * 참조하세요. 테마를 추가/변경할 때는 이 파일의 변수 값 세트만
+ * 바꾸면 됩니다. (기존 body.{theme}-mode + !important 오버라이드
+ *  방식을 대체하기 위한 기반)
+ *
+ * ⚠️ 원칙
+ *  - 반복되는 "의미 있는" 색상만 토큰화 (배경/표면/텍스트/강조/보더/
+ *    피드백/오버레이). 일회성 장식색(그라디언트·글로우 등)은 컴포넌트
+ *    고유값으로 두어 과잉 토큰화를 피함.
+ *  - :root = 기본(default) 테마. 현재 앱 외관을 그대로 재현.
+ * ============================================================= */
+
+:root {
+  /* ===== Surfaces (표면) ===== */
+  --color-bg: #f9f6f1;             /* 페이지/앱 배경 */
+  --color-surface: #ffffff;        /* 카드·모달·입력창·헤더 */
+  --color-surface-muted: #f5f5f5;  /* 은은한 대체 표면 / hover */
+  --color-surface-sunken: #f3f3f3; /* 취소 버튼·칩 배경 */
+
+  /* ===== Text (텍스트) ===== */
+  --color-text: #333333;           /* 기본 본문 */
+  --color-text-strong: #222222;    /* 강조 텍스트 */
+  --color-text-muted: #888888;     /* 보조 텍스트 */
+  --color-text-subtle: #999999;    /* 라벨·footer */
+  --color-text-faint: #aaaaaa;     /* 힌트·읽음 표시 */
+
+  /* ===== Accent (기본 액션) ===== */
+  --color-accent: #000000;         /* 주요 버튼 배경 */
+  --color-accent-hover: #222222;   /* 버튼 hover */
+  --color-on-accent: #ffffff;      /* accent 위 텍스트 */
+
+  /* ===== Borders (테두리) ===== */
+  --color-border: #dddddd;
+  --color-border-strong: #cccccc;
+  --color-border-subtle: #eeeeee;
+
+  /* ===== Feedback (피드백) ===== */
+  --color-danger: #ff4d4f;         /* 위험/삭제 액션 */
+  --color-danger-hover: #e04445;
+  --color-danger-accent: #ff6b6b;  /* 부드러운 경고(채팅 나가기 등) */
+  --color-danger-accent-hover: #e85b5b;
+  --color-danger-text: #c40000;    /* 경고 문구 텍스트 */
+  --color-danger-surface: #ffecec; /* 경고 박스 배경 */
+  --color-danger-border: #ff8080;  /* 경고 박스 테두리 */
+  --color-link: #2c68ff;           /* 링크·성공 메시지 */
+
+  /* ===== Neutral action (보조/취소) ===== */
+  --color-neutral: #f0f0f0;
+  --color-neutral-hover: #e0e0e0;
+
+  /* ===== Chat bubble (상대방 말풍선) ===== */
+  --color-bubble-other-bg: #f5f3ef;
+  --color-bubble-other-text: #222222;
+
+  /* ===== Overlays & Shadows (오버레이·그림자) ===== */
+  --overlay: rgba(0, 0, 0, 0.4);
+  --overlay-soft: rgba(0, 0, 0, 0.35);
+  --overlay-strong: rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* =============================================================
+ * 🗓️ 시즌 테마 토큰 오버라이드 (스캐폴딩)
+ * -------------------------------------------------------------
+ * 목표: 아래 블록의 변수 값만 채우면 halloween.css / christmas.css의
+ *       `body.{theme}-mode .class { ... !important }` 오버라이드 더미를
+ *       점진적으로 제거할 수 있음 ("테마 = 변수 세트 하나").
+ *
+ * 지금은 주석 처리 상태로 둔다:
+ *   - 기존 시즌 테마 CSS가 !important로 색을 직접 덮고 있어, 값을 켜면
+ *     이중 적용/충돌 가능성이 있음.
+ *   - 할로윈(10/23~31)·크리스마스(12월)에만 활성화되어 현재(오프시즌)
+ *     육안 검증이 불가.
+ * → 각 시즌에 실제 화면을 보며 값을 채우고 주석을 해제할 것.
+ * ============================================================= */
+
+/*
+body.halloween-mode {
+  --color-bg: #1b1715;
+  --color-surface: rgba(58, 45, 35, 0.9);
+  --color-text: #fffaf2;
+  --color-text-muted: #e2d3c1;
+  --color-accent: #ff9940;
+  --color-on-accent: #1b1715;
+  --color-border: #4a3b2e;
+}
+
+body.christmas-mode {
+  --color-bg: ...;
+  --color-surface: ...;
+  --color-text: ...;
+  --color-accent: ...;
+}
+*/

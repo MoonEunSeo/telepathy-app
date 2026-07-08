@@ -14,8 +14,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   min-height: 80vh;
-  background-color: #f9f6f1;
-  color: #333;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   padding: 20px 16px 80px; /* 하단 네비게이션 높이 고려 */
   box-sizing: border-box;
   text-align: center;
@@ -100,8 +100,8 @@ body {
 .mypage-button-full {
   margin-top: 8px;
   padding: 10px 14px;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-surface);
   border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
@@ -120,7 +120,7 @@ body {
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 14px;
-  color: #333;
+  color: var(--color-text);
   background: none;
   border: none;
   cursor: pointer;
@@ -128,7 +128,7 @@ body {
 }
 
 .mypage-button:hover {
-  color: #000;
+  color: #000; /* 순수 블랙 hover (의도) */
 }
 
 /* 🧭 버튼 그룹 */
@@ -156,8 +156,8 @@ body {
 
 /* ⚫ 모달 버튼 */
 .login-button1 {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
   border: none;
   padding: 12px 20px;
   width: 180px;
@@ -172,8 +172,8 @@ body {
 }
 
 .login-button1.cancel {
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: var(--color-neutral-hover);
+  color: var(--color-text);
 }
 
 .login-button1.cancel:hover {

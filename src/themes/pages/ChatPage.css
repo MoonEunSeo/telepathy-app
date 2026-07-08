@@ -6,7 +6,7 @@
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--color-surface);
   font-family: 'Gowun Dodum', sans-serif;
 }
 
@@ -18,8 +18,8 @@
   padding: 16px;
   font-weight: bold;
   font-size: 18px;
-  background-color: #fffffff8;
-  border-bottom: 1px solid #eaeaea;
+  background-color: #fffffff8; /* 반투명 화이트(장식) — 토큰 대상 아님 */
+  border-bottom: 1px solid var(--color-border-subtle);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -34,14 +34,14 @@
 .exit-button {
   background: none;
   border: none;
-  color: #888;
+  color: var(--color-text-muted);
   cursor: pointer;
   padding: 6px 10px;
   transition: all 0.2s;
 }
 
 .exit-button:hover {
-  color: #ff6b6b;
+  color: var(--color-danger-accent);
 }
 
 /* ----------------- 메시지 영역 ----------------- */
@@ -75,15 +75,15 @@
 
 .chat-message.self {
   align-self: flex-end;
-  background-color: #000;
-  color: #fff;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
   border-bottom-right-radius: 6px;
 }
 
 .chat-message.other {
   align-self: flex-start;
-  background-color: #F5F3EF;
-  color: #222;
+  background-color: var(--color-bubble-other-bg);
+  color: var(--color-bubble-other-text);
   border-bottom-left-radius: 6px;
 }
 
@@ -91,14 +91,14 @@
 .chat-input-container {
   display: flex;
   padding: 12px 16px;
-  border-top: 1px solid #eee;
-  background-color: #fff;
+  border-top: 1px solid var(--color-border-subtle);
+  background-color: var(--color-surface);
 }
 
 .chat-input {
   flex: 1;
   padding: 12px 14px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 24px;
   outline: none;
   font-size: 14px;
@@ -106,14 +106,14 @@
 }
 
 .chat-input:focus {
-  border-color: #999;
+  border-color: var(--color-text-subtle);
 }
 
 .chat-send-button {
   margin-left: 8px;
   padding: 12px 18px;
-  background-color: #000;
-  color: #fff;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
   border: none;
   border-radius: 24px;
   cursor: pointer;
@@ -123,12 +123,12 @@
 }
 
 .chat-send-button:hover {
-  background-color: #222;
+  background-color: var(--color-accent-hover);
 }
 
 .chat-input:disabled,
 .chat-send-button:disabled {
-  background-color: #eee;
+  background-color: var(--color-border-subtle);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -136,7 +136,7 @@
 /* ----------------- 상태 표시 ----------------- */
 .chat-read-indicator {
   font-size: 11px;
-  color: #aaa;
+  color: var(--color-text-faint);
   margin-top: 4px;
   text-align: right;
 }
@@ -152,7 +152,7 @@
   width: 6px;
   height: 6px;
   margin: 0 3px;
-  background-color: #999;
+  background-color: var(--color-text-subtle);
   border-radius: 50%;
   animation: blink 1.4s infinite both;
 }
@@ -173,17 +173,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--overlay-soft);
   backdrop-filter: blur(4px);
   z-index: 1000;
 }
 
 /* ----------------- 나가기 확인 모달 ----------------- */
 .chat-ended-modal {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 20px;
   padding: 24px 32px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   width: 300px;
   animation: fadeInUp 0.25s ease-out;
@@ -196,7 +196,7 @@
 
 .chat-ended-modal p {
   margin-bottom: 40px;
-  color: #333;
+  color: var(--color-text);
   font-size: 18px;
   font-weight: 600;
   padding: 20px;
@@ -217,22 +217,22 @@
 }
 
 .exit-button-text.confirm {
-  background-color: #ff6b6b;
-  color: #fff;
+  background-color: var(--color-danger-accent);
+  color: var(--color-on-accent);
   font-size: 16px;
 }
-.exit-button-text.confirm:hover { background-color: #e85b5b; }
+.exit-button-text.confirm:hover { background-color: var(--color-danger-accent-hover); }
 
 .exit-button-text.cancel {
-  background-color: #f3f3f3;
-  color: #333;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-text);
   font-size: 16px;
 }
-.exit-button-text.cancel:hover { background-color: #e1e1e1; }
+.exit-button-text.cancel:hover { background-color: var(--color-neutral-hover); }
 
 /* ----------------- 신고 모달 ----------------- */
 .report-modal {
-  background: #fdfdfd;
+  background: var(--color-surface);
   padding: 24px;
   border-radius: 16px;
   width: 90%;
@@ -255,7 +255,7 @@
   min-height: 90px;
   resize: none;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   margin-top: 8px;
   font-family: inherit;
@@ -278,14 +278,14 @@
 }
 
 .report-buttons button:last-child {
-  background: #222;
-  color: #fff;
+  background: var(--color-accent-hover);
+  color: var(--color-on-accent);
 }
 /* ----------------- 상대방 종료 모달 (중앙 정렬 + 블러 오버레이) ----------------- */
 .chat-ended-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--overlay-soft);
   backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
@@ -300,7 +300,7 @@
 }
 
 .chat-ended-banner {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 20px;
   padding: 28px 36px;
   box-shadow: 0 6px 24px rgba(0,0,0,0.25);
@@ -317,14 +317,14 @@
 
 .chat-ended-banner p {
   margin-bottom: 28px;
-  color: #333;
+  color: var(--color-text);
   font-size: 18px;
   font-weight: 600;
 }
 
 .chat-ended-banner .exit-button-text {
-  background: #000;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   border-radius: 9999px;
   padding: 10px 22px;
   cursor: pointer;
@@ -333,7 +333,7 @@
 }
 
 .chat-ended-banner .exit-button-text:hover {
-  background: #222;
+  background: var(--color-accent-hover);
   transform: translateY(-1px);
 }
 
