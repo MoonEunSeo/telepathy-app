@@ -173,64 +173,9 @@ body.halloween-mode .terms-footer {
     backdrop-filter: blur(6px);
   }
   
-  /* 🕯️ 하단 문구 (운영시간 등) */
-  body.halloween-mode .focus-hours {
-    color: #ffe6b3 !important;
-    font-size: 10px  !important;
-    text-shadow: 0 1px 6px rgba(255, 100, 0, 0.6);
-  }
-  
-  /* 🧊 네비게이터 & 하단 영역 복원 */
-  body.halloween-mode footer,
-  body.halloween-mode .bottom-layout,
-  body.halloween-mode .nav-container {
-    background: rgba(255, 255, 255, 0.8) !important;
-    color: #333 !important;
-    text-shadow: none !important;
-    box-shadow: none !important;
-    backdrop-filter: blur(6px);
-  }
-  
-  /* 🧊 네비게이터 아이콘 색 복원 */
-  body.halloween-mode .bottom-layout svg,
-  body.halloween-mode .bottom-layout path {
-    fill: #333 !important;
-    color: #333 !important;
-  }
-  
-  /* 🧊 사업자 정보 텍스트만 흰색 유지 */
-  body.halloween-mode footer p,
-  body.halloween-mode footer a {
-    color: #fff !important;
-    background: transparent !important;
-  }
-  
-/* 🧾 Halloween 모드에서 사업자 정보의 주황빛 완전 제거 */
-body.halloween-mode footer,
-body.halloween-mode footer *,
-body.halloween-mode .biz-info,
-body.halloween-mode .biz-info *,
-body.halloween-mode .focus-hours {
-  color: #2f2f2f !important; /* 기본 텍스트용 진한 회색 */
-  background: none !important;
-  text-shadow: none !important;
-  filter: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  transition: none !important;
-}
-
-/* 링크나 버튼 hover 시에도 색상 변화 차단 */
-body.halloween-mode footer a:hover,
-body.halloween-mode footer button:hover,
-body.halloween-mode .biz-info a:hover {
-  color: #2f2f2f !important;
-  background: none !important;
-  text-decoration: none !important;
-  opacity: 1 !important;
-  filter: none !important;
-  transition: none !important;
-}
+  /* 🧊 네비게이터/footer 복원 규칙은 button hammer 제거로 대부분 불필요해져 제거.
+     (base BottomLayout이 흰 네비바 + 회색/검정 아이콘을 이미 제공)
+     focus-hours 색은 tokens.css(--focus-hours-color)로 이관 */
 
 
   /* 🪄 부드러운 전체 전환 */
@@ -276,87 +221,9 @@ body.halloween-mode .biz-info a:hover {
     font-size: 14px;
   }
   
-  /* ✅ 네비게이터 및 MyPage 제외 영역 설정 */
-  body.halloween-mode .bottom-layout .nav-item,
-  body.halloween-mode .bottom-layout a {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  
-  body.halloween-mode .bottom-layout .active,
-  body.halloween-mode .bottom-layout .selected {
-    background: none !important;
-  }
-  
-  /* 🎃 Halloween 제외 대상 - 네비게이터 완전 복원 */
-  body.halloween-mode .bottom-nav-container,
-  body.halloween-mode .bottom-nav-button,
-  body.halloween-mode .bottom-nav-button.active,
-  body.halloween-mode .bottom-nav-container svg,
-  body.halloween-mode .bottom-nav-container path {
-    background: none !important;
-    box-shadow: none !important;
-    border: none !important;
-    color: inherit !important;
-    fill: inherit !important;
-  }
-  
-  /* ✅ 네비게이터 hover 시 색상 변화 완전 차단 */
-  body.halloween-mode .bottom-nav-button:hover,
-  body.halloween-mode .bottom-nav-button:focus,
-  body.halloween-mode .bottom-nav-button:active {
-    background: none !important;
-    color: #9ca3af !important;
-    transform: none !important;
-  }
-  
-  /* ✅ active(현재 페이지) 색상 복원 */
-  body.halloween-mode .bottom-nav-button.active {
-    color: #000000 !important;
-  }
-  
-  /* ✅ 네비 전체 영역 흰색 톤 유지 */
-  body.halloween-mode .bottom-nav-container {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(8px);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-  }
-  
-  /* ✅ 아이콘 색상 복원 */
-  body.halloween-mode .bottom-nav-container svg {
-    color: inherit !important;
-    fill: currentColor !important;
-    background: none !important;
-  }
-  
-  /* ✅ footer 복원 */
-  body.halloween-mode footer,
-  body.halloween-mode footer button,
-  body.halloween-mode footer .biz-info,
-  body.halloween-mode .focus-hours {
-    background: none !important;
-    color: #3a3020 !important;
-    text-shadow: none !important;
-    border: none !important;
-  }
-  
-  body.halloween-mode footer strong,
-  body.halloween-mode .focus-hours strong {
-    color: #e1b45d !important;
-  }
-  
-  body.halloween-mode .biz-info p {
-    color: #3a3020 !important;
-  }
-  
-  /* 🌕 hover 시 달빛 효과 */
-  body.halloween-mode .bottom-nav-button:hover svg {
-    filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
-    transform: scale(1.05);
-    transition: all 0.3s ease-in-out;
-  }
-  
+  /* (네비게이터/footer/biz-info 복원 규칙 제거 — hammer 부재로 base 스타일이
+     이미 중립 네비바를 제공. focus-hours는 --focus-hours-color 토큰으로 처리) */
+
   /* 🎃 MyPage는 Halloween 테마 제외 */
   body.halloween-mode [data-page="mypage"],
   body.halloween-mode [data-page="mypage"] * {

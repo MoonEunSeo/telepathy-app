@@ -509,7 +509,7 @@ footer div {
   font-family: "Gowun Dodum", sans-serif;
   font-weight: 400;
   text-align: center;
-  color: #6e5b48;
+  color: var(--focus-hours-color);
   opacity: 0.9;
   line-height: 1.6;
   z-index: 90;

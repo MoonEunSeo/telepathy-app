@@ -112,6 +112,7 @@
   --word-timer-bg: #f5c5c5;                        /* 타이머 박스 배경 */
   --word-timer-text: #ffffff;                      /* 타이머 박스 글자 */
   --word-timer-time-color: #3a3020;                /* 남은 시간 숫자 */
+  --focus-hours-color: #6e5b48;                    /* 운영시간 안내 텍스트 */
 
   /* ===== ChatPage (기본값 = 현재 default 외관) ===== */
   --chat-container-bg: var(--color-surface);       /* 채팅 컨테이너 */
@@ -190,6 +191,7 @@ body.halloween-mode {
   --word-timer-bg: rgba(255, 102, 0, 0.85);
   --word-timer-text: #ffffff;
   --word-timer-time-color: #ffe6b3;
+  --focus-hours-color: #ffe6b3;
 }
 
 /* ChatPage 할로윈 (data-page 스코프 — attribute 셀렉터라 CSS Modules 안전) */
