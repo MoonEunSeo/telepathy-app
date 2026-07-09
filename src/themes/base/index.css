@@ -56,8 +56,9 @@ body.loading-mode {
     border: 1px solid var(--color-border-strong);
     box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
 
-    background-color: var(--color-accent);
-    color: var(--color-on-accent);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    animation: var(--btn-animation);
     cursor: pointer;
     border: none; /* ✅ 버튼 border가 입력창과 다르면 폭이 어긋남 */
     line-height: 1.2;
@@ -130,8 +131,9 @@ body.loading-mode {
 
   .agree-button,
   .next-button {
-    background-color: var(--color-accent);
-    color: var(--color-on-accent);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    animation: var(--btn-animation);
     font-size: 15px;
     padding: 12px 20px;
     margin: 10px 5px;
@@ -168,8 +170,9 @@ body.loading-mode {
     font-size: 18px;
     border-radius: 6px;
     border: none;
-    background-color: var(--color-accent);
-    color: var(--color-on-accent);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    animation: var(--btn-animation);
     cursor: pointer;
     white-space: nowrap;
     line-height: 1.2

@@ -85,6 +85,13 @@
   --bold-link-hover-color: inherit;
   --auth-footer-color: inherit;                    /* 하단 안내 문구 */
 
+  /* ===== 액션 버튼 (login/agree/next/check 등 "기본 버튼") =====
+   * 기존 halloween의 광범위 `body.halloween-mode button {...!important}`
+   * hammer를 대체. 각 버튼이 이 토큰을 소비 → 테마별 값만 재정의. */
+  --btn-bg: var(--color-accent);                   /* 기본: 검정 */
+  --btn-text: var(--color-on-accent);              /* 기본: 흰색 */
+  --btn-animation: none;                           /* 기본: 애니메이션 없음 */
+
   /* ===== MainPage 타이머 ===== */
   --word-timer-bg: #f5c5c5;                        /* 타이머 박스 배경 */
   --word-timer-text: #ffffff;                      /* 타이머 박스 글자 */
@@ -125,6 +132,11 @@ body.halloween-mode {
   --bold-link-color: #fff2d8;
   --bold-link-hover-color: #ffb85f;
   --auth-footer-color: rgba(255, 230, 180, 0.85);
+
+  /* 액션 버튼 (구 button hammer 대체) */
+  --btn-bg: linear-gradient(135deg, #f5853f, #b83b1d);
+  --btn-text: #ffffff;
+  --btn-animation: pumpkin-glow 4s ease-in-out infinite;
 
   /* MainPage 타이머 */
   --word-timer-bg: rgba(255, 102, 0, 0.85);

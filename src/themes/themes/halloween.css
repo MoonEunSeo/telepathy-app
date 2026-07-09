@@ -111,27 +111,11 @@ body.halloween-mode .login-container {
 /* 🔗 회원가입/비밀번호 찾기 링크(.auth-footer-question, .bold-link)는
    tokens.css(--auth-footer-color, --bold-link-color/-hover-color)로 이관 완료 */
   
-/* 🎃 버튼 스타일
-   (.login-button/.agree-button/.next-button/.check-button은 모두 <button>이라
-    button element 셀렉터로 커버됨 → 클래스명 제거해도 동일, CSS Modules 안전) */
-body.halloween-mode button {
-  background: linear-gradient(135deg, #f5853f, #b83b1d) !important; /* 따뜻한 오렌지 → 붉은빛 */
-  color: #fff !important;
-  border: none !important;
-  border-radius: 8px !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  animation: pumpkin-glow 4s ease-in-out infinite;
-}
-
-/* 🧡 버튼 hover 효과 */
-body.halloween-mode button:hover {
-  background: linear-gradient(135deg, #ff994f, #c93f1d) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(255, 90, 0, 0.3);
-}
+/* 🎃 액션 버튼(오렌지 그라디언트 + pumpkin-glow)은 tokens.css의
+   --btn-bg / --btn-text / --btn-animation 으로 이관 완료.
+   → 광범위 `body.halloween-mode button {...!important}` hammer 제거.
+   각 버튼이 토큰을 소비하므로 CSS Modules 해시에도 특이도 충돌 없음.
+   (@keyframes pumpkin-glow는 --btn-animation이 참조 → 아래 유지) */
 
 /* ✨ 호박등 빛이 흐르는 효과 */
 @keyframes pumpkin-glow {
