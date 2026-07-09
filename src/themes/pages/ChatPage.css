@@ -6,7 +6,7 @@
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  background-color: var(--color-surface);
+  background-color: var(--chat-container-bg);
   font-family: 'Gowun Dodum', sans-serif;
 }
 
@@ -18,8 +18,9 @@
   padding: 16px;
   font-weight: bold;
   font-size: 18px;
-  background-color: #fffffff8; /* 반투명 화이트(장식) — 토큰 대상 아님 */
-  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--chat-panel-bg);
+  color: var(--chat-text);
+  border-bottom: 1px solid var(--chat-border);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -32,9 +33,9 @@
 }
 
 .exit-button {
-  background: none;
+  background: var(--chat-exit-bg);
   border: none;
-  color: var(--color-text-muted);
+  color: var(--chat-exit-text);
   cursor: pointer;
   padding: 6px 10px;
   transition: all 0.2s;
@@ -53,6 +54,7 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 10px;
+  color: var(--chat-text);
   animation: fadeIn 0.3s ease;
 }
 
@@ -75,15 +77,15 @@
 
 .chat-message.self {
   align-self: flex-end;
-  background-color: var(--color-accent);
-  color: var(--color-on-accent);
+  background: var(--chat-self-bg);
+  color: var(--chat-accent-text);
   border-bottom-right-radius: 6px;
 }
 
 .chat-message.other {
   align-self: flex-start;
-  background-color: var(--color-bubble-other-bg);
-  color: var(--color-bubble-other-text);
+  background: var(--chat-other-bg);
+  color: var(--chat-text);
   border-bottom-left-radius: 6px;
 }
 
@@ -91,14 +93,16 @@
 .chat-input-container {
   display: flex;
   padding: 12px 16px;
-  border-top: 1px solid var(--color-border-subtle);
-  background-color: var(--color-surface);
+  border-top: 1px solid var(--chat-border);
+  background-color: var(--chat-panel-bg);
 }
 
 .chat-input {
   flex: 1;
   padding: 12px 14px;
-  border: 1px solid var(--color-border);
+  background: var(--chat-input-bg);
+  color: var(--chat-input-text);
+  border: 1px solid var(--chat-input-border);
   border-radius: 24px;
   outline: none;
   font-size: 14px;
@@ -112,8 +116,8 @@
 .chat-send-button {
   margin-left: 8px;
   padding: 12px 18px;
-  background-color: var(--color-accent);
-  color: var(--color-on-accent);
+  background: var(--chat-accent-bg);
+  color: var(--chat-accent-text);
   border: none;
   border-radius: 24px;
   cursor: pointer;
@@ -152,7 +156,7 @@
   width: 6px;
   height: 6px;
   margin: 0 3px;
-  background-color: var(--color-text-subtle);
+  background-color: var(--chat-dots);
   border-radius: 50%;
   animation: blink 1.4s infinite both;
 }

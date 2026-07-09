@@ -406,6 +406,8 @@ body.halloween-mode [data-page="chatpage"] {
     position: relative;
     background: transparent !important;
     overflow: hidden;
+    /* 🎃 ChatPage 채팅 토큰 오버라이드(--chat-*)는 tokens.css로 이관
+       (항상 로드 → 오프시즌에도 검증 가능, CSS Modules 안전) */
   }
   
   /* 🕯️ 어두운 반투명 컨테이너 */
@@ -418,117 +420,11 @@ body.halloween-mode [data-page="chatpage"] {
     z-index: 0;
   }
   
-  /* 전체 컨테이너 */
-  body.halloween-mode [data-page="chatpage"] .chat-container {
-    background: transparent !important;
-    position: relative;
-    z-index: 1;
-  }
-  
-  /* ---------------- 헤더 ---------------- */
-  body.halloween-mode [data-page="chatpage"] .chat-header {
-    background: rgba(35, 20, 10, 0.85) !important;
-    color: #f9e4b7 !important;
-    border-bottom: 1px solid rgba(255, 200, 150, 0.15);
-  }
-  
-  body.halloween-mode [data-page="chatpage"] .chat-title {
-    color: #f5c978 !important;
-    text-shadow: 0 1px 6px rgba(255, 210, 130, 0.3);
-  }
-  
-  /* 신고 / 나가기 버튼 */
-  body.halloween-mode [data-page="chatpage"] .exit-button {
-    background: linear-gradient(135deg, #ff9940, #cc6a1c) !important;
-    color: #fffaf2 !important;
-    border: none;
-    border-radius: 8px;
-    padding: 6px 10px;
-    box-shadow: 0 3px 8px rgba(255, 150, 80, 0.3);
-    transition: all 0.25s ease-in-out;
-  }
-  
-  body.halloween-mode [data-page="chatpage"] .exit-button:hover {
-    background: linear-gradient(135deg, #ffae66, #e0772b) !important;
-    transform: translateY(-2px);
-  }
-  
-  /* ---------------- 메시지 영역 ---------------- */
-  body.halloween-mode [data-page="chatpage"] .chat-messages {
-    background: transparent !important;
-    color: #f9e4b7 !important;
-  }
-  
-  /* 💬 상대방 말풍선 */
-  body.halloween-mode [data-page="chatpage"] .chat-message.other {
-    background: rgba(80, 60, 40, 0.65) !important;
-    color: #f9e4b7 !important;
-    border: 1px solid rgba(255, 200, 150, 0.25);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(2px);
-  }
-  
-  /* ✨ 내 말풍선 */
-  body.halloween-mode [data-page="chatpage"] .chat-message.self {
-    background: linear-gradient(135deg, #ffb45e, #e67a2c) !important;
-    color: #fffaf2 !important;
-    border: none !important;
-    box-shadow: 0 3px 10px rgba(255, 180, 90, 0.3);
-    backdrop-filter: blur(1px);
-  }
-  
-  /* 시스템 메시지 */
-  body.halloween-mode [data-page="chatpage"] .chat-info-banner {
-    background: rgba(80, 60, 40, 0.5);
-    color: #f5c978 !important;
-    border-radius: 12px;
-    padding: 10px;
-    text-align: center;
-    font-style: italic;
-  }
-  
-  /* ---------------- 입력 영역 ---------------- */
-  body.halloween-mode [data-page="chatpage"] .chat-input-container {
-    background: rgba(35, 20, 10, 0.8) !important;
-    border-top: 1px solid rgba(255, 200, 150, 0.15);
-  }
-  
-  body.halloween-mode [data-page="chatpage"] .chat-input {
-    background: rgba(50, 35, 20, 0.7) !important;
-    color: #f5deb3 !important;
-    border: 1px solid rgba(200, 150, 100, 0.35);
-    border-radius: 20px;
-    padding: 12px 14px;
-    transition: all 0.3s ease-in-out;
-  }
-  
-  body.halloween-mode [data-page="chatpage"] .chat-input:focus {
-    background: rgba(60, 40, 25, 0.85) !important;
-    box-shadow: 0 0 6px rgba(240, 200, 130, 0.4);
-    outline: none !important;
-  }
-  
-  /* 🧡 전송 버튼 */
-  body.halloween-mode [data-page="chatpage"] .chat-send-button {
-    background: linear-gradient(135deg, #ff9940, #cc6a1c) !important;
-    color: #fffaf2 !important;
-    border: none !important;
-    border-radius: 24px;
-    box-shadow: 0 3px 8px rgba(255, 150, 80, 0.3);
-    transition: all 0.25s ease-in-out;
-  }
-  
-  body.halloween-mode [data-page="chatpage"] .chat-send-button:hover {
-    background: linear-gradient(135deg, #ffae66, #e0772b) !important;
-    transform: translateY(-2px);
-  }
-  
-  /* ---------------- 타이핑 인디케이터 ---------------- */
-  body.halloween-mode [data-page="chatpage"] .typing-dots span {
-    background-color: #f2c078 !important;
-    opacity: 0.9;
-  }
- 
+  /* 채팅 코어(.chat-container/.chat-header/.chat-message.self·.other/.chat-input/
+     .chat-send-button/.exit-button/.typing-dots 등)는 위 스코프 토큰(--chat-*)으로
+     이관 완료 → ChatPage.css가 var(--chat-*)를 소비.
+     (.chat-title/.chat-info-banner 미세 강조와 신고/종료 모달은 #8로 이월) */
+
   
 /* ------------------------------- */
 /* 🌕 Halloween 신고 모달 리디자인 */
