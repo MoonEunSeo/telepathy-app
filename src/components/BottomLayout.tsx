@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Home, MessageSquareHeart, Heart, User } from "lucide-react";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
+import styles from "../themes/base/BottomLayout.module.css";
 
 interface NavItem {
   icon: ReactNode;
@@ -30,7 +31,7 @@ export default function BottomLayout() {
     <>
       <Outlet />
 
-      <div className="bottom-nav-container">
+      <div className={styles['bottom-nav-container']}>
         {navItems.map(({ icon, path, external, url, title }, i) =>
           external ? (
             <a
@@ -39,7 +40,7 @@ export default function BottomLayout() {
               target="_blank"
               rel="noopener noreferrer"
               title={title || ""}
-              className="bottom-nav-button"
+              className={styles['bottom-nav-button']}
             >
               {icon}
             </a>
@@ -47,8 +48,8 @@ export default function BottomLayout() {
             <button
               key={i}
               onClick={() => path && navigate(path)}
-              className={`bottom-nav-button ${
-                location.pathname === path ? "active" : ""
+              className={`${styles['bottom-nav-button']} ${
+                location.pathname === path ? styles.active : ""
               }`}
               title={title || ""}
             >
