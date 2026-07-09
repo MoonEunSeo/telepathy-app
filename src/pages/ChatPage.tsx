@@ -8,6 +8,7 @@ import ReportModal from '../components/ReportModal';
 import { useWordSession } from '../contexts/WordSessionContext';
 import { getStorage, setStorage, removeStorage } from '../types';
 import type { ChatMessage, ReportResponse } from '../types';
+import styles from '../themes/pages/ChatPage.module.css';
 
 // ReportModal onSubmit({ reasons, extra }) 콜백 인자 모양.
 // TODO: ReportModal 실제 onSubmit 시그니처 확인 (reasons: string[], extra: string 가정).
@@ -219,7 +220,7 @@ export default function ChatPage() {
     messages.map((msg, idx) => (
       <div
         key={idx}
-        className={`chat-message ${msg.senderId === myId ? 'self' : 'other'}`}
+        className={`${styles['chat-message']} ${msg.senderId === myId ? styles.self : styles.other}`}
       >
         {msg.message}
       </div>
@@ -228,20 +229,20 @@ export default function ChatPage() {
   return (
     <div data-page="chatpage">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
-      <div className="chat-container">
+      <div className={styles['chat-container']}>
         {/* 🔹 채팅 헤더 */}
-        <div className="chat-header">
-          <div className="chat-title">채팅방 ({word})</div>
-          <div className="chat-header-icons">
+        <div className={styles['chat-header']}>
+          <div className={styles['chat-title']}>채팅방 ({word})</div>
+          <div className={styles['chat-header-icons']}>
             <button
-              className="exit-button"
+              className={styles['exit-button']}
               onClick={() => setShowReportModal(true)}
               title="신고하기"
             >
               <AlertTriangle size={22} />
             </button>
             <button
-              className="exit-button"
+              className={styles['exit-button']}
               onClick={() => setShowExitConfirm(true)}
             >
               <LogOut size={20} />
@@ -250,16 +251,16 @@ export default function ChatPage() {
         </div>
 
         {/* 🔹 메시지 영역 */}
-        <div className="chat-messages">
-          <div className="chat-info-banner">
+        <div className={styles['chat-messages']}>
+          <div className={styles['chat-info-banner']}>
             <strong>{partnerNickname}님과 같은 단어를 떠올렸어요!</strong>
             <br />
             즐거운 대화 되세요.
           </div>
           {renderMessages()}
           {isTyping && (
-            <div className="chat-message other">
-              <div className="chat-typing-indicator typing-dots">
+            <div className={`${styles['chat-message']} ${styles.other}`}>
+              <div className={`${styles['chat-typing-indicator']} ${styles['typing-dots']}`}>
                 <span></span>
                 <span></span>
                 <span></span>
@@ -270,9 +271,9 @@ export default function ChatPage() {
         </div>
 
         {/* 🔹 입력 영역 */}
-        <div className="chat-input-container">
+        <div className={styles['chat-input-container']}>
           <input
-            className="chat-input"
+            className={styles['chat-input']}
             placeholder="메시지를 입력하세요."
             value={message}
             onChange={handleTyping}
@@ -280,7 +281,7 @@ export default function ChatPage() {
             disabled={chatEnded}
           />
           <button
-            className="chat-send-button"
+            className={styles['chat-send-button']}
             onClick={handleSendMessage}
             disabled={chatEnded}
           >
@@ -290,18 +291,18 @@ export default function ChatPage() {
 
         {/* 🔹 나가기 확인 모달 */}
         {showExitConfirm && (
-          <div className="modal-overlay">
-            <div className="chat-ended-modal">
+          <div className={styles['modal-overlay']}>
+            <div className={styles['chat-ended-modal']}>
               <p>정말 나가시겠어요?</p>
-              <div className="modal-buttons">
+              <div className={styles['modal-buttons']}>
                 <button
-                  className="exit-button-text confirm"
+                  className={`${styles['exit-button-text']} ${styles.confirm}`}
                   onClick={handleExitChat}
                 >
                   네, 나갈래요
                 </button>
                 <button
-                  className="exit-button-text cancel"
+                  className={`${styles['exit-button-text']} ${styles.cancel}`}
                   onClick={() => setShowExitConfirm(false)}
                 >
                   아니요
@@ -321,10 +322,10 @@ export default function ChatPage() {
 
         {/* 🔹 상대방 종료 알림 */}
         {chatEnded && (
-          <div className="chat-ended-overlay">
-            <div className="chat-ended-banner">
+          <div className={styles['chat-ended-overlay']}>
+            <div className={styles['chat-ended-banner']}>
               <p>상대방이 대화를 종료했어요.</p>
-              <button className="exit-button-text" onClick={handleExitChat}>
+              <button className={styles['exit-button-text']} onClick={handleExitChat}>
                 나가기
               </button>
             </div>

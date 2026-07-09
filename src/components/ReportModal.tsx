@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
+import styles from '../themes/base/ReportModal.module.css';
 
 // ReportModal 이 onSubmit 으로 부모에게 전달하는 값.
 // (부모 ChatPage 가 여기에 reporterId/reportedId/roomId 를 더해 ReportPayload 로 전송)
@@ -50,7 +51,7 @@ const ReportModal = ({ onClose, onSubmit }: ReportModalProps) => {
 
   return (
     <div className="modal-overlay">
-      <div className="report-modal">
+      <div className={styles['report-modal']}>
         <h1 className="judson-title">Telepathy</h1>
         <p>상대방의 어떤 점이 불편하셨나요?</p>
         <ul>
@@ -73,7 +74,7 @@ const ReportModal = ({ onClose, onSubmit }: ReportModalProps) => {
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setExtra(e.target.value)}
           maxLength={200}
         />
-        <div className="report-buttons">
+        <div className={styles['report-buttons']}>
           <button onClick={onClose}>취소</button>
           <button onClick={handleSubmit} disabled={loading}>
             {loading ? '제출 중...' : '제출하기'}

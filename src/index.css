@@ -7,12 +7,9 @@
 @import './themes/base/index.css';
 
 /* CSS Modules 로 전환된 파일은 각 tsx 에서 import (여기 @import 하면 안 됨):
-   HelpPage / NicknameModal / BottomLayout / MegaphoneInputModal /
-   MyWords / TermsTemplate / WordSetForm */
-
-
-/* Pages */
-@import './themes/pages/ChatPage.css';
+   컴포넌트 — HelpPage / NicknameModal / BottomLayout / MegaphoneInputModal /
+   MegaphoneButton / ReportModal / MyWords / TermsTemplate / WordSetForm
+   페이지 — WordSetPage / LikePage / MyPage / MainPage / ChatPage */
 
 
 /* Themes (시즌 테마 halloween/christmas 는 App.tsx 의 useSeasonalTheme 이
