@@ -2,10 +2,10 @@
 /* 🧭 moved from: src\pages\MainPage.css */
 /* ✅ 타이머 박스 */
 .word-timer {
-  background-color: #f5c5c5;
+  background-color: var(--word-timer-bg);
   padding: 6px 14px;
   font-size: 14px;
-  color: #fff;
+  color: var(--word-timer-text);
   text-align: center;
   width: auto;
   border-radius: 6px;
@@ -30,7 +30,7 @@
   font-weight: 600;
   margin: 6px 0 8px;
   text-align: center;
-  color: #3a3020;
+  color: var(--word-timer-time-color);
 }
 
   .timer-display {
