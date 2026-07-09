@@ -226,9 +226,30 @@ body.loading-mode {
     font-size: 16px;
     margin-bottom: 10px;
     border-radius: 6px;
-    border: 1px solid var(--color-border-strong);
+    border: 1px solid var(--auth-input-border);
+    background: var(--auth-input-bg);
+    color: var(--auth-input-text);
     box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
     line-height: 1.2;
+  }
+
+  .birth-input::placeholder {
+    color: var(--auth-input-placeholder);
+  }
+
+  /* 인증번호 입력칸 (Verify-MVP) — auth-input과 동일 토큰 소비 */
+  .verify-input {
+    border-radius: 6px;
+    border: 1px solid var(--auth-input-border);
+    background: var(--auth-input-bg);
+    color: var(--auth-input-text);
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+  }
+
+  .verify-input::placeholder {
+    color: var(--auth-input-placeholder);
   }
 
   .title {

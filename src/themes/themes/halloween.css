@@ -1357,59 +1357,14 @@ Register는 .auth-input / .login-title / .login-subtitle / .bold-link 등
 =========================================== */
 
 
-/* 컨테이너 중앙 정렬 */
-body.halloween-mode [data-page="verify-mvp"] .login-container {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 0vh !important;
-  text-align: center !important;
-}
+/* Verify-MVP 이관 노트:
+   - .login-container / .login-title → base 규칙 + --login-title-color 토큰으로 커버
+   - .birth-input(+placeholder) → base에서 --auth-input-* 토큰 소비로 이관
+   - .birth-gender-row / .timer 는 JSX에서 미사용(인라인 스타일) → 죽은 규칙 제거
+   - .auth-input / .verify-input → base 토큰, .check-button/.login-button → generic button
+   - .toggle-button(성별)만 선택/비선택 구분 위해 유지 (button 광범위 규칙 정리 시 함께 처리) */
 
-/* 타이틀 */
-body.halloween-mode [data-page="verify-mvp"] .login-title {
-  font-size: 32px !important;
-  font-family: 'Gowun Dodum', sans-serif !important;
-  color: rgba(255, 230, 190, 0.9) !important;
-  text-shadow: 0 2px 8px rgba(255, 180, 90, 0.25) !important;
-  margin-bottom: 30px !important;
-}
-
-/* 생년월일 + 성별 버튼 줄 */
-body.halloween-mode [data-page="verify-mvp"] .birth-gender-row {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 358px !important;
-  gap: 14px !important;
-  margin-bottom: 12px !important;
-}
-
-/* 생년월일 입력 */
-body.halloween-mode [data-page="verify-mvp"] .birth-input {
-  flex: 3 !important;
-  width: 358px !important;
-  height: 48px !important;
-  border-radius: 6px !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #fff !important;
-  padding: 2 12px !important;
-  box-sizing: border-box !important;
-  font-size: 16px !important;
-}
-
-
-/* 🎃 placeholder 글씨색 (가시성 향상) */
-body.halloween-mode [data-page="verify-mvp"] .birth-input::placeholder {
-  color: rgba(255, 230, 190, 0.8) !important;
-  font-family: 'Gowun Dodum', sans-serif !important;
-  letter-spacing: 0.5px !important;
-}
-
-
-/* 성별 버튼 */
+/* 성별 버튼 (유지: 선택상태 구분 필요) */
 body.halloween-mode [data-page="verify-mvp"] .toggle-button {
   flex: 1 !important;
   height: 48px !important;
@@ -1430,84 +1385,6 @@ body.halloween-mode [data-page="verify-mvp"] .toggle-button.active {
   transform: translateY(-2px) !important;
 }
 
-/* 전화번호 입력 */
-body.halloween-mode [data-page="verify-mvp"] .auth-input {
-  width: 356px !important;
-  height: 48px !important;
-  border-radius: 6px !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #fff !important;
-  font-size: 16px !important;
-  padding: 0 12px !important;
-  box-sizing: border-box !important;
-  margin-bottom: 12px !important;
-}
-
-
-/* 🎃 placeholder 글씨색 (가시성 향상) */
-body.halloween-mode [data-page="verify-mvp"] .auth-input::placeholder {
-  color: rgba(255, 230, 190, 0.8) !important;
-  font-family: 'Gowun Dodum', sans-serif !important;
-  letter-spacing: 0.5px !important;
-}
-
-
-
-/* 인증번호 입력칸 */
-body.halloween-mode [data-page="verify-mvp"] .verify-input {
-  width: 100% !important;
-  height: 48px !important;
-  border-radius: 6px !important;
-  font-size: 16px !important;
-  padding: 0 60px 0 12px !important;
-  box-sizing: border-box !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #fff !important;
-  position: relative !important;
-}
-
-/* 🎃 placeholder 글씨색 (가시성 향상) */
-body.halloween-mode [data-page="verify-mvp"] .verify-input::placeholder {
-  color: rgba(255, 230, 190, 0.8) !important;
-  font-family: 'Gowun Dodum', sans-serif !important;
-  letter-spacing: 0.5px !important;
-}
-
-/* 타이머 */
-body.halloween-mode [data-page="verify-mvp"] .timer {
-  position: absolute !important;
-  right: 14px !important;
-  font-size: 14px !important;
-  color: rgba(255, 255, 255, 0.7) !important;
-  pointer-events: none !important;
-}
-
-/* 재생성 버튼 */
-body.halloween-mode [data-page="verify-mvp"] .check-button {
-  height: 48px !important;
-  padding: 0 16px !important;
-  flex-shrink: 0 !important;
-  border: none !important;
-  border-radius: 6px !important;
-  font-size: 16px !important;
-  color: #fff !important;
-  background: linear-gradient(145deg, rgba(255, 160, 80, 0.9), rgba(220, 70, 40, 0.9)) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-}
-
-/* 본인인증 버튼 */
-body.halloween-mode [data-page="verify-mvp"] .login-button {
-  width: 358px;
-  margin-top: 12px !important;
-  border: none !important;
-  color: #fff !important;
-  background: linear-gradient(145deg, rgba(255, 150, 80, 0.9), rgba(220, 70, 40, 0.9)) !important;
-  transition: all 0.3s ease !important;
-}
-body.halloween-mode [data-page="verify-mvp"] .login-button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 14px rgba(255, 160, 80, 0.35) !important;
-}
+/* 전화번호/인증번호 입력(.auth-input/.verify-input) → base --auth-input-* 토큰,
+   .timer → JSX 미사용(인라인)으로 제거, 재생성/본인인증 버튼(.check-button/
+   .login-button) → generic `body.halloween-mode button` 규칙으로 커버 */
