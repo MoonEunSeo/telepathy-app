@@ -4,7 +4,6 @@
 
 /* Base (전역 스타일시트) */
 @import './themes/base/ClosedModal.css';
-@import './themes/base/MegaphoneButton.css';
 @import './themes/base/index.css';
 
 /* CSS Modules 로 전환된 파일은 각 tsx 에서 import (여기 @import 하면 안 됨):

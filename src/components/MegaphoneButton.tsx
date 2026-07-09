@@ -4,6 +4,7 @@ import { Megaphone } from "lucide-react";
 import type { AppSocket } from "../types";
 import { getStorage, setStorage } from "../types";
 import MegaphoneInputModal from "./MegaphoneInputModal";
+import styles from "../themes/base/MegaphoneButton.module.css";
 
 interface MegaphoneButtonProps {
   socket: AppSocket;
@@ -48,7 +49,7 @@ const MegaphoneButton = ({ socket, megaphoneCount }: MegaphoneButtonProps) => {
 
       {/* 안내 모달 */}
       {showIntro && (
-        <div className="modal">
+        <div className={styles.modal}>
           <p>1분간 접속한 다른 사람들에게 내가 입력한 값을 전달할 수 있어요!</p>
           <button
             onClick={() => {
@@ -63,7 +64,7 @@ const MegaphoneButton = ({ socket, megaphoneCount }: MegaphoneButtonProps) => {
 
       {/* 구매 모달 */}
       {showStore && (
-        <div className="modal">
+        <div className={styles.modal}>
           <p>확성기가 없습니다. 구매해주세요.</p>
           <button onClick={() => buyMegaphone(1)}>1회권</button>
           <button onClick={() => buyMegaphone(5)}>5회권</button>
