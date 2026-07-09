@@ -81,6 +81,7 @@ body.loading-mode {
   .auth-footer-question {
     font-size: 14px;
     margin-top: 10px;
+    color: var(--auth-footer-color);
   }
 
   .terms-footer {
@@ -94,6 +95,12 @@ body.loading-mode {
     font-weight: bold;
     text-decoration: underline;
     cursor: pointer;
+    color: var(--bold-link-color);
+    transition: color 0.2s ease;
+  }
+
+  .bold-link:hover {
+    color: var(--bold-link-hover-color);
   }
 
   .modal-backdrop {

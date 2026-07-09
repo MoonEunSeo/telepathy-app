@@ -108,29 +108,13 @@ body.halloween-mode .login-container {
 /* 🎃 아이디/비밀번호 입력창 + 'or' 구분선은 tokens.css(--auth-input-*,
    --or-divider-color)로 이관 완료 → 여기서 제거됨 */
 
-/* 🔗 회원가입 / 비밀번호 찾기 */
-body.halloween-mode .auth-footer-question {
-  font-size: 13px;
-  color: rgba(255, 230, 180, 0.85);
-  margin-top: 0px;
-}
-
-body.halloween-mode .bold-link {
-  color: #fff2d8 !important;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-body.halloween-mode .bold-link:hover {
-  color: #ffb85f !important;
-}
+/* 🔗 회원가입/비밀번호 찾기 링크(.auth-footer-question, .bold-link)는
+   tokens.css(--auth-footer-color, --bold-link-color/-hover-color)로 이관 완료 */
   
-/* 🎃 버튼 스타일 */
-body.halloween-mode button,
-body.halloween-mode .login-button,
-body.halloween-mode .agree-button,
-body.halloween-mode .next-button {
+/* 🎃 버튼 스타일
+   (.login-button/.agree-button/.next-button/.check-button은 모두 <button>이라
+    button element 셀렉터로 커버됨 → 클래스명 제거해도 동일, CSS Modules 안전) */
+body.halloween-mode button {
   background: linear-gradient(135deg, #f5853f, #b83b1d) !important; /* 따뜻한 오렌지 → 붉은빛 */
   color: #fff !important;
   border: none !important;
@@ -143,10 +127,7 @@ body.halloween-mode .next-button {
 }
 
 /* 🧡 버튼 hover 효과 */
-body.halloween-mode button:hover,
-body.halloween-mode .login-button:hover,
-body.halloween-mode .agree-button:hover,
-body.halloween-mode .next-button:hover {
+body.halloween-mode button:hover {
   background: linear-gradient(135deg, #ff994f, #c93f1d) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 12px rgba(255, 90, 0, 0.3);
@@ -185,11 +166,9 @@ body.halloween-mode .terms-footer {
 }
 
 
-  body.halloween-mode .login-button,
-  body.halloween-mode .next-button {
-    animation: pumpkin-glow 3s infinite ease-in-out;
-  }
-  
+  /* (login-button/next-button 개별 애니메이션 override 제거 — 위 button 규칙의
+     pumpkin-glow 4s가 이미 모든 버튼에 적용됨) */
+
   /* 🕯️ 모달/피드백 박스 */
   body.halloween-mode .modal-content,
   body.halloween-mode .feedback-content {
@@ -1362,113 +1341,14 @@ body.halloween-mode .word-btn.paid.selected {
 
 
 /* ===========================================
-🎃 Register 페이지 폼 정렬 완벽 버전
+🎃 Register 페이지 (토큰 이관 완료)
+-------------------------------------------
+Register는 .auth-input / .login-title / .login-subtitle / .bold-link 등
+공유 클래스를 쓰므로 base의 토큰 규칙으로 자동 테마 적용되고, 버튼(.check-button
+/.login-button)은 위 `body.halloween-mode button` 규칙으로 커버된다.
+→ 기존 [data-page="register"] 클래스 훅 블록 제거 (CSS Modules 안전).
+   (레이아웃 미세 차이 = 정돈된 재작성 허용 범위)
 =========================================== */
-
-/* 아이디 + 중복검사 한 줄 */
-body.halloween-mode [data-page="register"] .id-check-row {
-  display: flex !important;
-  align-items: stretch !important;
-  justify-content: space-between !important;
-  gap: 10px !important;
-  width: 100% !important;
-  max-width: 340px !important;
-  margin: 0 auto 12px auto !important;
-  box-sizing: border-box !important;
-}
-
-/* 아이디 입력창 */
-body.halloween-mode [data-page="register"] .id-check-row .auth-input {
-  flex: 1 !important;
-  height: 44px !important;
-  border-radius: 8px !important;
-  border: 1.5px solid rgba(255, 230, 180, 0.3) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #fffaf0 !important;
-  font-family: "Gowun Dodum", sans-serif !important;
-  font-size: 15px !important;
-  padding: 0 14px !important;
-  box-sizing: border-box !important;
-  transition: all 0.25s ease !important;
-}
-
-body.halloween-mode [data-page="register"] .id-check-row .auth-input:focus {
-  border-color: rgba(255, 220, 160, 0.8) !important;
-  box-shadow: 0 0 8px rgba(255, 200, 120, 0.4) !important;
-}
-
-/* 중복검사 버튼 — 아이디와 완벽 정렬 */
-body.halloween-mode [data-page="register"] .id-check-row .check-button {
-  height: 44px !important;
-  width: 90px !important;
-  border-radius: 8px !important;
-  border: 1.5px solid rgba(255, 230, 180, 0.4) !important;
-  background: linear-gradient(
-    160deg,
-    rgba(255, 200, 130, 0.35),
-    rgba(255, 150, 90, 0.25)
-  ) !important;
-  color: #fff !important;
-  font-family: "Gowun Dodum", sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  box-shadow: 0 2px 6px rgba(255, 180, 90, 0.25) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-body.halloween-mode [data-page="register"] .id-check-row .check-button:hover {
-  background: linear-gradient(
-    160deg,
-    rgba(255, 220, 160, 0.4),
-    rgba(255, 170, 100, 0.3)
-  ) !important;
-  border-color: rgba(255, 240, 200, 0.8) !important;
-  transform: translateY(-1px) scale(1.02) !important;
-}
-
-/* 비밀번호 입력창 (너비를 기준으로 맞춤) */
-body.halloween-mode [data-page="register"] input[type="password"] {
-  width: 100% !important;
-  max-width: 340px !important;
-  height: 44px !important;
-  border-radius: 8px !important;
-  border: 1.5px solid rgba(255, 230, 180, 0.3) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #fffaf0 !important;
-  padding: 0 14px !important;
-  font-family: "Gowun Dodum", sans-serif !important;
-  font-size: 15px !important;
-  transition: all 0.25s ease !important;
-  margin: 0 auto 12px auto !important;
-  display: block !important;
-}
-
-/* 가입하기 버튼 — 비밀번호 칸과 동일 폭으로 정렬 */
-body.halloween-mode [data-page="register"] .login-button {
-  display: block !important;
-  width: 100% !important;
-  max-width: 340px !important;
-  height: 46px !important;
-  border-radius: 8px !important;
-  border: none !important;
-  margin: 0 auto !important;
-  color: #fff !important;
-  font-family: "Gowun Dodum", sans-serif !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
-  box-shadow: 0 3px 8px rgba(255, 150, 50, 0.3) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-}
-
-body.halloween-mode [data-page="register"] .login-button:hover {
-  transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 4px 12px rgba(255, 200, 120, 0.4) !important;
-}
 
 
 /* ===========================================

@@ -81,6 +81,9 @@
   --auth-input-focus-border: var(--color-text-subtle);
   --auth-input-focus-shadow: none;
   --or-divider-color: var(--color-text);           /* 'or' 구분선 텍스트 */
+  --bold-link-color: inherit;                      /* 강조 링크 */
+  --bold-link-hover-color: inherit;
+  --auth-footer-color: inherit;                    /* 하단 안내 문구 */
 
   /* ===== Overlays & Shadows (오버레이·그림자) ===== */
   --overlay: rgba(0, 0, 0, 0.4);
@@ -114,6 +117,9 @@ body.halloween-mode {
   --auth-input-focus-border: rgba(255, 170, 90, 0.8);
   --auth-input-focus-shadow: 0 0 6px rgba(255, 150, 80, 0.4), inset 0 0 6px rgba(255, 150, 80, 0.2);
   --or-divider-color: rgba(252, 234, 197, 0.7);
+  --bold-link-color: #fff2d8;
+  --bold-link-hover-color: #ffb85f;
+  --auth-footer-color: rgba(255, 230, 180, 0.85);
 }
 
 /*
