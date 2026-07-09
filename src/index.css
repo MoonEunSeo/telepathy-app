@@ -16,7 +16,6 @@
 @import './themes/pages/MainPage.css';
 @import './themes/pages/MyPage.css';
 @import './themes/pages/ChatPage.css';
-@import './themes/pages/WordSetPage.css';
 
 
 /* Themes (시즌 테마 halloween/christmas 는 App.tsx 의 useSeasonalTheme 이

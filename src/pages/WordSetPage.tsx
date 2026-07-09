@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import WordSetForm from "../components/WordSetForm";
 import type { CurrentUser, ProfileResponse } from "../types";
+import styles from "../themes/pages/WordSetPage.module.css";
 
 export default function WordSetPage() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
@@ -66,16 +67,16 @@ export default function WordSetPage() {
 
   // ✅ 정상 사용자라면 단어세트 입력 폼 표시
   return (
-    <div className="wordset-page">
-      <h1 className="wordset-title">
+    <div className={styles['wordset-page']}>
+      <h1 className={styles['wordset-title']}>
         <span>나만의</span> 단어세트 만들기 ✨
       </h1>
-      <p className="wordset-description">
+      <p className={styles['wordset-description']}>
         당신만의 감정을 담은 네 개의 단어를 입력해보세요. <br />
         동일한 단어를 입력한 사람과의 연결이 시작됩니다 ✨
       </p>
 
-      <div className="wordset-card">
+      <div className={styles['wordset-card']}>
         <WordSetForm currentUser={currentUser} />
       </div>
     </div>
