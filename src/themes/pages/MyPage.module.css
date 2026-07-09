@@ -180,13 +180,7 @@ body {
   background-color: #d0d0d0;
 }
 
-/* 🕓 기타 텍스트 */
-.focus-hours {
-  margin-top: 8px;
-  text-align: center;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
+/* (.focus-hours 는 MainPage 소유 — MyPage.tsx 미사용 중복본이라 제거) */
 
 /* 📱 모바일 여백 압축 버전 */
 @media (max-width: 480px) {
@@ -237,8 +231,10 @@ body {
 }
 
 
-/*  모달 버튼 영역 정렬 수정 */
-.modal-content > div {
+/*  모달 버튼 영역 정렬 수정
+    (.modal-content 는 base/index.css 전역 공유 클래스 → :global 로 참조하고
+     자손 .login-button1 만 이 모듈 소유(해시)로 매칭) */
+:global(.modal-content) > div {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -249,7 +245,7 @@ body {
 }
 
 /* 버튼이 두 개일 때도 모달 안에서 균형 잡히도록 */
-.modal-content .login-button1 {
+:global(.modal-content) .login-button1 {
   flex: 1 1 45%; /* 두 개일 때 반반 자동 */
   max-width: 140px;
   text-align: center;
@@ -258,7 +254,7 @@ body {
   transition: background-color 0.3s;
 }
 
-.modal-content .login-button1.cancel {
+:global(.modal-content) .login-button1.cancel {
   flex: 1 1 45%;
   max-width: 140px;
 }

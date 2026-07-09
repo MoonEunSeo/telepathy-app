@@ -217,20 +217,9 @@ body.halloween-mode .terms-footer {
     color: initial !important;
   }
 
-  /* 🧙‍♀️ MyPage 구분선 */
-  body.halloween-mode .mypage-container hr {
-    border: none;
-    width: 100%;
-    border-top: 1.5px solid rgba(255, 230, 180, 0.6) !important;
-    align-self: center;
-  }
-
-  .mypage-container hr {
-    border: none;
-    width: 100%;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    align-self: center;
-  }
+  /* (MyPage 구분선 hr 규칙은 MyPage.module.css 소유로 이동 — .mypage-container
+     가 해시되어 여기 전역 훅은 더 이상 매칭되지 않으므로 제거. MyPage 는
+     위 [data-page="mypage"] 리셋으로 이미 할로윈 테마에서 제외됨) */
 
 /*---------------------------------------*/
 /* 🎃 Halloween 모드 - ChatPage 전용 (Elegant Night Ver.) */

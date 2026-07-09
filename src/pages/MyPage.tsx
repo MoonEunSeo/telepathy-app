@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWordSession } from '../contexts/WordSessionContext';
 import profileImage from '../assets/profile_image.png';
+import styles from '../themes/pages/MyPage.module.css';
 import type {
   Id,
   ProfileResponse,
@@ -141,53 +142,53 @@ const MyPage = () => {
 
   return (
     <>
-      <main data-page="mypage" className="mypage-container">
-        <div className="mypage-inner">
+      <main data-page="mypage" className={styles['mypage-container']}>
+        <div className={styles['mypage-inner']}>
           {isActive && word && (
-            <div className="mypage-current-word">
+            <div className={styles['mypage-current-word']}>
               지금 연결 중인 단어 : {word}
             </div>
           )}
 
-          <h1 className="mypage-title">Telepathy</h1>
+          <h1 className={styles['mypage-title']}>Telepathy</h1>
 
-          <img className="mypage-profile-image" src={profileImage} alt="프로필" />
+          <img className={styles['mypage-profile-image']} src={profileImage} alt="프로필" />
 
-          <div className="mypage-nickname">{nickname || '닉네임 로딩중...'}</div>
+          <div className={styles['mypage-nickname']}>{nickname || '닉네임 로딩중...'}</div>
 
-          <div className="mypage-section">
+          <div className={styles['mypage-section']}>
             <hr />
-            <p className="mypage-section-title">| 내 정보 |</p>
-            <p className="mypage-text">ID: {username || '불러오는 중...'}</p>
-            <p className="mypage-text">
+            <p className={styles['mypage-section-title']}>| 내 정보 |</p>
+            <p className={styles['mypage-text']}>ID: {username || '불러오는 중...'}</p>
+            <p className={styles['mypage-text']}>
               텔레파시 횟수 : {wordCount} 번 / 보유 확성기 : {megaphoneCount} 개
             </p>
-            <button onClick={handleNavigateWords} className="mypage-button-full">
+            <button onClick={handleNavigateWords} className={styles['mypage-button-full']}>
               {'>'} 누군가와 함께 떠올린 단어
             </button>
           </div>
 
           <hr />
-          <div className="mypage-section">
-            <p className="mypage-section-title">| 계정 |</p>
-            <div className="mypage-button-group">
-              <button onClick={handlePaymentInquiry} className="mypage-button">
+          <div className={styles['mypage-section']}>
+            <p className={styles['mypage-section-title']}>| 계정 |</p>
+            <div className={styles['mypage-button-group']}>
+              <button onClick={handlePaymentInquiry} className={styles['mypage-button']}>
                 결제 문의
               </button>
-              <button onClick={handleOpenFAQ} className="mypage-button">
+              <button onClick={handleOpenFAQ} className={styles['mypage-button']}>
                 자주묻는질문
               </button>
-              <button onClick={handleChangePassword} className="mypage-button">
+              <button onClick={handleChangePassword} className={styles['mypage-button']}>
                 비밀번호 변경
               </button>
-              <button onClick={handleChangeLogout} className="mypage-button">
+              <button onClick={handleChangeLogout} className={styles['mypage-button']}>
                 로그아웃
               </button>
             </div>
           </div>
 
           <hr />
-          <button onClick={handleWithdraw} className="mypage-withdraw-button">
+          <button onClick={handleWithdraw} className={styles['mypage-withdraw-button']}>
             회원탈퇴
           </button>
         </div>
@@ -208,7 +209,7 @@ const MyPage = () => {
               }}
             >
               <button
-                className="login-button1"
+                className={styles['login-button1']}
                 onClick={() => setShowNotSupportedModal(false)}
               >
                 확인
@@ -233,11 +234,11 @@ const MyPage = () => {
                 marginTop: '16px',
               }}
             >
-              <button className="login-button1" onClick={confirmWithdraw}>
+              <button className={styles['login-button1']} onClick={confirmWithdraw}>
                 탈퇴하기
               </button>
               <button
-                className="login-button1 cancel"
+                className={`${styles['login-button1']} ${styles.cancel}`}
                 onClick={() => setShowWithdrawModal(false)}
               >
                 취소
