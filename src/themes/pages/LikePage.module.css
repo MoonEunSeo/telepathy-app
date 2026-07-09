@@ -453,3 +453,14 @@ body {
 }
 
 
+
+/* ▼ '내가 신청한 단어세트' 섹션 제목 — 이전엔 전역 WordSetPage.css 의
+   .wordset-title 을 빌려썼으나 WordSetPage 모듈화로 끊겨, 회귀 방지 위해
+   LikePage 소유로 이식. (list/item/button/status 는 원래 미스타일) */
+.wordset-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1e120b;
+  margin-bottom: 12px;
+  font-family: "Gowun Dodum", sans-serif;
+}
