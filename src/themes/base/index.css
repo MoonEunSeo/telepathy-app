@@ -110,14 +110,16 @@ body.loading-mode {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--overlay-strong);
+    background-color: var(--modal-overlay-bg);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .modal-content {
-    background-color: var(--color-surface);
+    background: var(--modal-bg);
+    color: var(--modal-text);
+    border: 1px solid var(--modal-border);
     padding: 20px;
     border-radius: 10px;
     width: 300px !important;
@@ -295,7 +297,7 @@ body.loading-mode {
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--overlay);
+    background: var(--modal-overlay-bg);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -365,7 +367,8 @@ body.loading-mode {
     to { opacity: 1; transform: translateY(0); }
   }
   .modal-content {
-    background: var(--color-surface);
+    background: var(--modal-bg);
+    color: var(--modal-text);
     padding: 20px;
     border-radius: 10px;
     text-align: center;

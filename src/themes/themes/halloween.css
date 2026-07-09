@@ -153,25 +153,13 @@ body.halloween-mode .terms-footer {
   /* (login-button/next-button 개별 애니메이션 override 제거 — 위 button 규칙의
      pumpkin-glow 4s가 이미 모든 버튼에 적용됨) */
 
-  /* 🕯️ 모달/피드백 박스 */
-  body.halloween-mode .modal-content,
-  body.halloween-mode .feedback-content {
-    background: rgba(255, 255, 255, 0.8) !important;
-    color: #ffe6b3 !important;
-    box-shadow: 0 6px 18px rgba(255, 100, 0, 0.3);
-    border: 1px solid rgba(255, 150, 0, 0.4);
-    border-radius: 10px;
-  }
-  
+  /* 🕯️ 공유 모달 박스(.modal-content)는 tokens.css(--modal-bg/-text/-border)로 이관 */
+
   /* ⏳ 타이머(.word-timer/.word-timer-time)는 tokens.css(--word-timer-*)로 이관 완료 */
 
   /* 🧙 단어 버튼(.word-btn)은 tokens.css(--word-btn-*)로 이관 완료 */
 
-  /* 🕸️ 모달 배경 어둡게 */
-  body.halloween-mode .modal-overlay {
-    background: rgba(0, 0, 0, 0.7) !important;
-    backdrop-filter: blur(6px);
-  }
+  /* 🕸️ 모달 오버레이(.modal-overlay)는 tokens.css(--modal-overlay-bg)로 이관 */
   
   /* 🧊 네비게이터/footer 복원 규칙은 button hammer 제거로 대부분 불필요해져 제거.
      (base BottomLayout이 흰 네비바 + 회색/검정 아이콘을 이미 제공)
