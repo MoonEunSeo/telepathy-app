@@ -92,6 +92,22 @@
   --btn-text: var(--color-on-accent);              /* 기본: 흰색 */
   --btn-animation: none;                           /* 기본: 애니메이션 없음 */
 
+  /* ===== MainPage 단어 버튼 (word-btn) ===== */
+  --word-btn-bg: var(--color-surface-muted);       /* 기본: 연회색 */
+  --word-btn-border: var(--color-border);
+  --word-btn-text: var(--color-text);
+  --word-btn-shadow: none;
+  --word-btn-backdrop: none;
+  --word-btn-hover-bg: #e0f0ff;                    /* 기본: 파란 tint */
+  --word-btn-hover-border: #5aa9ff;
+  --word-btn-selected-bg: #5aa9ff;                 /* 기본: 파랑 */
+  --word-btn-selected-border: #2e7dff;
+  --word-btn-selected-text: #ffffff;
+
+  /* ===== MainPage 의도(intent) 버튼 ===== */
+  --intent-btn-bg: transparent;                    /* 기본: 배경 없음 */
+  --intent-btn-text: #3a3020;                      /* 기본: 웜다크 */
+
   /* ===== MainPage 타이머 ===== */
   --word-timer-bg: #f5c5c5;                        /* 타이머 박스 배경 */
   --word-timer-text: #ffffff;                      /* 타이머 박스 글자 */
@@ -137,6 +153,22 @@ body.halloween-mode {
   --btn-bg: linear-gradient(135deg, #f5853f, #b83b1d);
   --btn-text: #ffffff;
   --btn-animation: pumpkin-glow 4s ease-in-out infinite;
+
+  /* MainPage 단어 버튼 (유리효과) */
+  --word-btn-bg: rgba(255, 255, 255, 0.08);
+  --word-btn-border: rgba(255, 255, 255, 0.45);
+  --word-btn-text: rgba(255, 245, 230, 0.95);
+  --word-btn-shadow: 0 2px 6px rgba(255, 255, 255, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.08);
+  --word-btn-backdrop: blur(3px);
+  --word-btn-hover-bg: rgba(255, 255, 255, 0.15);
+  --word-btn-hover-border: rgba(255, 255, 255, 0.7);
+  --word-btn-selected-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.3), rgba(255, 200, 150, 0.25));
+  --word-btn-selected-border: #ffffff;
+  --word-btn-selected-text: #ffffff;
+
+  /* MainPage 의도(intent) 버튼 */
+  --intent-btn-bg: linear-gradient(135deg, #ff6600, #cc3300);
+  --intent-btn-text: #ffffff;
 
   /* MainPage 타이머 */
   --word-timer-bg: rgba(255, 102, 0, 0.85);

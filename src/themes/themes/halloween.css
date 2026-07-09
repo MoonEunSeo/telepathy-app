@@ -165,20 +165,8 @@ body.halloween-mode .terms-footer {
   
   /* ⏳ 타이머(.word-timer/.word-timer-time)는 tokens.css(--word-timer-*)로 이관 완료 */
 
-  /* 🧙 단어 버튼 */
-  body.halloween-mode .word-btn {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: #fff !important;
-    border: 1.5px solid rgba(255, 200, 100, 0.4) !important;
-    box-shadow: 0 2px 6px rgba(255, 150, 50, 0.3);
-    border-radius: 8px;
-  }
-  
-  body.halloween-mode .word-btn:hover {
-    background: rgba(255, 150, 0, 0.25) !important;
-    transform: translateY(-2px);
-  }
-  
+  /* 🧙 단어 버튼(.word-btn)은 tokens.css(--word-btn-*)로 이관 완료 */
+
   /* 🕸️ 모달 배경 어둡게 */
   body.halloween-mode .modal-overlay {
     background: rgba(0, 0, 0, 0.7) !important;
@@ -250,29 +238,9 @@ body.halloween-mode .biz-info a:hover {
     transition: all 0.3s ease-in-out;
   }
   
-  /* 🧡 메인 단어 버튼 색상 강제 적용 */
-  body.halloween-mode .word-btn,
-  body.halloween-mode .intent-button {
-    background: linear-gradient(135deg, #ff6600, #cc3300) !important;
-    color: #fff !important;
-    border: none !important;
-    box-shadow: 0 3px 8px rgba(255, 100, 0, 0.5);
-    border-radius: 10px !important;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  body.halloween-mode .word-btn:hover,
-  body.halloween-mode .intent-button:hover {
-    background: linear-gradient(135deg, #ff8533, #e04a00) !important;
-    transform: translateY(-2px);
-  }
-  
-  /* 🧡 버튼 내 글씨는 항상 흰색 유지 */
-  body.halloween-mode .word-btn span,
-  body.halloween-mode .intent-button span {
-    color: #fff !important;
-  }
-  
+  /* 🧡 단어/의도 버튼(.word-btn, .intent-button)은 tokens.css
+     (--word-btn-*, --intent-btn-*)로 이관 완료 */
+
   /* 🧡 select 드롭다운 (할로윈 모드 리뉴얼) */
   body.halloween-mode select {
     background: linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9)) !important;
@@ -1250,37 +1218,8 @@ body.halloween-mode .icon-buttons .megaphone-button:hover {
 }
 
 
-/* 🎃 할로윈 모드: 기본 단어 버튼 (화이트 투명 테마) */
-body.halloween-mode .word-btn {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1.8px solid rgba(255, 255, 255, 0.45) !important;
-  color: rgba(255, 245, 230, 0.95) !important;
-  box-shadow:
-    0 2px 6px rgba(255, 255, 255, 0.15),
-    inset 0 0 8px rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(3px) !important;
-  transition: all 0.3s ease !important;
-}
-
-body.halloween-mode .word-btn:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.7) !important;
-  transform: translateY(-2px) !important;
-  box-shadow:
-    0 4px 10px rgba(255, 255, 255, 0.25),
-    inset 0 0 10px rgba(255, 255, 255, 0.1) !important;
-}
-
-body.halloween-mode .word-btn.selected {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.3), rgba(255, 200, 150, 0.25)) !important;
-  border-color: #fff !important;
-  color: #fff !important;
-  font-weight: 600 !important;
-  box-shadow:
-    0 0 16px rgba(255, 255, 255, 0.4),
-    inset 0 0 12px rgba(255, 255, 255, 0.25) !important;
-  transform: scale(1.05) !important;
-}
+/* 🎃 기본 단어 버튼(.word-btn / :hover / .selected)은 tokens.css
+   (--word-btn-*)로 이관 완료. (.paid 변형만 아래 유지 — 후속 이관 대상) */
 
 /* 🎃 할로윈 모드 + 유료(paid) 단어 버튼 (달빛+골드톤 강조) */
 body.halloween-mode .word-btn.paid {

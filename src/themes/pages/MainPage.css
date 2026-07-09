@@ -197,7 +197,8 @@
     border-radius: 20px;
     padding: 12px 18px;
     font-size: 14px;
-    color: #3a3020;
+    background: var(--intent-btn-bg);
+    color: var(--intent-btn-text);
     border: none;
     border-radius: 24px;
     cursor: pointer;
@@ -375,29 +376,31 @@
 
 /* 단어 버튼 */
 .word-btn {
-  background: var(--color-surface-muted);
-  border: 1.8px solid var(--color-border);
+  background: var(--word-btn-bg);
+  border: 1.8px solid var(--word-btn-border);
   border-radius: 10px;
   padding: 14px 10px;  /* 살짝 여유 */
   font-size: clamp(14px, 4vw, 16px);
   font-weight: 500;
-  color: var(--color-text);
+  color: var(--word-btn-text);
+  box-shadow: var(--word-btn-shadow);
+  backdrop-filter: var(--word-btn-backdrop);
   cursor: pointer;
   transition: all 0.25s ease;
   text-align: center;
 }
 
 .word-btn:hover {
-  background: #e0f0ff;
-  border-color: #5aa9ff;
+  background: var(--word-btn-hover-bg);
+  border-color: var(--word-btn-hover-border);
   transform: translateY(-2px);
 }
 
 /* 선택 시 */
 .word-btn.selected {
-  background: #5aa9ff;
-  border-color: #2e7dff;
-  color: white;
+  background: var(--word-btn-selected-bg);
+  border-color: var(--word-btn-selected-border);
+  color: var(--word-btn-selected-text);
   font-weight: 600;
   box-shadow: 0 4px 10px rgba(46, 125, 255, 0.3);
 }
