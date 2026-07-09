@@ -136,6 +136,109 @@
   --modal-border: transparent;                     /* 모달 테두리 */
   --modal-overlay-bg: rgba(0, 0, 0, 0.4);          /* 모달 뒤 어두운 막 */
 
+  /* ===== bespoke 팝업 (신고/종료/피드백/확성기 모달) =====
+   * default = 각 팝업의 현재 기본 외관. halloween 블록에서 재정의.
+   * 레이아웃(패딩/반경/애니메이션)은 컴포넌트 CSS에 리터럴 유지하고,
+   * 테마가 바꾸는 색/배경/보더/그림자/버튼색만 토큰화. */
+
+  /* 신고 모달 (ReportModal) */
+  --report-modal-bg: var(--color-surface);
+  --report-modal-border: transparent;
+  --report-modal-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  --report-modal-text: var(--color-text);
+  --report-title-color: #000000;
+  --report-input-bg: var(--color-surface);
+  --report-input-border: var(--color-border);
+  --report-input-text: var(--color-text);
+  --report-input-placeholder: var(--color-text-muted);
+  --report-cancel-bg: transparent;
+  --report-cancel-text: var(--color-text);
+  --report-submit-bg: var(--color-accent-hover);
+  --report-submit-text: var(--color-on-accent);
+
+  /* 나가기/상대종료 모달 (chat-ended-modal / chat-ended-banner) */
+  --ended-modal-bg: var(--color-surface);
+  --ended-modal-border: transparent;
+  --ended-modal-shadow: var(--shadow-lg);
+  --ended-modal-text: var(--color-text);
+  --ended-accent-bg: var(--color-accent);           /* 배너 나가기 버튼 */
+  --ended-accent-bg-hover: var(--color-accent-hover);
+  --ended-confirm-bg: var(--color-danger-accent);   /* 모달 '네' 버튼 */
+  --ended-confirm-bg-hover: var(--color-danger-accent-hover);
+  --ended-cancel-bg: var(--color-surface-sunken);   /* 모달 '아니요' 버튼 */
+  --ended-cancel-bg-hover: var(--color-neutral-hover);
+  --ended-cancel-text: var(--color-text);
+  --ended-btn-text: var(--color-on-accent);
+
+  /* 감정 피드백 모달 (MainPage) */
+  --feedback-bg: var(--color-bg);
+  --feedback-border: transparent;
+  --feedback-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --feedback-title-color: var(--color-text-warm-soft);
+  --feedback-desc-color: #7a6e65;
+  --emotion-btn-bg: var(--color-surface);
+  --emotion-btn-border: #bfa58e;
+  --emotion-btn-text: var(--color-text-warm-soft);
+  --emotion-btn-hover-bg: #e6d7c6;
+  --emotion-btn-selected-bg: #d4b99d;
+  --emotion-btn-selected-border: #a88a6e;
+  --emotion-btn-selected-text: #ffffff;
+  --feedback-submit-bg: #7a5c45;
+  --feedback-submit-bg-hover: #5e4433;
+  --feedback-submit-text: #ffffff;
+
+  /* 확성기 입력 모달 (MegaphoneInputModal) */
+  --mega-modal-bg: var(--color-surface);
+  --mega-modal-border: transparent;
+  --mega-modal-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  --mega-modal-text: var(--color-text);
+  --mega-title-color: inherit;
+  --mega-desc-color: var(--color-text-secondary);
+  --mega-input-bg: var(--color-surface);
+  --mega-input-border: var(--color-border);
+  --mega-input-text: var(--color-text);
+  --mega-purchase-bg: #f3f4f6;
+  --mega-purchase-bg-hover: #e5e7eb;
+  --mega-purchase-text: var(--color-text);
+  --mega-close-bg: #ef4444;
+  --mega-close-bg-hover: #dc2626;
+  --mega-close-text: #ffffff;
+
+  /* 확성기 안내/구매 모달 (MegaphoneButton — .modal>p 박스) */
+  --mega-intro-bg: var(--color-surface);
+  --mega-intro-border: transparent;
+  --mega-intro-text: var(--color-text);
+  --mega-intro-btn-bg: #4f46e5;
+  --mega-intro-btn-bg-hover: #4338ca;
+  --mega-intro-btn-text: #ffffff;
+  --mega-intro-close-bg: #4f46e5;
+  --mega-intro-close-bg-hover: #4338ca;
+
+  /* 유료 단어 버튼 (word-btn.paid — MainPage) */
+  --paid-btn-bg: linear-gradient(145deg, rgba(255, 243, 247, 0.85), rgba(255, 228, 236, 0.9));
+  --paid-btn-border: rgba(255, 195, 215, 0.55);
+  --paid-btn-text: #a84b6c;
+  --paid-btn-shadow: 0 2px 8px rgba(255, 190, 210, 0.25), 0 0 12px rgba(255, 210, 220, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.2);
+  --paid-btn-hover-bg: linear-gradient(145deg, rgba(255, 234, 240, 0.9), rgba(255, 218, 230, 0.95));
+  --paid-btn-hover-border: rgba(255, 150, 180, 0.6);
+  --paid-btn-hover-text: #954566;
+  --paid-btn-hover-shadow: 0 4px 12px rgba(255, 175, 195, 0.3), 0 0 20px rgba(255, 210, 220, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.25);
+  --paid-btn-selected-bg: linear-gradient(160deg, #ffc2d1, #ff9eb6);
+  --paid-btn-selected-border: #ff85a1;
+  --paid-btn-selected-text: #ffffff;
+  --paid-btn-selected-shadow: 0 0 16px rgba(255, 155, 175, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.25);
+
+  /* 아이콘 버튼 (MainPage .icon-buttons — help/megaphone) */
+  --icon-btn-bg: rgba(255, 255, 255, 0.8);
+  --icon-btn-border: rgba(0, 0, 0, 0.15);
+  --icon-btn-text: inherit;
+  --icon-btn-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --icon-btn-hover-bg: rgba(255, 255, 255, 0.95);
+
+  /* MainPage 제목/부제목 */
+  --main-title-color: #2f241a;
+  --main-subtitle-color: #6a5c4a;
+
   /* ===== Overlays & Shadows (오버레이·그림자) ===== */
   --overlay: rgba(0, 0, 0, 0.4);
   --overlay-soft: rgba(0, 0, 0, 0.35);
@@ -204,6 +307,105 @@ body.halloween-mode {
   --modal-text: #f8e6c1;
   --modal-border: rgba(255, 200, 150, 0.2);
   --modal-overlay-bg: rgba(0, 0, 0, 0.65);
+
+  /* --- bespoke 팝업 (다크 글래스 + 오렌지/골드 톤) --- */
+  /* 신고 모달 */
+  --report-modal-bg: radial-gradient(circle at top, rgba(45, 30, 15, 0.95), rgba(25, 15, 8, 0.95));
+  --report-modal-border: rgba(255, 190, 120, 0.25);
+  --report-modal-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(255, 180, 80, 0.08);
+  --report-modal-text: #f8e9d0;
+  --report-title-color: #ffce73;
+  --report-input-bg: rgba(45, 30, 15, 0.8);
+  --report-input-border: rgba(255, 200, 150, 0.25);
+  --report-input-text: #ffeccf;
+  --report-input-placeholder: rgba(255, 236, 207, 0.5);
+  --report-cancel-bg: rgba(70, 50, 30, 0.85);
+  --report-cancel-text: #f4dab3;
+  --report-submit-bg: linear-gradient(135deg, #ffc67d, #e98d3b);
+  --report-submit-text: #fffaf2;
+
+  /* 나가기/상대종료 모달 */
+  --ended-modal-bg: radial-gradient(circle at top, rgba(35, 20, 10, 0.95), rgba(20, 12, 6, 0.95));
+  --ended-modal-border: rgba(255, 200, 150, 0.15);
+  --ended-modal-shadow: 0 8px 22px rgba(255, 150, 60, 0.25);
+  --ended-modal-text: #f8e6c1;
+  --ended-accent-bg: linear-gradient(135deg, #ff9940, #cc6a1c);
+  --ended-accent-bg-hover: linear-gradient(135deg, #ffb86a, #e27f32);
+  --ended-confirm-bg: linear-gradient(135deg, #ff9d3f, #d86a18);
+  --ended-confirm-bg-hover: linear-gradient(135deg, #ffb361, #e27f2b);
+  --ended-cancel-bg: rgba(70, 50, 30, 0.8);
+  --ended-cancel-bg-hover: rgba(90, 65, 40, 0.85);
+  --ended-cancel-text: #f5deb3;
+  --ended-btn-text: #fffaf2;
+
+  /* 감정 피드백 모달 */
+  --feedback-bg: radial-gradient(circle at top, rgba(35, 22, 10, 0.95), rgba(20, 12, 6, 0.95));
+  --feedback-border: rgba(255, 200, 150, 0.12);
+  --feedback-shadow: 0 8px 20px rgba(255, 160, 80, 0.25), inset 0 0 15px rgba(255, 160, 80, 0.05);
+  --feedback-title-color: #ffcf74;
+  --feedback-desc-color: #f5dcb0;
+  --emotion-btn-bg: linear-gradient(160deg, #ffae4a 0%, #e8681c 100%);
+  --emotion-btn-border: transparent;
+  --emotion-btn-text: #fffaf2;
+  --emotion-btn-hover-bg: linear-gradient(160deg, #ffc56a 0%, #e46c1c 100%);
+  --emotion-btn-selected-bg: linear-gradient(145deg, #ffd289 0%, #f1902f 100%);
+  --emotion-btn-selected-border: transparent;
+  --emotion-btn-selected-text: #fffaf2;
+  --feedback-submit-bg: linear-gradient(135deg, #ffae4a, #e97b26);
+  --feedback-submit-bg-hover: linear-gradient(135deg, #ffc56a, #f1902f);
+  --feedback-submit-text: #fffaf2;
+
+  /* 확성기 입력 모달 */
+  --mega-modal-bg: radial-gradient(circle at 40% 20%, rgba(35, 20, 10, 0.96), rgba(20, 12, 6, 0.9));
+  --mega-modal-border: rgba(255, 200, 150, 0.25);
+  --mega-modal-shadow: 0 6px 20px rgba(255, 150, 60, 0.25), inset 0 0 10px rgba(255, 180, 100, 0.08);
+  --mega-modal-text: #ffeecd;
+  --mega-title-color: #ffce73;
+  --mega-desc-color: #f5dcb0;
+  --mega-input-bg: rgba(45, 30, 15, 0.85);
+  --mega-input-border: rgba(255, 190, 130, 0.3);
+  --mega-input-text: #fff8e1;
+  --mega-purchase-bg: linear-gradient(135deg, #ff9f3a, #e26b1c);
+  --mega-purchase-bg-hover: linear-gradient(135deg, #ff9f52, #e07126);
+  --mega-purchase-text: #fffaf2;
+  --mega-close-bg: rgba(60, 40, 25, 0.85);
+  --mega-close-bg-hover: rgba(90, 65, 40, 0.9);
+  --mega-close-text: #f4dab3;
+
+  /* 확성기 안내/구매 모달 (.modal>p) */
+  --mega-intro-bg: radial-gradient(circle at 40% 20%, rgba(35, 20, 10, 0.96), rgba(20, 12, 6, 0.9));
+  --mega-intro-border: rgba(255, 200, 150, 0.2);
+  --mega-intro-text: #ffeecd;
+  --mega-intro-btn-bg: linear-gradient(135deg, #ff8b2f, #d65f1a);
+  --mega-intro-btn-bg-hover: linear-gradient(135deg, #ff9f52, #e07126);
+  --mega-intro-btn-text: #fffaf2;
+  --mega-intro-close-bg: rgba(60, 40, 25, 0.8);
+  --mega-intro-close-bg-hover: rgba(90, 65, 40, 0.9);
+
+  /* 유료 단어 버튼 (달빛+골드톤) */
+  --paid-btn-bg: linear-gradient(145deg, rgba(255, 220, 180, 0.25), rgba(255, 180, 120, 0.25));
+  --paid-btn-border: rgba(255, 235, 200, 0.7);
+  --paid-btn-text: #fff9ef;
+  --paid-btn-shadow: 0 2px 8px rgba(255, 235, 200, 0.25), inset 0 0 8px rgba(255, 240, 200, 0.15);
+  --paid-btn-hover-bg: linear-gradient(145deg, rgba(255, 230, 180, 0.4), rgba(255, 200, 150, 0.35));
+  --paid-btn-hover-border: rgba(255, 240, 210, 0.9);
+  --paid-btn-hover-text: #fff9ef;
+  --paid-btn-hover-shadow: 0 4px 12px rgba(255, 240, 210, 0.4), inset 0 0 10px rgba(255, 240, 210, 0.25);
+  --paid-btn-selected-bg: linear-gradient(160deg, rgba(255, 240, 200, 0.5), rgba(255, 210, 150, 0.45));
+  --paid-btn-selected-border: #fff7e0;
+  --paid-btn-selected-text: #ffffff;
+  --paid-btn-selected-shadow: 0 0 20px rgba(255, 240, 180, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.3);
+
+  /* 아이콘 버튼 */
+  --icon-btn-bg: rgba(255, 180, 90, 0.15);
+  --icon-btn-border: rgba(255, 180, 90, 0.3);
+  --icon-btn-text: #ffffff;
+  --icon-btn-shadow: 0 3px 8px rgba(255, 150, 50, 0.3);
+  --icon-btn-hover-bg: rgba(255, 150, 80, 0.25);
+
+  /* MainPage 제목/부제목 */
+  --main-title-color: #d05d4b;
+  --main-subtitle-color: #ffe6b3;
 }
 
 /* ChatPage 할로윈 (data-page 스코프 — attribute 셀렉터라 CSS Modules 안전) */

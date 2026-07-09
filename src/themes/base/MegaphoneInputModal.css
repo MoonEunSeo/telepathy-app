@@ -11,18 +11,20 @@
     z-index: 999;
   }
   
-  /* 모달 카드 */
+  /* 모달 카드 (테마별 값은 --mega-modal-* 토큰) */
   .megaphone-modal {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--color-surface);
+    background: var(--mega-modal-bg);
+    color: var(--mega-modal-text);
+    border: 1px solid var(--mega-modal-border);
     border-radius: 16px;
     padding: 24px 28px;
     width: 360px;
     max-width: 90%;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--mega-modal-shadow);
     text-align: center;
     z-index: 1000;
     animation: fadeIn 0.25s ease-in-out;
@@ -38,6 +40,24 @@
       opacity: 1;
       transform: translate(-50%, -50%);
     }
+  }
+
+  /* 일반 버튼(발사 등) — :where() 로 특이도 0 유지해 아래 .close-btn /
+     .purchase-options button 이 항상 우선하도록. 테마값은 --mega-purchase-* 재사용 */
+  .megaphone-modal :where(button) {
+    background: var(--mega-purchase-bg);
+    color: var(--mega-purchase-text);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .megaphone-modal :where(button):hover {
+    background: var(--mega-purchase-bg-hover);
   }
   
   /* 타이틀 */
@@ -55,9 +75,24 @@
   .megaphone-modal p {
     font-size: 14px;
     margin-bottom: 20px;
-    color: var(--color-text-secondary);
+    color: var(--mega-desc-color);
   }
-  
+
+  /* 입력창 (JSX textarea — 테마별 값은 --mega-input-* 토큰) */
+  .megaphone-modal textarea {
+    width: 100%;
+    min-height: 80px;
+    background: var(--mega-input-bg);
+    color: var(--mega-input-text);
+    border: 1px solid var(--mega-input-border);
+    border-radius: 10px;
+    padding: 10px;
+    resize: none;
+    font-size: 14px;
+    font-family: "Gowun Dodum", sans-serif;
+    box-sizing: border-box;
+  }
+
   /* 구매 버튼 그룹 */
   .purchase-options {
     display: flex;
@@ -65,11 +100,11 @@
     gap: 10px;
     margin-bottom: 20px;
   }
-  
+
   .purchase-options button {
     flex: 1;
-    background: #f3f4f6;
-    color: var(--color-text);
+    background: var(--mega-purchase-bg);
+    color: var(--mega-purchase-text);
     border: 1px solid var(--color-border);
     border-radius: 10px;
     font-weight: 600;
@@ -78,16 +113,16 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .purchase-options button:hover {
-    background: #e5e7eb;
+    background: var(--mega-purchase-bg-hover);
     transform: scale(1.05);
   }
-  
+
   /* 닫기 버튼 */
   .close-btn {
-    background: #ef4444;
-    color: white;
+    background: var(--mega-close-bg);
+    color: var(--mega-close-text);
     font-weight: bold;
     padding: 12px;
     border-radius: 10px;
@@ -96,9 +131,9 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .close-btn:hover {
-    background: #dc2626;
+    background: var(--mega-close-bg-hover);
   }
   
 

@@ -247,12 +247,13 @@
 
 /* ✅ 모달 박스 */
 .feedback-content {
-  background: var(--color-bg);
+  background: var(--feedback-bg);
+  border: 1px solid var(--feedback-border);
   border-radius: 16px;
   padding: 24px 20px;
   width: 300px;
   text-align: center;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--feedback-shadow);
   font-family: 'Gowun Dodum', sans-serif;
   animation: fadeIn 0.3s ease-out;
 }
@@ -261,7 +262,7 @@
 .feedback-content h2 {
   font-size: 2.8rem;
   margin-bottom: 20px;
-  color: var(--color-text-warm-soft);
+  color: var(--feedback-title-color);
   font-weight: bold;
   font-family: 'Judson', serif;
 }
@@ -269,7 +270,7 @@
 /* ✅ 모달 질문 */
 .feedback-content p {
   font-size: 1rem;
-  color: #7a6e65;
+  color: var(--feedback-desc-color);
   margin-bottom: 18px;
 }
 
@@ -284,35 +285,35 @@
 
 /* ✅ 감정 버튼 스타일 */
 .emotion-buttons button {
-  background: var(--color-surface);
-  border: 1px solid #bfa58e;
+  background: var(--emotion-btn-bg);
+  border: 1px solid var(--emotion-btn-border);
   border-radius: 12px;
   padding: 8px 14px;
   font-size: 0.95rem;
-  color: var(--color-text-warm-soft);
+  color: var(--emotion-btn-text);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-family: 'Gowun Dodum', sans-serif;
 }
 
 .emotion-buttons button:hover {
-  background: #e6d7c6;
+  background: var(--emotion-btn-hover-bg);
   transform: scale(1.05);
 }
 
 /* ✅ 선택된 버튼 */
 .emotion-buttons .selected {
-  background: #d4b99d;
-  color: #fff;
-  border-color: #a88a6e;
+  background: var(--emotion-btn-selected-bg);
+  color: var(--emotion-btn-selected-text);
+  border-color: var(--emotion-btn-selected-border);
 }
 
 /* ✅ 결정하기 버튼 */
 .submit-btn {
   display: inline-block;
   width: 100%;
-  background: #7a5c45;
-  color: #fff;
+  background: var(--feedback-submit-bg);
+  color: var(--feedback-submit-text);
   padding: 12px 0;
   font-size: 1rem;
   border-radius: 10px;
@@ -323,7 +324,7 @@
 }
 
 .submit-btn:hover {
-  background: #5e4433;
+  background: var(--feedback-submit-bg-hover);
   transform: translateY(-2px);
 }
 
@@ -411,41 +412,33 @@
   cursor: not-allowed;
 }
 
-/* 🌙 유료(paid) 세트용 버튼 – 부드러운 몽환 스타일 */
+/* 🌙 유료(paid) 세트용 버튼 – 부드러운 몽환 스타일 (테마별 값은 --paid-btn-* 토큰) */
 .word-btn.paid {
-  background: linear-gradient(145deg, rgba(255, 243, 247, 0.85), rgba(255, 228, 236, 0.9));
-  border: 1.8px solid rgba(255, 195, 215, 0.55);
-  color: #a84b6c;
+  background: var(--paid-btn-bg);
+  border: 1.8px solid var(--paid-btn-border);
+  color: var(--paid-btn-text);
   font-weight: 550;
-  box-shadow:
-    0 2px 8px rgba(255, 190, 210, 0.25),
-    0 0 12px rgba(255, 210, 220, 0.15),
-    inset 0 0 8px rgba(255, 255, 255, 0.2);
+  box-shadow: var(--paid-btn-shadow);
   backdrop-filter: blur(5px);
   transition: all 0.3s ease;
 }
 
 /* hover 시 – 은은하게 빛나는 느낌 */
 .word-btn.paid:hover {
-  background: linear-gradient(145deg, rgba(255, 234, 240, 0.9), rgba(255, 218, 230, 0.95));
-  border-color: rgba(255, 150, 180, 0.6);
-  color: #954566;
+  background: var(--paid-btn-hover-bg);
+  border-color: var(--paid-btn-hover-border);
+  color: var(--paid-btn-hover-text);
   transform: translateY(-3px);
-  box-shadow:
-    0 4px 12px rgba(255, 175, 195, 0.3),
-    0 0 20px rgba(255, 210, 220, 0.25),
-    inset 0 0 10px rgba(255, 255, 255, 0.25);
+  box-shadow: var(--paid-btn-hover-shadow);
 }
 
 /* 선택된 상태 – 살짝 더 따뜻하게 glow */
 .word-btn.paid.selected {
-  background: linear-gradient(160deg, #ffc2d1, #ff9eb6);
-  border-color: #ff85a1;
-  color: white;
+  background: var(--paid-btn-selected-bg);
+  border-color: var(--paid-btn-selected-border);
+  color: var(--paid-btn-selected-text);
   font-weight: 600;
-  box-shadow:
-    0 0 16px rgba(255, 155, 175, 0.5),
-    inset 0 0 12px rgba(255, 255, 255, 0.25);
+  box-shadow: var(--paid-btn-selected-shadow);
   transform: scale(1.04);
 }
 .telepathy-container {
@@ -461,7 +454,7 @@
 .title {
   font-family: "Judson", serif;
   font-size: clamp(34px, 6vw, 42px);
-  color: #2f241a;
+  color: var(--main-title-color);
   font-weight: 700;
   margin: 0 0 10px;
 }
@@ -471,7 +464,7 @@
   margin: 6px 0 20px;
   text-align: center;
   font-size: clamp(15px, 3.5vw, 18px);
-  color: #6a5c4a;
+  color: var(--main-subtitle-color);
   line-height: 1.4;
   opacity: 0.85;
   max-width: 80%;
@@ -612,24 +605,25 @@ footer div {
   z-index: 100;
 }
 
-/* 🌕 기본 테마용 버튼 스타일 */
+/* 🌕 아이콘 버튼 (테마별 값은 --icon-btn-* 토큰) */
 .icon-buttons .help-icon,
 .icon-buttons .megaphone-button {
   position: static !important; /* ✅ 개별 position 무효화 */
   width: 50px;
   height: 50px;
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--icon-btn-border);
+  background: var(--icon-btn-bg);
+  color: var(--icon-btn-text);
+  box-shadow: var(--icon-btn-shadow);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   transition: all 0.25s ease-in-out;
 }
 
 .icon-buttons .help-icon:hover,
 .icon-buttons .megaphone-button:hover {
   transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--icon-btn-hover-bg);
 }
