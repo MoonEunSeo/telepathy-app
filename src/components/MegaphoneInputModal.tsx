@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent } from "react";
+import styles from "../themes/base/MegaphoneInputModal.module.css";
 
 interface MegaphoneInputModalProps {
   onClose: () => void;
@@ -21,7 +22,7 @@ export default function MegaphoneInputModal({
   };
 
   return (
-    <div className="megaphone-modal">
+    <div className={styles['megaphone-modal']}>
       <h2>🔊 확성기</h2>
 
       {hasMegaphone ? (
@@ -39,7 +40,7 @@ export default function MegaphoneInputModal({
       ) : (
         <>
           <p>보유한 확성기가 없습니다. 구매해주세요.</p>
-          <div className="purchase-options">
+          <div className={styles['purchase-options']}>
             <button onClick={() => onSend("megaphone_1")}>1개 (₩500)</button>
             <button onClick={() => onSend("megaphone_5")}>5개 (₩2,000)</button>
             <button onClick={() => onSend("megaphone_10")}>10개 (₩3,500)</button>
@@ -47,7 +48,7 @@ export default function MegaphoneInputModal({
         </>
       )}
 
-      <button className="close-btn" onClick={onClose}>
+      <button className={styles['close-btn']} onClick={onClose}>
         닫기
       </button>
     </div>

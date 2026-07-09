@@ -1,6 +1,8 @@
+import styles from '../../themes/base/TermsTemplate.module.css';
+
 export default function NotificationConsent() {
   return (
-    <div className="terms-container">
+    <div className={styles['terms-container']}>
 
       <h2>✅ 선택: 알림 수신 동의 (웹푸시 등)</h2>
       <p>

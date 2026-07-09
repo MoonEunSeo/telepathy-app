@@ -1,6 +1,8 @@
+import styles from '../../themes/base/TermsTemplate.module.css';
+
 export default function ImproveConsent() {
   return (
-    <div className="terms-container">
+    <div className={styles['terms-container']}>
       <h2>✅ [선택] 서비스 개선 동의</h2>
       <p>
         <strong>텔레파시는 더 나은 서비스 제공을 위해, 사용자의 이용 데이터를 분석하고자 합니다.</strong>

@@ -1,6 +1,8 @@
+import styles from '../../themes/base/TermsTemplate.module.css';
+
 export default function YouthPolicy() {
   return (
-    <div className="terms-container">
+    <div className={styles['terms-container']}>
       <h2>👶 청소년 보호정책 및 유해정보 차단정책</h2>
       <p>
         텔레파시는 <strong>청소년이 안전하게 서비스를 이용할 수 있도록 청소년 보호에 최선을 다합니다.</strong>
@@ -22,7 +24,7 @@ export default function YouthPolicy() {
         아래와 같은 정보는 <strong>청소년 유해정보</strong>로 간주되며 서비스 전반에서 생성, 공유, 검색될 수 없도록 기술적 제한을 둡니다.
       </p>
 
-      <table className="styled-table">
+      <table className={styles['styled-table']}>
         <thead>
           <tr><th>구분</th><th>차단 내용</th></tr>
         </thead>

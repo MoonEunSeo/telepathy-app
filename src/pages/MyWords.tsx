@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { WordHistoryItem, WordHistoryResponse } from '../types';
+import styles from '../themes/base/MyWords.module.css';
 
 export default function MyWords() {
   const [wordHistory, setWordHistory] = useState<WordHistoryItem[]>([]);
@@ -34,20 +35,20 @@ export default function MyWords() {
   }, []);
 
   return (
-    <div className="my-words-container">
-      <h2 className="my-words-title">누군가와 함께 떠올린 단어</h2>
-      <div className="divider-line" />
-      <p className="my-words-subtitle">
+    <div className={styles['my-words-container']}>
+      <h2 className={styles['my-words-title']}>누군가와 함께 떠올린 단어</h2>
+      <div className={styles['divider-line']} />
+      <p className={styles['my-words-subtitle']}>
         이 단어를, 누군가와 함께 떠올렸던 날이 있었어요.
       </p>
 
-      <div className="word-grid">
+      <div className={styles['word-grid']}>
         {wordHistory.length > 0 ? (
           wordHistory.map((item, index) => (
-            <div className="word-card" key={index}>
-              <div className="word">{item.word}</div>
-              <div className="nickname">{item.partner_nickname} 님</div>
-              <div className="date">
+            <div className={styles['word-card']} key={index}>
+              <div className={styles['word']}>{item.word}</div>
+              <div className={styles['nickname']}>{item.partner_nickname} 님</div>
+              <div className={styles['date']}>
                 {new Date(item.connected_at).toLocaleDateString('ko-KR', {
                   year: '2-digit',
                   month: '2-digit',
@@ -57,7 +58,7 @@ export default function MyWords() {
             </div>
           ))
         ) : (
-          <p className="empty-msg">아직 함께 떠올린 단어가 없어요.</p>
+          <p className={styles['empty-msg']}>아직 함께 떠올린 단어가 없어요.</p>
         )}
       </div>
     </div>

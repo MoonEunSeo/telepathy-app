@@ -1,6 +1,8 @@
+import styles from '../../themes/base/TermsTemplate.module.css';
+
 export default function ServiceAgreement() {
   return (
-    <div className="terms-container">
+    <div className={styles['terms-container']}>
       <h2>📜 텔레파시 서비스 이용약관 동의 (필수)</h2>
       <p>
         공고일 : 2025.06.01

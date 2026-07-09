@@ -2,15 +2,14 @@
 /* Design tokens — 반드시 최상단에서 먼저 로드 (다른 CSS가 var(--*)를 참조) */
 @import './themes/base/tokens.css';
 
-/* Base */
+/* Base (전역 스타일시트) */
 @import './themes/base/ClosedModal.css';
-@import './themes/base/HelpPage.module.css';
 @import './themes/base/MegaphoneButton.css';
-@import './themes/base/MegaphoneInputModal.css';
-@import './themes/base/MyWords.css';
 @import './themes/base/index.css';
-@import './themes/base/TermsTemplate.css';
-@import './themes/base/WordSetForm.css';
+
+/* CSS Modules 로 전환된 파일은 각 tsx 에서 import (여기 @import 하면 안 됨):
+   HelpPage / NicknameModal / BottomLayout / MegaphoneInputModal /
+   MyWords / TermsTemplate / WordSetForm */
 
 
 /* Pages */

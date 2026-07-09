@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import type { ChangeEvent, CompositionEvent, KeyboardEvent } from "react";
 import type { CurrentUser, SpPaymentUpdateRefundResponse } from "../types";
+import styles from "../themes/base/WordSetForm.module.css";
 
 const API_BASE = import.meta.env.VITE_REALSITE;
 
@@ -121,12 +122,12 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
     <div className="wordset-section">
       <h3>✨ 단어세트를 만들어볼까요?</h3>
       {/* 단어 입력 구역 */}
-      <div className="word-inputs">
+      <div className={styles['word-inputs']}>
         {words.map((w, i) => (
           <div key={i} className="mb-3">
             <input
               type="text"
-              className="wordset-input"
+              className={styles['wordset-input']}
               placeholder={`단어 ${i + 1} (한글 1~6자)`}
               value={w}
               onChange={(e) => handleWordInputChange(i, e)}
@@ -145,10 +146,10 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
 
       {/* 환불 계좌 입력 구역 */}
       <h3>💸 환불계좌 정보</h3>
-      <div className="word-inputs">
-          <div className="refund-section">
+      <div className={styles['word-inputs']}>
+          <div className={styles['refund-section']}>
             <select
-              className="wordset-select"
+              className={styles['wordset-select']}
               value={refundBank}
               onChange={(e) => setRefundBank(e.target.value)}
               >
@@ -170,7 +171,7 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
 
           <input
             type="text"
-            className="wordset-input refund-input"
+            className={`${styles['wordset-input']} ${styles['refund-input']}`}
             placeholder="계좌번호 (숫자만)"
             value={refundAccount}
             onChange={(e) => handleAccountChange(e.target.value)}
@@ -185,7 +186,7 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
         </div>
 
         <button
-          className="save-button"
+          className={styles['save-button']}
           onClick={handleSave}
           disabled={!isFormValid}
           title={!isFormValid ? "입력값을 확인해주세요" : "저장하기"}
