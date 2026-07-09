@@ -29,9 +29,22 @@ body.loading-mode {
     font-size: 16px;
     margin-bottom: 12px;
     border-radius: 6px;
-    border: 1px solid var(--color-border-strong);
+    border: 1px solid var(--auth-input-border);
+    background: var(--auth-input-bg);
+    color: var(--auth-input-text);
     box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
     line-height: 1.2;
+    transition: all 0.25s ease;
+  }
+
+  .auth-input::placeholder {
+    color: var(--auth-input-placeholder);
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: var(--auth-input-focus-border);
+    box-shadow: var(--auth-input-focus-shadow);
   }
 
   .login-button {
@@ -53,7 +66,7 @@ body.loading-mode {
   .login-subtitle {
     font-family: 'Gowun Batang';
     font-size: 18px;
-    color: var(--color-text);
+    color: var(--login-subtitle-color);
     text-align: center;
   }
 
@@ -61,6 +74,8 @@ body.loading-mode {
     font-family: 'Gowun Dodum';
     font-size: 32px;
     margin: 10px 0 20px;
+    color: var(--login-title-color);
+    text-shadow: var(--login-title-shadow);
   }
 
   .auth-footer-question {
@@ -222,7 +237,7 @@ body.loading-mode {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text);
+    color: var(--or-divider-color);
     font-size: 14px;
     margin: 24px 0;
     position: relative;
