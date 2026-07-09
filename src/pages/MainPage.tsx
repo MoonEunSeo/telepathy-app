@@ -10,6 +10,7 @@ import MegaphoneInputModal from '../components/MegaphoneInputModal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { recommendations } from '../utils/recommendations';
+import styles from '../themes/pages/MainPage.module.css';
 
 import { getStorage, setStorage, removeStorage } from '../types';
 import type {
@@ -468,7 +469,7 @@ export default function MainPage() {
 
       {/* 처음 설명 모달 */}
       {showFirstTimeModal && (
-        <div className="firsttime-modal">
+        <div className={styles['firsttime-modal']}>
           <div className="modal-content">
             <h2>🔊 확성기 안내</h2>
             <p>1분간 접속한 다른 사람들에게 내가 입력한 값을 전달할 수 있어요!</p>
@@ -486,18 +487,18 @@ export default function MainPage() {
         />
       )}
 
-      <div className="telepathy-container">
-        <div className="timer-display">{remaining}초</div>
-        <h1 className="title">Telepathy</h1>
-        <p className="subtitle">같은 단어를 선택한 사람과 연결돼요.</p>
+      <div className={styles['telepathy-container']}>
+        <div className={styles['timer-display']}>{remaining}초</div>
+        <h1 className={styles['title']}>Telepathy</h1>
+        <p className={styles['subtitle']}>같은 단어를 선택한 사람과 연결돼요.</p>
 
-        <div className={`word-set ${fadeClass}`}>
+        <div className={`${styles['word-set']} ${styles[fadeClass] ?? ''}`}>
           {wordSet.map((w) => (
             <button
               key={w}
-              className={`word-btn
-                ${selectedWord === w ? 'selected' : ''}
-                ${recommendations[round % recommendations.length].paid ? 'paid' : ''}`}
+              className={`${styles['word-btn']}
+                ${selectedWord === w ? styles.selected : ''}
+                ${recommendations[round % recommendations.length].paid ? styles.paid : ''}`}
               onClick={() => handleWordSelect(w)}
               disabled={!!selectedWord}
             >
@@ -507,15 +508,15 @@ export default function MainPage() {
         </div>
 
         {showFeedbackModal && feedbackInfo && (
-          <div className="feedback-modal">
-            <div className="feedback-content">
+          <div className={styles['feedback-modal']}>
+            <div className={styles['feedback-content']}>
               <h2>Telepathy</h2>
               <p>지금, 당신의 기분은 어떤가요?</p>
-              <div className="emotion-buttons">
+              <div className={styles['emotion-buttons']}>
                 {(['기뻐요', '괜찮아요', '슬퍼요', '행복해요', '화나요'] as const).map((emo) => (
                   <button
                     key={emo}
-                    className={selectedEmotion === emo ? 'selected' : ''}
+                    className={selectedEmotion === emo ? styles.selected : ''}
                     onClick={() => setSelectedEmotion(emo)}
                   >
                     {emo}
@@ -523,7 +524,7 @@ export default function MainPage() {
                 ))}
               </div>
               <button
-                className="submit-btn"
+                className={styles['submit-btn']}
                 onClick={handleSubmitFeedback}
                 disabled={!selectedEmotion} // ✅ 감정 선택 전엔 비활성화
               >
@@ -533,7 +534,7 @@ export default function MainPage() {
           </div>
         )}
 
-        <div className="focus-hours" aria-live="polite">
+        <div className={styles['focus-hours']} aria-live="polite">
           텔레파시 집중운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
         </div>
         <footer>
@@ -542,7 +543,7 @@ export default function MainPage() {
           </button>
 
           {showBizInfo && (
-            <div className="biz-info">
+            <div className={styles['biz-info']}>
               <p>상호명 : 넥스트커넥트 | 대표자 : 이수현</p>
               <p>사업자등록번호 : 316-22-01911</p>
               <p>주소 : (06978) 서울 동작구 상도로55길 8, 404호</p>
@@ -554,20 +555,20 @@ export default function MainPage() {
 
         {/* ✅ 현재 접속자 수는 2명 이상일 때만 보이게 */}
         {onlineCount >= 2 && (
-          <div className="online-counter">
+          <div className={styles['online-counter']}>
             현재 접속자 수: <strong>{onlineCount}</strong>명
           </div>
         )}
 
         {/* 🎃 왼쪽 하단 아이콘 버튼 묶음 */}
-        <div className="icon-buttons">
+        <div className={styles['icon-buttons']}>
           {/* 헬프 버튼 */}
-          <button className="help-icon" onClick={() => navigate('/helppage')}>
+          <button className={styles['help-icon']} onClick={() => navigate('/helppage')}>
             <HelpCircle />
           </button>
 
           {/* 확성기 버튼 */}
-          <button className="megaphone-button" onClick={handleMegaphoneClick}>
+          <button className={styles['megaphone-button']} onClick={handleMegaphoneClick}>
             <Megaphone />
           </button>
         </div>
