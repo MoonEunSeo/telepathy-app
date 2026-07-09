@@ -43,7 +43,6 @@ import './index.css';
 
 import halloweenCSS from './themes/themes/halloween.css?url';
 import christmasCSS from './themes/themes/christmas.css?url';
-import defaultCSS from './themes/themes/default.css?url';
 
 function useSeasonalTheme() {
   const { setTheme } = useTheme();
@@ -54,7 +53,7 @@ function useSeasonalTheme() {
     const day = today.getDate();
 
     let selectedTheme = 'default';
-    let cssToLoad = defaultCSS;
+    let cssToLoad: string | null = null;
 
     if (month === 10 && day >= 23 && day <= 31) {
       selectedTheme = 'halloween';
@@ -69,12 +68,15 @@ function useSeasonalTheme() {
     const oldThemeStyle = document.getElementById('theme-style');
     if (oldThemeStyle) oldThemeStyle.remove();
 
-    // ✅ 새 스타일 추가
-    const link = document.createElement('link');
-    link.id = 'theme-style';
-    link.rel = 'stylesheet';
-    link.href = cssToLoad;
-    document.head.insertBefore(link, document.head.firstChild);
+    // ✅ 시즌 테마만 <link> 주입. 기본(default) 테마는 tokens.css :root
+    //    토큰(항상 로드)이 담당하므로 로드할 별도 CSS 가 없다.
+    if (cssToLoad) {
+      const link = document.createElement('link');
+      link.id = 'theme-style';
+      link.rel = 'stylesheet';
+      link.href = cssToLoad;
+      document.head.insertBefore(link, document.head.firstChild);
+    }
 
     // ✅ body 클래스 추가
     document.body.classList.add(`${selectedTheme}-mode`);

@@ -20,10 +20,7 @@
 @import './themes/pages/WordSetPage.css';
 
 
-/* Themes */
-/* @import '../themes/christmas.css';
-@import '../themes/common.css';
-@import '../themes/default.css';
-@import '../themes/halloween.css';*/
+/* Themes (시즌 테마 halloween/christmas 는 App.tsx 의 useSeasonalTheme 이
+   날짜 기반으로 <link> 주입. 기본 테마는 tokens.css :root 토큰이 담당) */
 
 
