@@ -5,6 +5,7 @@ import { getStorage, setStorage } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import Modal from '../components/ui/Modal';
+import ToggleButton from '../components/ui/ToggleButton';
 import type {
   VerifyMvpSendResponse,
   VerifyMvpCheckResponse,
@@ -141,20 +142,20 @@ export default function Verify_mvp() {
           onChange={(e: ChangeEvent<HTMLInputElement>) => setBirthdate(e.target.value.replace(/\D/g, ''))}
           style={{ flex: 3 }}
         />
-        <button
-          className={`toggle-button ${gender === '남성' ? 'active' : ''}`}
+        <ToggleButton
+          active={gender === '남성'}
           onClick={() => setGender('남성')}
           style={{ flex: 1 }}
         >
           남성
-        </button>
-        <button
-          className={`toggle-button ${gender === '여성' ? 'active' : ''}`}
+        </ToggleButton>
+        <ToggleButton
+          active={gender === '여성'}
           onClick={() => setGender('여성')}
           style={{ flex: 1 }}
         >
           여성
-        </button>
+        </ToggleButton>
       </div>
 
       {gender && birthdate.length === 8 && (

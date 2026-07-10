@@ -114,6 +114,19 @@
   --word-timer-time-color: #3a3020;                /* 남은 시간 숫자 */
   --focus-hours-color: #6e5b48;                    /* 운영시간 안내 텍스트 */
 
+  /* ===== 성별 토글 버튼 (ToggleButton — Verify_mvp) ===== */
+  --toggle-height: 45px;
+  --toggle-radius: 8px;
+  --toggle-shadow: none;
+  --toggle-transition: none;
+  --toggle-bg: var(--color-surface);               /* 비선택 배경 */
+  --toggle-border: var(--color-border-strong);     /* 비선택 테두리 */
+  --toggle-text: #000000;                          /* 비선택 글자 (UA buttontext) */
+  --toggle-selected-bg: var(--color-accent);       /* 선택 배경 */
+  --toggle-selected-border: var(--color-border-strong); /* 기본 선택은 테두리 유지 */
+  --toggle-selected-text: var(--color-on-accent);  /* 선택 글자 */
+  --toggle-selected-transform: none;
+
   /* ===== ChatPage (기본값 = 현재 default 외관) ===== */
   --chat-container-bg: var(--color-surface);       /* 채팅 컨테이너 */
   --chat-panel-bg: var(--color-surface);           /* 헤더·입력영역 패널 */
@@ -424,6 +437,21 @@ body.halloween-mode [data-page="chatpage"] {
   --chat-exit-bg: linear-gradient(135deg, #ff9940, #cc6a1c);
   --chat-exit-text: #fffaf2;
   --chat-dots: #f2c078;
+}
+
+/* Verify-MVP 성별 토글 할로윈 (data-page 스코프 — 구 halloween.css 클래스 훅 대체) */
+body.halloween-mode [data-page="verify-mvp"] {
+  --toggle-height: 48px;
+  --toggle-radius: 6px;
+  --toggle-shadow: 0 3px 8px rgba(255, 150, 80, 0.3);
+  --toggle-transition: all 0.25s ease;
+  --toggle-bg: linear-gradient(145deg, rgba(255, 160, 80, 0.9), rgba(220, 70, 40, 0.9));
+  --toggle-border: rgba(255, 200, 150, 0.25);
+  --toggle-text: #ffffff;
+  --toggle-selected-bg: linear-gradient(145deg, rgba(255, 180, 100, 0.95), rgba(230, 90, 50, 0.95));
+  --toggle-selected-border: rgba(255, 220, 170, 0.6);
+  --toggle-selected-text: #ffffff;
+  --toggle-selected-transform: translateY(-2px);
 }
 
 /*

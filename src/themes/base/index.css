@@ -142,24 +142,8 @@ body.loading-mode {
     margin-bottom: 10px;
   }
 
-  .toggle-button {
-    height: 45px;
-    font-family: 'Gowun Dodum';
-    font-size: 16px;
-    border-radius: 8px;
-    box-sizing: border-box;
-    border: 1px solid var(--color-border-strong);
-  }
-
-  .toggle-button {
-    background-color: var(--color-surface);
-    cursor: pointer;
-  }
-
-  .toggle-button.active {
-    background-color: var(--color-accent);
-    color: var(--color-on-accent);
-  }
+  /* 🔀 성별 토글(구 .toggle-button/.active)은 src/components/ui/ToggleButton.tsx
+     (Tailwind + tokens.css --toggle-*) 로 이관됨 */
 
   .title {
     font-family: 'Judson', serif;
