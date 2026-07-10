@@ -2,6 +2,9 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { PasswordCheckUserResponse, PasswordResetResponse } from '../types';
+import Button from '../components/ui/Button';
+import AuthInput from '../components/ui/AuthInput';
+import Modal from '../components/ui/Modal';
 
 export default function FindPassword() {
   const [step, setStep] = useState<number>(1); // 1: 아이디 입력, 2: 실패, 3: 재설정, 4: 완료
@@ -44,8 +47,8 @@ export default function FindPassword() {
         <>
           <p className="login-subtitle">다시 연결될 수 있도록<br />도와드릴게요 :)</p>
           <h1 className="login-title">비밀번호 찾기</h1>
-          <input className="auth-input" placeholder="아이디" value={username} onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} />
-          <button className="login-button" onClick={handleIdCheck}>확인</button>
+          <AuthInput placeholder="아이디" value={username} onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} />
+          <Button onClick={handleIdCheck}>확인</Button>
         </>
       )}
 
@@ -53,17 +56,16 @@ export default function FindPassword() {
         <>
           <p className="login-subtitle">앗, 해당 아이디로<br />연결된 기록이 없어요... ;(</p>
           <h1 className="login-title">비밀번호 찾기</h1>
-                <input
-                className="auth-input"
+                <AuthInput
                 placeholder="아이디"
                 value={username}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                 />
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="login-button" onClick={() => navigate(-1)}>돌아가기</button>
+            <Button onClick={() => navigate(-1)}>돌아가기</Button>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="login-button" onClick={handleIdCheck}>재확인</button>
+          <Button onClick={handleIdCheck}>재확인</Button>
           </div>
         </>
       )}
@@ -72,9 +74,9 @@ export default function FindPassword() {
         <>
           <p className="login-subtitle">다시 연결될 수 있도록<br />도와드릴게요 :)</p>
           <h1 className="login-title">비밀번호 재설정</h1>
-          <input className="auth-input" placeholder="새 비밀번호" type="password" value={newPassword} onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)} />
-          <input className="auth-input" placeholder="비밀번호 확인" type="password" value={confirmPassword} onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)} />
-          <button className="login-button" onClick={handlePasswordReset}>확인</button>
+          <AuthInput placeholder="새 비밀번호" type="password" value={newPassword} onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)} />
+          <AuthInput placeholder="비밀번호 확인" type="password" value={confirmPassword} onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)} />
+          <Button onClick={handlePasswordReset}>확인</Button>
         </>
       )}
 
@@ -82,17 +84,15 @@ export default function FindPassword() {
         <>
           <h1 className="login-title" style={{ marginTop: '80px' }}>Telepathy</h1>
           <p style={{ textAlign: 'center', marginTop: '24px' }}>비밀번호가 재설정 되었습니다.</p>
-          <button className="login-button" style={{ marginTop: '24px' }} onClick={() => navigate('/login')}>로그인 하기</button>
+          <Button style={{ marginTop: '24px' }} onClick={() => navigate('/login')}>로그인 하기</Button>
         </>
       )}
 
       {modalMessage && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <p>{modalMessage}</p>
-            <button className="login-button" onClick={() => setModalMessage('')}>확인</button>
-          </div>
-        </div>
+        <Modal>
+          <p>{modalMessage}</p>
+          <Button onClick={() => setModalMessage('')}>확인</Button>
+        </Modal>
       )}
     </div>
   );

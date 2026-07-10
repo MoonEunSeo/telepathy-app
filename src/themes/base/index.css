@@ -23,46 +23,11 @@ body.loading-mode {
   }
 
 
-  .auth-input {
-    width: 300px;
-    padding: 12px;
-    font-size: 16px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    border: 1px solid var(--auth-input-border);
-    background: var(--auth-input-bg);
-    color: var(--auth-input-text);
-    box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
-    line-height: 1.2;
-    transition: all 0.25s ease;
-  }
+  /* 🔀 입력창(구 .auth-input/.birth-input/.verify-input)은
+     src/components/ui/AuthInput.tsx (Tailwind, variant: auth/birth/verify) 로 이관됨 */
 
-  .auth-input::placeholder {
-    color: var(--auth-input-placeholder);
-  }
-
-  .auth-input:focus {
-    outline: none;
-    border-color: var(--auth-input-focus-border);
-    box-shadow: var(--auth-input-focus-shadow);
-  }
-
-  .login-button {
-    width: 300px;
-    padding: 12px;
-    font-size: 16px;
-
-    border-radius: 6px;
-    border: 1px solid var(--color-border-strong);
-    box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
-
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    animation: var(--btn-animation);
-    cursor: pointer;
-    border: none; /* ✅ 버튼 border가 입력창과 다르면 폭이 어긋남 */
-    line-height: 1.2;
-  }
+  /* 🔀 액션 버튼(구 .login-button/.agree-button/.next-button/.check-button)은
+     src/components/ui/Button.tsx (Tailwind, variant: block/inline/check) 로 이관됨 */
 
   .login-subtitle {
     font-family: 'Gowun Batang';
@@ -131,22 +96,6 @@ body.loading-mode {
     text-align: center;
   }
 
-  .agree-button,
-  .next-button {
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    animation: var(--btn-animation);
-    font-size: 15px;
-    padding: 12px 20px;
-    margin: 10px 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    line-height: 1.2;
-    box-sizing: border-box;
-    height: 48px;             /* ✅ input과 높이 일치 */
-  }
-
   .alert-box {
     background-color: var(--color-danger-surface);
     color: var(--color-danger-text);
@@ -164,20 +113,6 @@ body.loading-mode {
     width: 350px;
     gap: 10px;
     margin-bottom: 10px;
-  }
-
-  .check-button {
-    height: 48px;
-    padding: 12px;
-    font-size: 18px;
-    border-radius: 6px;
-    border: none;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    animation: var(--btn-animation);
-    cursor: pointer;
-    white-space: nowrap;
-    line-height: 1.2
   }
 
   .result-message {
@@ -224,37 +159,6 @@ body.loading-mode {
   .toggle-button.active {
     background-color: var(--color-accent);
     color: var(--color-on-accent);
-  }
-
-  .birth-input{
-    padding: 12px;
-    font-size: 16px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: 1px solid var(--auth-input-border);
-    background: var(--auth-input-bg);
-    color: var(--auth-input-text);
-    box-sizing: border-box; /* ✅ 입력창과 버튼의 너비 일치 보장 */
-    line-height: 1.2;
-  }
-
-  .birth-input::placeholder {
-    color: var(--auth-input-placeholder);
-  }
-
-  /* 인증번호 입력칸 (Verify-MVP) — auth-input과 동일 토큰 소비 */
-  .verify-input {
-    border-radius: 6px;
-    border: 1px solid var(--auth-input-border);
-    background: var(--auth-input-bg);
-    color: var(--auth-input-text);
-    box-sizing: border-box;
-    font-size: 16px;
-    outline: none;
-  }
-
-  .verify-input::placeholder {
-    color: var(--auth-input-placeholder);
   }
 
   .title {

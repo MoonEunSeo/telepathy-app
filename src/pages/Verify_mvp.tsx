@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getStorage, setStorage } from '../types';
+import Button from '../components/ui/Button';
+import AuthInput from '../components/ui/AuthInput';
+import Modal from '../components/ui/Modal';
 import type {
   VerifyMvpSendResponse,
   VerifyMvpCheckResponse,
@@ -130,8 +133,8 @@ export default function Verify_mvp() {
 
       {/* 생년월일 + 성별 입력 */}
       <div style={{ display: 'flex', width: '100%', maxWidth: '350px', gap: '8px', marginBottom: '12px' }}>
-        <input
-          className="birth-input"
+        <AuthInput
+          variant="birth"
           placeholder="생년월일 8자리"
           maxLength={8}
           value={birthdate}
@@ -156,23 +159,22 @@ export default function Verify_mvp() {
 
       {gender && birthdate.length === 8 && (
         <>
-          <input
-            className="auth-input"
+          <AuthInput
             placeholder="전화번호를 입력하세요"
             value={phone}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
           />
 
           {!codeSent ? (
-            <button className="login-button" onClick={handleSendCode}>
+            <Button onClick={handleSendCode}>
               본인인증하기
-            </button>
+            </Button>
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
                 <div style={{ position: 'relative', flex: 1 }}>
-                  <input
-                    className="verify-input"
+                  <AuthInput
+                    variant="verify"
                     placeholder="인증번호 6자리"
                     value={verificationCode}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setVerificationCode(e.target.value)}
@@ -192,26 +194,24 @@ export default function Verify_mvp() {
                   </span>
                 </div>
 
-                <button className="check-button" style={{ height: '45px', flexShrink: 0 }} onClick={handleSendCode}>
+                <Button variant="check" style={{ height: '45px', flexShrink: 0 }} onClick={handleSendCode}>
                   재생성
-                </button>
+                </Button>
               </div>
 
-              <button className="login-button" style={{ marginTop: '16px' }} onClick={handleVerifyCode}>
+              <Button style={{ marginTop: '16px' }} onClick={handleVerifyCode}>
                 본인인증하기
-              </button>
+              </Button>
             </>
           )}
         </>
       )}
 
       {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>{modalMessage}</p>
-            <button className="login-button" onClick={() => setShowModal(false)}>확인</button>
-          </div>
-        </div>
+        <Modal>
+          <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>{modalMessage}</p>
+          <Button onClick={() => setShowModal(false)}>확인</Button>
+        </Modal>
       )}
    </div></div>
   );

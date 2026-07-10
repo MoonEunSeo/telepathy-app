@@ -4,6 +4,9 @@ import { useModal } from '../contexts/ModalContext';
 import ModalPolicy from '../components/ModalPolicy';
 import { useNavigate } from 'react-router-dom';
 import type { LoginResponse } from '../types';
+import Button from '../components/ui/Button';
+import AuthInput from '../components/ui/AuthInput';
+import Modal from '../components/ui/Modal';
 
 export default function LoginPage() {
   const { isOpen } = useModal();
@@ -46,22 +49,20 @@ export default function LoginPage() {
           </p>
           <h1 className="login-title">로그인</h1>
 
-          <input
-            className="auth-input"
+          <AuthInput
             placeholder="아이디"
             value={username}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
           />
-          <input
-            className="auth-input"
+          <AuthInput
             placeholder="비밀번호"
             type="password"
             value={password}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           />
-          <button className="login-button" type="submit" onClick={handleLogin}>
+          <Button type="submit" onClick={handleLogin}>
             로그인 하기
-          </button>
+          </Button>
 
           <div className="or-divider">or</div>
 
@@ -95,19 +96,14 @@ export default function LoginPage() {
           {isOpen && <ModalPolicy />}
 
           {modalMessage && (
-            <div className="modal-backdrop">
-              <div className="modal-content">
-                <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
-                  {modalMessage}
-                </p>
-                <button
-                  className="login-button"
-                  onClick={() => setModalMessage('')}
-                >
-                  확인
-                </button>
-              </div>
-            </div>
+            <Modal>
+              <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
+                {modalMessage}
+              </p>
+              <Button onClick={() => setModalMessage('')}>
+                확인
+              </Button>
+            </Modal>
           )}
         </div>
       </div>

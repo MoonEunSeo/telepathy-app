@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MatchStartResponse } from '../types';
+import Button from './ui/Button';
+import Modal from './ui/Modal';
 
 export default function IntentToggle() {
   const navigate = useNavigate();
@@ -55,29 +57,27 @@ export default function IntentToggle() {
 
       {/* ✅ 팝업 모달 */}
       {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
+        <Modal>
             <p style={{ marginBottom: '20px', fontSize: '16px' }}>
               자유로운 소통이 가능하지만
               로그는 저장되지 않습니다.
             </p>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                className="agree-button"
+              <Button
+                variant="inline"
                 onClick={startLightConnection}
                 style={{ marginRight: '10px' }}
               >
                 확인
-              </button>
-              <button
-                className="next-button"
+              </Button>
+              <Button
+                variant="inline"
                 onClick={() => setShowModal(false)}
               >
                 취소
-              </button>
+              </Button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

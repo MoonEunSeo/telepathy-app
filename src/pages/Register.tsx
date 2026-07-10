@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import type { CheckUsernameResponse } from '../types';
 import { setStorage } from '../types';
+import Button from '../components/ui/Button';
+import AuthInput from '../components/ui/AuthInput';
+import Modal from '../components/ui/Modal';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -93,13 +96,12 @@ export default function Register() {
       <h1 className="login-title">회원가입</h1>
 
       <div className="id-check-row">
-        <input
-          className="auth-input"
+        <AuthInput
           placeholder="아이디"
           value={username}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
         />
-        <button className="check-button" onClick={checkUsername}>중복검사</button>
+        <Button variant="check" onClick={checkUsername}>중복검사</Button>
       </div>
 
       {isAvailable !== null && (
@@ -108,17 +110,16 @@ export default function Register() {
         </p>
       )}
 
-      <input
-        className="auth-input"
+      <AuthInput
         placeholder="비밀번호"
         type="password"
         value={password}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
       />
 
-      <button className="login-button" style={{ marginTop: '16px' }} onClick={handleRegister}>
+      <Button style={{ marginTop: '16px' }} onClick={handleRegister}>
         가입하기
-      </button>
+      </Button>
 
       <p style={{ marginTop: '60px', fontSize: '14px', color: '#888', textAlign: 'center' }}>
         By clicking continue,<br />
@@ -126,12 +127,10 @@ export default function Register() {
       </p>
 
       {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>{modalMessage}</p>
-            <button className="login-button" style={{ marginTop: '16px' }} onClick={() => setShowModal(false)}>확인</button>
-          </div>
-        </div>
+        <Modal>
+          <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>{modalMessage}</p>
+          <Button style={{ marginTop: '16px' }} onClick={() => setShowModal(false)}>확인</Button>
+        </Modal>
       )}
     </div>
     </div>

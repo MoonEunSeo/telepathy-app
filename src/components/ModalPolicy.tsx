@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useModal } from '../contexts/ModalContext';
+import Button from './ui/Button';
+import Modal from './ui/Modal';
 
 interface TermItem {
   id: string;
@@ -56,8 +58,7 @@ export default function ModalPolicy() {
   }, []);
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content" ref={modalRef}>
+    <Modal ref={modalRef}>
         <h2 style={{ fontFamily: 'Gowun Dodum', fontSize: '22px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           약관에 동의해주세요
         </h2>
@@ -90,19 +91,18 @@ export default function ModalPolicy() {
           ))}
         </ul>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-         <button className="agree-button" onClick={agreeAll}>
+         <Button variant="inline" onClick={agreeAll}>
           전체 동의하기
-         </button>
-         <button className="agree-button" onClick={handleNext}>
+         </Button>
+         <Button variant="inline" onClick={handleNext}>
           다음
-         </button>
+         </Button>
         </div>
         {showAlert && (
           <div className="alert-box" style={{ marginTop: '16px', paddingLeft: '50px', paddingRight: '50px' }}>
             모든 필수 약관에 동의하지 않으면{'\n'}서비스를 이용할 수 없습니다.
           </div>
         )}
-      </div>
-    </div>
+    </Modal>
   );
 }
