@@ -4,9 +4,9 @@
  * 이 파일에는 "토큰으로 표현하기 어려운" 할로윈 전용 규칙만 남는다:
  *   - 배경 이미지 / 로딩 화면 / @keyframes
  *   - 전역 요소 셀렉터(select) · 3rd-party(Toastify)
- *   - 전역 클래스 훅(.title/.subtitle/.login-container/.terms-footer) —
- *     base/index.css 전역 스타일시트에 정의된 클래스라 CSS Modules 해시
- *     대상이 아니므로 훅이 계속 유효하다.
+ *   - 전역 클래스 훅(.title/.subtitle) — base/index.css 전역 스타일시트에
+ *     정의된 클래스라 CSS Modules 해시 대상이 아니므로 훅이 계속 유효하다.
+ *     (구 .login-container/.terms-footer 할로윈 훅은 인증 페이지 halloween:* 유틸로 이관)
  *   - attribute 스코프 훅([data-page="..."]) — CSS Modules 안전
  * 컴포넌트/페이지 팝업의 색·배경·버튼 등 테마 값은 전부 tokens.css 의
  * 팝업 토큰(--report / --ended / --feedback / --mega / --paid / --icon-btn
@@ -106,15 +106,7 @@ body.halloween-mode .halloween-loader * {
     color: #ffe6b3 !important;
   }
 
-/* 🧡 로그인 컨테이너 전체 (레이아웃 — 전역 클래스 훅 유지) */
-body.halloween-mode .login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  margin-top: 100px; /* 화면에서 딱 중앙 느낌 */
-  width: 100%;
-}
+/* 🧡 로그인 컨테이너 gap/width 는 각 인증 페이지의 halloween:gap-[3px] halloween:w-full 로 이관 */
 
 /* ✨ 호박등 빛이 흐르는 효과 (tokens.css 의 --btn-animation 이 참조) */
 @keyframes pumpkin-glow {
@@ -135,18 +127,7 @@ body.halloween-mode .login-container {
   }
 }
 
-/* ⚖️ 하단 약관 영역 (base/index.css 전역 클래스 훅 유지) */
-body.halloween-mode .terms-footer {
-  position: absolute;
-  bottom: 10px; /* 화면 하단과 간격 */
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  font-size: 13px;
-  line-height: 1.4;
-  width: 100%;
-  opacity: 0.9;
-}
+/* ⚖️ 하단 약관 할로윈 배치(하단 고정)는 Login/Register 의 halloween:absolute … 유틸로 이관 */
 
   /* 🪄 부드러운 전체 전환 */
   body.halloween-mode * {

@@ -36,8 +36,12 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="login-container">
-      <h1 className="login-title">비밀번호 변경</h1>
+    /* 구 .login-container */
+    <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
+      {/* 구 .login-title */}
+      <h1 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+        비밀번호 변경
+      </h1>
       <AuthInput
         type="password"
         placeholder="현재 비밀번호"

@@ -15,6 +15,12 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
+/* 🎃 시즌 테마 배리언트 — body.halloween-mode 하위 요소에 `halloween:*` 유틸 적용.
+   AI-quiz-clone 의 `dark:` 와 동일 개념. 테마별 레이아웃 차이도 별도 클래스 훅
+   대신 tsx 안에서 Tailwind 로 표현(예: `halloween:absolute halloween:bottom-[10px]`).
+   `body.halloween-mode &` → 특이도(0,2,1)로 기본 유틸을 안전하게 덮음. */
+@custom-variant halloween (body.halloween-mode &);
+
 /* Design tokens — 반드시 최상단에서 먼저 로드 (다른 CSS가 var(--*)를 참조) */
 @import './themes/base/tokens.css';
 

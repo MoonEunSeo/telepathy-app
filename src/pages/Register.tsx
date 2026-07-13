@@ -8,6 +8,7 @@ import { setStorage } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import Modal from '../components/ui/Modal';
+import TextLink from '../components/ui/TextLink';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -91,48 +92,58 @@ export default function Register() {
   return (
     <div data-page="register">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
-    <div className="login-container">
-      <p className="login-subtitle">바로 지금,<br />우리는 같은 단어를 떠올렸어요</p>
-      <h1 className="login-title">회원가입</h1>
-
-      <div className="id-check-row">
-        <AuthInput
-          placeholder="아이디"
-          value={username}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-        />
-        <Button variant="check" onClick={checkUsername}>중복검사</Button>
-      </div>
-
-      {isAvailable !== null && (
-        <p className={`result-message ${isAvailable ? '' : 'error'}`}>
-          {isAvailable ? '이 아이디는 사용 가능합니다.' : '이미 사용 중인 아이디입니다.'}
+      {/* 구 .login-container */}
+      <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
+        {/* 구 .login-subtitle */}
+        <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--login-subtitle-color)]">
+          바로 지금,<br />우리는 같은 단어를 떠올렸어요
         </p>
-      )}
+        {/* 구 .login-title */}
+        <h1 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+          회원가입
+        </h1>
 
-      <AuthInput
-        placeholder="비밀번호"
-        type="password"
-        value={password}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-      />
+        {/* 구 .id-check-row */}
+        <div className="flex w-[350px] justify-between gap-[10px] mb-[10px]">
+          <AuthInput
+            placeholder="아이디"
+            value={username}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+          />
+          <Button variant="check" onClick={checkUsername}>중복검사</Button>
+        </div>
 
-      <Button style={{ marginTop: '16px' }} onClick={handleRegister}>
-        가입하기
-      </Button>
+        {isAvailable !== null && (
+          /* 구 .result-message (.error) */
+          <p className={`text-[14px] mt-[6px] mb-[10px] text-left w-[300px] p-0 ${isAvailable ? 'text-[var(--color-link)]' : 'text-[var(--color-danger)]'}`}>
+            {isAvailable ? '이 아이디는 사용 가능합니다.' : '이미 사용 중인 아이디입니다.'}
+          </p>
+        )}
 
-      <p style={{ marginTop: '60px', fontSize: '14px', color: '#888', textAlign: 'center' }}>
-        By clicking continue,<br />
-        you agree to our <span className="bold-link">Terms of Service</span> and <span className="bold-link">Privacy Policy</span>
-      </p>
+        <AuthInput
+          placeholder="비밀번호"
+          type="password"
+          value={password}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+        />
 
-      {showModal && (
-        <Modal>
-          <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>{modalMessage}</p>
-          <Button style={{ marginTop: '16px' }} onClick={() => setShowModal(false)}>확인</Button>
-        </Modal>
-      )}
-    </div>
+        <Button className="mt-4" onClick={handleRegister}>
+          가입하기
+        </Button>
+
+        {/* 구 .terms-footer (인라인 #888 → --color-text-muted 토큰) */}
+        <p className="mt-[60px] text-[14px] text-center text-[var(--color-text-muted)] halloween:absolute halloween:bottom-[10px] halloween:left-1/2 halloween:-translate-x-1/2 halloween:text-[13px] halloween:leading-[1.4] halloween:w-full halloween:opacity-90">
+          By clicking continue,<br />
+          you agree to our <TextLink>Terms of Service</TextLink> and <TextLink>Privacy Policy</TextLink>
+        </p>
+
+        {showModal && (
+          <Modal>
+            <p className="[font-family:'Gowun_Dodum'] text-[16px]">{modalMessage}</p>
+            <Button className="mt-4" onClick={() => setShowModal(false)}>확인</Button>
+          </Modal>
+        )}
+      </div>
     </div>
   );
 }

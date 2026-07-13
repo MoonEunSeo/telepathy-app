@@ -7,6 +7,7 @@ import type { LoginResponse } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import Modal from '../components/ui/Modal';
+import TextLink from '../components/ui/TextLink';
 
 export default function LoginPage() {
   const { isOpen } = useModal();
@@ -40,14 +41,19 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* ✅ 로그인 페이지 본문 */}
-      <div className="login-page">
-        <div className="login-container">
-          <p className="login-subtitle">
+      {/* ✅ 로그인 페이지 본문 (구 .login-page — 스타일 없던 빈 래퍼) */}
+      <div>
+        {/* 구 .login-container */}
+        <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
+          {/* 구 .login-subtitle */}
+          <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--login-subtitle-color)]">
             바로 지금,<br />
             우리는 같은 단어를 떠올렸어요
           </p>
-          <h1 className="login-title">로그인</h1>
+          {/* 구 .login-title */}
+          <h1 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+            로그인
+          </h1>
 
           <AuthInput
             placeholder="아이디"
@@ -64,40 +70,40 @@ export default function LoginPage() {
             로그인 하기
           </Button>
 
-          <div className="or-divider">or</div>
+          {/* 구 .or-divider — 좌우 선은 ::before/::after 유틸(before:/after:)로 이관 */}
+          <div className="relative flex h-5 w-full items-center justify-center text-center text-[14px] text-[var(--or-divider-color)] my-6 before:content-[''] before:block before:flex-1 before:h-px before:max-w-[200px] before:mx-3 before:bg-[var(--color-border)] after:content-[''] after:block after:flex-1 after:h-px after:max-w-[200px] after:mx-3 after:bg-[var(--color-border)]">
+            or
+          </div>
 
-          {/* 회원가입 */}
-          <p className="auth-footer-question">
+          {/* 회원가입 — 구 .auth-footer-question */}
+          <p className="mt-[10px] text-[14px] text-[var(--auth-footer-color)]">
             계정이 없으신가요?{' '}
-            <span className="bold-link" onClick={() => navigate('/register')}>
+            <TextLink onClick={() => navigate('/register')}>
               회원가입
-            </span>
+            </TextLink>
           </p>
 
-          {/* 비밀번호 찾기 */}
-          <p className="auth-footer-question">
+          {/* 비밀번호 찾기 — 구 .auth-footer-question */}
+          <p className="mt-[10px] text-[14px] text-[var(--auth-footer-color)]">
             비밀번호를 잊으셨나요?{' '}
-            <span
-              className="bold-link"
-              onClick={() => navigate('/findpassword')}
-            >
+            <TextLink onClick={() => navigate('/findpassword')}>
               비밀번호 찾기
-            </span>
+            </TextLink>
           </p>
 
-          {/* 하단 약관 */}
-          <p className="terms-footer">
+          {/* 하단 약관 — 구 .terms-footer */}
+          <p className="mt-[60px] text-[14px] text-center text-[var(--color-text-muted)] halloween:absolute halloween:bottom-[10px] halloween:left-1/2 halloween:-translate-x-1/2 halloween:text-[13px] halloween:leading-[1.4] halloween:w-full halloween:opacity-90">
             By clicking continue,<br />
             you agree to our{' '}
-            <span className="bold-link">Terms of Service</span> and{' '}
-            <span className="bold-link">Privacy Policy</span>
+            <TextLink>Terms of Service</TextLink> and{' '}
+            <TextLink>Privacy Policy</TextLink>
           </p>
 
           {isOpen && <ModalPolicy />}
 
           {modalMessage && (
             <Modal>
-              <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
+              <p className="[font-family:'Gowun_Dodum'] text-[16px]">
                 {modalMessage}
               </p>
               <Button onClick={() => setModalMessage('')}>

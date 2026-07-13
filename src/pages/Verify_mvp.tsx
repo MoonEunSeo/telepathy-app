@@ -129,91 +129,87 @@ export default function Verify_mvp() {
   return (
     <div data-page="verify-mvp">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
-    <div className="login-container">
-      <h2 className="login-title">본인인증</h2>
+      {/* 구 .login-container */}
+      <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
+        {/* 구 .login-title */}
+        <h2 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+          본인인증
+        </h2>
 
-      {/* 생년월일 + 성별 입력 */}
-      <div style={{ display: 'flex', width: '100%', maxWidth: '350px', gap: '8px', marginBottom: '12px' }}>
-        <AuthInput
-          variant="birth"
-          placeholder="생년월일 8자리"
-          maxLength={8}
-          value={birthdate}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setBirthdate(e.target.value.replace(/\D/g, ''))}
-          style={{ flex: 3 }}
-        />
-        <ToggleButton
-          active={gender === '남성'}
-          onClick={() => setGender('남성')}
-          style={{ flex: 1 }}
-        >
-          남성
-        </ToggleButton>
-        <ToggleButton
-          active={gender === '여성'}
-          onClick={() => setGender('여성')}
-          style={{ flex: 1 }}
-        >
-          여성
-        </ToggleButton>
-      </div>
-
-      {gender && birthdate.length === 8 && (
-        <>
+        {/* 생년월일 + 성별 입력 */}
+        <div className="flex w-full max-w-[350px] gap-[8px] mb-[12px]">
           <AuthInput
-            placeholder="전화번호를 입력하세요"
-            value={phone}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+            variant="birth"
+            placeholder="생년월일 8자리"
+            maxLength={8}
+            value={birthdate}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setBirthdate(e.target.value.replace(/\D/g, ''))}
+            className="flex-[3]"
           />
+          <ToggleButton
+            active={gender === '남성'}
+            onClick={() => setGender('남성')}
+            className="flex-1"
+          >
+            남성
+          </ToggleButton>
+          <ToggleButton
+            active={gender === '여성'}
+            onClick={() => setGender('여성')}
+            className="flex-1"
+          >
+            여성
+          </ToggleButton>
+        </div>
 
-          {!codeSent ? (
-            <Button onClick={handleSendCode}>
-              본인인증하기
-            </Button>
-          ) : (
-            <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
-                  <AuthInput
-                    variant="verify"
-                    placeholder="인증번호 6자리"
-                    value={verificationCode}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setVerificationCode(e.target.value)}
-                    style={{ width: '100%', height: '45px', paddingRight: '60px' }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      right: '12px',
-                      top: '50%',
-                      transform: 'translateY(-75%)',
-                      color: '#999',
-                      fontSize: '14px',
-                    }}
-                  >
-                    {formatTime(timeLeft)}
-                  </span>
-                </div>
+        {gender && birthdate.length === 8 && (
+          <>
+            <AuthInput
+              placeholder="전화번호를 입력하세요"
+              value={phone}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+            />
 
-                <Button variant="check" style={{ height: '45px', flexShrink: 0 }} onClick={handleSendCode}>
-                  재생성
-                </Button>
-              </div>
-
-              <Button style={{ marginTop: '16px' }} onClick={handleVerifyCode}>
+            {!codeSent ? (
+              <Button onClick={handleSendCode}>
                 본인인증하기
               </Button>
-            </>
-          )}
-        </>
-      )}
+            ) : (
+              <>
+                <div className="flex items-center gap-[8px] mt-[10px]">
+                  <div className="relative flex-1">
+                    <AuthInput
+                      variant="verify"
+                      placeholder="인증번호 6자리"
+                      value={verificationCode}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => setVerificationCode(e.target.value)}
+                      className="w-full h-[45px] pr-[60px]"
+                    />
+                    <span className="absolute right-[12px] top-1/2 -translate-y-[75%] text-[14px] text-[#999]">
+                      {formatTime(timeLeft)}
+                    </span>
+                  </div>
 
-      {showModal && (
-        <Modal>
-          <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>{modalMessage}</p>
-          <Button onClick={() => setShowModal(false)}>확인</Button>
-        </Modal>
-      )}
-   </div></div>
+                  <Button variant="check" className="h-[45px]! shrink-0" onClick={handleSendCode}>
+                    재생성
+                  </Button>
+                </div>
+
+                <Button className="mt-4" onClick={handleVerifyCode}>
+                  본인인증하기
+                </Button>
+              </>
+            )}
+          </>
+        )}
+
+        {showModal && (
+          <Modal>
+            <p className="[font-family:'Gowun_Dodum'] text-[16px]">{modalMessage}</p>
+            <Button onClick={() => setShowModal(false)}>확인</Button>
+          </Modal>
+        )}
+      </div>
+    </div>
   );
 }
