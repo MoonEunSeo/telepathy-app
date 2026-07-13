@@ -3,8 +3,8 @@ import type { Socket } from 'socket.io-client';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
-  MegaphoneShow,
 } from '@shared/socketEvents';
+import type { MegaphoneShowPayload } from '@shared/domain';
 
 interface MegaphoneToastProps {
   socket: Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -12,7 +12,7 @@ interface MegaphoneToastProps {
 
 const MegaphoneToast = ({ socket }: MegaphoneToastProps) => {
   // 이벤트 페이로드 타입은 @shared 소켓 계약에서 자동 추론됨 (annotation 불필요)
-  const [megaphoneData, setMegaphoneData] = useState<MegaphoneShow | null>(null);
+  const [megaphoneData, setMegaphoneData] = useState<MegaphoneShowPayload | null>(null);
 
   useEffect(() => {
     socket.on('megaphone:show', ({ nickname, message }) => {
