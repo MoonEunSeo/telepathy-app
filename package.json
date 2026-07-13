@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx server/index.ts",
     "dev": "tsx watch server/index.ts",
-    "build": "npm install --prefix client && npm run build --prefix client",
+    "build": "npm install --prefix telepathy-front && npm run build --prefix telepathy-front",
     "typecheck": "tsc --noEmit -p server/tsconfig.json"
   },
   "dependencies": {
@@ -25,7 +25,7 @@
     "socket.io": "^4.7.5",
     "solapi": "^5.4.0",
     "tsx": "^4.23.1",
-    "uuid": "^9.0.0"
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

@@ -96,15 +96,15 @@ app.get(['/', '/index.html'], (req: Request, res: Response) => {
 app.get('/healthz', (req: Request, res: Response) => res.status(200).send('OK'));
 
 // ✅ 정적 파일 서빙 (Vite 빌드 결과)
-const distPath = path.join(__dirname, '../client/dist');
+const distPath = path.join(__dirname, '../telepathy-front/dist');
 app.use(express.static(distPath));
 
 // ✅ assets 폴더 정적 서빙
 app.use('/assets', express.static(path.join(distPath, 'assets')));
 
 // ✅ sitemap.xml, robots.txt 등은 index.html로 리디렉션되지 않게 예외 처리
-app.use('/sitemap.xml', express.static(path.join(__dirname, '../client/public')));
-app.use('/robots.txt', express.static(path.join(__dirname, '../client/public')));
+app.use('/sitemap.xml', express.static(path.join(__dirname, '../telepathy-front/public')));
+app.use('/robots.txt', express.static(path.join(__dirname, '../telepathy-front/public')));
 
 // ✅ SPA 라우팅 처리 (404나 미스매치 시 index.html 반환)
 app.use((req: Request, res: Response) => {

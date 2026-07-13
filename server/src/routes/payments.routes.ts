@@ -2,7 +2,7 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
-import type { PaymentVerifyRequest, PaymentVerifyResponse } from '@shared/api';
+import type { PaymentsVerifyRequest, PaymentsVerifyResponse } from '@shared/api';
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ interface PortOnePaymentResponse {
 }
 
 router.post('/verify', async (req: Request, res: Response) => {
-  const { imp_uid, userId, count, amount } = req.body as PaymentVerifyRequest;
+  const { imp_uid, userId, count, amount } = req.body as PaymentsVerifyRequest;
 
   try {
     // 1. PortOne 토큰 발급
@@ -60,16 +60,16 @@ router.post('/verify', async (req: Request, res: Response) => {
         },
       ]);
 
-      return res.json({ success: true } satisfies PaymentVerifyResponse);
+      return res.json({ success: true } satisfies PaymentsVerifyResponse);
     } else {
       return res
         .status(400)
-        .json({ success: false, message: '결제 검증 실패' } satisfies PaymentVerifyResponse);
+        .json({ success: false, message: '결제 검증 실패' } satisfies PaymentsVerifyResponse);
     }
   } catch (err) {
     const error = err as { response?: { data?: unknown }; message?: string };
     console.error(error.response?.data || error.message);
-    res.status(500).json({ success: false, message: '서버 오류' } satisfies PaymentVerifyResponse);
+    res.status(500).json({ success: false, message: '서버 오류' } satisfies PaymentsVerifyResponse);
   }
 });
 

@@ -1,68 +1,41 @@
-// shared/socketEvents.ts
-// client ↔ server 소켓 계약 (단일 출처). ⚠️ 런타임 코드 없음 — 타입만.
-// 양쪽에서 반드시 `import type` 으로 사용 (컴파일 시 제거되어 런타임 resolve 불필요).
+// Socket.IO 타입 이벤트 맵
+// 원본: src/config/socket.js (io(...) 인스턴스), src/pages/ChatPage.jsx,
+//        src/pages/MainPage.jsx, src/components/MegaphoneToast.jsx 의 emit/on 호출부.
 
-export interface ChatMessage {
-  roomId: string;
-  senderId: string;
-  senderNickname: string;
-  receiverId: string;
-  receiverNickname: string;
-  word: string;
-  message: string;
-  timestamp: string | number;
-}
+// ⚠️ AppSocket(socket.io-client 의존)은 클라 전용이라 shared에서 제외.
+import type {
+  Id,
+  ChatMessage,
+  ReceiverInfo,
+  MatchedPayload,
+  JoinMatchPayload,
+  MegaphoneSendPayload,
+  MegaphoneShowPayload,
+  MegaphoneFailedPayload,
+} from './domain';
 
-export interface MatchedPayload {
-  roomId: string;
-  senderId: string;
-  senderUsername: string;
-  senderNickname: string;
-  receiverId: string;
-  receiverUsername: string;
-  receiverNickname: string;
-  word: string;
-  round: number;
-}
-
-export interface JoinMatchPayload {
-  userId: string;
-  username: string;
-  nickname: string;
-  word: string;
-  round: number;
-}
-
-export interface MegaphoneShow {
-  nickname: string;
-  message: string;
-}
-
-export interface ReceiverInfo {
-  receiverId: string;
-  receiverNickname: string;
-}
-
-// 서버 → 클라이언트
+// 서버 → 클라이언트 (socket.on)
 export interface ServerToClientEvents {
+  chatMessage: (data: ChatMessage) => void;
+  receiverInfo: (info: ReceiverInfo) => void; // legacy useSocket 훅
+  typing: () => void; // payload 없음
+  stopTyping: () => void; // payload 없음
+  chatEnded: () => void; // payload 없음
+  chatEndedByReport: () => void; // payload 없음
   onlineCount: (count: number) => void;
   matched: (data: MatchedPayload) => void;
-  chatMessage: (data: ChatMessage) => void;
-  typing: () => void;
-  stopTyping: () => void;
-  chatEnded: () => void;
-  receiverInfo: (data: ReceiverInfo) => void;
-  'megaphone:show': (data: MegaphoneShow) => void;
-  'megaphone:failed': (data: { message: string }) => void;
+  'megaphone:show': (payload: MegaphoneShowPayload) => void;
+  'megaphone:failed': (payload: MegaphoneFailedPayload) => void;
 }
 
-// 클라이언트 → 서버
+// 클라이언트 → 서버 (socket.emit)
 export interface ClientToServerEvents {
-  getOnlineCount: () => void;
-  join_match: (data: JoinMatchPayload) => void;
-  chatMessage: (data: ChatMessage) => void;
-  typing: (data: { roomId: string }) => void;
-  stopTyping: (data: { roomId: string }) => void;
-  leaveRoom: (data: { roomId: string; userId: string }) => void;
-  'megaphone:send': (data: { userId: string; message: string }) => void;
+  chatMessage: (msgData: ChatMessage) => void;
+  typing: (payload: { roomId: string }) => void;
+  stopTyping: (payload: { roomId: string }) => void;
+  // ChatPage: { userId, roomId } / legacy useSocket: { roomId } → userId optional
+  leaveRoom: (payload: { roomId: string; userId?: Id }) => void;
+  'megaphone:send': (payload: MegaphoneSendPayload) => void;
+  getOnlineCount: () => void; // payload 없음
+  join_match: (payload: JoinMatchPayload) => void;
 }

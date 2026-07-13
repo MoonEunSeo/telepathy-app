@@ -1,15 +1,15 @@
+// deposit.routes.ts
+import express, { Request, Response } from 'express';
+import supabase from '../config/supabase';
+import { parseDepositMessage } from '../utils/parseDeposit';
 
-//deposit.routes.js
-const express = require('express');
 const router = express.Router();
-const  supabase  = require('../config/supabase');
-const { parseDepositMessage } = require('../utils/parseDeposit');
 
-router.post('/webhook', async (req, res) => {
+router.post('/webhook', async (req: Request, res: Response) => {
   console.log('🔍 Raw body:', req.body);
-  
+
   try {
-    const { message } = req.body;
+    const { message } = req.body as { message: string };
 
     const parsed = parseDepositMessage(message);
     if (!parsed) {
@@ -48,9 +48,9 @@ router.post('/webhook', async (req, res) => {
     console.log('❌ 매칭되는 결제 없음');
     return res.json({ success: false });
   } catch (err) {
-    console.error('❌ /deposit/webhook 오류:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('❌ /deposit/webhook 오류:', (err as Error).message);
+    res.status(500).json({ error: (err as Error).message });
   }
 });
 
-module.exports = router;
+export default router;
