@@ -59,30 +59,23 @@ export default function ModalPolicy() {
 
   return (
     <Modal ref={modalRef}>
-        <h2 style={{ fontFamily: 'Gowun Dodum', fontSize: '22px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
+        <h2 className="[font-family:'Gowun_Dodum'] text-[22px] font-bold mb-4 text-center">
           약관에 동의해주세요
         </h2>
-        <ul style={{
-                       listStyle: 'none',
-                       padding: 0,
-                       margin: 0,
-                       display: 'flex',
-                       flexDirection: 'column',
-                       alignItems: 'center', // 리스트 항목들 가운데 정렬
-                    }}>
+        <ul className="list-none p-0 m-0 flex flex-col items-center">
           {termsList.map((term) => (
-            <li key={term.id} style={{ marginBottom: '8px', fontFamily: 'Gowun Dodum' }}>
-              <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <li key={term.id} className="mb-2 [font-family:'Gowun_Dodum']">
+              <label className="cursor-pointer flex items-center">
                 <input
                   type="checkbox"
                   checked={!!checked[term.id]}
                   onChange={() => toggleCheckbox(term.id)}
-                  style={{ marginRight: '8px' }}
+                  className="mr-2"
                   onClick={(e) => e.stopPropagation()} // ✅ 체크박스 클릭 시 라벨 클릭 방지
                 />
                 <span
                   onClick={() => navigate(`/terms/${term.id}`)}
-                  style={{ textDecoration: 'underline' }}
+                  className="underline"
                 >
                   {term.label}
                 </span>
@@ -90,7 +83,7 @@ export default function ModalPolicy() {
             </li>
           ))}
         </ul>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <div className="flex justify-center mt-5">
          <Button variant="inline" onClick={agreeAll}>
           전체 동의하기
          </Button>
@@ -99,7 +92,8 @@ export default function ModalPolicy() {
          </Button>
         </div>
         {showAlert && (
-          <div className="alert-box" style={{ marginTop: '16px', paddingLeft: '50px', paddingRight: '50px' }}>
+          /* 구 전역 .alert-box + 인라인(mt/px) 흡수 */
+          <div className="[background-color:var(--color-danger-surface)] text-[var(--color-danger-text)] [border:1px_solid_var(--color-danger-border)] py-3 px-[50px] text-[14px] rounded-[8px] text-center mt-4 whitespace-pre-line">
             모든 필수 약관에 동의하지 않으면{'\n'}서비스를 이용할 수 없습니다.
           </div>
         )}

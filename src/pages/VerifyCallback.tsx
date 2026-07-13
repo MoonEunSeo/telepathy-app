@@ -40,7 +40,7 @@ export default function VerifyCallback() {
   }, [searchParams]);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '100px' }}>
+    <div className="text-center mt-[100px]">
       <h2>{message}</h2>
     </div>
   );

@@ -37,5 +37,5 @@ export default function Verify() {
     run();
   }, []);
 
-  return <h2 style={{ textAlign: 'center' }}>본인인증을 진행 중입니다...</h2>;
+  return <h2 className="text-center">본인인증을 진행 중입니다...</h2>;
 }
