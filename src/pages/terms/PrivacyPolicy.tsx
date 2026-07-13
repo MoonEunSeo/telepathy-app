@@ -1,8 +1,8 @@
-import styles from '../../themes/base/TermsTemplate.module.css';
+import { termsContainer, styledTable } from './termsStyles';
 
 export default function PrivacyPolicy() {
   return (
-    <div className={styles['terms-container']}>
+    <div className={termsContainer}>
       <h2>🔐 텔레파시 개인정보 처리방침 (필수)</h2>
       <p>
         텔레파시는 이용자의 개인정보 보호를 매우 중요하게 여기며, 「개인정보 보호법」 등 관련 법령을 준수합니다.
@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
       <hr />
 
       <h3>제1조 [수집하는 개인정보 항목]</h3>
-      <table className={styles['styled-table']}>
+      <table className={styledTable}>
         <thead>
           <tr>
             <th>구분</th>
@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
         <li><strong>회원 탈퇴 시:</strong> 즉시 파기</li>
         <li>단, 다음의 사유로 최대 <strong>6개월 간 보관</strong>될 수 있습니다.</li>
       </ul>
-      <table className={styles['styled-table']}>
+      <table className={styledTable}>
         <thead>
           <tr>
             <th>항목</th>

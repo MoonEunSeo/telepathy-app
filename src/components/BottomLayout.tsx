@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { Home, MessageSquareHeart, Heart, User } from "lucide-react";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
-import styles from "../themes/base/BottomLayout.module.css";
 
 interface NavItem {
   icon: ReactNode;
@@ -10,6 +9,9 @@ interface NavItem {
   url?: string;
   title?: string;
 }
+
+// 구 .bottom-nav-button (색은 active 여부로 분기 → 충돌 없이 명시)
+const navBtn = "flex flex-col items-center bg-transparent border-none text-[20px] cursor-pointer";
 
 export default function BottomLayout() {
   const navigate = useNavigate();
@@ -31,7 +33,8 @@ export default function BottomLayout() {
     <>
       <Outlet />
 
-      <div className={styles['bottom-nav-container']}>
+      {/* 구 .bottom-nav-container */}
+      <div className="fixed bottom-0 left-0 right-0 h-14 bg-[var(--color-surface)] [border-top:1px_solid_#e5e7eb] flex justify-around items-center z-50">
         {navItems.map(({ icon, path, external, url, title }, i) =>
           external ? (
             <a
@@ -40,7 +43,7 @@ export default function BottomLayout() {
               target="_blank"
               rel="noopener noreferrer"
               title={title || ""}
-              className={styles['bottom-nav-button']}
+              className={`${navBtn} text-[#9ca3af]`}
             >
               {icon}
             </a>
@@ -48,8 +51,8 @@ export default function BottomLayout() {
             <button
               key={i}
               onClick={() => path && navigate(path)}
-              className={`${styles['bottom-nav-button']} ${
-                location.pathname === path ? styles.active : ""
+              className={`${navBtn} ${
+                location.pathname === path ? "text-[var(--color-accent)]" : "text-[#9ca3af]"
               }`}
               title={title || ""}
             >
