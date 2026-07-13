@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWordSession } from '../contexts/WordSessionContext';
 import profileImage from '../assets/profile_image.png';
-import styles from '../themes/pages/MyPage.module.css';
+import Modal from '../components/ui/Modal';
 import type {
   Id,
   ProfileResponse,
@@ -10,6 +10,17 @@ import type {
   MegaphoneCountResponse,
   WithdrawResponse,
 } from '../types';
+
+// 구 .mypage-container hr (구분선) — 3곳 반복
+const hrCls =
+  "border-x-0 border-b-0 [border-top:1px_solid_rgba(255,240,200,0.6)] w-full rounded-full my-3 shadow-[0_0_3px_rgba(255,200,120,0.3)] max-[480px]:my-2";
+
+// 구 .login-button1 (모달 버튼, :global(.modal-content) 오버라이드 반영 = flex 1 1 45%/max140/pad10·0)
+const modalBtn =
+  "[background:var(--color-accent)] text-[var(--color-on-accent)] border-none rounded-[6px] text-[14px] cursor-pointer [transition:background-color_0.3s] flex-[1_1_45%] max-w-[140px] py-2.5 px-0 text-center hover:[background-color:#333]";
+// 구 .login-button1.cancel
+const modalBtnCancel =
+  "[background:var(--color-neutral-hover)] [color:var(--color-text)] border-none rounded-[6px] text-[14px] cursor-pointer [transition:background-color_0.3s] flex-[1_1_45%] max-w-[140px] py-2.5 px-0 text-center hover:[background-color:#d0d0d0]";
 
 const MyPage = () => {
   const [nickname, setNickname] = useState('');
@@ -142,53 +153,84 @@ const MyPage = () => {
 
   return (
     <>
-      <main data-page="mypage" className={styles['mypage-container']}>
-        <div className={styles['mypage-inner']}>
+      {/* data-page="mypage" 유지 → halloween.css 의 [data-page="mypage"] 테마-제외 리셋이 계속 작동 */}
+      <main
+        data-page="mypage"
+        className="flex flex-col items-center justify-start min-h-[80vh] bg-[var(--color-bg)] text-[var(--color-text)] pt-5 px-4 pb-20 box-border text-center max-[480px]:pt-2.5 max-[480px]:px-3 max-[480px]:pb-[60px]"
+      >
+        {/* 구 .mypage-inner (스타일 없던 빈 래퍼) */}
+        <div>
           {isActive && word && (
-            <div className={styles['mypage-current-word']}>
+            /* 구 .mypage-current-word */
+            <div className="w-full max-w-[350px] text-center text-[14px] text-white bg-[#f5c5c5] py-1.5 mb-3 rounded-[6px]">
               지금 연결 중인 단어 : {word}
             </div>
           )}
 
-          <h1 className={styles['mypage-title']}>Telepathy</h1>
+          {/* 구 .mypage-title */}
+          <h1 className="[font-family:'Judson',serif] text-[42px] font-bold mt-[10px] mb-[15px] text-center max-[480px]:mt-1">
+            Telepathy
+          </h1>
 
-          <img className={styles['mypage-profile-image']} src={profileImage} alt="프로필" />
+          {/* 구 .mypage-profile-image */}
+          <img
+            className="block w-[120px] h-[120px] rounded-full object-cover mx-auto mb-[15px] border border-[rgba(255,255,255,0.4)] shadow-[0_0_6px_rgba(0,0,0,0.15)] max-[480px]:w-[90px] max-[480px]:h-[90px]"
+            src={profileImage}
+            alt="프로필"
+          />
 
-          <div className={styles['mypage-nickname']}>{nickname || '닉네임 로딩중...'}</div>
+          {/* 구 .mypage-nickname */}
+          <div className="[font-family:'Gowun_Batang',sans-serif] font-bold text-[22px] mb-[15px]">
+            {nickname || '닉네임 로딩중...'}
+          </div>
 
-          <div className={styles['mypage-section']}>
-            <hr />
-            <p className={styles['mypage-section-title']}>| 내 정보 |</p>
-            <p className={styles['mypage-text']}>ID: {username || '불러오는 중...'}</p>
-            <p className={styles['mypage-text']}>
+          {/* 구 .mypage-section */}
+          <div className="w-full max-w-[360px] text-center mb-[15px] text-[14px] leading-[1.8]">
+            <hr className={hrCls} />
+            {/* 구 .mypage-section-title */}
+            <p className="[font-family:'Gowun_Batang',sans-serif] font-bold mb-2 text-[18px] max-[480px]:mb-1">| 내 정보 |</p>
+            {/* 구 .mypage-text */}
+            <p className="mb-[15px] text-[14px]">ID: {username || '불러오는 중...'}</p>
+            <p className="mb-[15px] text-[14px]">
               텔레파시 횟수 : {wordCount} 번 / 보유 확성기 : {megaphoneCount} 개
             </p>
-            <button onClick={handleNavigateWords} className={styles['mypage-button-full']}>
+            {/* 구 .mypage-button-full */}
+            <button
+              onClick={handleNavigateWords}
+              className="mt-2 py-2.5 px-3.5 [border:1px_solid_var(--color-border-strong)] bg-[var(--color-surface)] rounded-[20px] text-[14px] cursor-pointer [transition:all_0.2s_ease] w-full max-w-[230px] hover:bg-[#fafafa] max-[480px]:mt-1.5 max-[480px]:py-2 max-[480px]:px-2.5"
+            >
               {'>'} 누군가와 함께 떠올린 단어
             </button>
           </div>
 
-          <hr />
-          <div className={styles['mypage-section']}>
-            <p className={styles['mypage-section-title']}>| 계정 |</p>
-            <div className={styles['mypage-button-group']}>
-              <button onClick={handlePaymentInquiry} className={styles['mypage-button']}>
+          <hr className={hrCls} />
+          {/* 구 .mypage-section */}
+          <div className="w-full max-w-[360px] text-center mb-[15px] text-[14px] leading-[1.8]">
+            <p className="[font-family:'Gowun_Batang',sans-serif] font-bold mb-2 text-[18px] max-[480px]:mb-1">| 계정 |</p>
+            {/* 구 .mypage-button-group */}
+            <div className="flex flex-col items-center gap-2.5 mt-4 w-full max-[480px]:gap-1.5 max-[480px]:mt-[15px]">
+              {/* 구 .mypage-button (×4) */}
+              <button onClick={handlePaymentInquiry} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
                 결제 문의
               </button>
-              <button onClick={handleOpenFAQ} className={styles['mypage-button']}>
+              <button onClick={handleOpenFAQ} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
                 자주묻는질문
               </button>
-              <button onClick={handleChangePassword} className={styles['mypage-button']}>
+              <button onClick={handleChangePassword} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
                 비밀번호 변경
               </button>
-              <button onClick={handleChangeLogout} className={styles['mypage-button']}>
+              <button onClick={handleChangeLogout} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
                 로그아웃
               </button>
             </div>
           </div>
 
-          <hr />
-          <button onClick={handleWithdraw} className={styles['mypage-withdraw-button']}>
+          <hr className={hrCls} />
+          {/* 구 .mypage-withdraw-button */}
+          <button
+            onClick={handleWithdraw}
+            className="mt-5 [font-family:'Gowun_Dodum',sans-serif] text-[#d84f4f] font-bold text-[14px] underline bg-transparent border-none cursor-pointer max-[480px]:mt-3"
+          >
             회원탈퇴
           </button>
         </div>
@@ -196,56 +238,33 @@ const MyPage = () => {
 
       {/* 미지원기능모달 */}
       {showNotSupportedModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
-              아직 지원하지 않는 기능이에요!
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: '16px',
-              }}
-            >
-              <button
-                className={styles['login-button1']}
-                onClick={() => setShowNotSupportedModal(false)}
-              >
-                확인
-              </button>
-            </div>
+        <Modal>
+          <p className="[font-family:'Gowun_Dodum'] text-[16px]">
+            아직 지원하지 않는 기능이에요!
+          </p>
+          <div className="mt-4">
+            <button className={modalBtn} onClick={() => setShowNotSupportedModal(false)}>
+              확인
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* 탈퇴 모달 */}
       {showWithdrawModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <p style={{ fontFamily: 'Gowun Dodum', fontSize: '16px' }}>
-              {withdrawMessage}
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: '10px',
-                marginTop: '16px',
-              }}
-            >
-              <button className={styles['login-button1']} onClick={confirmWithdraw}>
-                탈퇴하기
-              </button>
-              <button
-                className={`${styles['login-button1']} ${styles.cancel}`}
-                onClick={() => setShowWithdrawModal(false)}
-              >
-                취소
-              </button>
-            </div>
+        <Modal>
+          <p className="[font-family:'Gowun_Dodum'] text-[16px]">
+            {withdrawMessage}
+          </p>
+          <div className="mt-4">
+            <button className={modalBtn} onClick={confirmWithdraw}>
+              탈퇴하기
+            </button>
+            <button className={modalBtnCancel} onClick={() => setShowWithdrawModal(false)}>
+              취소
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   );

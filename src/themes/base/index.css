@@ -52,6 +52,18 @@ body.loading-mode {
     text-align: center;
   }
 
+  /* 모달 내부 버튼행(직속 div) 정렬 — 구 MyPage.module.css 의 :global(.modal-content) > div
+     규칙을 공유 모달 레이어로 이관(앱 전역 소비자: MyPage 모달·ClosedModal .comments 등 보존) */
+  .modal-content > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .alert-box {
     background-color: var(--color-danger-surface);
     color: var(--color-danger-text);
