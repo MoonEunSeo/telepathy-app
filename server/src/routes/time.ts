@@ -1,13 +1,14 @@
-const express = require('express');
-const router = express.Router();
+import express, { Request, Response } from 'express';
 
 // utils 불러오기
-const { getCurrentRound } = require('../utils/round');
+import { getCurrentRound } from '../utils/round';
+
+const router = express.Router();
 
 const OPEN_HOUR = 20;
 const CLOSE_HOUR = 5;
 
-router.get('/server-time', (req, res) => {
+router.get('/server-time', (req: Request, res: Response) => {
   try {
     const now = new Date();
 
@@ -15,8 +16,8 @@ router.get('/server-time', (req, res) => {
     const hourKST = (now.getUTCHours() + 9) % 24;
     const minuteKST = now.getUTCMinutes();
 
-    //let isOpen = (hourKST >= OPEN_HOUR || hourKST < CLOSE_HOUR);
-    let isOpen = true;
+    // let isOpen = (hourKST >= OPEN_HOUR || hourKST < CLOSE_HOUR);
+    const isOpen = true;
 
     // ✅ 라운드/남은시간
     const { round, remaining } = getCurrentRound();
@@ -28,12 +29,12 @@ router.get('/server-time', (req, res) => {
       minuteKST,
       isOpen,
       round,
-      remaining
+      remaining,
     });
   } catch (err) {
     console.error('❌ /server-time 오류:', err);
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: (err as Error).message });
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,10 +1,12 @@
-// server/src/middlewares/validateRefund.js
+// server/src/middleware/validateRefund.ts
+import type { Request, Response, NextFunction } from 'express';
+
 const KOREAN_WORD_RE = /^[가-힣]{1,6}$/;
 const BANK_RE = /^[가-힣A-Za-z\s]{2,20}$/;
 const ACCOUNT_RE = /^\d{4,20}$/;
 
-function trimString(v) {
-  return typeof v === 'string' ? v.trim() : v;
+function trimString(v: unknown): string | undefined {
+  return typeof v === 'string' ? v.trim() : undefined;
 }
 
 /**
@@ -14,7 +16,7 @@ function trimString(v) {
  *  - refund_account: 숫자 4~20
  *  - wordset: 배열, 각 요소 한글 1~6자
  */
-function validateRefundPayload(req, res, next) {
+export function validateRefundPayload(req: Request, res: Response, next: NextFunction) {
   try {
     const { user_id, refund_bank, refund_account, wordset } = req.body || {};
 
@@ -69,7 +71,7 @@ function validateRefundPayload(req, res, next) {
     }
 
     // wordset는 이미 정제했음
-    req.body.wordset = wordset.map((s) => s); // 안전 복사
+    req.body.wordset = wordset.map((s: string) => s); // 안전 복사
 
     // 통과
     return next();
@@ -78,5 +80,3 @@ function validateRefundPayload(req, res, next) {
     return res.status(500).json({ ok: false, message: '서버 검증 중 오류' });
   }
 }
-
-module.exports = { validateRefundPayload };
