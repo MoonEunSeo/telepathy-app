@@ -189,3 +189,28 @@ body.loading-mode {
   .cancel-btn {
     background-color: var(--color-neutral-hover);
   }
+
+  /* 🎬 ChatPage 애니메이션 — 구 ChatPage.module.css @keyframes 를 모듈 삭제에 따라
+     전역 이관(chat- 접두사로 base/ClosedModal 의 fadeIn/fadeInUp 충돌 회피).
+     tsx 는 animate-[chat-*_...] arbitrary 유틸로 참조. */
+  @keyframes chat-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes chat-blink {
+    0% { opacity: 0.2; }
+    20% { opacity: 1; }
+    100% { opacity: 0.2; }
+  }
+  @keyframes chat-fade-in-up {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes chat-fade-in-overlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes chat-fade-in-up-modal {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }

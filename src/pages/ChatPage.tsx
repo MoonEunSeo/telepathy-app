@@ -8,7 +8,6 @@ import ReportModal from '../components/ReportModal';
 import { useWordSession } from '../contexts/WordSessionContext';
 import { getStorage, setStorage, removeStorage } from '../types';
 import type { ChatMessage, ReportResponse } from '../types';
-import styles from '../themes/pages/ChatPage.module.css';
 
 // ReportModal onSubmit({ reasons, extra }) 콜백 인자 모양.
 // TODO: ReportModal 실제 onSubmit 시그니처 확인 (reasons: string[], extra: string 가정).
@@ -16,6 +15,21 @@ interface ReportSubmitValues {
   reasons: string[];
   extra: string;
 }
+
+// 구 .chat-message (+ .self / .other) — renderMessages 반복
+const msgBase =
+  'max-w-[65%] py-2.5 px-3.5 rounded-[18px] text-[15px] leading-[1.5] whitespace-pre-wrap break-words box-border';
+const msgSelf = 'self-end [background:var(--chat-self-bg)] text-[var(--chat-accent-text)] rounded-br-[6px]';
+const msgOther = 'self-start [background:var(--chat-other-bg)] text-[var(--chat-text)] rounded-bl-[6px]';
+// 구 .exit-button (헤더 아이콘)
+const exitBtn =
+  '[background:var(--chat-exit-bg)] border-none text-[var(--chat-exit-text)] cursor-pointer py-1.5 px-2.5 [transition:all_0.2s] hover:text-[var(--color-danger-accent)]';
+// 구 .exit-button-text.confirm / .cancel (나가기 확인 모달)
+const endedBtnBase = 'py-2.5 px-[18px] border-none rounded-full cursor-pointer [transition:all_0.2s] text-[16px]';
+const endedBtnConfirm = `${endedBtnBase} [background:var(--ended-confirm-bg)] text-[var(--ended-btn-text)] hover:[background:var(--ended-confirm-bg-hover)]`;
+const endedBtnCancel = `${endedBtnBase} [background:var(--ended-cancel-bg)] text-[var(--ended-cancel-text)] hover:[background:var(--ended-cancel-bg-hover)]`;
+// 구 .typing-dots span
+const dot = 'w-1.5 h-1.5 mx-[3px] [background-color:var(--chat-dots)] rounded-full animate-[chat-blink_1.4s_infinite_both]';
 
 export default function ChatPage() {
   const navigate = useNavigate();
@@ -220,7 +234,7 @@ export default function ChatPage() {
     messages.map((msg, idx) => (
       <div
         key={idx}
-        className={`${styles['chat-message']} ${msg.senderId === myId ? styles.self : styles.other}`}
+        className={`${msgBase} ${msg.senderId === myId ? msgSelf : msgOther}`}
       >
         {msg.message}
       </div>
@@ -228,60 +242,59 @@ export default function ChatPage() {
 
   return (
     <div data-page="chatpage">
-      {/* 🎃 할로윈 모드용 페이지 식별자 */}
-      <div className={styles['chat-container']}>
-        {/* 🔹 채팅 헤더 */}
-        <div className={styles['chat-header']}>
-          <div className={styles['chat-title']}>채팅방 ({word})</div>
-          <div className={styles['chat-header-icons']}>
-            <button
-              className={styles['exit-button']}
-              onClick={() => setShowReportModal(true)}
-              title="신고하기"
-            >
+      {/* 🎃 할로윈 모드용 페이지 식별자 ([data-page="chatpage"] + ::before 오버레이가 halloween.css 에 존재) */}
+      {/* 구 .chat-container */}
+      <div className="flex flex-col h-screen w-full bg-[var(--chat-container-bg)] [font-family:'Gowun_Dodum',sans-serif]">
+        {/* 🔹 채팅 헤더 — 구 .chat-header */}
+        <div className="flex justify-between items-center p-4 font-bold text-[18px] bg-[var(--chat-panel-bg)] text-[var(--chat-text)] [border-bottom:1px_solid_var(--chat-border)] sticky top-0 z-20">
+          {/* 구 .chat-title (모듈 미정의 → 무스타일) */}
+          <div>채팅방 ({word})</div>
+          {/* 구 .chat-header-icons */}
+          <div className="flex items-center gap-2">
+            <button className={exitBtn} onClick={() => setShowReportModal(true)} title="신고하기">
               <AlertTriangle size={22} />
             </button>
-            <button
-              className={styles['exit-button']}
-              onClick={() => setShowExitConfirm(true)}
-            >
+            <button className={exitBtn} onClick={() => setShowExitConfirm(true)}>
               <LogOut size={20} />
             </button>
           </div>
         </div>
 
-        {/* 🔹 메시지 영역 */}
-        <div className={styles['chat-messages']}>
-          <div className={styles['chat-info-banner']}>
+        {/* 🔹 메시지 영역 — 구 .chat-messages */}
+        <div className="flex-1 p-5 overflow-y-auto flex flex-col gap-2.5 mt-2.5 text-[var(--chat-text)] animate-[chat-fade-in_0.3s_ease]">
+          {/* 구 .chat-info-banner (모듈 미정의 → 무스타일) */}
+          <div>
             <strong>{partnerNickname}님과 같은 단어를 떠올렸어요!</strong>
             <br />
             즐거운 대화 되세요.
           </div>
           {renderMessages()}
           {isTyping && (
-            <div className={`${styles['chat-message']} ${styles.other}`}>
-              <div className={`${styles['chat-typing-indicator']} ${styles['typing-dots']}`}>
-                <span></span>
-                <span></span>
-                <span></span>
+            <div className={`${msgBase} ${msgOther}`}>
+              {/* 구 .chat-typing-indicator(미정의) + .typing-dots */}
+              <div className="flex justify-center items-center">
+                <span className={dot}></span>
+                <span className={`${dot} [animation-delay:0.2s]`}></span>
+                <span className={`${dot} [animation-delay:0.4s]`}></span>
               </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* 🔹 입력 영역 */}
-        <div className={styles['chat-input-container']}>
+        {/* 🔹 입력 영역 — 구 .chat-input-container */}
+        <div className="flex py-3 px-4 [border-top:1px_solid_var(--chat-border)] bg-[var(--chat-panel-bg)]">
           <input
-            className={styles['chat-input']}
+            className="flex-1 py-3 px-3.5 [background:var(--chat-input-bg)] text-[var(--chat-input-text)] [border:1px_solid_var(--chat-input-border)] rounded-[24px] outline-none text-[14px] [transition:border_0.2s] focus:[border-color:var(--color-text-subtle)] disabled:[background-color:var(--color-border-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
             placeholder="메시지를 입력하세요."
             value={message}
             onChange={handleTyping}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             disabled={chatEnded}
           />
+          {/* 구 .chat-send-button */}
           <button
-            className={styles['chat-send-button']}
+            className="ml-2 py-3 px-[18px] [background:var(--chat-accent-bg)] text-[var(--chat-accent-text)] border-none rounded-[24px] cursor-pointer font-bold text-[14px] [transition:background_0.2s] hover:[background-color:var(--color-accent-hover)] disabled:[background-color:var(--color-border-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={handleSendMessage}
             disabled={chatEnded}
           >
@@ -289,22 +302,17 @@ export default function ChatPage() {
           </button>
         </div>
 
-        {/* 🔹 나가기 확인 모달 */}
+        {/* 🔹 나가기 확인 모달 — 구 .modal-overlay(스코프) / .chat-ended-modal */}
         {showExitConfirm && (
-          <div className={styles['modal-overlay']}>
-            <div className={styles['chat-ended-modal']}>
-              <p>정말 나가시겠어요?</p>
-              <div className={styles['modal-buttons']}>
-                <button
-                  className={`${styles['exit-button-text']} ${styles.confirm}`}
-                  onClick={handleExitChat}
-                >
+          <div className="fixed inset-0 flex justify-center items-center [background:var(--modal-overlay-bg)] [backdrop-filter:blur(4px)] z-[1000]">
+            <div className="[background:var(--ended-modal-bg)] text-[var(--ended-modal-text)] [border:1px_solid_var(--ended-modal-border)] rounded-[20px] py-6 px-8 [box-shadow:var(--ended-modal-shadow)] text-center w-[300px] animate-[chat-fade-in-up_0.25s_ease-out]">
+              <p className="mb-10 text-[var(--ended-modal-text)] text-[18px] font-semibold p-5">정말 나가시겠어요?</p>
+              {/* 구 .modal-buttons */}
+              <div className="flex justify-center gap-3">
+                <button className={endedBtnConfirm} onClick={handleExitChat}>
                   네, 나갈래요
                 </button>
-                <button
-                  className={`${styles['exit-button-text']} ${styles.cancel}`}
-                  onClick={() => setShowExitConfirm(false)}
-                >
+                <button className={endedBtnCancel} onClick={() => setShowExitConfirm(false)}>
                   아니요
                 </button>
               </div>
@@ -320,12 +328,16 @@ export default function ChatPage() {
           />
         )}
 
-        {/* 🔹 상대방 종료 알림 */}
+        {/* 🔹 상대방 종료 알림 — 구 .chat-ended-overlay / .chat-ended-banner */}
         {chatEnded && (
-          <div className={styles['chat-ended-overlay']}>
-            <div className={styles['chat-ended-banner']}>
-              <p>상대방이 대화를 종료했어요.</p>
-              <button className={styles['exit-button-text']} onClick={handleExitChat}>
+          <div className="fixed inset-0 [background:var(--modal-overlay-bg)] [backdrop-filter:blur(6px)] flex justify-center items-center z-[2000] animate-[chat-fade-in-overlay_0.3s_ease-out]">
+            <div className="[background:var(--ended-modal-bg)] text-[var(--ended-modal-text)] [border:1px_solid_var(--ended-modal-border)] rounded-[20px] py-7 px-9 [box-shadow:var(--ended-modal-shadow)] text-center w-[250px] animate-[chat-fade-in-up-modal_0.3s_ease-out] [font-family:'Gowun_Dodum',sans-serif]">
+              <p className="mb-7 text-[var(--ended-modal-text)] text-[18px] font-semibold">상대방이 대화를 종료했어요.</p>
+              {/* 구 .chat-ended-banner .exit-button-text (배너 전용 오버라이드) */}
+              <button
+                className="py-2.5 px-[22px] border-none rounded-full cursor-pointer text-[15px] [background:var(--ended-accent-bg)] text-[var(--ended-btn-text)] [transition:background_0.2s_ease,transform_0.1s_ease] hover:[background:var(--ended-accent-bg-hover)] hover:-translate-y-px"
+                onClick={handleExitChat}
+              >
                 나가기
               </button>
             </div>
