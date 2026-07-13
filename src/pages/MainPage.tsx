@@ -420,6 +420,14 @@ export default function MainPage() {
       return;
     }
 
+    // ✅ (b) 닉네임 미설정 시 매칭 차단 → 닉네임 설정 모달로 유도
+    //    JoinMatchPayload.nickname 이 항상 non-null 이 되도록 보장한다.
+    if (!profile.nickname) {
+      setShowNicknameModal(true);
+      toast.info('먼저 닉네임을 설정해주세요!');
+      return;
+    }
+
     // ✅ 이미 단어 선택했으면 중복 방지
     if (selectedWord) return;
 

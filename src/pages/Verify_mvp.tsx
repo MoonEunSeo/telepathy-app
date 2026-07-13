@@ -137,7 +137,7 @@ export default function Verify_mvp() {
         </h2>
 
         {/* 생년월일 + 성별 입력 */}
-        <div className="flex w-full max-w-[350px] gap-[8px] mb-[12px]">
+        <div className="flex w-full max-w-[320px] gap-[8px] mb-[12px]">
           <AuthInput
             variant="birth"
             placeholder="생년월일 8자리"

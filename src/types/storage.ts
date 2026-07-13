@@ -3,7 +3,7 @@
 //  · JSON 객체 저장: chatInfo, feedbackInfo
 //  · 평문 문자열 저장: 그 외 전부 (nickname/username/... 및 'true' 플래그)
 
-import type { ChatInfo, FeedbackInfo } from './domain';
+import type { ChatInfo, FeedbackInfo } from '@shared/domain';
 
 // 키 → 저장(파싱 후) 값 타입
 export interface LocalStorageSchema {

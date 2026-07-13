@@ -13,7 +13,7 @@ interface ProfileInput {
 interface StartSessionInput {
   word: string;
   round: number;
-  roomId: Id;
+  roomId: string; // roomId는 항상 uuid 문자열
   myId: Id;
   myUsername: string;
   myNickname: string;

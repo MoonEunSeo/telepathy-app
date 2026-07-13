@@ -19,7 +19,7 @@ type SocketWithTimeout = AppSocket & {
 };
 
 interface UseSocketParams {
-  roomId: Id;
+  roomId: string; // roomId는 항상 uuid 문자열
   senderId: Id;
   senderNickname: string;
   word: string;
