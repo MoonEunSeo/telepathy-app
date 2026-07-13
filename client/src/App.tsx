@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { socket } from './config/socket';
 
 // ✅ 페이지 컴포넌트
@@ -29,7 +29,7 @@ import NotificationConsent from './pages/terms/NotificationConsent';
 import BottomLayout from './components/BottomLayout';
 import { IntentProvider } from './contexts/IntentContext';
 import { ToastContainer } from 'react-toastify';
-import { ThemeProvider, useTheme } from "./themes/themes/ThemeContext"; // ✅ 추가
+import { ThemeProvider, useTheme } from './themes/themes/ThemeContext';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
@@ -37,7 +37,6 @@ import './index.css';
 // --------------------------------------------------
 // 🎁 날짜 기반 테마 자동 설정 Hook
 // --------------------------------------------------
-
 import halloweenCSS from './themes/themes/halloween.css?url';
 import christmasCSS from './themes/themes/christmas.css?url';
 import defaultCSS from './themes/themes/default.css?url';
@@ -50,26 +49,26 @@ function useSeasonalTheme() {
     const month = today.getMonth() + 1;
     const day = today.getDate();
 
-    let selectedTheme = "default";
+    let selectedTheme = 'default';
     let cssToLoad = defaultCSS;
 
     if (month === 10 && day >= 23 && day <= 31) {
-      selectedTheme = "halloween";
+      selectedTheme = 'halloween';
       cssToLoad = halloweenCSS;
     } else if (month === 12 && day >= 1 && day <= 31) {
-      selectedTheme = "christmas";
+      selectedTheme = 'christmas';
       cssToLoad = christmasCSS;
     }
 
     // ✅ 기존 스타일 초기화
-    document.body.className = "";
-    const oldThemeStyle = document.getElementById("theme-style");
+    document.body.className = '';
+    const oldThemeStyle = document.getElementById('theme-style');
     if (oldThemeStyle) oldThemeStyle.remove();
 
     // ✅ 새 스타일 추가
-    const link = document.createElement("link");
-    link.id = "theme-style";
-    link.rel = "stylesheet";
+    const link = document.createElement('link');
+    link.id = 'theme-style';
+    link.rel = 'stylesheet';
     link.href = cssToLoad;
     document.head.insertBefore(link, document.head.firstChild);
 
@@ -78,44 +77,7 @@ function useSeasonalTheme() {
     setTheme(selectedTheme);
   }, [setTheme]);
 }
-/*
-function useSeasonalTheme() {
-  const { setTheme } = useTheme();
 
-  useEffect(() => {
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-
-    let selectedTheme = "default";
-    let cssToLoad = new URL(`./themes/themes/default.css`, import.meta.url).href;
-
-    if (month === 10 && day >= 23 && day <= 31) {
-      selectedTheme = "halloween";
-      cssToLoad = new URL(`./themes/themes/halloween.css`, import.meta.url).href;
-    } else if (month === 12 && day >= 1 && day <= 31) {
-      selectedTheme = "christmas";
-      cssToLoad = new URL(`./themes/themes/christmas.css`, import.meta.url).href;
-    }
-
-    // ✅ 기존 스타일 초기화
-    document.body.className = "";
-    const oldThemeStyle = document.getElementById("theme-style");
-    if (oldThemeStyle) oldThemeStyle.remove();
-
-    // ✅ 새 스타일 추가
-    const link = document.createElement("link");
-    link.id = "theme-style";
-    link.rel = "stylesheet";
-    link.href = cssToLoad;
-    document.head.insertBefore(link, document.head.firstChild);
-
-
-    // ✅ body 클래스 추가
-    document.body.classList.add(`${selectedTheme}-mode`);
-    setTheme(selectedTheme);
-  }, [setTheme]);
-}*/
 // --------------------------------------------------
 // 🎯 App 구성
 // --------------------------------------------------
@@ -126,8 +88,8 @@ function AppRoutes() {
   // ✅ 로그인 상태 확인
   useEffect(() => {
     fetch('/api/auth/check', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.loggedIn) {
           if (location.pathname === '/login' || location.pathname === '/register') {
             navigate('/main');

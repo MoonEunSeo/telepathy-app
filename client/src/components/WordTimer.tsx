@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useWordSession } from '../contexts/WordSessionContext';
 
-export default function WordTimer({ word, displayedText, onExpire }) {
+interface WordTimerProps {
+  word?: string;
+  displayedText: string;
+  onExpire: () => void;
+}
+
+export default function WordTimer({ word, displayedText, onExpire }: WordTimerProps) {
   const { startTime } = useWordSession();
   const [timeLeft, setTimeLeft] = useState(300);
 
@@ -21,7 +27,7 @@ export default function WordTimer({ word, displayedText, onExpire }) {
     return () => clearInterval(intervalId);
   }, [startTime, onExpire]); // onExpire 포함 → 안정성 확보
 
-  const formatTime = (sec) => {
+  const formatTime = (sec: number) => {
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
     const s = String(sec % 60).padStart(2, '0');
     return `${m}:${s}`;
@@ -32,9 +38,7 @@ export default function WordTimer({ word, displayedText, onExpire }) {
   return (
     <div className="word-timer-group">
       <div className="word-timer">
-        {isIntentWord
-          ? displayedText
-          : `입력한 단어 : ${displayedText}`}
+        {isIntentWord ? displayedText : `입력한 단어 : ${displayedText}`}
       </div>
       <div className="word-timer-time">{formatTime(timeLeft)}</div>
     </div>
