@@ -247,3 +247,9 @@ body.loading-mode {
     from { opacity: 0; }
     to { opacity: 1; }
   }
+
+  /* 🎬 MainPage 피드백 모달 등장 (구 MainPage.module.css @keyframes fadeIn → main- 접두사) */
+  @keyframes main-fade-in {
+    from { opacity: 0; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(0); }
+  }
