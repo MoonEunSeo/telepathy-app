@@ -86,12 +86,14 @@ export default function ClosedModal({ username, nickname }: ClosedModalProps) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content letter-style">
-        {/* 편지 영역 */}
-        <h1 className="title">Telepathy</h1>
-        <h2>마음이 통하는 연결, 텔레파시</h2>
-        <p>
+    /* 구 .modal-overlay (ClosedModal.css 의도: overlay-strong) */
+    <div className="fixed top-0 left-0 w-full h-full [background:var(--overlay-strong)] flex justify-center items-center z-[999]">
+      {/* 구 .modal-content.letter-style (ClosedModal.css 의도: 편지 카드 480px) */}
+      <div className="bg-[var(--color-surface)] w-[90%] max-w-[480px] rounded-[20px] p-8 text-center [box-shadow:var(--shadow-md)] [font-family:'Gowun_Dodum',sans-serif] animate-[closed-fade-in-up_0.4s_ease]">
+        {/* 편지 영역 — 구 .title + .modal-content h1 */}
+        <h1 className="[font-family:'Judson',serif] text-[3rem] font-bold mb-[-0.5rem] text-[var(--color-text)]">Telepathy</h1>
+        <h2 className="text-[1.2rem] mb-[0.8rem] text-[var(--color-text)]">마음이 통하는 연결, 텔레파시</h2>
+        <p className="text-[0.95rem] leading-[1.6] text-[var(--color-text-secondary)] mb-6">
           <strong>Telepathy time coming soon</strong>
           <br />
           저녁 8시 ~ 새벽 2시
@@ -108,20 +110,21 @@ export default function ClosedModal({ username, nickname }: ClosedModalProps) {
         <br />
         <br />
 
-        {/* 댓글창 */}
-        <div className="comments">
-          <h3>익명 댓글</h3>
-          <form onSubmit={handleSubmit}>
+        {/* 댓글창 — 구 .comments */}
+        <div className="mt-6 text-left">
+          <h3 className="text-base mb-2">익명 댓글</h3>
+          <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
             <input
               value={text}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setText(e.target.value)}
               placeholder="댓글을 입력하세요..."
+              className="flex-1 p-[0.6rem] [border:1px_solid_var(--color-border)] rounded-[8px]"
             />
-            <button type="submit">작성</button>
+            <button type="submit" className="py-[0.6rem] px-4 bg-[#302864] text-white border-none rounded-[8px] cursor-pointer [transition:background_0.2s] hover:bg-[#4634a7]">작성</button>
           </form>
-          <ul>
+          <ul className="list-none p-0 m-0">
             {comments.slice(0, 3).map((c) => (
-              <li key={c.id}>
+              <li key={c.id} className="mb-2 text-[0.9rem]">
                 <strong>{c.nickname}</strong>: {c.content}
               </li>
             ))}

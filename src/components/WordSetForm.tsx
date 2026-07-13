@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import type { ChangeEvent, CompositionEvent, KeyboardEvent } from "react";
 import type { CurrentUser, SpPaymentUpdateRefundResponse } from "../types";
-import styles from "../themes/base/WordSetForm.module.css";
 
 const API_BASE = import.meta.env.VITE_REALSITE;
 
@@ -12,9 +11,18 @@ const KOREAN_WORD_REGEX = /^[가-힣]{1,6}$/;
 const BANK_REGEX = /^[가-힣A-Za-z\s]{2,20}$/;
 const ACCOUNT_REGEX = /^\d{4,20}$/;
 
-interface WordSetFormProps {
-  currentUser: CurrentUser;
-}
+// 구 warm-input 계열 (단어 입력 / 환불계좌 입력 / 은행 select / 저장 버튼)
+const wordInput =
+  "w-[320px] h-[42px] bg-[var(--color-warm-input-bg)] [border:1.6px_solid_var(--color-warm-input-border)] rounded-[8px] py-2.5 px-3.5 text-[15px] text-[var(--color-warm-input-text)] [font-family:'Gowun_Dodum',sans-serif] outline-none [transition:all_0.2s_ease] box-border focus:[border-color:var(--color-warm-input-border-focus)] focus:bg-[var(--color-warm-input-bg-focus)]";
+// 구 .refund-section .wordset-input (+.refund-input) 병합값
+const accountInput =
+  "flex-1 min-w-[150px] h-[42px] bg-[var(--color-warm-input-bg)] [border:1.6px_solid_var(--color-warm-input-border)] rounded-[8px] px-3 text-[15px] text-[var(--color-warm-input-text)] [font-family:'Gowun_Dodum',sans-serif] outline-none [transition:all_0.2s_ease] box-border focus:[border-color:var(--color-warm-input-border-focus)] focus:bg-[var(--color-warm-input-bg-focus)]";
+const bankSelect =
+  "pl-1 flex-[0_0_110px] h-[42px] bg-[var(--color-warm-input-bg)] [border:1.6px_solid_var(--color-warm-input-border)] rounded-[8px] text-[14px] text-[var(--color-warm-input-text)] [font-family:'Gowun_Dodum',sans-serif] text-center cursor-pointer [transition:all_0.2s_ease] box-border leading-[42px] hover:[border-color:var(--color-warm-input-border-focus)] hover:bg-[var(--color-warm-input-bg-focus)] hover:[box-shadow:0_1px_4px_rgba(0,0,0,0.08)] focus:[border-color:var(--color-warm-input-border-focus)] focus:bg-[var(--color-warm-input-bg-focus)] focus:[box-shadow:0_1px_4px_rgba(0,0,0,0.08)] [&_option]:text-[14px] [&_option]:py-1.5 [&_option]:px-2 [&_option]:text-[var(--color-text-warm)] [&_option]:bg-[#fffefb] max-[480px]:w-full";
+const saveBtn =
+  "bg-[#ffb347] text-white border-none py-2.5 px-[30px] rounded-full text-[16px] [font-family:'Gowun_Dodum'] cursor-pointer [transition:background-color_0.2s_ease,transform_0.15s_ease] hover:bg-[#ffa726] hover:scale-105 disabled:bg-[#e0c6a1] disabled:cursor-not-allowed disabled:scale-100";
+// 구 .word-inputs
+const wordInputs = "flex flex-col items-center gap-[14px] mb-[30px]";
 
 export default function WordSetForm({ currentUser }: WordSetFormProps) {
   const navigate = useNavigate();
@@ -117,17 +125,17 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
     }
   };
 
-  // ✅ UI
+  // ✅ UI (구 .wordset-section 은 미정의 → 무스타일 래퍼)
   return (
-    <div className="wordset-section">
+    <div>
       <h3>✨ 단어세트를 만들어볼까요?</h3>
-      {/* 단어 입력 구역 */}
-      <div className={styles['word-inputs']}>
+      {/* 단어 입력 구역 — 구 .word-inputs */}
+      <div className={wordInputs}>
         {words.map((w, i) => (
           <div key={i} className="mb-3">
             <input
               type="text"
-              className={styles['wordset-input']}
+              className={wordInput}
               placeholder={`단어 ${i + 1} (한글 1~6자)`}
               value={w}
               onChange={(e) => handleWordInputChange(i, e)}
@@ -146,10 +154,11 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
 
       {/* 환불 계좌 입력 구역 */}
       <h3>💸 환불계좌 정보</h3>
-      <div className={styles['word-inputs']}>
-          <div className={styles['refund-section']}>
+      <div className={wordInputs}>
+          {/* 구 .refund-section */}
+          <div className="flex justify-center items-stretch gap-2 w-full max-w-[320px] max-[480px]:flex-col max-[480px]:gap-2 max-[480px]:max-w-[260px]">
             <select
-              className={styles['wordset-select']}
+              className={bankSelect}
               value={refundBank}
               onChange={(e) => setRefundBank(e.target.value)}
               >
@@ -171,7 +180,7 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
 
           <input
             type="text"
-            className={`${styles['wordset-input']} ${styles['refund-input']}`}
+            className={accountInput}
             placeholder="계좌번호 (숫자만)"
             value={refundAccount}
             onChange={(e) => handleAccountChange(e.target.value)}
@@ -181,12 +190,12 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
           />
         </div>
 
-        <div style={{ color: "red", fontSize: 12 }}>
+        <div className="text-[red] text-[12px]">
           {errors.bank || errors.account || ""}
         </div>
 
         <button
-          className={styles['save-button']}
+          className={saveBtn}
           onClick={handleSave}
           disabled={!isFormValid}
           title={!isFormValid ? "입력값을 확인해주세요" : "저장하기"}
@@ -196,4 +205,8 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
       </div>
     </div>
   );
+}
+
+interface WordSetFormProps {
+  currentUser: CurrentUser;
 }

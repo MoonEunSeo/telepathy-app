@@ -243,3 +243,15 @@ body.loading-mode {
     from { opacity: 0; transform: translateY(0); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  /* 🎬 MegaphoneInputModal 등장 (구 module @keyframes fadeIn → mega- 접두사) */
+  @keyframes mega-fade-in {
+    from { opacity: 0; transform: translate(-50%, -40%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+  }
+
+  /* 🎬 ClosedModal 편지 등장 (구 ClosedModal.css @keyframes fadeInUp → closed- 접두사) */
+  @keyframes closed-fade-in-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }

@@ -24,8 +24,7 @@
 /* Design tokens — 반드시 최상단에서 먼저 로드 (다른 CSS가 var(--*)를 참조) */
 @import './themes/base/tokens.css';
 
-/* Base (전역 스타일시트) */
-@import './themes/base/ClosedModal.css';
+/* Base (전역 스타일시트) — ClosedModal.css 는 자기완결 유틸화로 제거됨 */
 @import './themes/base/index.css';
 
 /* ============================================================
