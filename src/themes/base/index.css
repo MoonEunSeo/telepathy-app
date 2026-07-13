@@ -214,3 +214,36 @@ body.loading-mode {
     from { opacity: 0; transform: translateY(20px) scale(0.95); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
+
+  /* 🎬 LikePage 애니메이션 + 별가루 배경 — 구 LikePage.module.css 이관(모듈 삭제).
+     keyframe 은 like- 접두사(전역 fadeIn/fadeUp 충돌 회피). fadeUp 은 모듈 내
+     3중 정의 중 마지막(translateY 10px)이 실제 적용값이라 그것으로 통일.
+     별가루 배경은 이중 radial-gradient(콤마) → arbitrary 회피 위해 var 로. */
+  :root {
+    --like-stars-image:
+      radial-gradient(rgba(255, 255, 255, 0.3) 0.5px, transparent 1px),
+      radial-gradient(rgba(255, 240, 250, 0.2) 1px, transparent 1px);
+    --like-stars-size: 4px 4px, 8px 8px;
+    --like-btn-bg: linear-gradient(90deg, var(--color-text-warm) 0%, #000 100%);
+    --like-btn-bg-hover: linear-gradient(90deg, #4a3a25 0%, #1b1715 100%);
+    --like-btn-bg-hover-strong: linear-gradient(90deg, #433026 0%, #161210 100%);
+    --like-sweep: linear-gradient(115deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(255, 255, 255, 0.05) 100%);
+    --like-title-grad: linear-gradient(90deg, #d4a3a8 0%, var(--color-text-warm) 100%);
+  }
+  @keyframes like-star-drift {
+    0% { background-position: 0 0, 30px 50px; opacity: 0.15; }
+    50% { background-position: 40px 60px, 80px 120px; opacity: 0.25; }
+    100% { background-position: 0 0, 30px 50px; opacity: 0.15; }
+  }
+  @keyframes like-fade-in-page {
+    from { opacity: 0; filter: blur(6px); transform: translateY(15px); }
+    to { opacity: 1; filter: blur(0); transform: translateY(0); }
+  }
+  @keyframes like-fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes like-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
