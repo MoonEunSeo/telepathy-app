@@ -129,23 +129,26 @@ export default function Verify_mvp() {
   return (
     <div data-page="verify-mvp">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
-      {/* 구 .login-container */}
-      <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
-        {/* 구 .login-title */}
-        <h2 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+      {/* 구 .login-container — 리디자인: 세로 중앙 정렬 */}
+      <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+        {/* 리드카피 */}
+        <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]">
+          안전한 연결을 위해<br />본인인증이 필요해요
+        </p>
+        {/* 구 .login-title — 세리프 */}
+        <h2 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
           본인인증
         </h2>
 
-        {/* 생년월일 + 성별 입력 */}
-        <div className="flex w-full max-w-[320px] gap-[8px] mb-[12px]">
-          <AuthInput
-            variant="birth"
-            placeholder="생년월일 8자리"
-            maxLength={8}
-            value={birthdate}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setBirthdate(e.target.value.replace(/\D/g, ''))}
-            className="flex-[3]"
-          />
+        {/* 생년월일 (전폭) */}
+        <AuthInput
+          placeholder="생년월일 8자리"
+          maxLength={8}
+          value={birthdate}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setBirthdate(e.target.value.replace(/\D/g, ''))}
+        />
+        {/* 성별 2분할 세그먼트 토글 */}
+        <div className="flex w-[300px] gap-[10px] mb-3">
           <ToggleButton
             active={gender === '남성'}
             onClick={() => setGender('남성')}

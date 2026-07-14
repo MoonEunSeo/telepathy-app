@@ -8,8 +8,8 @@ import Modal from '../components/ui/Modal';
 
 // 인증 페이지 공통 텍스트(구 .login-subtitle / .login-title) — 이 파일에서 3~4회 반복되어 상수화.
 // title 은 상단 여백을 제외(사용처마다 mt-* 로 지정 → 충돌 없음)
-const subtitle = "[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--login-subtitle-color)]";
-const title = "[font-family:'Gowun_Dodum'] text-[32px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]";
+const subtitle = "[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]";
+const title = "[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]";
 
 export default function FindPassword() {
   const [step, setStep] = useState<number>(1); // 1: 아이디 입력, 2: 실패, 3: 재설정, 4: 완료
@@ -47,8 +47,8 @@ export default function FindPassword() {
   };
 
   return (
-    /* 구 .login-container */
-    <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
+    /* 구 .login-container — 리디자인: 세로 중앙 정렬 */
+    <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
       {step === 1 && (
         <>
           <p className={subtitle}>다시 연결될 수 있도록<br />도와드릴게요 :)</p>

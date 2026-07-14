@@ -58,20 +58,22 @@ export default function WordSetPage() {
 
   // ✅ 정상 사용자라면 단어세트 입력 폼 표시
   return (
-    /* 구 .wordset-page */
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#fdf9f3] text-center px-5 py-20 box-border max-[480px]:px-4 max-[480px]:py-[60px]">
-      {/* 구 .wordset-title (span=강조색) */}
-      <h1 className="text-[1.8rem] font-bold text-[#1e120b] mb-3 [font-family:'Gowun_Dodum',sans-serif]">
-        <span className="text-[#d18f92]">나만의</span> 단어세트 만들기 ✨
+    /* 구 .wordset-page — 리디자인 */
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--color-bg)] text-center px-5 py-20 pb-28 box-border max-[480px]:px-4 max-[480px]:py-[60px] max-[480px]:pb-24">
+      {/* 구 .wordset-title — serif + 그라디언트("나만의"만 강조) */}
+      <h1 className="text-[23px] min-[1025px]:text-[26px] font-bold mb-3 leading-tight">
+        <span className="[font-family:'Judson',serif] [background-image:var(--wordset-title-grad)] [-webkit-background-clip:text] [background-clip:text] text-transparent">나만의</span>{' '}
+        <span className="[font-family:'Judson',serif] text-[var(--main-title-color)]">단어세트 만들기</span>{' '}
+        <span className="text-[19px]">✨</span>
       </h1>
       {/* 구 .wordset-description */}
-      <p className="text-base text-[var(--color-text-warm-soft)] leading-[1.6] mb-10 [font-family:'Gowun_Dodum',sans-serif] max-[480px]:mb-7">
+      <p className="text-[15px] text-[var(--main-subtitle-color)] leading-[1.6] mb-8 [font-family:'Gowun_Dodum',sans-serif] max-[480px]:mb-7">
         당신만의 감정을 담은 네 개의 단어를 입력해보세요. <br />
         동일한 단어를 입력한 사람과의 연결이 시작됩니다 ✨
       </p>
 
       {/* 구 .wordset-card */}
-      <div className="bg-[#fffdf9] rounded-[24px] shadow-[0_3px_12px_rgba(0,0,0,0.05)] px-7 py-10 w-full max-w-[420px] box-border max-[480px]:px-5 max-[480px]:py-7">
+      <div className="bg-[var(--color-surface)] rounded-[var(--radius-lg)] [box-shadow:var(--card-shadow)] [border:1px_solid_var(--color-border-subtle)] px-7 py-8 w-full max-w-[440px] box-border max-[480px]:px-5 max-[480px]:py-7 min-[1025px]:max-w-[520px]">
         <WordSetForm currentUser={currentUser} />
       </div>
     </div>

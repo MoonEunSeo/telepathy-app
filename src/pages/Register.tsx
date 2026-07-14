@@ -92,20 +92,21 @@ export default function Register() {
   return (
     <div data-page="register">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
-      {/* 구 .login-container */}
-      <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
-        {/* 구 .login-subtitle */}
-        <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--login-subtitle-color)]">
+      {/* 구 .login-container — 리디자인: 세로 중앙 정렬 */}
+      <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+        {/* 구 .login-subtitle — 감성 리드카피 */}
+        <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]">
           바로 지금,<br />우리는 같은 단어를 떠올렸어요
         </p>
-        {/* 구 .login-title */}
-        <h1 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+        {/* 구 .login-title — 세리프 */}
+        <h1 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
           회원가입
         </h1>
 
-        {/* 구 .id-check-row */}
-        <div className="flex w-[350px] justify-between gap-[10px] mb-[10px]">
+        {/* 구 .id-check-row — 아이디 입력(flex) + 중복검사(사각 보조) 같은 높이 정렬 */}
+        <div className="flex w-[300px] items-center gap-[10px] mb-[10px]">
           <AuthInput
+            className="flex-1 min-w-0"
             placeholder="아이디"
             value={username}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}

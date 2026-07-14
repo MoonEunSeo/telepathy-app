@@ -43,15 +43,15 @@ export default function LoginPage() {
     <>
       {/* ✅ 로그인 페이지 본문 (구 .login-page — 스타일 없던 빈 래퍼) */}
       <div>
-        {/* 구 .login-container */}
-        <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
-          {/* 구 .login-subtitle */}
-          <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--login-subtitle-color)]">
+        {/* 구 .login-container — 리디자인: 세로 중앙 정렬 */}
+        <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+          {/* 구 .login-subtitle — 감성 리드카피 */}
+          <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]">
             바로 지금,<br />
             우리는 같은 단어를 떠올렸어요
           </p>
-          {/* 구 .login-title */}
-          <h1 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+          {/* 구 .login-title — 세리프 */}
+          <h1 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
             로그인
           </h1>
 

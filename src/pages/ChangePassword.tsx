@@ -37,9 +37,9 @@ export default function ChangePassword() {
 
   return (
     /* 구 .login-container */
-    <div className="flex flex-col items-center mt-[100px] halloween:gap-[3px] halloween:w-full">
-      {/* 구 .login-title */}
-      <h1 className="[font-family:'Gowun_Dodum'] text-[32px] mt-[10px] mb-5 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+    <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+      {/* 구 .login-title — 세리프 */}
+      <h1 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
         비밀번호 변경
       </h1>
       <AuthInput

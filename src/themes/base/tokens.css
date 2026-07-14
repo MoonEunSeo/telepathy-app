@@ -74,15 +74,16 @@
   --login-title-color: var(--color-text);        /* 타이틀 색 */
   --login-title-shadow: none;
   --login-subtitle-color: var(--color-text);      /* 서브타이틀 색 */
-  --auth-input-bg: transparent;                    /* 입력창 배경 */
-  --auth-input-border: var(--color-border-strong); /* 입력창 테두리 */
+  --auth-input-bg: #ffffff;                        /* 입력창 배경 (리디자인) */
+  --auth-input-border: #e4ddce;                    /* 입력창 테두리 */
   --auth-input-text: var(--color-text);            /* 입력창 글자 */
-  --auth-input-placeholder: #b3b3b3;               /* placeholder */
-  --auth-input-focus-border: var(--color-text-subtle);
+  --auth-input-placeholder: #a9a093;               /* placeholder */
+  --auth-input-focus-border: #c9bda9;
   --auth-input-focus-shadow: none;
   --or-divider-color: var(--color-text);           /* 'or' 구분선 텍스트 */
-  --bold-link-color: inherit;                      /* 강조 링크 */
-  --bold-link-hover-color: inherit;
+  --auth-lead-color: #8b93a0;                      /* 감성 리드카피 (신규) */
+  --bold-link-color: #222222;                      /* 강조 링크 */
+  --bold-link-hover-color: #000000;
   --auth-footer-color: inherit;                    /* 하단 안내 문구 */
 
   /* ===== 액션 버튼 (login/agree/next/check 등 "기본 버튼") =====
@@ -92,56 +93,67 @@
   --btn-text: var(--color-on-accent);              /* 기본: 흰색 */
   --btn-animation: none;                           /* 기본: 애니메이션 없음 */
 
-  /* ===== MainPage 단어 버튼 (word-btn) ===== */
-  --word-btn-bg: var(--color-surface-muted);       /* 기본: 연회색 */
-  --word-btn-border: var(--color-border);
-  --word-btn-text: var(--color-text);
-  --word-btn-shadow: none;
+  /* ===== MainPage 단어 버튼 (word-btn) — 리디자인: 크림/브라운 ===== */
+  --word-btn-bg: #fbf9f5;                           /* 크림 */
+  --word-btn-border: #ece5d8;
+  --word-btn-text: #3a3229;
+  --word-btn-shadow: var(--card-shadow);
   --word-btn-backdrop: none;
-  --word-btn-hover-bg: #e0f0ff;                    /* 기본: 파란 tint */
-  --word-btn-hover-border: #5aa9ff;
-  --word-btn-selected-bg: #5aa9ff;                 /* 기본: 파랑 */
-  --word-btn-selected-border: #2e7dff;
+  --word-btn-hover-bg: #f4efe6;
+  --word-btn-hover-border: #e0d7c6;
+  --word-btn-selected-bg: #2f241a;                 /* 다크브라운 (구 파랑) */
+  --word-btn-selected-border: #2f241a;
   --word-btn-selected-text: #ffffff;
 
   /* ===== MainPage 의도(intent) 버튼 ===== */
   --intent-btn-bg: transparent;                    /* 기본: 배경 없음 */
   --intent-btn-text: #3a3020;                      /* 기본: 웜다크 */
 
-  /* ===== MainPage 타이머 ===== */
-  --word-timer-bg: #f5c5c5;                        /* 타이머 박스 배경 */
-  --word-timer-text: #ffffff;                      /* 타이머 박스 글자 */
-  --word-timer-time-color: #3a3020;                /* 남은 시간 숫자 */
+  /* ===== MainPage 타이머 (리디자인: 원형 링) ===== */
+  --word-timer-bg: #f5c5c5;                        /* (구) 박스 배경 — 잔존(halloween 참조) */
+  --word-timer-text: #ffffff;                      /* (구) 박스 글자 — 잔존(halloween 참조) */
+  --word-timer-time-color: #3a3020;                /* (구) 남은 시간 숫자 */
+  --word-timer-ring: #2f241a;                      /* 링 진행색 */
+  --word-timer-track: #eee5d6;                     /* 링 트랙(배경) */
+  --word-timer-num: #2f241a;                       /* 링 중앙 숫자 */
+  --word-timer-label: #8a7f6f;                     /* "다음 연결까지" 라벨 */
   --focus-hours-color: #6e5b48;                    /* 운영시간 안내 텍스트 */
 
   /* ===== 성별 토글 버튼 (ToggleButton — Verify_mvp) ===== */
-  --toggle-height: 45px;
-  --toggle-radius: 8px;
+  --toggle-height: 52px;
+  --toggle-radius: var(--radius-md);
   --toggle-shadow: none;
   --toggle-transition: none;
   --toggle-bg: var(--color-surface);               /* 비선택 배경 */
-  --toggle-border: var(--color-border-strong);     /* 비선택 테두리 */
-  --toggle-text: #000000;                          /* 비선택 글자 (UA buttontext) */
-  --toggle-selected-bg: var(--color-accent);       /* 선택 배경 */
-  --toggle-selected-border: var(--color-border-strong); /* 기본 선택은 테두리 유지 */
+  --toggle-border: #e4ddce;                        /* 비선택 테두리 (리디자인) */
+  --toggle-text: #6b6154;                          /* 비선택 글자 */
+  --toggle-selected-bg: #111111;                   /* 선택 배경 */
+  --toggle-selected-border: #111111;               /* 선택 테두리 */
   --toggle-selected-text: var(--color-on-accent);  /* 선택 글자 */
   --toggle-selected-transform: none;
 
   /* ===== ChatPage (기본값 = 현재 default 외관) ===== */
-  --chat-container-bg: var(--color-surface);       /* 채팅 컨테이너 */
+  --chat-container-bg: var(--color-bg);            /* 채팅 컨테이너(크림 바디) */
   --chat-panel-bg: var(--color-surface);           /* 헤더·입력영역 패널 */
   --chat-text: var(--color-text);                  /* 헤더·메시지 텍스트 */
   --chat-border: var(--color-border-subtle);       /* 패널 구분선 */
   --chat-other-bg: var(--color-bubble-other-bg);   /* 상대 말풍선 */
   --chat-self-bg: var(--color-accent);             /* 내 말풍선 */
   --chat-accent-text: var(--color-on-accent);      /* 강조 위 텍스트 */
-  --chat-input-bg: transparent;                    /* 입력창 배경 */
+  --chat-input-bg: #f5f3ef;                        /* 입력창 배경(웜 pill) */
   --chat-input-text: var(--color-text);            /* 입력창 글자 */
-  --chat-input-border: var(--color-border);        /* 입력창 테두리 */
+  --chat-input-border: #e9e1d2;                    /* 입력창 테두리 */
   --chat-accent-bg: var(--color-accent);           /* 전송 버튼 */
   --chat-exit-bg: transparent;                     /* 나가기 버튼 배경 */
   --chat-exit-text: var(--color-text-muted);       /* 나가기 버튼 글자 */
   --chat-dots: var(--color-text-subtle);           /* 타이핑 점 */
+  /* 리디자인 신규(채팅): 헤더/시스템 칩/시간/전송 */
+  --chat-header-bg: #ffffff;                        /* 헤더·입력바 배경 */
+  --chat-system-bg: #f2ede3;                        /* 시스템 중앙 칩 배경 */
+  --chat-system-text: #8a7f6f;                      /* 시스템 칩 글자 */
+  --chat-self-text: #ffffff;                        /* 내 말풍선 글자 */
+  --chat-send-bg: #111111;                          /* 전송 버튼(원형) */
+  --chat-time-color: #b4aa99;                       /* 말풍선 시간 */
 
   /* ===== 모달 공통 (컨테이너·오버레이) ===== */
   --modal-bg: var(--color-surface);                /* 모달 박스 배경 */
@@ -241,12 +253,12 @@
   --paid-btn-selected-text: #ffffff;
   --paid-btn-selected-shadow: 0 0 16px rgba(255, 155, 175, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.25);
 
-  /* 아이콘 버튼 (MainPage .icon-buttons — help/megaphone) */
-  --icon-btn-bg: rgba(255, 255, 255, 0.8);
-  --icon-btn-border: rgba(0, 0, 0, 0.15);
-  --icon-btn-text: inherit;
+  /* 아이콘 버튼 (MainPage .icon-buttons — help/megaphone) — 리디자인 */
+  --icon-btn-bg: #ffffff;
+  --icon-btn-border: #ece5d8;
+  --icon-btn-text: #5b4636;
   --icon-btn-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  --icon-btn-hover-bg: rgba(255, 255, 255, 0.95);
+  --icon-btn-hover-bg: #f4efe6;
 
   /* MainPage 제목/부제목 */
   --main-title-color: #2f241a;
@@ -259,6 +271,49 @@
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.15);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.25);
+
+  /* =============================================================
+   * 🎨 리디자인 신규 구조 토큰 (텔레파시 리디자인.dc.html 반영)
+   *   default(:root)만 정의. 계절 오버라이드는 이번 범위 아님(10/12월).
+   * ============================================================= */
+  /* 반경 / 카드 그림자 / 포커스 링 */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --card-shadow: 0 1px 2px rgba(43, 38, 32, 0.05), 0 10px 28px rgba(43, 38, 32, 0.07);
+  --focus-ring: 0 0 0 3px rgba(47, 36, 26, 0.18);
+
+  /* 라이브 상태 pill (MainPage: 지금 N명 접속 중) */
+  --live-dot: #3fb27f;
+  --status-pill-bg: #ffffff;
+  --status-pill-text: #6a5c4a;
+
+  /* 하단 탭바 */
+  --tab-bar-bg: rgba(255, 255, 255, 0.94);
+  --tab-bar-border: #efe7d8;
+  --tab-icon: #b7ad9c;
+  --tab-icon-active: #2f241a;
+  --tab-label: #a89e8f;
+  --tab-label-active: #2f241a;
+
+  /* MyPage (섹션 라벨·통계 칩·아바타 링·행 화살표) */
+  --section-label-color: #a89a86;
+  --stat-chip-bg: #f7f3ec;
+  --avatar-ring: #f0e7d8;
+  --row-arrow: #c9bda9;
+
+  /* WordSet (제목 그라디언트·번호 배지·비활성 버튼) */
+  --wordset-title-grad: linear-gradient(90deg, #e08a3c, #c8622a);
+  --word-num-bg: #ffffff;
+  --btn-disabled-bg: #e7dcc6;
+  --btn-disabled-text: #b6a88c;
+}
+
+/* 라이브 상태 점 깜빡임 (MainPage status pill) */
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 
 /* =============================================================

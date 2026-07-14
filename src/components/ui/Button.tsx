@@ -23,10 +23,11 @@ const BASE =
   '[background:var(--btn-bg)] [color:var(--btn-text)] [animation:var(--btn-animation)]';
 
 // 각 variant = 기존 클래스의 크기/모양만 옮긴 것 (색/애니메이션은 BASE 공유)
+// 리디자인: primary = 검정 pill(radius-pill), 보조(check) = 사각(radius-md)
 const VARIANT: Record<ButtonVariant, string> = {
-  block: 'w-[300px] p-3 text-[16px] rounded-[6px]', //            ← 구 .login-button
-  inline: 'h-12 px-5 py-3 mx-[5px] my-2.5 text-[15px] rounded-[4px]', // ← 구 .agree-button / .next-button
-  check: 'h-12 p-3 text-[18px] rounded-[6px] whitespace-nowrap', //   ← 구 .check-button
+  block: 'w-[300px] h-[52px] text-[15px] font-bold rounded-[var(--radius-pill)]', // ← 구 .login-button
+  inline: 'h-12 px-5 py-3 mx-[5px] my-2.5 text-[15px] rounded-[var(--radius-md)]', // ← 구 .agree-button / .next-button
+  check: 'h-[52px] px-4 text-[15px] font-semibold rounded-[var(--radius-md)] whitespace-nowrap', // ← 구 .check-button(보조)
 };
 
 export default function Button({ variant = 'block', className = '', ...props }: ButtonProps) {

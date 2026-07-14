@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { CSSProperties } from 'react';
 import { useWordSession } from '../contexts/WordSessionContext';
 import { useNavigate } from 'react-router-dom';
 import { HelpCircle, Megaphone } from 'lucide-react';
@@ -54,7 +55,7 @@ const wordBtnStruct =
 const wbNormal =
   "[background:var(--word-btn-bg)] [border:1.8px_solid_var(--word-btn-border)] text-[var(--word-btn-text)] font-medium [box-shadow:var(--word-btn-shadow)] [backdrop-filter:var(--word-btn-backdrop)] [transition:all_0.25s_ease] hover:[background:var(--word-btn-hover-bg)] hover:[border-color:var(--word-btn-hover-border)] hover:-translate-y-0.5";
 const wbNormalSel =
-  "[background:var(--word-btn-selected-bg)] [border:1.8px_solid_var(--word-btn-selected-border)] text-[var(--word-btn-selected-text)] font-semibold [box-shadow:0_4px_10px_rgba(46,125,255,0.3)] [transition:all_0.25s_ease]";
+  "[background:var(--word-btn-selected-bg)] [border:1.8px_solid_var(--word-btn-selected-border)] text-[var(--word-btn-selected-text)] font-semibold [box-shadow:0_6px_16px_rgba(47,36,26,0.28)] [transition:all_0.25s_ease]";
 const wbPaid =
   "[background:var(--paid-btn-bg)] [border:1.8px_solid_var(--paid-btn-border)] text-[var(--paid-btn-text)] font-[550] [box-shadow:var(--paid-btn-shadow)] [backdrop-filter:blur(5px)] [transition:all_0.3s_ease] hover:[background:var(--paid-btn-hover-bg)] hover:[border-color:var(--paid-btn-hover-border)] hover:text-[var(--paid-btn-hover-text)] hover:-translate-y-[3px] hover:[box-shadow:var(--paid-btn-hover-shadow)]";
 const wbPaidSel =
@@ -80,7 +81,7 @@ export default function MainPage() {
 
   const [round, setRound] = useState(0);
   const [wordSet, setWordSet] = useState<string[]>([]);
-  const [remaining, setRemaining] = useState(30);
+  const [remaining, setRemaining] = useState(15);
   const [selectedWord, setSelectedWord] = useState('');
   const [fadeClass, setFadeClass] = useState('fade-in');
 
@@ -523,26 +524,48 @@ export default function MainPage() {
       )}
 
       {/* 구 .telepathy-container */}
-      <div className="flex flex-col items-center justify-center min-h-[80vh] pt-[8vh] pb-[6vh] box-border">
-        {/* 구 .timer-display */}
-        <div className="text-[24px] font-semibold my-2.5 text-center text-[var(--color-text)]">{remaining}초</div>
+      <div className="relative flex flex-col items-center justify-center min-h-[80vh] pt-[8vh] pb-[6vh] box-border">
+        {/* 원형 카운트다운 링 (구 .timer-display) */}
+        <div className="flex flex-col items-center mb-1">
+          <div
+            className="relative w-28 h-28 min-[1025px]:w-[120px] min-[1025px]:h-[120px] rounded-full flex items-center justify-center"
+            style={{
+              background:
+                'conic-gradient(var(--word-timer-ring) calc(var(--pct) * 360deg), var(--word-timer-track) 0)',
+              '--pct': String(Math.max(0, Math.min(1, remaining / 15))),
+            } as CSSProperties}
+          >
+            <div className="absolute inset-[9px] rounded-full bg-[var(--color-bg)] flex items-center justify-center">
+              <span className="[font-family:'Judson',serif] text-[36px] min-[1025px]:text-[40px] font-bold leading-none text-[var(--word-timer-num)]">{remaining}</span>
+              <span className="ml-0.5 text-[14px] text-[var(--word-timer-num)]">초</span>
+            </div>
+          </div>
+        </div>
         {/* 구 .title */}
-        <h1 className="[font-family:'Judson',serif] text-[clamp(34px,6vw,42px)] text-[var(--main-title-color)] font-bold mb-2.5 min-[1025px]:text-[clamp(42px,3vw,54px)]">Telepathy</h1>
+        <h1 className="[font-family:'Judson',serif] text-[clamp(34px,6vw,42px)] text-[var(--main-title-color)] font-bold mt-4 mb-2.5 min-[1025px]:text-[clamp(42px,3vw,54px)]">Telepathy</h1>
         {/* 구 .subtitle */}
-        <p className="mt-1.5 mb-5 text-center text-[clamp(15px,3.5vw,18px)] text-[var(--main-subtitle-color)] leading-[1.4] opacity-85 max-w-[80%] min-[1025px]:text-[clamp(18px,1.5vw,22px)] min-[1025px]:mt-2.5 min-[1025px]:mb-7">같은 단어를 선택한 사람과 연결돼요.</p>
+        <p className="mt-1.5 text-center text-[clamp(15px,3.5vw,18px)] text-[var(--main-subtitle-color)] leading-[1.4] max-w-[80%] min-[1025px]:text-[clamp(18px,1.5vw,22px)] min-[1025px]:mt-2.5">같은 단어를 선택한 사람과 연결돼요.</p>
 
         {/* 구 .word-set (+ fade-in/out 전환 상태) */}
         <div className={`grid grid-cols-2 gap-3 mt-5 mb-10 w-[90%] max-w-[320px] [transition:opacity_0.6s_ease,transform_0.6s_ease] min-[1025px]:mt-10 min-[1025px]:mb-[60px] min-[1025px]:gap-5 ${fadeClass === 'fade-in' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]'}`}>
-          {wordSet.map((w) => (
-            <button
-              key={w}
-              className={wordBtnClass(!!recommendations[round % recommendations.length].paid, selectedWord === w)}
-              onClick={() => handleWordSelect(w)}
-              disabled={!!selectedWord}
-            >
-              {w}
-            </button>
-          ))}
+          {wordSet.map((w) => {
+            const isPaidSet = !!recommendations[round % recommendations.length].paid;
+            return (
+              <button
+                key={w}
+                className={`relative ${wordBtnClass(isPaidSet, selectedWord === w)}`}
+                onClick={() => handleWordSelect(w)}
+                disabled={!!selectedWord}
+              >
+                {isPaidSet && (
+                  <span className="absolute -top-2.5 right-2.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full [background:var(--paid-btn-selected-bg)] leading-none">
+                    ✦ 확성기
+                  </span>
+                )}
+                {w}
+              </button>
+            );
+          })}
         </div>
 
         {showFeedbackModal && feedbackInfo && (
@@ -598,10 +621,11 @@ export default function MainPage() {
           )}
         </footer>
 
-        {/* ✅ 현재 접속자 수는 2명 이상일 때만 보이게 — 구 .online-counter */}
+        {/* ✅ 현재 접속자 수는 2명 이상일 때만 — 구 .online-counter → 라이브 상태 pill */}
         {onlineCount >= 2 && (
-          <div className="absolute top-2.5 right-5 text-[14px] text-[var(--color-text-secondary)]">
-            현재 접속자 수: <strong>{onlineCount}</strong>명
+          <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-[var(--status-pill-bg)] text-[var(--status-pill-text)] text-[13px] font-medium py-1.5 px-3 rounded-[var(--radius-pill)] [box-shadow:var(--card-shadow)]">
+            <span className="w-[7px] h-[7px] rounded-full bg-[var(--live-dot)] [animation:pulseDot_1.6s_ease-in-out_infinite]"></span>
+            지금 <strong className="font-bold">{onlineCount}</strong>명 접속 중
           </div>
         )}
 

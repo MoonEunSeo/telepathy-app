@@ -13,6 +13,7 @@ import VerifyCallback from './pages/VerifyCallback';
 import Verify_mvp from './pages/Verify_mvp';
 import FindPassword from './pages/FindPassword';
 import ChangePassword from './pages/ChangePassword';
+import SplashScreen from './pages/SplashScreen';
 
 import MainPage from './pages/MainPage';
 import MyPage from './pages/MyPage';
@@ -115,6 +116,9 @@ function AppRoutes() {
   return (
     <>
       <Routes>
+        {/* ✅ 진입 스플래시 */}
+        <Route path="/" element={<SplashScreen />} />
+
         {/* ✅ 인증 관련 */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ChevronRight, LogOut } from 'lucide-react';
 import { useWordSession } from '../contexts/WordSessionContext';
 import profileImage from '../assets/profile_image.png';
 import Modal from '../components/ui/Modal';
@@ -10,10 +11,6 @@ import type {
   MegaphoneCountResponse,
   WithdrawResponse,
 } from '../types';
-
-// 구 .mypage-container hr (구분선) — 3곳 반복
-const hrCls =
-  "border-x-0 border-b-0 [border-top:1px_solid_rgba(255,240,200,0.6)] w-full rounded-full my-3 shadow-[0_0_3px_rgba(255,200,120,0.3)] max-[480px]:my-2";
 
 // 구 .login-button1 (모달 버튼, :global(.modal-content) 오버라이드 반영 = flex 1 1 45%/max140/pad10·0)
 const modalBtn =
@@ -158,81 +155,93 @@ const MyPage = () => {
         data-page="mypage"
         className="flex flex-col items-center justify-start min-h-[80vh] bg-[var(--color-bg)] text-[var(--color-text)] pt-5 px-4 pb-20 box-border text-center max-[480px]:pt-2.5 max-[480px]:px-3 max-[480px]:pb-[60px]"
       >
-        {/* 구 .mypage-inner (스타일 없던 빈 래퍼) */}
-        <div>
+        {/* 리디자인: 중앙 컬럼 (좌측 정렬 콘텐츠) */}
+        <div className="w-full max-w-[460px] mx-auto text-left">
           {isActive && word && (
-            /* 구 .mypage-current-word */
-            <div className="w-full max-w-[350px] text-center text-[14px] text-white bg-[#f5c5c5] py-1.5 mb-3 rounded-[6px]">
-              지금 연결 중인 단어 : {word}
+            /* 구 .mypage-current-word — 세션 배너 */
+            <div className="w-full text-center text-[14px] text-[var(--color-on-accent)] bg-[var(--color-accent)] py-2 mb-4 rounded-[var(--radius-pill)]">
+              지금 연결 중인 단어 · {word}
             </div>
           )}
 
-          {/* 구 .mypage-title */}
-          <h1 className="[font-family:'Judson',serif] text-[42px] font-bold mt-[10px] mb-[15px] text-center max-[480px]:mt-1">
-            Telepathy
-          </h1>
-
-          {/* 구 .mypage-profile-image */}
-          <img
-            className="block w-[120px] h-[120px] rounded-full object-cover mx-auto mb-[15px] border border-[rgba(255,255,255,0.4)] shadow-[0_0_6px_rgba(0,0,0,0.15)] max-[480px]:w-[90px] max-[480px]:h-[90px]"
-            src={profileImage}
-            alt="프로필"
-          />
-
-          {/* 구 .mypage-nickname */}
-          <div className="[font-family:'Gowun_Batang',sans-serif] font-bold text-[22px] mb-[15px]">
-            {nickname || '닉네임 로딩중...'}
+          {/* 앱바 워드마크 */}
+          <div className="text-center pt-2 pb-4">
+            <span className="[font-family:'Judson',serif] text-[22px] min-[1025px]:text-[24px] font-bold text-[var(--main-title-color)]">
+              Telepathy
+            </span>
           </div>
 
-          {/* 구 .mypage-section */}
-          <div className="w-full max-w-[360px] text-center mb-[15px] text-[14px] leading-[1.8]">
-            <hr className={hrCls} />
-            {/* 구 .mypage-section-title */}
-            <p className="[font-family:'Gowun_Batang',sans-serif] font-bold mb-2 text-[18px] max-[480px]:mb-1">| 내 정보 |</p>
-            {/* 구 .mypage-text */}
-            <p className="mb-[15px] text-[14px]">ID: {username || '불러오는 중...'}</p>
-            <p className="mb-[15px] text-[14px]">
-              텔레파시 횟수 : {wordCount} 번 / 보유 확성기 : {megaphoneCount} 개
-            </p>
-            {/* 구 .mypage-button-full */}
-            <button
-              onClick={handleNavigateWords}
-              className="mt-2 py-2.5 px-3.5 [border:1px_solid_var(--color-border-strong)] bg-[var(--color-surface)] rounded-[20px] text-[14px] cursor-pointer [transition:all_0.2s_ease] w-full max-w-[230px] hover:bg-[#fafafa] max-[480px]:mt-1.5 max-[480px]:py-2 max-[480px]:px-2.5"
-            >
-              {'>'} 누군가와 함께 떠올린 단어
-            </button>
-          </div>
-
-          <hr className={hrCls} />
-          {/* 구 .mypage-section */}
-          <div className="w-full max-w-[360px] text-center mb-[15px] text-[14px] leading-[1.8]">
-            <p className="[font-family:'Gowun_Batang',sans-serif] font-bold mb-2 text-[18px] max-[480px]:mb-1">| 계정 |</p>
-            {/* 구 .mypage-button-group */}
-            <div className="flex flex-col items-center gap-2.5 mt-4 w-full max-[480px]:gap-1.5 max-[480px]:mt-[15px]">
-              {/* 구 .mypage-button (×4) */}
-              <button onClick={handlePaymentInquiry} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
-                결제 문의
-              </button>
-              <button onClick={handleOpenFAQ} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
-                자주묻는질문
-              </button>
-              <button onClick={handleChangePassword} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
-                비밀번호 변경
-              </button>
-              <button onClick={handleChangeLogout} className="[font-family:'Gowun_Dodum',sans-serif] py-1.5 px-3 rounded-[6px] text-[14px] text-[var(--color-text)] bg-transparent border-none cursor-pointer [transition:color_0.2s_ease] hover:text-black">
-                로그아웃
-              </button>
+          {/* 아이덴티티 블록 */}
+          <div className="flex flex-col items-center gap-2.5 mb-8">
+            <img
+              className="w-[88px] h-[88px] min-[1025px]:w-24 min-[1025px]:h-24 rounded-full object-cover [box-shadow:0_0_0_4px_var(--avatar-ring)]"
+              src={profileImage}
+              alt="프로필"
+            />
+            <div className="text-center">
+              <div className="[font-family:'Gowun_Batang',sans-serif] font-bold text-[20px] min-[1025px]:text-[22px] text-[var(--color-text-strong)] leading-tight">
+                {nickname || '닉네임 로딩중...'}
+              </div>
+              <div className="text-[13px] text-[var(--color-text-muted)] mt-0.5">@{username || '...'}</div>
             </div>
           </div>
 
-          <hr className={hrCls} />
-          {/* 구 .mypage-withdraw-button */}
+          {/* 내 정보 */}
+          <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[var(--section-label-color)] mb-2.5">내 정보</p>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="bg-[var(--stat-chip-bg)] [border:1px_solid_var(--color-border-subtle)] rounded-[var(--radius-md)] py-4 text-center">
+              <div className="[font-family:'Judson',serif] text-[26px] font-bold text-[var(--main-title-color)] leading-none">{wordCount}</div>
+              <div className="text-[12.5px] text-[var(--color-text-muted)] mt-1.5">텔레파시 횟수</div>
+            </div>
+            <div className="bg-[var(--stat-chip-bg)] [border:1px_solid_var(--color-border-subtle)] rounded-[var(--radius-md)] py-4 text-center">
+              <div className="[font-family:'Judson',serif] text-[26px] font-bold text-[var(--main-title-color)] leading-none">{megaphoneCount}</div>
+              <div className="text-[12.5px] text-[var(--color-text-muted)] mt-1.5">보유 확성기</div>
+            </div>
+          </div>
+          {/* 구 .mypage-button-full → 행 버튼 + chevron */}
           <button
-            onClick={handleWithdraw}
-            className="mt-5 [font-family:'Gowun_Dodum',sans-serif] text-[#d84f4f] font-bold text-[14px] underline bg-transparent border-none cursor-pointer max-[480px]:mt-3"
+            onClick={handleNavigateWords}
+            className="w-full flex items-center justify-between bg-[var(--color-surface)] [border:1px_solid_var(--word-btn-border)] rounded-[var(--radius-md)] [box-shadow:var(--card-shadow)] py-3.5 px-4 text-[14.5px] text-[var(--color-text)] cursor-pointer mb-8 hover:bg-[var(--color-surface-muted)]"
           >
-            회원탈퇴
+            <span>누군가와 함께 떠올린 단어</span>
+            <ChevronRight size={18} className="text-[var(--row-arrow)] shrink-0" />
           </button>
+
+          {/* 계정 */}
+          <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[var(--section-label-color)] mb-2.5">계정</p>
+          <div className="bg-[var(--color-surface)] [border:1px_solid_var(--word-btn-border)] rounded-[var(--radius-md)] [box-shadow:var(--card-shadow)] overflow-hidden mb-8 cursor-pointer mb-8 hover:bg-[var(--color-surface-muted)]">
+            {[
+              { label: '결제 문의', onClick: handlePaymentInquiry },
+              { label: '자주 묻는 질문', onClick: handleOpenFAQ },
+              { label: '비밀번호 변경', onClick: handleChangePassword },
+            ].map((row) => (
+              <button
+                key={row.label}
+                onClick={row.onClick}
+                className="w-full flex items-center justify-between py-3.5 px-4 text-[14.5px] text-[var(--color-text)] bg-transparent [border-bottom:1px_solid_var(--color-border-subtle)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+              >
+                <span>{row.label}</span>
+                <ChevronRight size={18} className="text-[var(--row-arrow)] shrink-0" />
+              </button>
+            ))}
+            <button
+              onClick={handleChangeLogout}
+              className="w-full flex items-center justify-between py-3.5 px-4 text-[14.5px] text-[var(--color-text-secondary)] bg-transparent cursor-pointer hover:bg-[var(--color-surface-muted)]"
+            >
+              <span>로그아웃</span>
+              <LogOut size={17} className="text-[var(--row-arrow)] shrink-0" />
+            </button>
+          </div>
+
+          {/* 회원탈퇴 */}
+          <div className="text-center">
+            <button
+              onClick={handleWithdraw}
+              className="[font-family:'Gowun_Dodum',sans-serif] text-[var(--color-danger)] text-[13.5px] underline bg-transparent border-none cursor-pointer"
+            >
+              회원탈퇴
+            </button>
+          </div>
         </div>
       </main>
 

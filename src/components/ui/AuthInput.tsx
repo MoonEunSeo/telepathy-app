@@ -18,14 +18,14 @@ interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 // 토큰 기반 테두리/배경/글자 + placeholder + 공통 리셋 — 모든 variant 공유
 const BASE =
-  'box-border text-[16px] rounded-[6px] ' +
+  'box-border text-[16px] rounded-[var(--radius-md)] ' +
   '[border:1px_solid_var(--auth-input-border)] [background:var(--auth-input-bg)] [color:var(--auth-input-text)] ' +
   'placeholder:text-[var(--auth-input-placeholder)]';
 
 const VARIANT: Record<InputVariant, string> = {
-  // 구 .auth-input — 너비/여백 + 부드러운 전환 + focus 스타일
+  // 구 .auth-input — 너비/높이(52) + 부드러운 전환 + focus 스타일
   auth:
-    'w-[300px] p-3 mb-3 leading-[1.2] [transition:all_0.25s_ease] ' +
+    'w-[300px] h-[52px] px-3.5 mb-3 leading-[1.2] [transition:all_0.25s_ease] ' +
     'focus:outline-none focus:[border-color:var(--auth-input-focus-border)] focus:[box-shadow:var(--auth-input-focus-shadow)]',
   // 구 .birth-input — padding/margin만 (성별 입력 행에서 flex 로 배치)
   birth: 'p-3 mb-2.5 leading-[1.2]',

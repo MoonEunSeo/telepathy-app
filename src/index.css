@@ -27,6 +27,13 @@
 /* Base (전역 스타일시트) — ClosedModal.css 는 자기완결 유틸화로 제거됨 */
 @import './themes/base/index.css';
 
+@layer base {
+   button {
+      border-width: 0;
+      border-style: solid
+   }
+}
+
 /* ============================================================
  * 🎨 디자인 토큰 → Tailwind 테마 브리지
  * -----------------------------------------------------------

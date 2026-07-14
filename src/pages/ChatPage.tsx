@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, AlertTriangle } from 'lucide-react';
+import { LogOut, AlertTriangle, ChevronLeft, Send } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { socket } from '../config/socket';
 import ReportModal from '../components/ReportModal';
@@ -21,9 +21,16 @@ const msgBase =
   'max-w-[65%] py-2.5 px-3.5 rounded-[18px] text-[15px] leading-[1.5] whitespace-pre-wrap break-words box-border';
 const msgSelf = 'self-end [background:var(--chat-self-bg)] text-[var(--chat-accent-text)] rounded-br-[6px]';
 const msgOther = 'self-start [background:var(--chat-other-bg)] text-[var(--chat-text)] rounded-bl-[6px]';
-// 구 .exit-button (헤더 아이콘)
-const exitBtn =
-  '[background:var(--chat-exit-bg)] border-none text-[var(--chat-exit-text)] cursor-pointer py-1.5 px-2.5 [transition:all_0.2s] hover:text-[var(--color-danger-accent)]';
+// 말풍선 시간 표기 (오전/오후 h:mm)
+const formatTime = (ts?: number) => {
+  if (!ts) return '';
+  const d = new Date(ts);
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h < 12 ? '오전' : '오후';
+  h = h % 12 || 12;
+  return `${ampm} ${h}:${String(m).padStart(2, '0')}`;
+};
 // 구 .exit-button-text.confirm / .cancel (나가기 확인 모달)
 const endedBtnBase = 'py-2.5 px-[18px] border-none rounded-full cursor-pointer [transition:all_0.2s] text-[16px]';
 const endedBtnConfirm = `${endedBtnBase} [background:var(--ended-confirm-bg)] text-[var(--ended-btn-text)] hover:[background:var(--ended-confirm-bg-hover)]`;
@@ -231,42 +238,66 @@ export default function ChatPage() {
 
   // ✅ 메시지 렌더링
   const renderMessages = () =>
-    messages.map((msg, idx) => (
-      <div
-        key={idx}
-        className={`${msgBase} ${msg.senderId === myId ? msgSelf : msgOther}`}
-      >
-        {msg.message}
-      </div>
-    ));
+    messages.map((msg, idx) => {
+      const mine = msg.senderId === myId;
+      return (
+        <div key={idx} className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
+          <div className={`${msgBase} ${mine ? msgSelf : msgOther}`}>{msg.message}</div>
+          {msg.timestamp ? (
+            <span className="mt-1 px-1 text-[11px] text-[var(--chat-time-color)]">{formatTime(msg.timestamp)}</span>
+          ) : null}
+        </div>
+      );
+    });
 
   return (
     <div data-page="chatpage">
       {/* 🎃 할로윈 모드용 페이지 식별자 ([data-page="chatpage"] + ::before 오버레이가 halloween.css 에 존재) */}
       {/* 구 .chat-container */}
       <div className="flex flex-col h-screen w-full bg-[var(--chat-container-bg)] [font-family:'Gowun_Dodum',sans-serif]">
-        {/* 🔹 채팅 헤더 — 구 .chat-header */}
-        <div className="flex justify-between items-center p-4 font-bold text-[18px] bg-[var(--chat-panel-bg)] text-[var(--chat-text)] [border-bottom:1px_solid_var(--chat-border)] sticky top-0 z-20">
-          {/* 구 .chat-title (모듈 미정의 → 무스타일) */}
-          <div>채팅방 ({word})</div>
-          {/* 구 .chat-header-icons */}
-          <div className="flex items-center gap-2">
-            <button className={exitBtn} onClick={() => setShowReportModal(true)} title="신고하기">
-              <AlertTriangle size={22} />
+        {/* 🔹 채팅 헤더 — 리디자인: 뒤로가기 + 상대 닉네임 + 단어 배지 + 신고/나가기 */}
+        <div className="flex justify-between items-center py-3 px-3 bg-[var(--chat-panel-bg)] text-[var(--chat-text)] [border-bottom:1px_solid_var(--chat-border)] sticky top-0 z-20">
+          {/* 뒤로가기 */}
+          <button
+            className="w-9 h-9 shrink-0 flex items-center justify-center rounded-full text-[var(--chat-text)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+            onClick={() => setShowExitConfirm(true)}
+            title="나가기"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          {/* 상대 닉네임 + 단어 배지 */}
+          <div className="flex flex-col items-center leading-tight min-w-0">
+            <span className="font-bold text-[16px] text-[var(--color-text-strong)] truncate max-w-[180px]">
+              {partnerNickname}
+            </span>
+            <span className="mt-0.5 text-[11.5px] text-[var(--chat-system-text)] bg-[var(--stat-chip-bg)] rounded-[var(--radius-pill)] px-2 py-0.5">
+              함께 떠올린 단어 · {word}
+            </span>
+          </div>
+          {/* 신고(중립) / 나가기(danger) */}
+          <div className="flex items-center gap-0.5 shrink-0">
+            <button
+              className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--chat-exit-text)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+              onClick={() => setShowReportModal(true)}
+              title="신고하기"
+            >
+              <AlertTriangle size={19} />
             </button>
-            <button className={exitBtn} onClick={() => setShowExitConfirm(true)}>
-              <LogOut size={20} />
+            <button
+              className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--color-danger)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+              onClick={() => setShowExitConfirm(true)}
+              title="나가기"
+            >
+              <LogOut size={19} />
             </button>
           </div>
         </div>
 
         {/* 🔹 메시지 영역 — 구 .chat-messages */}
         <div className="flex-1 p-5 overflow-y-auto flex flex-col gap-2.5 mt-2.5 text-[var(--chat-text)] animate-[chat-fade-in_0.3s_ease]">
-          {/* 구 .chat-info-banner (모듈 미정의 → 무스타일) */}
-          <div>
-            <strong>{partnerNickname}님과 같은 단어를 떠올렸어요!</strong>
-            <br />
-            즐거운 대화 되세요.
+          {/* 시스템 안내 — 중앙 칩 */}
+          <div className="self-center max-w-[85%] text-center text-[13px] text-[var(--chat-system-text)] bg-[var(--chat-system-bg)] rounded-[var(--radius-md)] py-2 px-3.5 my-1">
+            <strong className="font-semibold">{partnerNickname}</strong>님과 같은 단어를 떠올렸어요! 즐거운 대화 되세요.
           </div>
           {renderMessages()}
           {isTyping && (
@@ -282,23 +313,24 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* 🔹 입력 영역 — 구 .chat-input-container */}
-        <div className="flex py-3 px-4 [border-top:1px_solid_var(--chat-border)] bg-[var(--chat-panel-bg)]">
+        {/* 🔹 입력 영역 — 리디자인: pill 입력 + 원형 전송 버튼 */}
+        <div className="flex items-center gap-2 py-3 px-4 [border-top:1px_solid_var(--chat-border)] bg-[var(--chat-panel-bg)]">
           <input
-            className="flex-1 py-3 px-3.5 [background:var(--chat-input-bg)] text-[var(--chat-input-text)] [border:1px_solid_var(--chat-input-border)] rounded-[24px] outline-none text-[14px] [transition:border_0.2s] focus:[border-color:var(--color-text-subtle)] disabled:[background-color:var(--color-border-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex-1 h-[46px] px-4 [background:var(--chat-input-bg)] text-[var(--chat-input-text)] [border:1px_solid_var(--chat-input-border)] rounded-[var(--radius-pill)] outline-none text-[14px] [transition:border_0.2s] focus:[border-color:var(--color-text-subtle)] disabled:[background-color:var(--color-border-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
             placeholder="메시지를 입력하세요."
             value={message}
             onChange={handleTyping}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             disabled={chatEnded}
           />
-          {/* 구 .chat-send-button */}
+          {/* 원형 전송 버튼 (종이비행기) */}
           <button
-            className="ml-2 py-3 px-[18px] [background:var(--chat-accent-bg)] text-[var(--chat-accent-text)] border-none rounded-[24px] cursor-pointer font-bold text-[14px] [transition:background_0.2s] hover:[background-color:var(--color-accent-hover)] disabled:[background-color:var(--color-border-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-[46px] h-[46px] shrink-0 flex items-center justify-center [background:var(--chat-send-bg)] text-[var(--color-on-accent)] border-none rounded-full cursor-pointer [transition:opacity_0.2s] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
             onClick={handleSendMessage}
             disabled={chatEnded}
+            title="전송"
           >
-            전송
+            <Send size={18} />
           </button>
         </div>
 
