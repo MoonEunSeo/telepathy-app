@@ -23,11 +23,16 @@ const BASE =
   '[box-shadow:var(--toggle-shadow)] [transition:var(--toggle-transition)]';
 
 // 비선택 / 선택 — 상호배타라 background/border-color/color/transform 충돌 없음
-const OFF = '[background:var(--toggle-bg)] [border-color:var(--toggle-border)] [color:var(--toggle-text)]';
+const OFF =
+  '[background:var(--toggle-bg)] [border-color:var(--toggle-border)] [color:var(--toggle-text)]';
 const ON =
   '[background:var(--toggle-selected-bg)] [border-color:var(--toggle-selected-border)] ' +
   '[color:var(--toggle-selected-text)] [transform:var(--toggle-selected-transform)]';
 
-export default function ToggleButton({ active = false, className = '', ...props }: ToggleButtonProps) {
+export default function ToggleButton({
+  active = false,
+  className = '',
+  ...props
+}: ToggleButtonProps) {
   return <button className={`${BASE} ${active ? ON : OFF} ${className}`.trim()} {...props} />;
 }

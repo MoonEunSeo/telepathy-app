@@ -5,10 +5,13 @@ export default function ImproveConsent() {
     <div className={termsContainer}>
       <h2>✅ [선택] 서비스 개선 동의</h2>
       <p>
-        <strong>텔레파시는 더 나은 서비스 제공을 위해, 사용자의 이용 데이터를 분석하고자 합니다.</strong>
+        <strong>
+          텔레파시는 더 나은 서비스 제공을 위해, 사용자의 이용 데이터를 분석하고자 합니다.
+        </strong>
       </p>
       <p>
-        이 항목은 <strong>서비스 개선 목적</strong>으로 활용되며, 사용자의 개인정보는 철저히 보호됩니다.
+        이 항목은 <strong>서비스 개선 목적</strong>으로 활용되며, 사용자의 개인정보는 철저히
+        보호됩니다.
       </p>
       <hr />
 
@@ -38,8 +41,13 @@ export default function ImproveConsent() {
 
       <h3>제4조 [동의 거부 시 불이익]</h3>
       <ul>
-        <li>본 동의는 <strong>선택사항</strong>이며, 동의하지 않더라도 기본 서비스 이용에는 제한이 없습니다.</li>
-        <li>다만 일부 개인 맞춤 기능(예: 추천 단어, 감정 트렌드 등)은 제공되지 않을 수 있습니다.</li>
+        <li>
+          본 동의는 <strong>선택사항</strong>이며, 동의하지 않더라도 기본 서비스 이용에는 제한이
+          없습니다.
+        </li>
+        <li>
+          다만 일부 개인 맞춤 기능(예: 추천 단어, 감정 트렌드 등)은 제공되지 않을 수 있습니다.
+        </li>
       </ul>
     </div>
   );

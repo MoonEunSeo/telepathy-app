@@ -130,13 +130,15 @@ export default function Verify_mvp() {
     <div data-page="verify-mvp">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
       {/* 구 .login-container — 리디자인: 세로 중앙 정렬 */}
-      <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+      <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10">
         {/* 리드카피 */}
-        <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]">
-          안전한 연결을 위해<br />본인인증이 필요해요
+        <p className="text-center [font-family:'Gowun_Batang'] text-[18px] text-[var(--auth-lead-color)]">
+          안전한 연결을 위해
+          <br />
+          본인인증이 필요해요
         </p>
         {/* 구 .login-title — 세리프 */}
-        <h2 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+        <h2 className="mt-[10px] mb-6 [font-family:'Judson',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
           본인인증
         </h2>
 
@@ -145,10 +147,12 @@ export default function Verify_mvp() {
           placeholder="생년월일 8자리"
           maxLength={8}
           value={birthdate}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setBirthdate(e.target.value.replace(/\D/g, ''))}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setBirthdate(e.target.value.replace(/\D/g, ''))
+          }
         />
         {/* 성별 2분할 세그먼트 토글 */}
-        <div className="flex w-[300px] gap-[10px] mb-3">
+        <div className="mb-3 flex w-[300px] gap-[10px]">
           <ToggleButton
             active={gender === '남성'}
             onClick={() => setGender('남성')}
@@ -174,21 +178,21 @@ export default function Verify_mvp() {
             />
 
             {!codeSent ? (
-              <Button onClick={handleSendCode}>
-                본인인증하기
-              </Button>
+              <Button onClick={handleSendCode}>본인인증하기</Button>
             ) : (
               <>
-                <div className="flex items-center gap-[8px] mt-[10px]">
+                <div className="mt-[10px] flex items-center gap-[8px]">
                   <div className="relative flex-1">
                     <AuthInput
                       variant="verify"
                       placeholder="인증번호 6자리"
                       value={verificationCode}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => setVerificationCode(e.target.value)}
-                      className="w-full h-[45px] pr-[60px]"
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setVerificationCode(e.target.value)
+                      }
+                      className="h-[45px] w-full pr-[60px]"
                     />
-                    <span className="absolute right-[12px] top-1/2 -translate-y-[75%] text-[14px] text-[#999]">
+                    <span className="absolute top-1/2 right-[12px] -translate-y-[75%] text-[14px] text-[#999]">
                       {formatTime(timeLeft)}
                     </span>
                   </div>

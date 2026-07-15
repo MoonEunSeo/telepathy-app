@@ -100,9 +100,7 @@ export const WordSessionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WordSessionContext.Provider
-      value={{ ...session, setProfile, startSession, endSession }}
-    >
+    <WordSessionContext.Provider value={{ ...session, setProfile, startSession, endSession }}>
       {children}
     </WordSessionContext.Provider>
   );

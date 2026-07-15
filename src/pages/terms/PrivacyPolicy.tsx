@@ -5,7 +5,8 @@ export default function PrivacyPolicy() {
     <div className={termsContainer}>
       <h2>🔐 텔레파시 개인정보 처리방침 (필수)</h2>
       <p>
-        텔레파시는 이용자의 개인정보 보호를 매우 중요하게 여기며, 「개인정보 보호법」 등 관련 법령을 준수합니다.
+        텔레파시는 이용자의 개인정보 보호를 매우 중요하게 여기며, 「개인정보 보호법」 등 관련 법령을
+        준수합니다.
       </p>
       <hr />
 
@@ -57,8 +58,12 @@ export default function PrivacyPolicy() {
       <hr />
       <h3>제4조 [개인정보 보유 및 이용 기간]</h3>
       <ul>
-        <li><strong>회원 탈퇴 시:</strong> 즉시 파기</li>
-        <li>단, 다음의 사유로 최대 <strong>6개월 간 보관</strong>될 수 있습니다.</li>
+        <li>
+          <strong>회원 탈퇴 시:</strong> 즉시 파기
+        </li>
+        <li>
+          단, 다음의 사유로 최대 <strong>6개월 간 보관</strong>될 수 있습니다.
+        </li>
       </ul>
       <table className={styledTable}>
         <thead>
@@ -90,7 +95,8 @@ export default function PrivacyPolicy() {
       <h3>제6조 [개인정보의 제3자 제공]</h3>
       <ul>
         <li>원칙적으로 외부에 제공하지 않습니다.</li>
-        <li>단, 다음의 경우는 예외로 합니다:
+        <li>
+          단, 다음의 경우는 예외로 합니다:
           <ul>
             <li>이용자가 사전에 동의한 경우</li>
             <li>수사기관 요청 등 법령에 따라 제공이 필요한 경우</li>
@@ -110,7 +116,9 @@ export default function PrivacyPolicy() {
       <h3>제8조 [개인정보 보호책임자]</h3>
       <ul>
         <li>이름: 문은서</li>
-        <li>이메일: <a href="mailto:telepathy.cs@gmail.com">telepathy.cs@gmail.com</a></li>
+        <li>
+          이메일: <a href="mailto:telepathy.cs@gmail.com">telepathy.cs@gmail.com</a>
+        </li>
       </ul>
 
       <hr />

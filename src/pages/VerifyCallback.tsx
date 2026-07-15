@@ -47,27 +47,39 @@ export default function VerifyCallback() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center bg-[var(--color-bg)]">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-[var(--color-bg)] px-6 text-center">
       {status === 'success' ? (
         <>
           {/* 중앙 체크 아이콘 (검정 원) */}
-          <div className="w-[88px] h-[88px] min-[1025px]:w-24 min-[1025px]:h-24 rounded-full bg-[var(--color-accent)] flex items-center justify-center [box-shadow:var(--card-shadow)]">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-on-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="flex h-[88px] w-[88px] items-center justify-center rounded-full bg-[var(--color-accent)] [box-shadow:var(--card-shadow)] min-[1025px]:h-24 min-[1025px]:w-24">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--color-on-accent)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M20 6 9 17l-5-5" />
             </svg>
           </div>
-          <h1 className="[font-family:'Judson',serif] text-[32px] min-[1025px]:text-[38px] font-bold mt-6 text-[var(--color-text-strong)]">
+          <h1 className="mt-6 [font-family:'Judson',serif] text-[32px] font-bold text-[var(--color-text-strong)] min-[1025px]:text-[38px]">
             인증 성공
           </h1>
           <p className="mt-3 text-[15px] text-[var(--auth-lead-color)]">
-            {userName && <b className="font-bold text-[var(--main-title-color)]">{userName}님</b>} 환영합니다
+            {userName && <b className="font-bold text-[var(--main-title-color)]">{userName}님</b>}{' '}
+            환영합니다
           </p>
           <div className="mt-8">
             <Button onClick={() => navigate('/main')}>시작하기</Button>
           </div>
         </>
       ) : (
-        <p className="[font-family:'Gowun_Dodum'] text-[16px] text-[var(--color-text)]">{message}</p>
+        <p className="[font-family:'Gowun_Dodum'] text-[16px] text-[var(--color-text)]">
+          {message}
+        </p>
       )}
     </div>
   );

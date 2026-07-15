@@ -72,7 +72,9 @@ export default function Register() {
     }
 
     if (!validatePassword(password)) {
-      setModalMessage('비밀번호는 8자 이상이며, 영문/숫자/특수문자 중 2가지 이상을 포함해야 합니다.');
+      setModalMessage(
+        '비밀번호는 8자 이상이며, 영문/숫자/특수문자 중 2가지 이상을 포함해야 합니다.',
+      );
       setShowModal(true);
       return;
     }
@@ -93,30 +95,36 @@ export default function Register() {
     <div data-page="register">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
       {/* 구 .login-container — 리디자인: 세로 중앙 정렬 */}
-      <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+      <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10">
         {/* 구 .login-subtitle — 감성 리드카피 */}
-        <p className="[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]">
-          바로 지금,<br />우리는 같은 단어를 떠올렸어요
+        <p className="text-center [font-family:'Gowun_Batang'] text-[18px] text-[var(--auth-lead-color)]">
+          바로 지금,
+          <br />
+          우리는 같은 단어를 떠올렸어요
         </p>
         {/* 구 .login-title — 세리프 */}
-        <h1 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+        <h1 className="mt-[10px] mb-6 [font-family:'Judson',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
           회원가입
         </h1>
 
         {/* 구 .id-check-row — 아이디 입력(flex) + 중복검사(사각 보조) 같은 높이 정렬 */}
-        <div className="flex w-[300px] items-center gap-[10px] mb-[10px]">
+        <div className="mb-[10px] flex w-[300px] items-center gap-[10px]">
           <AuthInput
-            className="flex-1 min-w-0"
+            className="min-w-0 flex-1"
             placeholder="아이디"
             value={username}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
           />
-          <Button variant="check" onClick={checkUsername}>중복검사</Button>
+          <Button variant="check" onClick={checkUsername}>
+            중복검사
+          </Button>
         </div>
 
         {isAvailable !== null && (
           /* 구 .result-message (.error) */
-          <p className={`text-[14px] mt-[6px] mb-[10px] text-left w-[300px] p-0 ${isAvailable ? 'text-[var(--color-link)]' : 'text-[var(--color-danger)]'}`}>
+          <p
+            className={`mt-[6px] mb-[10px] w-[300px] p-0 text-left text-[14px] ${isAvailable ? 'text-[var(--color-link)]' : 'text-[var(--color-danger)]'}`}
+          >
             {isAvailable ? '이 아이디는 사용 가능합니다.' : '이미 사용 중인 아이디입니다.'}
           </p>
         )}
@@ -133,15 +141,19 @@ export default function Register() {
         </Button>
 
         {/* 구 .terms-footer (인라인 #888 → --color-text-muted 토큰) */}
-        <p className="mt-[60px] text-[14px] text-center text-[var(--color-text-muted)] halloween:absolute halloween:bottom-[10px] halloween:left-1/2 halloween:-translate-x-1/2 halloween:text-[13px] halloween:leading-[1.4] halloween:w-full halloween:opacity-90">
-          By clicking continue,<br />
-          you agree to our <TextLink>Terms of Service</TextLink> and <TextLink>Privacy Policy</TextLink>
+        <p className="halloween:absolute halloween:bottom-[10px] halloween:left-1/2 halloween:-translate-x-1/2 halloween:text-[13px] halloween:leading-[1.4] halloween:w-full halloween:opacity-90 mt-[60px] text-center text-[14px] text-[var(--color-text-muted)]">
+          By clicking continue,
+          <br />
+          you agree to our <TextLink>Terms of Service</TextLink> and{' '}
+          <TextLink>Privacy Policy</TextLink>
         </p>
 
         {showModal && (
           <Modal>
             <p className="[font-family:'Gowun_Dodum'] text-[16px]">{modalMessage}</p>
-            <Button className="mt-4" onClick={() => setShowModal(false)}>확인</Button>
+            <Button className="mt-4" onClick={() => setShowModal(false)}>
+              확인
+            </Button>
           </Modal>
         )}
       </div>

@@ -2,12 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import type { Socket } from 'socket.io-client';
-import type {
-  AppSocket,
-  ChatMessage,
-  Id,
-  ReceiverInfo,
-} from '../types';
+import type { AppSocket, ChatMessage, Id, ReceiverInfo } from '../types';
 
 const SOCKET_URL = import.meta.env.PROD
   ? 'https://telepathy-app.onrender.com'
@@ -26,13 +21,7 @@ interface UseSocketParams {
   onChatEnded: () => void;
 }
 
-const useSocket = ({
-  roomId,
-  senderId,
-  senderNickname,
-  word,
-  onChatEnded,
-}: UseSocketParams) => {
+const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }: UseSocketParams) => {
   const socketRef = useRef<SocketWithTimeout | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [receiverInfo, setReceiverInfo] = useState<ReceiverInfo>({
@@ -48,8 +37,7 @@ const useSocket = ({
     socketRef.current = socket;
 
     // 핸들러 정의 (정리 가능하도록 변수화)
-    const handleMessage = (data: ChatMessage) =>
-      setMessages((prev) => [...prev, data]);
+    const handleMessage = (data: ChatMessage) => setMessages((prev) => [...prev, data]);
     const handleReceiverInfo = (info: ReceiverInfo) => setReceiverInfo(info);
     const handleTyping = () => setIsTyping(true);
     const handleStopTyping = () => setIsTyping(false);

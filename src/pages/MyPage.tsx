@@ -14,10 +14,10 @@ import type {
 
 // 구 .login-button1 (모달 버튼, :global(.modal-content) 오버라이드 반영 = flex 1 1 45%/max140/pad10·0)
 const modalBtn =
-  "[background:var(--color-accent)] text-[var(--color-on-accent)] border-none rounded-[6px] text-[14px] cursor-pointer [transition:background-color_0.3s] flex-[1_1_45%] max-w-[140px] py-2.5 px-0 text-center hover:[background-color:#333]";
+  '[background:var(--color-accent)] text-[var(--color-on-accent)] border-none rounded-[6px] text-[14px] cursor-pointer [transition:background-color_0.3s] flex-[1_1_45%] max-w-[140px] py-2.5 px-0 text-center hover:[background-color:#333]';
 // 구 .login-button1.cancel
 const modalBtnCancel =
-  "[background:var(--color-neutral-hover)] [color:var(--color-text)] border-none rounded-[6px] text-[14px] cursor-pointer [transition:background-color_0.3s] flex-[1_1_45%] max-w-[140px] py-2.5 px-0 text-center hover:[background-color:#d0d0d0]";
+  '[background:var(--color-neutral-hover)] [color:var(--color-text)] border-none rounded-[6px] text-[14px] cursor-pointer [transition:background-color_0.3s] flex-[1_1_45%] max-w-[140px] py-2.5 px-0 text-center hover:[background-color:#d0d0d0]';
 
 const MyPage = () => {
   const [nickname, setNickname] = useState('');
@@ -28,7 +28,6 @@ const MyPage = () => {
   const [wordCount, setWordCount] = useState(0);
   const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
   const [megaphoneCount, setMegaphoneCount] = useState(0);
-
 
   const navigate = useNavigate();
   // 원본은 isSessionActive(없는 필드)를 참조 — isActive로 정정
@@ -84,18 +83,17 @@ const MyPage = () => {
     fetchMegaphoneCount();
   }, []);
 
-
   const handleNavigateWords = () => {
     console.log('Go to Words Page');
     navigate('/mywords');
   };
 
   const handlePaymentInquiry = () => {
-    window.open("https://forms.gle/8w9meqD1YnP9qjnM8", "_blank");
+    window.open('https://forms.gle/8w9meqD1YnP9qjnM8', '_blank');
   };
 
   const handleOpenFAQ = () => {
-    window.open("https://jet-koi-be0.notion.site/28efb29d9d4680739120e18eb77eb511", "_blank");
+    window.open('https://jet-koi-be0.notion.site/28efb29d9d4680739120e18eb77eb511', '_blank');
   };
 
   const handleChangePassword = () => {
@@ -153,63 +151,75 @@ const MyPage = () => {
       {/* data-page="mypage" 유지 → halloween.css 의 [data-page="mypage"] 테마-제외 리셋이 계속 작동 */}
       <main
         data-page="mypage"
-        className="flex flex-col items-center justify-start min-h-[80vh] bg-[var(--color-bg)] text-[var(--color-text)] pt-5 px-4 pb-20 box-border text-center max-[480px]:pt-2.5 max-[480px]:px-3 max-[480px]:pb-[60px]"
+        className="box-border flex min-h-[80vh] flex-col items-center justify-start bg-[var(--color-bg)] px-4 pt-5 pb-20 text-center text-[var(--color-text)] max-[480px]:px-3 max-[480px]:pt-2.5 max-[480px]:pb-[60px]"
       >
         {/* 리디자인: 중앙 컬럼 (좌측 정렬 콘텐츠) */}
-        <div className="w-full max-w-[460px] mx-auto text-left">
+        <div className="mx-auto w-full max-w-[460px] text-left">
           {isActive && word && (
             /* 구 .mypage-current-word — 세션 배너 */
-            <div className="w-full text-center text-[14px] text-[var(--color-on-accent)] bg-[var(--color-accent)] py-2 mb-4 rounded-[var(--radius-pill)]">
+            <div className="mb-4 w-full rounded-[var(--radius-pill)] bg-[var(--color-accent)] py-2 text-center text-[14px] text-[var(--color-on-accent)]">
               지금 연결 중인 단어 · {word}
             </div>
           )}
 
           {/* 앱바 워드마크 */}
-          <div className="text-center pt-2 pb-4">
-            <span className="[font-family:'Judson',serif] text-[22px] min-[1025px]:text-[24px] font-bold text-[var(--main-title-color)]">
+          <div className="pt-2 pb-4 text-center">
+            <span className="[font-family:'Judson',serif] text-[22px] font-bold text-[var(--main-title-color)] min-[1025px]:text-[24px]">
               Telepathy
             </span>
           </div>
 
           {/* 아이덴티티 블록 */}
-          <div className="flex flex-col items-center gap-2.5 mb-8">
+          <div className="mb-8 flex flex-col items-center gap-2.5">
             <img
-              className="w-[88px] h-[88px] min-[1025px]:w-24 min-[1025px]:h-24 rounded-full object-cover [box-shadow:0_0_0_4px_var(--avatar-ring)]"
+              className="h-[88px] w-[88px] rounded-full object-cover [box-shadow:0_0_0_4px_var(--avatar-ring)] min-[1025px]:h-24 min-[1025px]:w-24"
               src={profileImage}
               alt="프로필"
             />
             <div className="text-center">
-              <div className="[font-family:'Gowun_Batang',sans-serif] font-bold text-[20px] min-[1025px]:text-[22px] text-[var(--color-text-strong)] leading-tight">
+              <div className="[font-family:'Gowun_Batang',sans-serif] text-[20px] leading-tight font-bold text-[var(--color-text-strong)] min-[1025px]:text-[22px]">
                 {nickname || '닉네임 로딩중...'}
               </div>
-              <div className="text-[13px] text-[var(--color-text-muted)] mt-0.5">@{username || '...'}</div>
+              <div className="mt-0.5 text-[13px] text-[var(--color-text-muted)]">
+                @{username || '...'}
+              </div>
             </div>
           </div>
 
           {/* 내 정보 */}
-          <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[var(--section-label-color)] mb-2.5">내 정보</p>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div className="bg-[var(--stat-chip-bg)] [border:1px_solid_var(--color-border-subtle)] rounded-[var(--radius-md)] py-4 text-center">
-              <div className="[font-family:'Judson',serif] text-[26px] font-bold text-[var(--main-title-color)] leading-none">{wordCount}</div>
-              <div className="text-[12.5px] text-[var(--color-text-muted)] mt-1.5">텔레파시 횟수</div>
+          <p className="mb-2.5 text-[11px] font-bold tracking-[0.12em] text-[var(--section-label-color)] uppercase">
+            내 정보
+          </p>
+          <div className="mb-3 grid grid-cols-2 gap-3">
+            <div className="rounded-[var(--radius-md)] bg-[var(--stat-chip-bg)] py-4 text-center [border:1px_solid_var(--color-border-subtle)]">
+              <div className="[font-family:'Judson',serif] text-[26px] leading-none font-bold text-[var(--main-title-color)]">
+                {wordCount}
+              </div>
+              <div className="mt-1.5 text-[12.5px] text-[var(--color-text-muted)]">
+                텔레파시 횟수
+              </div>
             </div>
-            <div className="bg-[var(--stat-chip-bg)] [border:1px_solid_var(--color-border-subtle)] rounded-[var(--radius-md)] py-4 text-center">
-              <div className="[font-family:'Judson',serif] text-[26px] font-bold text-[var(--main-title-color)] leading-none">{megaphoneCount}</div>
-              <div className="text-[12.5px] text-[var(--color-text-muted)] mt-1.5">보유 확성기</div>
+            <div className="rounded-[var(--radius-md)] bg-[var(--stat-chip-bg)] py-4 text-center [border:1px_solid_var(--color-border-subtle)]">
+              <div className="[font-family:'Judson',serif] text-[26px] leading-none font-bold text-[var(--main-title-color)]">
+                {megaphoneCount}
+              </div>
+              <div className="mt-1.5 text-[12.5px] text-[var(--color-text-muted)]">보유 확성기</div>
             </div>
           </div>
           {/* 구 .mypage-button-full → 행 버튼 + chevron */}
           <button
             onClick={handleNavigateWords}
-            className="w-full flex items-center justify-between bg-[var(--color-surface)] [border:1px_solid_var(--word-btn-border)] rounded-[var(--radius-md)] [box-shadow:var(--card-shadow)] py-3.5 px-4 text-[14.5px] text-[var(--color-text)] cursor-pointer mb-8 hover:bg-[var(--color-surface-muted)]"
+            className="mb-8 flex w-full cursor-pointer items-center justify-between rounded-[var(--radius-md)] bg-[var(--color-surface)] px-4 py-3.5 text-[14.5px] text-[var(--color-text)] [box-shadow:var(--card-shadow)] [border:1px_solid_var(--word-btn-border)] hover:bg-[var(--color-surface-muted)]"
           >
             <span>누군가와 함께 떠올린 단어</span>
-            <ChevronRight size={18} className="text-[var(--row-arrow)] shrink-0" />
+            <ChevronRight size={18} className="shrink-0 text-[var(--row-arrow)]" />
           </button>
 
           {/* 계정 */}
-          <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[var(--section-label-color)] mb-2.5">계정</p>
-          <div className="bg-[var(--color-surface)] [border:1px_solid_var(--word-btn-border)] rounded-[var(--radius-md)] [box-shadow:var(--card-shadow)] overflow-hidden mb-8 cursor-pointer mb-8 hover:bg-[var(--color-surface-muted)]">
+          <p className="mb-2.5 text-[11px] font-bold tracking-[0.12em] text-[var(--section-label-color)] uppercase">
+            계정
+          </p>
+          <div className="mb-8 cursor-pointer overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-surface)] [box-shadow:var(--card-shadow)] [border:1px_solid_var(--word-btn-border)] hover:bg-[var(--color-surface-muted)]">
             {[
               { label: '결제 문의', onClick: handlePaymentInquiry },
               { label: '자주 묻는 질문', onClick: handleOpenFAQ },
@@ -218,18 +228,18 @@ const MyPage = () => {
               <button
                 key={row.label}
                 onClick={row.onClick}
-                className="w-full flex items-center justify-between py-3.5 px-4 text-[14.5px] text-[var(--color-text)] bg-transparent [border-bottom:1px_solid_var(--color-border-subtle)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+                className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text)] [border-bottom:1px_solid_var(--color-border-subtle)] hover:bg-[var(--color-surface-muted)]"
               >
                 <span>{row.label}</span>
-                <ChevronRight size={18} className="text-[var(--row-arrow)] shrink-0" />
+                <ChevronRight size={18} className="shrink-0 text-[var(--row-arrow)]" />
               </button>
             ))}
             <button
               onClick={handleChangeLogout}
-              className="w-full flex items-center justify-between py-3.5 px-4 text-[14.5px] text-[var(--color-text-secondary)] bg-transparent cursor-pointer hover:bg-[var(--color-surface-muted)]"
+              className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)]"
             >
               <span>로그아웃</span>
-              <LogOut size={17} className="text-[var(--row-arrow)] shrink-0" />
+              <LogOut size={17} className="shrink-0 text-[var(--row-arrow)]" />
             </button>
           </div>
 
@@ -237,7 +247,7 @@ const MyPage = () => {
           <div className="text-center">
             <button
               onClick={handleWithdraw}
-              className="[font-family:'Gowun_Dodum',sans-serif] text-[var(--color-danger)] text-[13.5px] underline bg-transparent border-none cursor-pointer"
+              className="cursor-pointer border-none bg-transparent [font-family:'Gowun_Dodum',sans-serif] text-[13.5px] text-[var(--color-danger)] underline"
             >
               회원탈퇴
             </button>
@@ -248,9 +258,7 @@ const MyPage = () => {
       {/* 미지원기능모달 */}
       {showNotSupportedModal && (
         <Modal>
-          <p className="[font-family:'Gowun_Dodum'] text-[16px]">
-            아직 지원하지 않는 기능이에요!
-          </p>
+          <p className="[font-family:'Gowun_Dodum'] text-[16px]">아직 지원하지 않는 기능이에요!</p>
           <div className="mt-4">
             <button className={modalBtn} onClick={() => setShowNotSupportedModal(false)}>
               확인
@@ -262,9 +270,7 @@ const MyPage = () => {
       {/* 탈퇴 모달 */}
       {showWithdrawModal && (
         <Modal>
-          <p className="[font-family:'Gowun_Dodum'] text-[16px]">
-            {withdrawMessage}
-          </p>
+          <p className="[font-family:'Gowun_Dodum'] text-[16px]">{withdrawMessage}</p>
           <div className="mt-4">
             <button className={modalBtn} onClick={confirmWithdraw}>
               탈퇴하기

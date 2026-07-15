@@ -1,9 +1,9 @@
 // ✅ WordSetForm.tsx
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import type { ChangeEvent, CompositionEvent, KeyboardEvent } from "react";
-import type { CurrentUser, SpPaymentUpdateRefundResponse } from "../types";
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import type { ChangeEvent, CompositionEvent, KeyboardEvent } from 'react';
+import type { CurrentUser, SpPaymentUpdateRefundResponse } from '../types';
 
 const API_BASE = import.meta.env.VITE_REALSITE;
 
@@ -22,34 +22,28 @@ const bankSelect =
 const saveBtn =
   "w-full h-[52px] [background:var(--color-accent)] text-[var(--color-on-accent)] border-none rounded-[var(--radius-pill)] text-[16px] font-bold [font-family:'Gowun_Dodum'] cursor-pointer [transition:opacity_0.2s_ease] hover:opacity-90 disabled:[background:var(--btn-disabled-bg)] disabled:text-[var(--btn-disabled-text)] disabled:cursor-not-allowed";
 // 구 .word-inputs
-const wordInputs = "flex flex-col gap-3";
+const wordInputs = 'flex flex-col gap-3';
 
 export default function WordSetForm({ currentUser }: WordSetFormProps) {
   const navigate = useNavigate();
 
   const [, setIsComposing] = useState(false);
-  const [words, setWords] = useState<string[]>(["", "", "", ""]);
-  const [refundBank, setRefundBank] = useState("");
-  const [refundAccount, setRefundAccount] = useState("");
+  const [words, setWords] = useState<string[]>(['', '', '', '']);
+  const [refundBank, setRefundBank] = useState('');
+  const [refundAccount, setRefundAccount] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // ✅ 유효성 검사 함수
   const validateField = (key: string, value: string): string => {
     switch (key) {
-      case "word":
-        return KOREAN_WORD_REGEX.test(value)
-          ? ""
-          : "한글 1~6자만 입력 가능합니다.";
-      case "bank":
-        return BANK_REGEX.test(value)
-          ? ""
-          : "은행명은 한글/영문 2~20자만 허용됩니다.";
-      case "account":
-        return ACCOUNT_REGEX.test(value)
-          ? ""
-          : "계좌번호는 숫자만 (4~20자리) 입력하세요.";
+      case 'word':
+        return KOREAN_WORD_REGEX.test(value) ? '' : '한글 1~6자만 입력 가능합니다.';
+      case 'bank':
+        return BANK_REGEX.test(value) ? '' : '은행명은 한글/영문 2~20자만 허용됩니다.';
+      case 'account':
+        return ACCOUNT_REGEX.test(value) ? '' : '계좌번호는 숫자만 (4~20자리) 입력하세요.';
       default:
-        return "";
+        return '';
     }
   };
 
@@ -60,18 +54,15 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
       updated[i] = e.target.value;
       return updated;
     });
-    setErrors((prev) => ({ ...prev, [`w${i}`]: "" }));
+    setErrors((prev) => ({ ...prev, [`w${i}`]: '' }));
   };
 
   const handleCompositionStart = () => setIsComposing(true);
 
-  const handleCompositionEnd = (
-    i: number,
-    e: CompositionEvent<HTMLInputElement>
-  ) => {
+  const handleCompositionEnd = (i: number, e: CompositionEvent<HTMLInputElement>) => {
     setIsComposing(false);
     const input = (e.target as HTMLInputElement).value;
-    const onlyKorean = input.replace(/[^가-힣]/g, "").slice(0, 6);
+    const onlyKorean = input.replace(/[^가-힣]/g, '').slice(0, 6);
     setWords((prev) => {
       const updated = [...prev];
       updated[i] = onlyKorean;
@@ -79,14 +70,14 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
     });
     setErrors((prev) => ({
       ...prev,
-      [`w${i}`]: validateField("word", onlyKorean),
+      [`w${i}`]: validateField('word', onlyKorean),
     }));
   };
 
   const handleAccountChange = (v: string) => {
-    const filtered = v.replace(/\D/g, "").slice(0, 20);
+    const filtered = v.replace(/\D/g, '').slice(0, 20);
     setRefundAccount(filtered);
-    setErrors((p) => ({ ...p, account: validateField("account", filtered) }));
+    setErrors((p) => ({ ...p, account: validateField('account', filtered) }));
   };
 
   // ✅ 전체 폼 유효성 검사
@@ -99,7 +90,7 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
 
   // ✅ 저장 처리
   const handleSave = async () => {
-    if (!isFormValid) return alert("입력값을 다시 확인해주세요.");
+    if (!isFormValid) return alert('입력값을 다시 확인해주세요.');
 
     try {
       const res = await axios.post<SpPaymentUpdateRefundResponse>(
@@ -110,18 +101,18 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
           refund_account: refundAccount,
           wordset: words,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (res.data?.ok) {
-        alert("감사합니다! 24시간 안에 반영될거예요 😎");
-        navigate("/likes");
+        alert('감사합니다! 24시간 안에 반영될거예요 😎');
+        navigate('/likes');
       } else {
-        alert("⚠️ 저장 실패: " + (res.data?.message || "알 수 없는 이유"));
+        alert('⚠️ 저장 실패: ' + (res.data?.message || '알 수 없는 이유'));
       }
     } catch (err) {
-      console.error("저장 중 오류:", err);
-      alert("저장 중 오류가 발생했습니다 😢");
+      console.error('저장 중 오류:', err);
+      alert('저장 중 오류가 발생했습니다 😢');
     }
   };
 
@@ -131,15 +122,19 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
   return (
     <div className="text-left">
       {/* 단어 입력 구역 */}
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[var(--section-label-color)]">나의 단어 4개</p>
-        <span className="[font-family:'Judson',serif] text-[15px] font-bold text-[var(--main-title-color)]">{filledCount}/4</span>
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-[11px] font-bold tracking-[0.12em] text-[var(--section-label-color)] uppercase">
+          나의 단어 4개
+        </p>
+        <span className="[font-family:'Judson',serif] text-[15px] font-bold text-[var(--main-title-color)]">
+          {filledCount}/4
+        </span>
       </div>
       <div className={wordInputs}>
         {words.map((w, i) => (
           <div key={i}>
             <div className="flex items-center gap-2.5">
-              <span className="w-7 h-7 shrink-0 flex items-center justify-center rounded-full bg-[var(--word-num-bg)] [border:1px_solid_var(--color-warm-input-border)] text-[13px] font-bold text-[var(--main-title-color)]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--word-num-bg)] text-[13px] font-bold text-[var(--main-title-color)] [border:1px_solid_var(--color-warm-input-border)]">
                 {i + 1}
               </span>
               <input
@@ -151,23 +146,25 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
                 onCompositionStart={handleCompositionStart}
                 onCompositionEnd={(e) => handleCompositionEnd(i, e)}
                 onKeyDown={(e: KeyboardEvent<HTMLInputElement>) =>
-                  e.key === "Enter" && e.preventDefault()
+                  e.key === 'Enter' && e.preventDefault()
                 }
               />
             </div>
             {errors[`w${i}`] && (
-              <p className="text-[var(--color-danger)] text-xs mt-1 pl-[38px]">{errors[`w${i}`]}</p>
+              <p className="mt-1 pl-[38px] text-xs text-[var(--color-danger)]">{errors[`w${i}`]}</p>
             )}
           </div>
         ))}
       </div>
 
       {/* 구분선 */}
-      <div className="[border-top:1px_solid_var(--color-border-subtle)] my-6" />
+      <div className="my-6 [border-top:1px_solid_var(--color-border-subtle)]" />
 
       {/* 환불 계좌 입력 구역 */}
-      <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[var(--section-label-color)] mb-3">💸 환불 계좌 정보</p>
-      <div className="flex items-stretch gap-2 w-full mb-2 max-[480px]:flex-col">
+      <p className="mb-3 text-[11px] font-bold tracking-[0.12em] text-[var(--section-label-color)] uppercase">
+        💸 환불 계좌 정보
+      </p>
+      <div className="mb-2 flex w-full items-stretch gap-2 max-[480px]:flex-col">
         <select
           className={bankSelect}
           value={refundBank}
@@ -199,8 +196,8 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
         />
       </div>
 
-      <div className="text-[var(--color-danger-warm)] text-[12px] min-h-[16px] mb-4">
-        {errors.bank || errors.account || ""}
+      <div className="mb-4 min-h-[16px] text-[12px] text-[var(--color-danger-warm)]">
+        {errors.bank || errors.account || ''}
       </div>
 
       {/* 저장 */}
@@ -208,12 +205,12 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
         className={saveBtn}
         onClick={handleSave}
         disabled={!isFormValid}
-        title={!isFormValid ? "입력값을 확인해주세요" : "저장하기"}
+        title={!isFormValid ? '입력값을 확인해주세요' : '저장하기'}
       >
         저장하기
       </button>
       {!isFormValid && (
-        <p className="text-center text-[12px] text-[var(--color-text-muted)] mt-2.5">
+        <p className="mt-2.5 text-center text-[12px] text-[var(--color-text-muted)]">
           단어 4개를 모두 입력하면 저장할 수 있어요
         </p>
       )}

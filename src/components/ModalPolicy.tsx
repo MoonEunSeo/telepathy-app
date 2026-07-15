@@ -59,44 +59,41 @@ export default function ModalPolicy() {
 
   return (
     <Modal ref={modalRef}>
-        <h2 className="[font-family:'Gowun_Dodum'] text-[22px] font-bold mb-4 text-center">
-          약관에 동의해주세요
-        </h2>
-        <ul className="list-none p-0 m-0 flex flex-col items-center">
-          {termsList.map((term) => (
-            <li key={term.id} className="mb-2 [font-family:'Gowun_Dodum']">
-              <label className="cursor-pointer flex items-center">
-                <input
-                  type="checkbox"
-                  checked={!!checked[term.id]}
-                  onChange={() => toggleCheckbox(term.id)}
-                  className="mr-2"
-                  onClick={(e) => e.stopPropagation()} // ✅ 체크박스 클릭 시 라벨 클릭 방지
-                />
-                <span
-                  onClick={() => navigate(`/terms/${term.id}`)}
-                  className="underline"
-                >
-                  {term.label}
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
-        <div className="flex justify-center mt-5">
-         <Button variant="inline" onClick={agreeAll}>
+      <h2 className="mb-4 text-center [font-family:'Gowun_Dodum'] text-[22px] font-bold">
+        약관에 동의해주세요
+      </h2>
+      <ul className="m-0 flex list-none flex-col items-center p-0">
+        {termsList.map((term) => (
+          <li key={term.id} className="mb-2 [font-family:'Gowun_Dodum']">
+            <label className="flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                checked={!!checked[term.id]}
+                onChange={() => toggleCheckbox(term.id)}
+                className="mr-2"
+                onClick={(e) => e.stopPropagation()} // ✅ 체크박스 클릭 시 라벨 클릭 방지
+              />
+              <span onClick={() => navigate(`/terms/${term.id}`)} className="underline">
+                {term.label}
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-5 flex justify-center">
+        <Button variant="inline" onClick={agreeAll}>
           전체 동의하기
-         </Button>
-         <Button variant="inline" onClick={handleNext}>
+        </Button>
+        <Button variant="inline" onClick={handleNext}>
           다음
-         </Button>
+        </Button>
+      </div>
+      {showAlert && (
+        /* 구 전역 .alert-box + 인라인(mt/px) 흡수 */
+        <div className="mt-4 rounded-[8px] [background-color:var(--color-danger-surface)] px-[50px] py-3 text-center text-[14px] whitespace-pre-line text-[var(--color-danger-text)] [border:1px_solid_var(--color-danger-border)]">
+          모든 필수 약관에 동의하지 않으면{'\n'}서비스를 이용할 수 없습니다.
         </div>
-        {showAlert && (
-          /* 구 전역 .alert-box + 인라인(mt/px) 흡수 */
-          <div className="[background-color:var(--color-danger-surface)] text-[var(--color-danger-text)] [border:1px_solid_var(--color-danger-border)] py-3 px-[50px] text-[14px] rounded-[8px] text-center mt-4 whitespace-pre-line">
-            모든 필수 약관에 동의하지 않으면{'\n'}서비스를 이용할 수 없습니다.
-          </div>
-        )}
+      )}
     </Modal>
   );
 }

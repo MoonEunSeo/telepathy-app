@@ -37,9 +37,9 @@ export default function ChangePassword() {
 
   return (
     /* 구 .login-container */
-    <div className="flex flex-col items-center min-h-[100dvh] justify-center py-10 halloween:gap-[3px] halloween:w-full">
+    <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10">
       {/* 구 .login-title — 세리프 */}
-      <h1 className="[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mt-[10px] mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]">
+      <h1 className="mt-[10px] mb-6 [font-family:'Judson',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
         비밀번호 변경
       </h1>
       <AuthInput
@@ -60,9 +60,7 @@ export default function ChangePassword() {
         value={confirmPassword}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
       />
-      <Button onClick={handleChangePassword}>
-        변경하기
-      </Button>
+      <Button onClick={handleChangePassword}>변경하기</Button>
 
       {modalMessage && (
         <Modal>

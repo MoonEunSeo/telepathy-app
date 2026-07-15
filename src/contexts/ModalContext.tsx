@@ -15,11 +15,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   // useState(false) 는 TS가 알아서 boolean으로 추론 → 제네릭 생략 OK
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
-    <ModalContext.Provider value={{ isOpen, setIsOpen }}>
-      {children}
-    </ModalContext.Provider>
-  );
+  return <ModalContext.Provider value={{ isOpen, setIsOpen }}>{children}</ModalContext.Provider>;
 };
 
 export const useModal = (): ModalContextValue => {

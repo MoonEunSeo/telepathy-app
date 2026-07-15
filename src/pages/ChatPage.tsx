@@ -19,8 +19,10 @@ interface ReportSubmitValues {
 // 구 .chat-message (+ .self / .other) — renderMessages 반복
 const msgBase =
   'max-w-[65%] py-2.5 px-3.5 rounded-[18px] text-[15px] leading-[1.5] whitespace-pre-wrap break-words box-border';
-const msgSelf = 'self-end [background:var(--chat-self-bg)] text-[var(--chat-accent-text)] rounded-br-[6px]';
-const msgOther = 'self-start [background:var(--chat-other-bg)] text-[var(--chat-text)] rounded-bl-[6px]';
+const msgSelf =
+  'self-end [background:var(--chat-self-bg)] text-[var(--chat-accent-text)] rounded-br-[6px]';
+const msgOther =
+  'self-start [background:var(--chat-other-bg)] text-[var(--chat-text)] rounded-bl-[6px]';
 // 말풍선 시간 표기 (오전/오후 h:mm)
 const formatTime = (ts?: number) => {
   if (!ts) return '';
@@ -32,11 +34,13 @@ const formatTime = (ts?: number) => {
   return `${ampm} ${h}:${String(m).padStart(2, '0')}`;
 };
 // 구 .exit-button-text.confirm / .cancel (나가기 확인 모달)
-const endedBtnBase = 'py-2.5 px-[18px] border-none rounded-full cursor-pointer [transition:all_0.2s] text-[16px]';
+const endedBtnBase =
+  'py-2.5 px-[18px] border-none rounded-full cursor-pointer [transition:all_0.2s] text-[16px]';
 const endedBtnConfirm = `${endedBtnBase} [background:var(--ended-confirm-bg)] text-[var(--ended-btn-text)] hover:[background:var(--ended-confirm-bg-hover)]`;
 const endedBtnCancel = `${endedBtnBase} [background:var(--ended-cancel-bg)] text-[var(--ended-cancel-text)] hover:[background:var(--ended-cancel-bg-hover)]`;
 // 구 .typing-dots span
-const dot = 'w-1.5 h-1.5 mx-[3px] [background-color:var(--chat-dots)] rounded-full animate-[chat-blink_1.4s_infinite_both]';
+const dot =
+  'w-1.5 h-1.5 mx-[3px] [background-color:var(--chat-dots)] rounded-full animate-[chat-blink_1.4s_infinite_both]';
 
 export default function ChatPage() {
   const navigate = useNavigate();
@@ -78,8 +82,7 @@ export default function ChatPage() {
 
   // ✅ 소켓 이벤트
   useEffect(() => {
-    const handleChatMessage = (msg: ChatMessage) =>
-      setMessages((prev) => [...prev, msg]);
+    const handleChatMessage = (msg: ChatMessage) => setMessages((prev) => [...prev, msg]);
     const handleTyping = () => setIsTyping(true);
     const handleStopTyping = () => setIsTyping(false);
 
@@ -244,7 +247,9 @@ export default function ChatPage() {
         <div key={idx} className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
           <div className={`${msgBase} ${mine ? msgSelf : msgOther}`}>{msg.message}</div>
           {msg.timestamp ? (
-            <span className="mt-1 px-1 text-[11px] text-[var(--chat-time-color)]">{formatTime(msg.timestamp)}</span>
+            <span className="mt-1 px-1 text-[11px] text-[var(--chat-time-color)]">
+              {formatTime(msg.timestamp)}
+            </span>
           ) : null}
         </div>
       );
@@ -254,37 +259,37 @@ export default function ChatPage() {
     <div data-page="chatpage">
       {/* 🎃 할로윈 모드용 페이지 식별자 ([data-page="chatpage"] + ::before 오버레이가 halloween.css 에 존재) */}
       {/* 구 .chat-container */}
-      <div className="flex flex-col h-screen w-full bg-[var(--chat-container-bg)] [font-family:'Gowun_Dodum',sans-serif]">
+      <div className="flex h-screen w-full flex-col bg-[var(--chat-container-bg)] [font-family:'Gowun_Dodum',sans-serif]">
         {/* 🔹 채팅 헤더 — 리디자인: 뒤로가기 + 상대 닉네임 + 단어 배지 + 신고/나가기 */}
-        <div className="flex justify-between items-center py-3 px-3 bg-[var(--chat-panel-bg)] text-[var(--chat-text)] [border-bottom:1px_solid_var(--chat-border)] sticky top-0 z-20">
+        <div className="sticky top-0 z-20 flex items-center justify-between bg-[var(--chat-panel-bg)] px-3 py-3 text-[var(--chat-text)] [border-bottom:1px_solid_var(--chat-border)]">
           {/* 뒤로가기 */}
           <button
-            className="w-9 h-9 shrink-0 flex items-center justify-center rounded-full text-[var(--chat-text)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--chat-text)] hover:bg-[var(--color-surface-muted)]"
             onClick={() => setShowExitConfirm(true)}
             title="나가기"
           >
             <ChevronLeft size={22} />
           </button>
           {/* 상대 닉네임 + 단어 배지 */}
-          <div className="flex flex-col items-center leading-tight min-w-0">
-            <span className="font-bold text-[16px] text-[var(--color-text-strong)] truncate max-w-[180px]">
+          <div className="flex min-w-0 flex-col items-center leading-tight">
+            <span className="max-w-[180px] truncate text-[16px] font-bold text-[var(--color-text-strong)]">
               {partnerNickname}
             </span>
-            <span className="mt-0.5 text-[11.5px] text-[var(--chat-system-text)] bg-[var(--stat-chip-bg)] rounded-[var(--radius-pill)] px-2 py-0.5">
+            <span className="mt-0.5 rounded-[var(--radius-pill)] bg-[var(--stat-chip-bg)] px-2 py-0.5 text-[11.5px] text-[var(--chat-system-text)]">
               함께 떠올린 단어 · {word}
             </span>
           </div>
           {/* 신고(중립) / 나가기(danger) */}
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex shrink-0 items-center gap-0.5">
             <button
-              className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--chat-exit-text)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[var(--chat-exit-text)] hover:bg-[var(--color-surface-muted)]"
               onClick={() => setShowReportModal(true)}
               title="신고하기"
             >
               <AlertTriangle size={19} />
             </button>
             <button
-              className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--color-danger)] cursor-pointer hover:bg-[var(--color-surface-muted)]"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[var(--color-danger)] hover:bg-[var(--color-surface-muted)]"
               onClick={() => setShowExitConfirm(true)}
               title="나가기"
             >
@@ -294,16 +299,17 @@ export default function ChatPage() {
         </div>
 
         {/* 🔹 메시지 영역 — 구 .chat-messages */}
-        <div className="flex-1 p-5 overflow-y-auto flex flex-col gap-2.5 mt-2.5 text-[var(--chat-text)] animate-[chat-fade-in_0.3s_ease]">
+        <div className="mt-2.5 flex flex-1 animate-[chat-fade-in_0.3s_ease] flex-col gap-2.5 overflow-y-auto p-5 text-[var(--chat-text)]">
           {/* 시스템 안내 — 중앙 칩 */}
-          <div className="self-center max-w-[85%] text-center text-[13px] text-[var(--chat-system-text)] bg-[var(--chat-system-bg)] rounded-[var(--radius-md)] py-2 px-3.5 my-1">
-            <strong className="font-semibold">{partnerNickname}</strong>님과 같은 단어를 떠올렸어요! 즐거운 대화 되세요.
+          <div className="my-1 max-w-[85%] self-center rounded-[var(--radius-md)] bg-[var(--chat-system-bg)] px-3.5 py-2 text-center text-[13px] text-[var(--chat-system-text)]">
+            <strong className="font-semibold">{partnerNickname}</strong>님과 같은 단어를 떠올렸어요!
+            즐거운 대화 되세요.
           </div>
           {renderMessages()}
           {isTyping && (
             <div className={`${msgBase} ${msgOther}`}>
               {/* 구 .chat-typing-indicator(미정의) + .typing-dots */}
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <span className={dot}></span>
                 <span className={`${dot} [animation-delay:0.2s]`}></span>
                 <span className={`${dot} [animation-delay:0.4s]`}></span>
@@ -314,9 +320,9 @@ export default function ChatPage() {
         </div>
 
         {/* 🔹 입력 영역 — 리디자인: pill 입력 + 원형 전송 버튼 */}
-        <div className="flex items-center gap-2 py-3 px-4 [border-top:1px_solid_var(--chat-border)] bg-[var(--chat-panel-bg)]">
+        <div className="flex items-center gap-2 bg-[var(--chat-panel-bg)] px-4 py-3 [border-top:1px_solid_var(--chat-border)]">
           <input
-            className="flex-1 h-[46px] px-4 [background:var(--chat-input-bg)] text-[var(--chat-input-text)] [border:1px_solid_var(--chat-input-border)] rounded-[var(--radius-pill)] outline-none text-[14px] [transition:border_0.2s] focus:[border-color:var(--color-text-subtle)] disabled:[background-color:var(--color-border-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-[46px] flex-1 rounded-[var(--radius-pill)] px-4 text-[14px] text-[var(--chat-input-text)] outline-none [background:var(--chat-input-bg)] [border:1px_solid_var(--chat-input-border)] [transition:border_0.2s] focus:[border-color:var(--color-text-subtle)] disabled:cursor-not-allowed disabled:[background-color:var(--color-border-subtle)] disabled:opacity-60"
             placeholder="메시지를 입력하세요."
             value={message}
             onChange={handleTyping}
@@ -325,7 +331,7 @@ export default function ChatPage() {
           />
           {/* 원형 전송 버튼 (종이비행기) */}
           <button
-            className="w-[46px] h-[46px] shrink-0 flex items-center justify-center [background:var(--chat-send-bg)] text-[var(--color-on-accent)] border-none rounded-full cursor-pointer [transition:opacity_0.2s] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex h-[46px] w-[46px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none text-[var(--color-on-accent)] [background:var(--chat-send-bg)] [transition:opacity_0.2s] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             onClick={handleSendMessage}
             disabled={chatEnded}
             title="전송"
@@ -336,9 +342,11 @@ export default function ChatPage() {
 
         {/* 🔹 나가기 확인 모달 — 구 .modal-overlay(스코프) / .chat-ended-modal */}
         {showExitConfirm && (
-          <div className="fixed inset-0 flex justify-center items-center [background:var(--modal-overlay-bg)] [backdrop-filter:blur(4px)] z-[1000]">
-            <div className="[background:var(--ended-modal-bg)] text-[var(--ended-modal-text)] [border:1px_solid_var(--ended-modal-border)] rounded-[20px] py-6 px-8 [box-shadow:var(--ended-modal-shadow)] text-center w-[300px] animate-[chat-fade-in-up_0.25s_ease-out]">
-              <p className="mb-10 text-[var(--ended-modal-text)] text-[18px] font-semibold p-5">정말 나가시겠어요?</p>
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center [backdrop-filter:blur(4px)] [background:var(--modal-overlay-bg)]">
+            <div className="w-[300px] animate-[chat-fade-in-up_0.25s_ease-out] rounded-[20px] px-8 py-6 text-center text-[var(--ended-modal-text)] [box-shadow:var(--ended-modal-shadow)] [background:var(--ended-modal-bg)] [border:1px_solid_var(--ended-modal-border)]">
+              <p className="mb-10 p-5 text-[18px] font-semibold text-[var(--ended-modal-text)]">
+                정말 나가시겠어요?
+              </p>
               {/* 구 .modal-buttons */}
               <div className="flex justify-center gap-3">
                 <button className={endedBtnConfirm} onClick={handleExitChat}>
@@ -354,20 +362,19 @@ export default function ChatPage() {
 
         {/* 🔹 신고 모달 */}
         {showReportModal && (
-          <ReportModal
-            onClose={() => setShowReportModal(false)}
-            onSubmit={handleSubmitReport}
-          />
+          <ReportModal onClose={() => setShowReportModal(false)} onSubmit={handleSubmitReport} />
         )}
 
         {/* 🔹 상대방 종료 알림 — 구 .chat-ended-overlay / .chat-ended-banner */}
         {chatEnded && (
-          <div className="fixed inset-0 [background:var(--modal-overlay-bg)] [backdrop-filter:blur(6px)] flex justify-center items-center z-[2000] animate-[chat-fade-in-overlay_0.3s_ease-out]">
-            <div className="[background:var(--ended-modal-bg)] text-[var(--ended-modal-text)] [border:1px_solid_var(--ended-modal-border)] rounded-[20px] py-7 px-9 [box-shadow:var(--ended-modal-shadow)] text-center w-[250px] animate-[chat-fade-in-up-modal_0.3s_ease-out] [font-family:'Gowun_Dodum',sans-serif]">
-              <p className="mb-7 text-[var(--ended-modal-text)] text-[18px] font-semibold">상대방이 대화를 종료했어요.</p>
+          <div className="fixed inset-0 z-[2000] flex animate-[chat-fade-in-overlay_0.3s_ease-out] items-center justify-center [backdrop-filter:blur(6px)] [background:var(--modal-overlay-bg)]">
+            <div className="w-[250px] animate-[chat-fade-in-up-modal_0.3s_ease-out] rounded-[20px] px-9 py-7 text-center [font-family:'Gowun_Dodum',sans-serif] text-[var(--ended-modal-text)] [box-shadow:var(--ended-modal-shadow)] [background:var(--ended-modal-bg)] [border:1px_solid_var(--ended-modal-border)]">
+              <p className="mb-7 text-[18px] font-semibold text-[var(--ended-modal-text)]">
+                상대방이 대화를 종료했어요.
+              </p>
               {/* 구 .chat-ended-banner .exit-button-text (배너 전용 오버라이드) */}
               <button
-                className="py-2.5 px-[22px] border-none rounded-full cursor-pointer text-[15px] [background:var(--ended-accent-bg)] text-[var(--ended-btn-text)] [transition:background_0.2s_ease,transform_0.1s_ease] hover:[background:var(--ended-accent-bg-hover)] hover:-translate-y-px"
+                className="cursor-pointer rounded-full border-none px-[22px] py-2.5 text-[15px] text-[var(--ended-btn-text)] [background:var(--ended-accent-bg)] [transition:background_0.2s_ease,transform_0.1s_ease] hover:-translate-y-px hover:[background:var(--ended-accent-bg-hover)]"
                 onClick={handleExitChat}
               >
                 나가기

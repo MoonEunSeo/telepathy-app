@@ -22,9 +22,7 @@ const ReportModal = ({ onClose, onSubmit }: ReportModalProps) => {
 
   const toggleReason = (reason: string) => {
     setSelectedReasons((prev) =>
-      prev.includes(reason)
-        ? prev.filter((r) => r !== reason)
-        : [...prev, reason]
+      prev.includes(reason) ? prev.filter((r) => r !== reason) : [...prev, reason],
     );
   };
 
@@ -51,9 +49,11 @@ const ReportModal = ({ onClose, onSubmit }: ReportModalProps) => {
   return (
     <div className="modal-overlay">
       {/* 구 .report-modal */}
-      <div className="[background:var(--report-modal-bg)] text-[var(--report-modal-text)] [border:1px_solid_var(--report-modal-border)] p-6 rounded-[16px] w-[90%] max-w-[360px] [font-family:'Gowun_Dodum',sans-serif] [box-shadow:var(--report-modal-shadow)]">
+      <div className="w-[100%] max-w-[360px] rounded-[16px] p-6 [font-family:'Gowun_Dodum',sans-serif] text-[var(--report-modal-text)] [box-shadow:var(--report-modal-shadow)] [background:var(--report-modal-bg)] [border:1px_solid_var(--report-modal-border)]">
         {/* 구 .report-modal h1 (judson-title 훅) */}
-        <h1 className="[font-family:'Judson',serif] text-[28px] font-semibold mt-0 mb-6 text-[var(--report-title-color)] tracking-[0.5px]">Telepathy</h1>
+        <h1 className="mt-0 mb-6 [font-family:'Judson',serif] text-[28px] font-semibold tracking-[0.5px] text-[var(--report-title-color)]">
+          Telepathy
+        </h1>
         <p>상대방의 어떤 점이 불편하셨나요?</p>
         <ul>
           {reasonsList.map((reason) => (
@@ -71,16 +71,25 @@ const ReportModal = ({ onClose, onSubmit }: ReportModalProps) => {
         </ul>
         {/* 구 .report-modal textarea */}
         <textarea
-          className="w-full min-h-[90px] resize-none p-2.5 [background:var(--report-input-bg)] text-[var(--report-input-text)] [border:1px_solid_var(--report-input-border)] rounded-[8px] mt-2 [font-family:inherit] text-[14px] placeholder:text-[var(--report-input-placeholder)]"
+          className="mt-2 min-h-[90px] w-full resize-none rounded-[8px] p-2.5 [font-family:inherit] text-[14px] text-[var(--report-input-text)] [background:var(--report-input-bg)] [border:1px_solid_var(--report-input-border)] placeholder:text-[var(--report-input-placeholder)]"
           placeholder="이 내용은 운영팀만 열람 가능하며, 신고자는 익명으로 처리됩니다"
           value={extra}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setExtra(e.target.value)}
           maxLength={200}
         />
         {/* 구 .report-buttons (취소=first, 제출=last) */}
-        <div className="flex justify-end gap-3 mt-4">
-          <button onClick={onClose} className="py-2 px-[18px] rounded-full border-none cursor-pointer text-[14px] [background:var(--report-cancel-bg)] text-[var(--report-cancel-text)]">취소</button>
-          <button onClick={handleSubmit} disabled={loading} className="py-2 px-[18px] rounded-full border-none cursor-pointer text-[14px] [background:var(--report-submit-bg)] text-[var(--report-submit-text)]">
+        <div className="mt-4 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="cursor-pointer rounded-full border-none px-[18px] py-2 text-[14px] text-[var(--report-cancel-text)] [background:var(--report-cancel-bg)]"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="cursor-pointer rounded-full border-none px-[18px] py-2 text-[14px] text-[var(--report-submit-text)] [background:var(--report-submit-bg)]"
+          >
             {loading ? '제출 중...' : '제출하기'}
           </button>
         </div>

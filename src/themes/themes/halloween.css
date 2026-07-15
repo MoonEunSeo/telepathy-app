@@ -13,7 +13,6 @@
  * 계열)으로 이관됨. 컴포넌트 CSS 가 var 로 소비 → 클래스 해시와 무관하게 적용.
  * ------------------------------------------------------------------- */
 
-
 /* 🎃 Halloween 로딩 화면 */
 .halloween-loader {
   position: fixed !important;
@@ -33,12 +32,19 @@
 
 /* ✨ fade in → 유지 → fade out */
 @keyframes fadeInOut {
-  0% { opacity: 0; }
-  25% { opacity: 1; }
-  75% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
-
 
 /* 🎃 중앙 호박 아이콘 */
 .halloween-loader .pumpkin-face {
@@ -49,7 +55,8 @@
 
 /* 호박 glow */
 @keyframes glowPumpkin {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.9;
     filter: brightness(0.8);
     text-shadow: 0 0 8px rgba(255, 140, 50, 0.3);
@@ -71,226 +78,233 @@
 }
 
 @keyframes text-fade {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
 }
-
 
 /* 🧙‍♀️ 전체 테마 배경 */
 body.halloween-mode {
-    background: url('../../assets/Halloween.svg') no-repeat center center fixed;
-    background-size: cover !important;
-    color: #fff !important;
-  }
+  background: url('../../assets/Halloween.svg') no-repeat center center fixed;
+  background-size: cover !important;
+  color: #fff !important;
+}
 
-  /* 부드러운 전환 (버튼/입력) */
-  body.halloween-mode button,
-  body.halloween-mode input {
-    transition: all 0.3s ease-in-out;
-  }
+/* 부드러운 전환 (버튼/입력) */
+body.halloween-mode button,
+body.halloween-mode input {
+  transition: all 0.3s ease-in-out;
+}
 
-  body.halloween-mode .halloween-loader,
+body.halloween-mode .halloween-loader,
 body.halloween-mode .halloween-loader * {
   background-color: unset !important;
 }
 
-
-  /* 🧡 메인 타이틀 / 서브타이틀 (base/index.css 전역 클래스 → 훅 유지)
+/* 🧡 메인 타이틀 / 서브타이틀 (base/index.css 전역 클래스 → 훅 유지)
      (login-title/login-subtitle 은 tokens.css 로 이관 완료 → 여기서 제외) */
-  body.halloween-mode .title {
-    color: #D05D4B !important;
-    text-shadow: 0 0px 0px rgba(255, 150, 0, 0.7)  !important;
-  }
+body.halloween-mode .title {
+  color: #d05d4b !important;
+  text-shadow: 0 0px 0px rgba(255, 150, 0, 0.7) !important;
+}
 
-  body.halloween-mode .subtitle {
-    color: #ffe6b3 !important;
-  }
+body.halloween-mode .subtitle {
+  color: #ffe6b3 !important;
+}
 
 /* 🧡 로그인 컨테이너 gap/width 는 각 인증 페이지의 halloween:gap-[3px] halloween:w-full 로 이관 */
 
 /* ✨ 호박등 빛이 흐르는 효과 (tokens.css 의 --btn-animation 이 참조) */
 @keyframes pumpkin-glow {
   0% {
-    box-shadow: 0 0 10px rgba(255, 120, 50, 0.2),
-                inset 0 0 6px rgba(255, 160, 80, 0.1);
+    box-shadow:
+      0 0 10px rgba(255, 120, 50, 0.2),
+      inset 0 0 6px rgba(255, 160, 80, 0.1);
     filter: brightness(1);
   }
   50% {
-    box-shadow: 0 0 16px rgba(255, 150, 60, 0.45),
-                inset 0 0 8px rgba(255, 180, 100, 0.25);
+    box-shadow:
+      0 0 16px rgba(255, 150, 60, 0.45),
+      inset 0 0 8px rgba(255, 180, 100, 0.25);
     filter: brightness(1.08);
   }
   100% {
-    box-shadow: 0 0 10px rgba(255, 120, 50, 0.2),
-                inset 0 0 6px rgba(255, 160, 80, 0.1);
+    box-shadow:
+      0 0 10px rgba(255, 120, 50, 0.2),
+      inset 0 0 6px rgba(255, 160, 80, 0.1);
     filter: brightness(1);
   }
 }
 
 /* ⚖️ 하단 약관 할로윈 배치(하단 고정)는 Login/Register 의 halloween:absolute … 유틸로 이관 */
 
-  /* 🪄 부드러운 전체 전환 */
-  body.halloween-mode * {
-    transition: all 0.3s ease-in-out;
-  }
+/* 🪄 부드러운 전체 전환 */
+body.halloween-mode * {
+  transition: all 0.3s ease-in-out;
+}
 
-  /* 🧡 select 드롭다운 (요소 셀렉터 → CSS Modules 안전) */
-  body.halloween-mode select {
-    background: linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9)) !important;
-    color: #ffdc91 !important; /* 부드러운 금빛 글씨 */
-    border: 1.5px solid rgba(255, 160, 60, 0.5) !important;
-    border-radius: 10px !important;
-    padding: 8px 12px !important;
-    font-family: 'Gowun Dodum', sans-serif;
-    font-size: 14px;
-    box-shadow: 0 2px 6px rgba(255, 150, 0, 0.25);
-    appearance: none !important;
-    background-image: url('../assets/select-arrow.svg'),
-                      linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9));
-    background-repeat: no-repeat;
-    background-position: right 10px center, center;
-    background-size: 12px, cover;
-    transition: all 0.25s ease-in-out;
-  }
+/* 🧡 select 드롭다운 (요소 셀렉터 → CSS Modules 안전) */
+body.halloween-mode select {
+  background: linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9)) !important;
+  color: #ffdc91 !important; /* 부드러운 금빛 글씨 */
+  border: 1.5px solid rgba(255, 160, 60, 0.5) !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(255, 150, 0, 0.25);
+  appearance: none !important;
+  background-image:
+    url('../assets/select-arrow.svg'),
+    linear-gradient(145deg, rgba(55, 30, 10, 0.9), rgba(35, 20, 5, 0.9));
+  background-repeat: no-repeat;
+  background-position:
+    right 10px center,
+    center;
+  background-size: 12px, cover;
+  transition: all 0.25s ease-in-out;
+}
 
-  body.halloween-mode select:hover,
-  body.halloween-mode select:focus {
-    background: linear-gradient(145deg, rgba(75, 40, 15, 0.95), rgba(45, 25, 10, 0.95)) !important;
-    border-color: rgba(255, 190, 100, 0.7) !important;
-    box-shadow: 0 0 8px rgba(255, 180, 80, 0.4);
-    color: #fff3cf !important;
-  }
+body.halloween-mode select:hover,
+body.halloween-mode select:focus {
+  background: linear-gradient(145deg, rgba(75, 40, 15, 0.95), rgba(45, 25, 10, 0.95)) !important;
+  border-color: rgba(255, 190, 100, 0.7) !important;
+  box-shadow: 0 0 8px rgba(255, 180, 80, 0.4);
+  color: #fff3cf !important;
+}
 
-  body.halloween-mode select option {
-    background: rgba(45, 25, 10, 0.96) !important;
-    color: #ffecb3 !important;
-    border: none !important;
-    font-family: 'Gowun Dodum', sans-serif;
-    font-size: 14px;
-  }
+body.halloween-mode select option {
+  background: rgba(45, 25, 10, 0.96) !important;
+  color: #ffecb3 !important;
+  border: none !important;
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 14px;
+}
 
-  /* 🎃 MyPage 는 Halloween 테마 제외 (attribute 스코프 → CSS Modules 안전) */
-  body.halloween-mode [data-page="mypage"],
-  body.halloween-mode [data-page="mypage"] * {
-    background: none !important;
-    background-color: initial !important;
-    color: initial !important;
-    box-shadow: initial !important;
-    border: initial !important;
-    text-shadow: none !important;
-    filter: none !important;
-    transition: none !important;
-  }
+/* 🎃 MyPage 는 Halloween 테마 제외 (attribute 스코프 → CSS Modules 안전) */
+body.halloween-mode [data-page='mypage'],
+body.halloween-mode [data-page='mypage'] * {
+  background: none !important;
+  background-color: initial !important;
+  color: initial !important;
+  box-shadow: initial !important;
+  border: initial !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+}
 
-  /* ✅ MyPage 내부 원래 톤 복원 */
-  body.halloween-mode [data-page="mypage"] button {
-    background: initial !important;
-    color: initial !important;
-    border: initial !important;
-    box-shadow: initial !important;
-  }
+/* ✅ MyPage 내부 원래 톤 복원 */
+body.halloween-mode [data-page='mypage'] button {
+  background: initial !important;
+  color: initial !important;
+  border: initial !important;
+  box-shadow: initial !important;
+}
 
-  body.halloween-mode [data-page="mypage"] h1,
-  body.halloween-mode [data-page="mypage"] h2,
-  body.halloween-mode [data-page="mypage"] h3,
-  body.halloween-mode [data-page="mypage"] p {
-    color: initial !important;
-  }
+body.halloween-mode [data-page='mypage'] h1,
+body.halloween-mode [data-page='mypage'] h2,
+body.halloween-mode [data-page='mypage'] h3,
+body.halloween-mode [data-page='mypage'] p {
+  color: initial !important;
+}
 
-  /* (MyPage 구분선 hr 규칙은 MyPage.module.css 소유로 이동 — .mypage-container
+/* (MyPage 구분선 hr 규칙은 MyPage.module.css 소유로 이동 — .mypage-container
      가 해시되어 여기 전역 훅은 더 이상 매칭되지 않으므로 제거. MyPage 는
      위 [data-page="mypage"] 리셋으로 이미 할로윈 테마에서 제외됨) */
 
 /*---------------------------------------*/
 /* 🎃 Halloween 모드 - ChatPage 전용 (Elegant Night Ver.) */
 /*---------------------------------------*/
-body.halloween-mode [data-page="chatpage"] {
-    position: relative;
-    background: transparent !important;
-    overflow: hidden;
-    /* 채팅 토큰 오버라이드(--chat-*)는 tokens.css 로 이관 (항상 로드) */
-  }
+body.halloween-mode [data-page='chatpage'] {
+  position: relative;
+  background: transparent !important;
+  overflow: hidden;
+  /* 채팅 토큰 오버라이드(--chat-*)는 tokens.css 로 이관 (항상 로드) */
+}
 
-  /* 🕯️ 어두운 반투명 컨테이너 */
-  body.halloween-mode [data-page="chatpage"]::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 10, 5, 0.65);
-    backdrop-filter: blur(6px);
-    z-index: 0;
-  }
+/* 🕯️ 어두운 반투명 컨테이너 */
+body.halloween-mode [data-page='chatpage']::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 10, 5, 0.65);
+  backdrop-filter: blur(6px);
+  z-index: 0;
+}
 
-  /* 채팅 코어 + 신고/종료 모달은 tokens.css 의 chat / report / ended 계열
+/* 채팅 코어 + 신고/종료 모달은 tokens.css 의 chat / report / ended 계열
      토큰으로 이관 완료 → ChatPage.css 가 var 로 소비. */
 
-
-  /* ------------------------------------------ */
+/* ------------------------------------------ */
 /* 🎃 Halloween 모드 - Toast 알림 (3rd-party 전역 클래스 → 훅 유지) */
 /* ------------------------------------------ */
 body.halloween-mode .Toastify__toast {
-    background: rgba(255, 255, 255, 0.15) !important;  /* ✨ 연한 반투명 흰색 */
-    backdrop-filter: blur(6px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
-    color: #fffaf2 !important;
-    box-shadow: 0 4px 12px rgba(255, 200, 150, 0.15) !important;
-    border-radius: 12px !important;
-    font-family: 'Gowun Dodum', sans-serif !important;
-    letter-spacing: 0.2px !important;
-    font-size: 15px !important;
-  }
+  background: rgba(255, 255, 255, 0.15) !important; /* ✨ 연한 반투명 흰색 */
+  backdrop-filter: blur(6px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #fffaf2 !important;
+  box-shadow: 0 4px 12px rgba(255, 200, 150, 0.15) !important;
+  border-radius: 12px !important;
+  font-family: 'Gowun Dodum', sans-serif !important;
+  letter-spacing: 0.2px !important;
+  font-size: 15px !important;
+}
 
-  /* ✅ 성공 토스트 */
-  body.halloween-mode .Toastify__toast--success {
-    background: rgba(255, 255, 255, 0.18) !important;
-    border-left: 4px solid #6eff8d !important;          /* 부드러운 초록빛 */
-    color: #eaffea !important;
-  }
+/* ✅ 성공 토스트 */
+body.halloween-mode .Toastify__toast--success {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-left: 4px solid #6eff8d !important; /* 부드러운 초록빛 */
+  color: #eaffea !important;
+}
 
-  /* ⚠️ 에러 토스트 */
-  body.halloween-mode .Toastify__toast--error {
-    background: rgba(255, 255, 255, 0.18) !important;
-    border-left: 4px solid #ff6f6f !important;          /* 따뜻한 붉은빛 */
-    color: #ffe6e6 !important;
-  }
+/* ⚠️ 에러 토스트 */
+body.halloween-mode .Toastify__toast--error {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-left: 4px solid #ff6f6f !important; /* 따뜻한 붉은빛 */
+  color: #ffe6e6 !important;
+}
 
-  /* ⏳ 프로그레스 바 (toast 밑줄) */
-  body.halloween-mode .Toastify__progress-bar {
-    background: rgba(255, 200, 120, 0.6) !important;
-    height: 3px !important;
-    border-radius: 10px !important;
-  }
+/* ⏳ 프로그레스 바 (toast 밑줄) */
+body.halloween-mode .Toastify__progress-bar {
+  background: rgba(255, 200, 120, 0.6) !important;
+  height: 3px !important;
+  border-radius: 10px !important;
+}
 
-  /* 🕯️ 토스트 닫기 버튼 */
-  body.halloween-mode .Toastify__close-button {
-    position: absolute !important;
-    top: 6px !important;
-    right: 6px !important;
-    width: 22px !important;
-    height: 22px !important;
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.18) !important; /* 연한 흰색 반투명 */
-    color: #ff9f4a !important;                        /* 🧡 따뜻한 주황빛 */
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 2px 8px rgba(255, 150, 50, 0.25);
-    border: 1px solid rgba(255, 200, 150, 0.3) !important;
-    transition: all 0.25s ease-in-out !important;
-    cursor: pointer !important;
-  }
+/* 🕯️ 토스트 닫기 버튼 */
+body.halloween-mode .Toastify__close-button {
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.18) !important; /* 연한 흰색 반투명 */
+  color: #ff9f4a !important; /* 🧡 따뜻한 주황빛 */
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(255, 150, 50, 0.25);
+  border: 1px solid rgba(255, 200, 150, 0.3) !important;
+  transition: all 0.25s ease-in-out !important;
+  cursor: pointer !important;
+}
 
-  /* ✨ hover 시 달빛 반짝 효과 */
-  body.halloween-mode .Toastify__close-button:hover {
-    background: rgba(255, 200, 150, 0.25) !important;
-    color: #fff5e0 !important;
-    transform: scale(1.1) !important;
-    box-shadow: 0 0 8px rgba(255, 180, 100, 0.4);
-  }
-
+/* ✨ hover 시 달빛 반짝 효과 */
+body.halloween-mode .Toastify__close-button:hover {
+  background: rgba(255, 200, 150, 0.25) !important;
+  color: #fff5e0 !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 8px rgba(255, 180, 100, 0.4);
+}
 
 /* ===========================================
 🎃 Register 페이지 (토큰 이관 완료)
@@ -299,7 +313,6 @@ Register 는 .auth-input / .login-title / .login-subtitle / .bold-link 등
 공유 클래스를 쓰므로 base 의 토큰 규칙으로 자동 테마 적용되고, 버튼은
 tokens.css 의 --btn-* 토큰으로 커버된다.
 =========================================== */
-
 
 /* 🎃 Verify-MVP 성별 토글 → tokens.css --toggle-* (body.halloween-mode
    [data-page="verify-mvp"]) + src/components/ui/ToggleButton.tsx 로 이관됨 */

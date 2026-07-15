@@ -15,23 +15,23 @@
 
 :root {
   /* ===== Surfaces (표면) ===== */
-  --color-bg: #f9f6f1;             /* 페이지/앱 배경 */
-  --color-surface: #ffffff;        /* 카드·모달·입력창·헤더 */
-  --color-surface-muted: #f5f5f5;  /* 은은한 대체 표면 / hover */
+  --color-bg: #f9f6f1; /* 페이지/앱 배경 */
+  --color-surface: #ffffff; /* 카드·모달·입력창·헤더 */
+  --color-surface-muted: #f5f5f5; /* 은은한 대체 표면 / hover */
   --color-surface-sunken: #f3f3f3; /* 취소 버튼·칩 배경 */
 
   /* ===== Text (텍스트) ===== */
-  --color-text: #333333;           /* 기본 본문 */
-  --color-text-strong: #222222;    /* 강조 텍스트 */
+  --color-text: #333333; /* 기본 본문 */
+  --color-text-strong: #222222; /* 강조 텍스트 */
   --color-text-secondary: #555555; /* muted보다 진한 보조 텍스트 (#555·#666 통합) */
-  --color-text-muted: #888888;     /* 보조 텍스트 */
-  --color-text-subtle: #999999;    /* 라벨·footer */
-  --color-text-faint: #aaaaaa;     /* 힌트·읽음 표시 */
+  --color-text-muted: #888888; /* 보조 텍스트 */
+  --color-text-subtle: #999999; /* 라벨·footer */
+  --color-text-faint: #aaaaaa; /* 힌트·읽음 표시 */
 
   /* ===== Accent (기본 액션) ===== */
-  --color-accent: #000000;         /* 주요 버튼 배경 */
-  --color-accent-hover: #222222;   /* 버튼 hover */
-  --color-on-accent: #ffffff;      /* accent 위 텍스트 */
+  --color-accent: #000000; /* 주요 버튼 배경 */
+  --color-accent-hover: #222222; /* 버튼 hover */
+  --color-on-accent: #ffffff; /* accent 위 텍스트 */
 
   /* ===== Borders (테두리) ===== */
   --color-border: #dddddd;
@@ -39,14 +39,14 @@
   --color-border-subtle: #eeeeee;
 
   /* ===== Feedback (피드백) ===== */
-  --color-danger: #ff4d4f;         /* 위험/삭제 액션 */
+  --color-danger: #ff4d4f; /* 위험/삭제 액션 */
   --color-danger-hover: #e04445;
-  --color-danger-accent: #ff6b6b;  /* 부드러운 경고(채팅 나가기 등) */
+  --color-danger-accent: #ff6b6b; /* 부드러운 경고(채팅 나가기 등) */
   --color-danger-accent-hover: #e85b5b;
-  --color-danger-text: #c40000;    /* 경고 문구 텍스트 */
+  --color-danger-text: #c40000; /* 경고 문구 텍스트 */
   --color-danger-surface: #ffecec; /* 경고 박스 배경 */
-  --color-danger-border: #ff8080;  /* 경고 박스 테두리 */
-  --color-link: #2c68ff;           /* 링크·성공 메시지 */
+  --color-danger-border: #ff8080; /* 경고 박스 테두리 */
+  --color-link: #2c68ff; /* 링크·성공 메시지 */
 
   /* ===== Neutral action (보조/취소) ===== */
   --color-neutral: #f0f0f0;
@@ -59,107 +59,107 @@
   /* ===== Warm paper palette (기본 테마의 웜톤 정체성) =====
    * 아래 값들은 여러 파일에서 "동일한 값"으로 반복되던 것을 그대로
    * 승격한 것 (값 변경 없는 순수 중앙화). */
-  --color-text-warm: #3a2d23;              /* 웜 다크브라운 제목/본문 */
-  --color-text-warm-soft: #5b4636;         /* 웜 브라운 설명 텍스트 */
-  --color-warm-input-bg: #fffaf5;          /* 웜 입력창 배경 */
-  --color-warm-input-bg-focus: #fff8ef;    /* 웜 입력창 포커스 배경 */
-  --color-warm-input-border: #e2d3c1;      /* 웜 입력창 테두리 */
-  --color-warm-input-border-focus: #d3b896;/* 웜 입력창 포커스 테두리 */
-  --color-warm-input-text: #4a3b2e;        /* 웜 입력창 텍스트 */
-  --color-danger-warm: #c94f4f;            /* 웜 계열 경고 레드 (입금 경고 등) */
+  --color-text-warm: #3a2d23; /* 웜 다크브라운 제목/본문 */
+  --color-text-warm-soft: #5b4636; /* 웜 브라운 설명 텍스트 */
+  --color-warm-input-bg: #fffaf5; /* 웜 입력창 배경 */
+  --color-warm-input-bg-focus: #fff8ef; /* 웜 입력창 포커스 배경 */
+  --color-warm-input-border: #e2d3c1; /* 웜 입력창 테두리 */
+  --color-warm-input-border-focus: #d3b896; /* 웜 입력창 포커스 테두리 */
+  --color-warm-input-text: #4a3b2e; /* 웜 입력창 텍스트 */
+  --color-danger-warm: #c94f4f; /* 웜 계열 경고 레드 (입금 경고 등) */
 
   /* ===== 로그인/인증 화면 (CSS Modules 전환 파일럿) =====
    * 테마 가능한 속성을 토큰으로 노출 → 기본값은 현재 default 모습을 재현.
    * 할로윈 값은 아래 body.halloween-mode 블록에서 재정의. */
-  --login-title-color: var(--color-text);        /* 타이틀 색 */
+  --login-title-color: var(--color-text); /* 타이틀 색 */
   --login-title-shadow: none;
-  --login-subtitle-color: var(--color-text);      /* 서브타이틀 색 */
-  --auth-input-bg: #ffffff;                        /* 입력창 배경 (리디자인) */
-  --auth-input-border: #e4ddce;                    /* 입력창 테두리 */
-  --auth-input-text: var(--color-text);            /* 입력창 글자 */
-  --auth-input-placeholder: #a9a093;               /* placeholder */
+  --login-subtitle-color: var(--color-text); /* 서브타이틀 색 */
+  --auth-input-bg: #ffffff; /* 입력창 배경 (리디자인) */
+  --auth-input-border: #e4ddce; /* 입력창 테두리 */
+  --auth-input-text: var(--color-text); /* 입력창 글자 */
+  --auth-input-placeholder: #a9a093; /* placeholder */
   --auth-input-focus-border: #c9bda9;
   --auth-input-focus-shadow: none;
-  --or-divider-color: var(--color-text);           /* 'or' 구분선 텍스트 */
-  --auth-lead-color: #8b93a0;                      /* 감성 리드카피 (신규) */
-  --bold-link-color: #222222;                      /* 강조 링크 */
+  --or-divider-color: var(--color-text); /* 'or' 구분선 텍스트 */
+  --auth-lead-color: #8b93a0; /* 감성 리드카피 (신규) */
+  --bold-link-color: #222222; /* 강조 링크 */
   --bold-link-hover-color: #000000;
-  --auth-footer-color: inherit;                    /* 하단 안내 문구 */
+  --auth-footer-color: inherit; /* 하단 안내 문구 */
 
   /* ===== 액션 버튼 (login/agree/next/check 등 "기본 버튼") =====
    * 기존 halloween의 광범위 `body.halloween-mode button {...!important}`
    * hammer를 대체. 각 버튼이 이 토큰을 소비 → 테마별 값만 재정의. */
-  --btn-bg: var(--color-accent);                   /* 기본: 검정 */
-  --btn-text: var(--color-on-accent);              /* 기본: 흰색 */
-  --btn-animation: none;                           /* 기본: 애니메이션 없음 */
+  --btn-bg: var(--color-accent); /* 기본: 검정 */
+  --btn-text: var(--color-on-accent); /* 기본: 흰색 */
+  --btn-animation: none; /* 기본: 애니메이션 없음 */
 
   /* ===== MainPage 단어 버튼 (word-btn) — 리디자인: 크림/브라운 ===== */
-  --word-btn-bg: #fbf9f5;                           /* 크림 */
+  --word-btn-bg: #fbf9f5; /* 크림 */
   --word-btn-border: #ece5d8;
   --word-btn-text: #3a3229;
   --word-btn-shadow: var(--card-shadow);
   --word-btn-backdrop: none;
   --word-btn-hover-bg: #f4efe6;
   --word-btn-hover-border: #e0d7c6;
-  --word-btn-selected-bg: #2f241a;                 /* 다크브라운 (구 파랑) */
+  --word-btn-selected-bg: #2f241a; /* 다크브라운 (구 파랑) */
   --word-btn-selected-border: #2f241a;
   --word-btn-selected-text: #ffffff;
 
   /* ===== MainPage 의도(intent) 버튼 ===== */
-  --intent-btn-bg: transparent;                    /* 기본: 배경 없음 */
-  --intent-btn-text: #3a3020;                      /* 기본: 웜다크 */
+  --intent-btn-bg: transparent; /* 기본: 배경 없음 */
+  --intent-btn-text: #3a3020; /* 기본: 웜다크 */
 
   /* ===== MainPage 타이머 (리디자인: 원형 링) ===== */
-  --word-timer-bg: #f5c5c5;                        /* (구) 박스 배경 — 잔존(halloween 참조) */
-  --word-timer-text: #ffffff;                      /* (구) 박스 글자 — 잔존(halloween 참조) */
-  --word-timer-time-color: #3a3020;                /* (구) 남은 시간 숫자 */
-  --word-timer-ring: #2f241a;                      /* 링 진행색 */
-  --word-timer-track: #eee5d6;                     /* 링 트랙(배경) */
-  --word-timer-num: #2f241a;                       /* 링 중앙 숫자 */
-  --word-timer-label: #8a7f6f;                     /* "다음 연결까지" 라벨 */
-  --focus-hours-color: #6e5b48;                    /* 운영시간 안내 텍스트 */
+  --word-timer-bg: #f5c5c5; /* (구) 박스 배경 — 잔존(halloween 참조) */
+  --word-timer-text: #ffffff; /* (구) 박스 글자 — 잔존(halloween 참조) */
+  --word-timer-time-color: #3a3020; /* (구) 남은 시간 숫자 */
+  --word-timer-ring: #2f241a; /* 링 진행색 */
+  --word-timer-track: #eee5d6; /* 링 트랙(배경) */
+  --word-timer-num: #2f241a; /* 링 중앙 숫자 */
+  --word-timer-label: #8a7f6f; /* "다음 연결까지" 라벨 */
+  --focus-hours-color: #6e5b48; /* 운영시간 안내 텍스트 */
 
   /* ===== 성별 토글 버튼 (ToggleButton — Verify_mvp) ===== */
   --toggle-height: 52px;
   --toggle-radius: var(--radius-md);
   --toggle-shadow: none;
   --toggle-transition: none;
-  --toggle-bg: var(--color-surface);               /* 비선택 배경 */
-  --toggle-border: #e4ddce;                        /* 비선택 테두리 (리디자인) */
-  --toggle-text: #6b6154;                          /* 비선택 글자 */
-  --toggle-selected-bg: #111111;                   /* 선택 배경 */
-  --toggle-selected-border: #111111;               /* 선택 테두리 */
-  --toggle-selected-text: var(--color-on-accent);  /* 선택 글자 */
+  --toggle-bg: var(--color-surface); /* 비선택 배경 */
+  --toggle-border: #e4ddce; /* 비선택 테두리 (리디자인) */
+  --toggle-text: #6b6154; /* 비선택 글자 */
+  --toggle-selected-bg: #111111; /* 선택 배경 */
+  --toggle-selected-border: #111111; /* 선택 테두리 */
+  --toggle-selected-text: var(--color-on-accent); /* 선택 글자 */
   --toggle-selected-transform: none;
 
   /* ===== ChatPage (기본값 = 현재 default 외관) ===== */
-  --chat-container-bg: var(--color-bg);            /* 채팅 컨테이너(크림 바디) */
-  --chat-panel-bg: var(--color-surface);           /* 헤더·입력영역 패널 */
-  --chat-text: var(--color-text);                  /* 헤더·메시지 텍스트 */
-  --chat-border: var(--color-border-subtle);       /* 패널 구분선 */
-  --chat-other-bg: var(--color-bubble-other-bg);   /* 상대 말풍선 */
-  --chat-self-bg: var(--color-accent);             /* 내 말풍선 */
-  --chat-accent-text: var(--color-on-accent);      /* 강조 위 텍스트 */
-  --chat-input-bg: #f5f3ef;                        /* 입력창 배경(웜 pill) */
-  --chat-input-text: var(--color-text);            /* 입력창 글자 */
-  --chat-input-border: #e9e1d2;                    /* 입력창 테두리 */
-  --chat-accent-bg: var(--color-accent);           /* 전송 버튼 */
-  --chat-exit-bg: transparent;                     /* 나가기 버튼 배경 */
-  --chat-exit-text: var(--color-text-muted);       /* 나가기 버튼 글자 */
-  --chat-dots: var(--color-text-subtle);           /* 타이핑 점 */
+  --chat-container-bg: var(--color-bg); /* 채팅 컨테이너(크림 바디) */
+  --chat-panel-bg: var(--color-surface); /* 헤더·입력영역 패널 */
+  --chat-text: var(--color-text); /* 헤더·메시지 텍스트 */
+  --chat-border: var(--color-border-subtle); /* 패널 구분선 */
+  --chat-other-bg: var(--color-bubble-other-bg); /* 상대 말풍선 */
+  --chat-self-bg: var(--color-accent); /* 내 말풍선 */
+  --chat-accent-text: var(--color-on-accent); /* 강조 위 텍스트 */
+  --chat-input-bg: #f5f3ef; /* 입력창 배경(웜 pill) */
+  --chat-input-text: var(--color-text); /* 입력창 글자 */
+  --chat-input-border: #e9e1d2; /* 입력창 테두리 */
+  --chat-accent-bg: var(--color-accent); /* 전송 버튼 */
+  --chat-exit-bg: transparent; /* 나가기 버튼 배경 */
+  --chat-exit-text: var(--color-text-muted); /* 나가기 버튼 글자 */
+  --chat-dots: var(--color-text-subtle); /* 타이핑 점 */
   /* 리디자인 신규(채팅): 헤더/시스템 칩/시간/전송 */
-  --chat-header-bg: #ffffff;                        /* 헤더·입력바 배경 */
-  --chat-system-bg: #f2ede3;                        /* 시스템 중앙 칩 배경 */
-  --chat-system-text: #8a7f6f;                      /* 시스템 칩 글자 */
-  --chat-self-text: #ffffff;                        /* 내 말풍선 글자 */
-  --chat-send-bg: #111111;                          /* 전송 버튼(원형) */
-  --chat-time-color: #b4aa99;                       /* 말풍선 시간 */
+  --chat-header-bg: #ffffff; /* 헤더·입력바 배경 */
+  --chat-system-bg: #f2ede3; /* 시스템 중앙 칩 배경 */
+  --chat-system-text: #8a7f6f; /* 시스템 칩 글자 */
+  --chat-self-text: #ffffff; /* 내 말풍선 글자 */
+  --chat-send-bg: #111111; /* 전송 버튼(원형) */
+  --chat-time-color: #b4aa99; /* 말풍선 시간 */
 
   /* ===== 모달 공통 (컨테이너·오버레이) ===== */
-  --modal-bg: var(--color-surface);                /* 모달 박스 배경 */
-  --modal-text: var(--color-text);                 /* 모달 텍스트 */
-  --modal-border: transparent;                     /* 모달 테두리 */
-  --modal-overlay-bg: rgba(0, 0, 0, 0.4);          /* 모달 뒤 어두운 막 */
+  --modal-bg: var(--color-surface); /* 모달 박스 배경 */
+  --modal-text: var(--color-text); /* 모달 텍스트 */
+  --modal-border: transparent; /* 모달 테두리 */
+  --modal-overlay-bg: rgba(0, 0, 0, 0.4); /* 모달 뒤 어두운 막 */
 
   /* ===== bespoke 팝업 (신고/종료/피드백/확성기 모달) =====
    * default = 각 팝업의 현재 기본 외관. halloween 블록에서 재정의.
@@ -186,11 +186,11 @@
   --ended-modal-border: transparent;
   --ended-modal-shadow: var(--shadow-lg);
   --ended-modal-text: var(--color-text);
-  --ended-accent-bg: var(--color-accent);           /* 배너 나가기 버튼 */
+  --ended-accent-bg: var(--color-accent); /* 배너 나가기 버튼 */
   --ended-accent-bg-hover: var(--color-accent-hover);
-  --ended-confirm-bg: var(--color-danger-accent);   /* 모달 '네' 버튼 */
+  --ended-confirm-bg: var(--color-danger-accent); /* 모달 '네' 버튼 */
   --ended-confirm-bg-hover: var(--color-danger-accent-hover);
-  --ended-cancel-bg: var(--color-surface-sunken);   /* 모달 '아니요' 버튼 */
+  --ended-cancel-bg: var(--color-surface-sunken); /* 모달 '아니요' 버튼 */
   --ended-cancel-bg-hover: var(--color-neutral-hover);
   --ended-cancel-text: var(--color-text);
   --ended-btn-text: var(--color-on-accent);
@@ -243,15 +243,20 @@
   --paid-btn-bg: linear-gradient(145deg, rgba(255, 243, 247, 0.85), rgba(255, 228, 236, 0.9));
   --paid-btn-border: rgba(255, 195, 215, 0.55);
   --paid-btn-text: #a84b6c;
-  --paid-btn-shadow: 0 2px 8px rgba(255, 190, 210, 0.25), 0 0 12px rgba(255, 210, 220, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.2);
+  --paid-btn-shadow:
+    0 2px 8px rgba(255, 190, 210, 0.25), 0 0 12px rgba(255, 210, 220, 0.15),
+    inset 0 0 8px rgba(255, 255, 255, 0.2);
   --paid-btn-hover-bg: linear-gradient(145deg, rgba(255, 234, 240, 0.9), rgba(255, 218, 230, 0.95));
   --paid-btn-hover-border: rgba(255, 150, 180, 0.6);
   --paid-btn-hover-text: #954566;
-  --paid-btn-hover-shadow: 0 4px 12px rgba(255, 175, 195, 0.3), 0 0 20px rgba(255, 210, 220, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.25);
+  --paid-btn-hover-shadow:
+    0 4px 12px rgba(255, 175, 195, 0.3), 0 0 20px rgba(255, 210, 220, 0.25),
+    inset 0 0 10px rgba(255, 255, 255, 0.25);
   --paid-btn-selected-bg: linear-gradient(160deg, #ffc2d1, #ff9eb6);
   --paid-btn-selected-border: #ff85a1;
   --paid-btn-selected-text: #ffffff;
-  --paid-btn-selected-shadow: 0 0 16px rgba(255, 155, 175, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.25);
+  --paid-btn-selected-shadow:
+    0 0 16px rgba(255, 155, 175, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.25);
 
   /* 아이콘 버튼 (MainPage .icon-buttons — help/megaphone) — 리디자인 */
   --icon-btn-bg: #ffffff;
@@ -312,8 +317,13 @@
 
 /* 라이브 상태 점 깜빡임 (MainPage status pill) */
 @keyframes pulseDot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 /* =============================================================
@@ -356,7 +366,11 @@ body.halloween-mode {
   --word-btn-backdrop: blur(3px);
   --word-btn-hover-bg: rgba(255, 255, 255, 0.15);
   --word-btn-hover-border: rgba(255, 255, 255, 0.7);
-  --word-btn-selected-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.3), rgba(255, 200, 150, 0.25));
+  --word-btn-selected-bg: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 200, 150, 0.25)
+  );
   --word-btn-selected-border: #ffffff;
   --word-btn-selected-text: #ffffff;
 
@@ -426,7 +440,8 @@ body.halloween-mode {
   /* 확성기 입력 모달 */
   --mega-modal-bg: radial-gradient(circle at 40% 20%, rgba(35, 20, 10, 0.96), rgba(20, 12, 6, 0.9));
   --mega-modal-border: rgba(255, 200, 150, 0.25);
-  --mega-modal-shadow: 0 6px 20px rgba(255, 150, 60, 0.25), inset 0 0 10px rgba(255, 180, 100, 0.08);
+  --mega-modal-shadow:
+    0 6px 20px rgba(255, 150, 60, 0.25), inset 0 0 10px rgba(255, 180, 100, 0.08);
   --mega-modal-text: #ffeecd;
   --mega-title-color: #ffce73;
   --mega-desc-color: #f5dcb0;
@@ -458,11 +473,17 @@ body.halloween-mode {
   --paid-btn-hover-bg: linear-gradient(145deg, rgba(255, 230, 180, 0.4), rgba(255, 200, 150, 0.35));
   --paid-btn-hover-border: rgba(255, 240, 210, 0.9);
   --paid-btn-hover-text: #fff9ef;
-  --paid-btn-hover-shadow: 0 4px 12px rgba(255, 240, 210, 0.4), inset 0 0 10px rgba(255, 240, 210, 0.25);
-  --paid-btn-selected-bg: linear-gradient(160deg, rgba(255, 240, 200, 0.5), rgba(255, 210, 150, 0.45));
+  --paid-btn-hover-shadow:
+    0 4px 12px rgba(255, 240, 210, 0.4), inset 0 0 10px rgba(255, 240, 210, 0.25);
+  --paid-btn-selected-bg: linear-gradient(
+    160deg,
+    rgba(255, 240, 200, 0.5),
+    rgba(255, 210, 150, 0.45)
+  );
   --paid-btn-selected-border: #fff7e0;
   --paid-btn-selected-text: #ffffff;
-  --paid-btn-selected-shadow: 0 0 20px rgba(255, 240, 180, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.3);
+  --paid-btn-selected-shadow:
+    0 0 20px rgba(255, 240, 180, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.3);
 
   /* 아이콘 버튼 */
   --icon-btn-bg: rgba(255, 180, 90, 0.15);
@@ -477,7 +498,7 @@ body.halloween-mode {
 }
 
 /* ChatPage 할로윈 (data-page 스코프 — attribute 셀렉터라 CSS Modules 안전) */
-body.halloween-mode [data-page="chatpage"] {
+body.halloween-mode [data-page='chatpage'] {
   --chat-container-bg: transparent;
   --chat-panel-bg: rgba(35, 20, 10, 0.85);
   --chat-text: #f9e4b7;
@@ -495,7 +516,7 @@ body.halloween-mode [data-page="chatpage"] {
 }
 
 /* Verify-MVP 성별 토글 할로윈 (data-page 스코프 — 구 halloween.css 클래스 훅 대체) */
-body.halloween-mode [data-page="verify-mvp"] {
+body.halloween-mode [data-page='verify-mvp'] {
   --toggle-height: 48px;
   --toggle-radius: 6px;
   --toggle-shadow: 0 3px 8px rgba(255, 150, 80, 0.3);

@@ -17,11 +17,7 @@ const IntentContext = createContext<IntentContextValue | undefined>(undefined);
 export const IntentProvider = ({ children }: { children: ReactNode }) => {
   const [intent, setIntent] = useState<Intent | null>(null);
 
-  return (
-    <IntentContext.Provider value={{ intent, setIntent }}>
-      {children}
-    </IntentContext.Provider>
-  );
+  return <IntentContext.Provider value={{ intent, setIntent }}>{children}</IntentContext.Provider>;
 };
 
 // ⭐ 여기서 undefined를 걸러내면, 이 훅을 쓰는 컴포넌트는

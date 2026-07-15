@@ -1,46 +1,53 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import FrameIcon from "../assets/sasinamu.svg";
-import Telpa from "../assets/telpa.svg";
-import Want_to from "../assets/want_to.svg";
-import Want_from from "../assets/want_from.svg";
-import Emotion from "../assets/Emotion_Feedback.svg";
-import Alert from "../assets/alert.svg";
-import Searchbar from "../assets/searchbar.svg";
-import Remember from "../assets/remember.svg";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import FrameIcon from '../assets/sasinamu.svg';
+import Telpa from '../assets/telpa.svg';
+import Want_to from '../assets/want_to.svg';
+import Want_from from '../assets/want_from.svg';
+import Emotion from '../assets/Emotion_Feedback.svg';
+import Alert from '../assets/alert.svg';
+import Searchbar from '../assets/searchbar.svg';
+import Remember from '../assets/remember.svg';
 
 // 구 .section (프로세 스타일 — h2/h3/p/li 자손을 자식 셀렉터 유틸로) — 3곳 반복
 const section =
   "[&_h2]:text-[22px] [&_h2]:font-bold [&_h2]:[border-bottom:1px_solid_#7d6c5f] [&_h2]:pb-1.5 [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:[font-family:'Gowun_Dodum'] " +
-  "[&_h3]:flex [&_h3]:justify-center [&_h3]:text-[18px] [&_h3]:font-bold [&_h3]:mt-[70px] [&_h3]:mb-[30px] " +
-  "[&_p]:text-center [&_p]:text-[16px] [&_p]:mt-10 [&_p]:mb-5 [&_p]:leading-[1.7] [&_p]:text-[#f6ede7] " +
-  "[&_li]:text-center [&_li]:text-[16px] [&_li]:mt-10 [&_li]:mb-5 [&_li]:leading-[1.7] [&_li]:text-white";
+  '[&_h3]:flex [&_h3]:justify-center [&_h3]:text-[18px] [&_h3]:font-bold [&_h3]:mt-[70px] [&_h3]:mb-[30px] ' +
+  '[&_p]:text-center [&_p]:text-[16px] [&_p]:mt-10 [&_p]:mb-5 [&_p]:leading-[1.7] [&_p]:text-[#f6ede7] ' +
+  '[&_li]:text-center [&_li]:text-[16px] [&_li]:mt-10 [&_li]:mb-5 [&_li]:leading-[1.7] [&_li]:text-white';
 // 구 .centered / .centered_1
-const centered = "flex justify-center flex-col mt-8 mb-[42px]";
-const centered1 = "flex justify-center mt-[5px] mb-[5px]";
+const centered = 'flex justify-center flex-col mt-8 mb-[42px]';
+const centered1 = 'flex justify-center mt-[5px] mb-[5px]';
 
 export default function HelpPage() {
   useEffect(() => {
     // 페이지 들어올 때 할로윈 모드 제거
-    document.body.classList.remove("halloween-mode");
+    document.body.classList.remove('halloween-mode');
   }, []);
 
   const navigate = useNavigate();
 
   return (
     /* 구 .fullBackground */
-    <div className="bg-[#3a3020] min-h-screen flex justify-center">
+    <div className="flex min-h-screen justify-center bg-[#3a3020]">
       {/* 구 .helpContainer */}
-      <div className="bg-[#3a3020] [font-family:'Gowun_Dodum','Gowun_Batang',sans-serif] text-[#f6ede7] py-8 px-5 max-w-[430px] mx-auto">
+      <div className="mx-auto max-w-[430px] bg-[#3a3020] px-5 py-8 [font-family:'Gowun_Dodum','Gowun_Batang',sans-serif] text-[#f6ede7]">
         {/* 구 .button */}
-        <button className="inline-block bg-[#d7bfae] text-[#3a2a20] py-2.5 px-4 rounded-[20px] text-[14px] m-[6px_6px_10px_0] [font-family:'Gowun_Dodum'] border-none [box-shadow:1px_2px_5px_rgba(0,0,0,0.2)] cursor-pointer hover:bg-[#e6cfc0]" onClick={() => navigate(-1)}>
+        <button
+          className="m-[6px_6px_10px_0] inline-block cursor-pointer rounded-[20px] border-none bg-[#d7bfae] px-4 py-2.5 [font-family:'Gowun_Dodum'] text-[14px] text-[#3a2a20] [box-shadow:1px_2px_5px_rgba(0,0,0,0.2)] hover:bg-[#e6cfc0]"
+          onClick={() => navigate(-1)}
+        >
           ← 돌아가기
         </button>
 
         {/* 구 .title */}
-        <h1 className="[font-family:'Judson',serif] text-[60px] text-center mt-10 mb-5 text-white">Telepathy</h1>
+        <h1 className="mt-10 mb-5 text-center [font-family:'Judson',serif] text-[60px] text-white">
+          Telepathy
+        </h1>
         {/* 구 .subtitle */}
-        <p className="text-[16px] text-center text-[#ffeedd] mt-5 mb-10">당신이 궁금해하실 법한 이야기들을 모아봤어요.</p>
+        <p className="mt-5 mb-10 text-center text-[16px] text-[#ffeedd]">
+          당신이 궁금해하실 법한 이야기들을 모아봤어요.
+        </p>
 
         <div className={section}>
           <h2>1. 텔레파시의 철학</h2>
@@ -107,7 +114,8 @@ export default function HelpPage() {
           <p>마치 기적같은 일이에요.</p>
           <p>당신의 빛났던 순간을 텔레파시가 간직해드려요.</p>
           <p>
-            기록된 단어는 <span className="text-[#ff5e5e]">삭제</span>가 어려우니, 이점 꼭 기억해 주세요.
+            기록된 단어는 <span className="text-[#ff5e5e]">삭제</span>가 어려우니, 이점 꼭 기억해
+            주세요.
           </p>
         </div>
 
@@ -122,7 +130,10 @@ export default function HelpPage() {
           <p>🔦 이 앱에 대한 개선 아이디어가 있으신가요?</p>
           <p>텔레파시는 당신의 의견이 필요해요.</p>
           <p>
-            Contact : <span className="bg-[#d9c8b2] text-[#3c2f27] rounded-[10px] py-2.5 px-3.5 text-[13px] [box-shadow:0_2px_4px_rgba(0,0,0,0.2)] m-[6px_6px_6px_0] inline-block">telepathy.cs@gmail.com</span>
+            Contact :{' '}
+            <span className="m-[6px_6px_6px_0] inline-block rounded-[10px] bg-[#d9c8b2] px-3.5 py-2.5 text-[13px] text-[#3c2f27] [box-shadow:0_2px_4px_rgba(0,0,0,0.2)]">
+              telepathy.cs@gmail.com
+            </span>
           </p>
           <div className={centered}>
             <strong>당신의 낭만적인 연결을, 텔레파시에서 느껴보세요.</strong>

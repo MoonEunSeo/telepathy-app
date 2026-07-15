@@ -17,11 +17,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     document.body.classList.add(`${theme}-mode`);
   }, [theme]);
 
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = (): ThemeContextValue => {

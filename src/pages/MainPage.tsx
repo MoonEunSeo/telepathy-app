@@ -40,10 +40,7 @@ declare global {
   interface Window {
     IMP: {
       init: (code: string) => void;
-      request_pay: (
-        params: ImpRequestPayParams,
-        callback: (rsp: ImpPayResponse) => void,
-      ) => void;
+      request_pay: (params: ImpRequestPayParams, callback: (rsp: ImpPayResponse) => void) => void;
     };
   }
 }
@@ -52,15 +49,15 @@ declare global {
 //    search/recommend 등은 죽은 컴포넌트분이라 변환에서 제외) ──────────────────
 // 단어 버튼: paid/selected 조합의 특이도 충돌 회피 위해 "명시적 상태"로 계산(레이어링 X)
 const wordBtnStruct =
-  "rounded-[10px] py-3.5 px-2.5 text-[clamp(14px,4vw,16px)] cursor-pointer text-center disabled:opacity-60 disabled:cursor-not-allowed min-[1025px]:text-[18px] min-[1025px]:py-4 min-[1025px]:px-3.5 min-[1025px]:rounded-[12px] min-[1025px]:w-[160px]";
+  'rounded-[10px] py-3.5 px-2.5 text-[clamp(14px,4vw,16px)] cursor-pointer text-center disabled:opacity-60 disabled:cursor-not-allowed min-[1025px]:text-[18px] min-[1025px]:py-4 min-[1025px]:px-3.5 min-[1025px]:rounded-[12px] min-[1025px]:w-[160px]';
 const wbNormal =
-  "[background:var(--word-btn-bg)] [border:1.8px_solid_var(--word-btn-border)] text-[var(--word-btn-text)] font-medium [box-shadow:var(--word-btn-shadow)] [backdrop-filter:var(--word-btn-backdrop)] [transition:all_0.25s_ease] hover:[background:var(--word-btn-hover-bg)] hover:[border-color:var(--word-btn-hover-border)] hover:-translate-y-0.5";
+  '[background:var(--word-btn-bg)] [border:1.8px_solid_var(--word-btn-border)] text-[var(--word-btn-text)] font-medium [box-shadow:var(--word-btn-shadow)] [backdrop-filter:var(--word-btn-backdrop)] [transition:all_0.25s_ease] hover:[background:var(--word-btn-hover-bg)] hover:[border-color:var(--word-btn-hover-border)] hover:-translate-y-0.5';
 const wbNormalSel =
-  "[background:var(--word-btn-selected-bg)] [border:1.8px_solid_var(--word-btn-selected-border)] text-[var(--word-btn-selected-text)] font-semibold [box-shadow:0_6px_16px_rgba(47,36,26,0.28)] [transition:all_0.25s_ease]";
+  '[background:var(--word-btn-selected-bg)] [border:1.8px_solid_var(--word-btn-selected-border)] text-[var(--word-btn-selected-text)] font-semibold [box-shadow:0_6px_16px_rgba(47,36,26,0.28)] [transition:all_0.25s_ease]';
 const wbPaid =
-  "[background:var(--paid-btn-bg)] [border:1.8px_solid_var(--paid-btn-border)] text-[var(--paid-btn-text)] font-[550] [box-shadow:var(--paid-btn-shadow)] [backdrop-filter:blur(5px)] [transition:all_0.3s_ease] hover:[background:var(--paid-btn-hover-bg)] hover:[border-color:var(--paid-btn-hover-border)] hover:text-[var(--paid-btn-hover-text)] hover:-translate-y-[3px] hover:[box-shadow:var(--paid-btn-hover-shadow)]";
+  '[background:var(--paid-btn-bg)] [border:1.8px_solid_var(--paid-btn-border)] text-[var(--paid-btn-text)] font-[550] [box-shadow:var(--paid-btn-shadow)] [backdrop-filter:blur(5px)] [transition:all_0.3s_ease] hover:[background:var(--paid-btn-hover-bg)] hover:[border-color:var(--paid-btn-hover-border)] hover:text-[var(--paid-btn-hover-text)] hover:-translate-y-[3px] hover:[box-shadow:var(--paid-btn-hover-shadow)]';
 const wbPaidSel =
-  "[background:var(--paid-btn-selected-bg)] [border:1.8px_solid_var(--paid-btn-selected-border)] text-[var(--paid-btn-selected-text)] font-semibold [box-shadow:var(--paid-btn-selected-shadow)] [backdrop-filter:blur(5px)] [transition:all_0.3s_ease] scale-[1.04]";
+  '[background:var(--paid-btn-selected-bg)] [border:1.8px_solid_var(--paid-btn-selected-border)] text-[var(--paid-btn-selected-text)] font-semibold [box-shadow:var(--paid-btn-selected-shadow)] [backdrop-filter:blur(5px)] [transition:all_0.3s_ease] scale-[1.04]';
 const wordBtnClass = (isPaid: boolean, sel: boolean) =>
   `${wordBtnStruct} ${isPaid ? (sel ? wbPaidSel : wbPaid) : sel ? wbNormalSel : wbNormal}`;
 
@@ -68,13 +65,13 @@ const wordBtnClass = (isPaid: boolean, sel: boolean) =>
 const emoBase =
   "rounded-[12px] py-2 px-3.5 text-[0.95rem] cursor-pointer [transition:all_0.2s_ease-in-out] [font-family:'Gowun_Dodum',sans-serif] [border-width:1px] [border-style:solid] hover:scale-105 hover:[background:var(--emotion-btn-hover-bg)]";
 const emoNormal =
-  "[background:var(--emotion-btn-bg)] [border-color:var(--emotion-btn-border)] text-[var(--emotion-btn-text)]";
+  '[background:var(--emotion-btn-bg)] [border-color:var(--emotion-btn-border)] text-[var(--emotion-btn-text)]';
 const emoSel =
-  "[background:var(--emotion-btn-selected-bg)] [border-color:var(--emotion-btn-selected-border)] text-[var(--emotion-btn-selected-text)]";
+  '[background:var(--emotion-btn-selected-bg)] [border-color:var(--emotion-btn-selected-border)] text-[var(--emotion-btn-selected-text)]';
 
 // 좌하단 아이콘 버튼(help/megaphone — 구 .icon-buttons .help-icon/.megaphone-button 합성)
 const iconBtn =
-  "w-[50px] h-[50px] rounded-[12px] [border:1px_solid_var(--icon-btn-border)] [background:var(--icon-btn-bg)] text-[var(--icon-btn-text)] [box-shadow:var(--icon-btn-shadow)] flex items-center justify-center [transition:all_0.25s_ease-in-out] p-1.5 cursor-pointer hover:scale-105 hover:[background:var(--icon-btn-hover-bg)]";
+  'w-[50px] h-[50px] rounded-[12px] [border:1px_solid_var(--icon-btn-border)] [background:var(--icon-btn-bg)] text-[var(--icon-btn-text)] [box-shadow:var(--icon-btn-shadow)] flex items-center justify-center [transition:all_0.25s_ease-in-out] p-1.5 cursor-pointer hover:scale-105 hover:[background:var(--icon-btn-hover-bg)]';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -257,19 +254,18 @@ export default function MainPage() {
 
   // ✅ 유저 프로필 가져오기
   useEffect(() => {
-
-        // 비로그인/실패 시 게스트 신원으로 진행
+    // 비로그인/실패 시 게스트 신원으로 진행
     const applyGuestProfile = () => {
-      const guest = buildGuestProfile()
-      setProfile(guest)
-      if(!guest.nickname) setShowNicknameModal(true) // 닉네임 없으면 모달
-    }
+      const guest = buildGuestProfile();
+      setProfile(guest);
+      if (!guest.nickname) setShowNicknameModal(true); // 닉네임 없으면 모달
+    };
 
     const fetchProfile = async () => {
       try {
         const res = await fetch('/api/nickname/profile', { credentials: 'include' });
         const data = (await res.json()) as ProfileResponse;
-        const uid = data.user_id || data.id || data.userId
+        const uid = data.user_id || data.id || data.userId;
         if (data.success && uid) {
           setProfile({
             userId: (data.user_id || data.id || data.userId) as Id, // ✅ 양쪽 다 커버
@@ -284,11 +280,11 @@ export default function MainPage() {
             nickname: data.nickname,
           });
         } else {
-          applyGuestProfile() // 미로그인 -> 게스트
+          applyGuestProfile(); // 미로그인 -> 게스트
         }
       } catch (err) {
         console.error('프로필 불러오기 오류 -> 게스트로 진행', err);
-        applyGuestProfile() // 네트워크 실패도 게스트로 진행함
+        applyGuestProfile(); // 네트워크 실패도 게스트로 진행함
       }
     };
     fetchProfile();
@@ -297,12 +293,12 @@ export default function MainPage() {
   // ✅ 닉네임 저장
   const handleSaveNickname = async (nickname: string) => {
     // 게스트면 서버 대신 로컬 저장
-    if (isGuestId(profile?.userId)){
-      setGuestNickname(nickname)
-      setProfile((prev) => ({...prev, nickname}) as UserProfile)
-      setShowNicknameModal(false)
-      toast.success("닉네임이 저장되었습니다!")
-      return
+    if (isGuestId(profile?.userId)) {
+      setGuestNickname(nickname);
+      setProfile((prev) => ({ ...prev, nickname }) as UserProfile);
+      setShowNicknameModal(false);
+      toast.success('닉네임이 저장되었습니다!');
+      return;
     }
 
     try {
@@ -411,9 +407,7 @@ export default function MainPage() {
             setFadeClass('fade-in');
           }, 500);
         } else {
-          setRemaining((prev) =>
-            Math.abs(prev - data.remaining) > 2 ? data.remaining : prev,
-          );
+          setRemaining((prev) => (Math.abs(prev - data.remaining) > 2 ? data.remaining : prev));
         }
       } catch (err) {
         console.error('서버 동기화 실패:', err);
@@ -450,9 +444,6 @@ export default function MainPage() {
       toast.info('먼저 닉네임을 설정해주세요!');
       return;
     }
-
-    // ✅ 이미 단어 선택했으면 중복 방지
-    if (selectedWord) return;
 
     setSelectedWord(word);
 
@@ -550,30 +541,40 @@ export default function MainPage() {
       )}
 
       {/* 구 .telepathy-container */}
-      <div className="relative flex flex-col items-center justify-center min-h-[80vh] pt-[8vh] pb-[6vh] box-border">
+      <div className="relative box-border flex min-h-[80vh] flex-col items-center justify-center pt-[8vh] pb-[6vh]">
         {/* 원형 카운트다운 링 (구 .timer-display) */}
-        <div className="flex flex-col items-center mb-1">
+        <div className="mb-1 flex flex-col items-center">
           <div
-            className="relative w-28 h-28 min-[1025px]:w-[120px] min-[1025px]:h-[120px] rounded-full flex items-center justify-center"
-            style={{
-              background:
-                'conic-gradient(var(--word-timer-ring) calc(var(--pct) * 360deg), var(--word-timer-track) 0)',
-              '--pct': String(Math.max(0, Math.min(1, remaining / 15))),
-            } as CSSProperties}
+            className="relative flex h-28 w-28 items-center justify-center rounded-full min-[1025px]:h-[120px] min-[1025px]:w-[120px]"
+            style={
+              {
+                background:
+                  'conic-gradient(var(--word-timer-ring) calc(var(--pct) * 360deg), var(--word-timer-track) 0)',
+                '--pct': String(Math.max(0, Math.min(1, remaining / 15))),
+              } as CSSProperties
+            }
           >
-            <div className="absolute inset-[9px] rounded-full bg-[var(--color-bg)] flex items-center justify-center">
-              <span className="[font-family:'Judson',serif] text-[36px] min-[1025px]:text-[40px] font-bold leading-none text-[var(--word-timer-num)]">{remaining}</span>
+            <div className="absolute inset-[9px] flex items-center justify-center rounded-full bg-[var(--color-bg)]">
+              <span className="[font-family:'Judson',serif] text-[36px] leading-none font-bold text-[var(--word-timer-num)] min-[1025px]:text-[40px]">
+                {remaining}
+              </span>
               <span className="ml-0.5 text-[14px] text-[var(--word-timer-num)]">초</span>
             </div>
           </div>
         </div>
         {/* 구 .title */}
-        <h1 className="[font-family:'Judson',serif] text-[clamp(34px,6vw,42px)] text-[var(--main-title-color)] font-bold mt-4 mb-2.5 min-[1025px]:text-[clamp(42px,3vw,54px)]">Telepathy</h1>
+        <h1 className="mt-4 mb-2.5 [font-family:'Judson',serif] text-[clamp(34px,6vw,42px)] font-bold text-[var(--main-title-color)] min-[1025px]:text-[clamp(42px,3vw,54px)]">
+          Telepathy
+        </h1>
         {/* 구 .subtitle */}
-        <p className="mt-1.5 text-center text-[clamp(15px,3.5vw,18px)] text-[var(--main-subtitle-color)] leading-[1.4] max-w-[80%] min-[1025px]:text-[clamp(18px,1.5vw,22px)] min-[1025px]:mt-2.5">같은 단어를 선택한 사람과 연결돼요.</p>
+        <p className="mt-1.5 max-w-[80%] text-center text-[clamp(15px,3.5vw,18px)] leading-[1.4] text-[var(--main-subtitle-color)] min-[1025px]:mt-2.5 min-[1025px]:text-[clamp(18px,1.5vw,22px)]">
+          같은 단어를 선택한 사람과 연결돼요.
+        </p>
 
         {/* 구 .word-set (+ fade-in/out 전환 상태) */}
-        <div className={`grid grid-cols-2 gap-3 mt-5 mb-10 w-[90%] max-w-[320px] [transition:opacity_0.6s_ease,transform_0.6s_ease] min-[1025px]:mt-10 min-[1025px]:mb-[60px] min-[1025px]:gap-5 ${fadeClass === 'fade-in' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]'}`}>
+        <div
+          className={`mt-5 mb-10 grid w-[90%] max-w-[320px] grid-cols-2 gap-3 [transition:opacity_0.6s_ease,transform_0.6s_ease] min-[1025px]:mt-10 min-[1025px]:mb-[60px] min-[1025px]:gap-5 ${fadeClass === 'fade-in' ? 'translate-y-0 opacity-100' : 'translate-y-[10px] opacity-0'}`}
+        >
           {wordSet.map((w) => {
             const isPaidSet = !!recommendations[round % recommendations.length].paid;
             return (
@@ -583,7 +584,7 @@ export default function MainPage() {
                 onClick={() => handleWordSelect(w)}
               >
                 {isPaidSet && (
-                  <span className="absolute -top-2.5 right-2.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full [background:var(--paid-btn-selected-bg)] leading-none">
+                  <span className="absolute -top-2.5 right-2.5 rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold text-white [background:var(--paid-btn-selected-bg)]">
                     ✦ 확성기
                   </span>
                 )}
@@ -595,13 +596,17 @@ export default function MainPage() {
 
         {showFeedbackModal && feedbackInfo && (
           /* 구 .feedback-modal */
-          <div className="fixed top-0 left-0 w-full h-full [background-color:var(--overlay)] flex items-center justify-center z-[1000]">
+          <div className="fixed top-0 left-0 z-[1000] flex h-full w-full items-center justify-center [background-color:var(--overlay)]">
             {/* 구 .feedback-content */}
-            <div className="[background:var(--feedback-bg)] [border:1px_solid_var(--feedback-border)] rounded-[16px] py-6 px-5 w-[300px] text-center [box-shadow:var(--feedback-shadow)] [font-family:'Gowun_Dodum',sans-serif] animate-[main-fade-in_0.3s_ease-out]">
-              <h2 className="text-[2.8rem] mb-5 text-[var(--feedback-title-color)] font-bold [font-family:'Judson',serif]">Telepathy</h2>
-              <p className="text-base text-[var(--feedback-desc-color)] mb-[18px]">지금, 당신의 기분은 어떤가요?</p>
+            <div className="w-[300px] animate-[main-fade-in_0.3s_ease-out] rounded-[16px] px-5 py-6 text-center [font-family:'Gowun_Dodum',sans-serif] [box-shadow:var(--feedback-shadow)] [background:var(--feedback-bg)] [border:1px_solid_var(--feedback-border)]">
+              <h2 className="mb-5 [font-family:'Judson',serif] text-[2.8rem] font-bold text-[var(--feedback-title-color)]">
+                Telepathy
+              </h2>
+              <p className="mb-[18px] text-base text-[var(--feedback-desc-color)]">
+                지금, 당신의 기분은 어떤가요?
+              </p>
               {/* 구 .emotion-buttons */}
-              <div className="flex flex-wrap gap-2.5 justify-center mb-[18px]">
+              <div className="mb-[18px] flex flex-wrap justify-center gap-2.5">
                 {(['기뻐요', '괜찮아요', '슬퍼요', '행복해요', '화나요'] as const).map((emo) => (
                   <button
                     key={emo}
@@ -614,7 +619,7 @@ export default function MainPage() {
               </div>
               {/* 구 .submit-btn */}
               <button
-                className="inline-block w-full [background:var(--feedback-submit-bg)] text-[var(--feedback-submit-text)] py-3 px-0 text-base rounded-[10px] border-none cursor-pointer [transition:background_0.3s_ease,transform_0.2s_ease] [font-family:'Gowun_Dodum',sans-serif] hover:[background:var(--feedback-submit-bg-hover)] hover:-translate-y-0.5"
+                className="inline-block w-full cursor-pointer rounded-[10px] border-none px-0 py-3 [font-family:'Gowun_Dodum',sans-serif] text-base text-[var(--feedback-submit-text)] [background:var(--feedback-submit-bg)] [transition:background_0.3s_ease,transform_0.2s_ease] hover:-translate-y-0.5 hover:[background:var(--feedback-submit-bg-hover)]"
                 onClick={handleSubmitFeedback}
                 disabled={!selectedEmotion} // ✅ 감정 선택 전엔 비활성화
               >
@@ -625,18 +630,24 @@ export default function MainPage() {
         )}
 
         {/* 구 .focus-hours (반응형 4단: 기본/태블릿/모바일/초소형) */}
-        <div className="fixed bottom-[170px] left-1/2 -translate-x-1/2 [font-family:'Gowun_Dodum',sans-serif] font-normal text-center text-[var(--focus-hours-color)] opacity-90 leading-[1.6] z-[90] text-[13px] [transition:all_0.3s_ease] min-[768px]:max-[1024px]:bottom-[105px] min-[768px]:max-[1024px]:text-[#6b5847] max-[767px]:bottom-[140px] max-[767px]:text-[9px]! max-[767px]:text-[#7d6a58] max-[360px]:bottom-[150px] max-[360px]:text-[11.6px]" aria-live="polite">
+        <div
+          className="fixed bottom-[170px] left-1/2 z-[90] -translate-x-1/2 text-center [font-family:'Gowun_Dodum',sans-serif] text-[13px] leading-[1.6] font-normal text-[var(--focus-hours-color)] opacity-90 [transition:all_0.3s_ease] max-[767px]:bottom-[140px] max-[767px]:text-[9px]! max-[767px]:text-[#7d6a58] max-[360px]:bottom-[150px] max-[360px]:text-[11.6px] min-[768px]:max-[1024px]:bottom-[105px] min-[768px]:max-[1024px]:text-[#6b5847]"
+          aria-live="polite"
+        >
           텔레파시 집중운영시간: <strong>오후 8시 ~ 새벽 2시</strong>
         </div>
         {/* 구 footer (요소 셀렉터 → 유틸) */}
-        <footer className="text-[12px] text-[var(--color-text-subtle)] text-center mt-[30px] p-[5px] min-[1025px]:text-[13px] min-[1025px]:mt-4">
-          <button className="text-[12px] text-[var(--color-text-secondary)] bg-transparent border-none cursor-pointer" onClick={() => setShowBizInfo(!showBizInfo)}>
+        <footer className="mt-[30px] p-[5px] text-center text-[12px] text-[var(--color-text-subtle)] min-[1025px]:mt-4 min-[1025px]:text-[13px]">
+          <button
+            className="cursor-pointer border-none bg-transparent text-[12px] text-[var(--color-text-secondary)]"
+            onClick={() => setShowBizInfo(!showBizInfo)}
+          >
             ⓒ Telepathy | 고객센터/사업자 정보
           </button>
 
           {showBizInfo && (
             /* 구 .biz-info(미정의) + footer div 규칙 */
-            <div className="text-[12px] text-[var(--color-text-subtle)] mt-2.5">
+            <div className="mt-2.5 text-[12px] text-[var(--color-text-subtle)]">
               <p>상호명 : 넥스트커넥트 | 대표자 : 이수현</p>
               <p>사업자등록번호 : 316-22-01911</p>
               <p>주소 : (06978) 서울 동작구 상도로55길 8, 404호</p>
@@ -648,14 +659,14 @@ export default function MainPage() {
 
         {/* ✅ 현재 접속자 수는 2명 이상일 때만 — 구 .online-counter → 라이브 상태 pill */}
         {onlineCount >= 2 && (
-          <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-[var(--status-pill-bg)] text-[var(--status-pill-text)] text-[13px] font-medium py-1.5 px-3 rounded-[var(--radius-pill)] [box-shadow:var(--card-shadow)]">
-            <span className="w-[7px] h-[7px] rounded-full bg-[var(--live-dot)] [animation:pulseDot_1.6s_ease-in-out_infinite]"></span>
+          <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-[var(--status-pill-bg)] px-3 py-1.5 text-[13px] font-medium text-[var(--status-pill-text)] [box-shadow:var(--card-shadow)]">
+            <span className="h-[7px] w-[7px] [animation:pulseDot_1.6s_ease-in-out_infinite] rounded-full bg-[var(--live-dot)]"></span>
             지금 <strong className="font-bold">{onlineCount}</strong>명 접속 중
           </div>
         )}
 
         {/* 🎃 왼쪽 하단 아이콘 버튼 묶음 — 구 .icon-buttons */}
-        <div className="fixed bottom-[90px] left-5 flex flex-row items-center gap-[15px] z-[100]">
+        <div className="fixed bottom-[90px] left-5 z-[100] flex flex-row items-center gap-[15px]">
           <button className={iconBtn} onClick={() => navigate('/helppage')}>
             <HelpCircle />
           </button>

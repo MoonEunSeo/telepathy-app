@@ -3,12 +3,12 @@ import { termsContainer } from './termsStyles';
 export default function NotificationConsent() {
   return (
     <div className={termsContainer}>
-
       <h2>✅ 선택: 알림 수신 동의 (웹푸시 등)</h2>
       <p>
-        <strong>텔레파시는 사용자에게 의미 있는 소식을 전달하기 위해 알림 기능을 운영합니다.</strong>
-        <br />
-        이 동의를 통해 <strong>웹푸시</strong> 수신 여부를 선택하실 수 있습니다.
+        <strong>
+          텔레파시는 사용자에게 의미 있는 소식을 전달하기 위해 알림 기능을 운영합니다.
+        </strong>
+        <br />이 동의를 통해 <strong>웹푸시</strong> 수신 여부를 선택하실 수 있습니다.
       </p>
       <hr />
 
@@ -29,7 +29,9 @@ export default function NotificationConsent() {
 
       <h3>제3조 [동의 거부 시 불이익]</h3>
       <ul>
-        <li>본 동의는 <strong>선택사항</strong>이며, 동의하지 않아도 서비스 이용에 제한은 없습니다.</li>
+        <li>
+          본 동의는 <strong>선택사항</strong>이며, 동의하지 않아도 서비스 이용에 제한은 없습니다.
+        </li>
         <li>다만 일부 실시간 알림 기능은 제공되지 않습니다.</li>
       </ul>
     </div>

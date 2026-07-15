@@ -1,0 +1,11 @@
+# Prettier endOfLine: lf 와 일치시키기 위해 텍스트 파일 줄바꿈을 LF로 고정
+* text=auto eol=lf
+
+# 바이너리는 변환 제외
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
