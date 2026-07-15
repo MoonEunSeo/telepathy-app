@@ -37,6 +37,7 @@ const allowedOrigins = [
   'http://localhost:5000',
   'https://telepathy.my',
   'https://telepathy-app.onrender.com',
+  'http://70.12.102.131:5000'
 ];
 
 // ✅ CORS 설정 (쿠키 포함 필수)
@@ -86,11 +87,6 @@ app.use('/api/payments', paymentsRoutes);
 // ================================
 // 📦 정적 파일 및 기본 라우트 처리
 // ================================
-
-// ✅ 루트 접근 시 /login으로 리디렉션
-app.get(['/', '/index.html'], (req: Request, res: Response) => {
-  res.redirect(302, '/login');
-});
 
 // ✅ 헬스체크
 app.get('/healthz', (req: Request, res: Response) => res.status(200).send('OK'));

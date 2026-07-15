@@ -71,6 +71,8 @@ export function registerSocketHandlers(io: IOServer): void {
     socket.on('join_match', async (data) => {
       const { userId, username, nickname, word, round } = data;
 
+      console.log("매칭 요청 확인:", data)
+
       // 1. 현재 유저를 큐에 등록 (waiting)
       const { error: insertError } = await supabase.from('telepathy_sessions_queue').insert([
         {
@@ -250,7 +252,7 @@ export function registerSocketHandlers(io: IOServer): void {
       console.log(`🚪 leaveRoom: userId=${userId}, roomId=${roomId}`);
       socket.to(roomId).emit('chatEnded'); // 상대방에게 알림
       socket.leave(roomId);
-      socket.disconnect(true);
+      // socket.disconnect(true);
 
       // 🔹 DB 상태만 ended로 업데이트 (로그 기록은 하지 않음)
       await supabase

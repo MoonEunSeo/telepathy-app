@@ -37,6 +37,8 @@ router.post('/start', async (req: Request, res: Response) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
     const userId = decoded.user_id;
 
+    console.log("매칭을 원하는 유저:", decoded.username)
+
     // 유저 프로필 조회
     const { data: profile } = await supabase
       .from('users')
