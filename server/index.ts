@@ -18,11 +18,11 @@ app.use(
       'http://localhost:5179',
       'https://telepathy.my',
       'https://telepathy-app.onrender.com',
-      'http://70.12.102.131:5000'
+      'http://70.12.102.131:5000',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
-  })
+  }),
 );
 
 // ✅ HTTP 서버 생성
@@ -31,11 +31,7 @@ const server = createServer(app);
 // ✅ Socket.IO 설정
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
-    origin: [
-      'http://localhost:5179',
-      'https://telepathy.my',
-      'https://telepathy-app.onrender.com',
-    ],
+    origin: ['http://localhost:5179', 'https://telepathy.my', 'https://telepathy-app.onrender.com'],
     methods: ['GET', 'POST'],
     credentials: true,
   },

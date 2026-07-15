@@ -16,7 +16,7 @@ const router = express.Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 interface JwtUser {
@@ -35,7 +35,8 @@ router.post('/check-user', async (req: Request, res: Response) => {
     .eq('username', username)
     .maybeSingle();
 
-  if (error || !data) return res.status(200).json({ exists: false } satisfies PasswordCheckUserResponse);
+  if (error || !data)
+    return res.status(200).json({ exists: false } satisfies PasswordCheckUserResponse);
   return res.status(200).json({ exists: true } satisfies PasswordCheckUserResponse);
 });
 
@@ -68,9 +69,10 @@ router.post('/change', async (req: Request, res: Response) => {
     // ✅ 2️⃣ 기존 비밀번호 일치 확인
     const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: '현재 비밀번호가 일치하지 않습니다.' } satisfies PasswordChangeResponse);
+      return res.status(400).json({
+        success: false,
+        message: '현재 비밀번호가 일치하지 않습니다.',
+      } satisfies PasswordChangeResponse);
     }
 
     // ✅ 3️⃣ 새 비밀번호 해싱 후 저장
@@ -85,7 +87,10 @@ router.post('/change', async (req: Request, res: Response) => {
       throw updateError;
     }
 
-    res.json({ success: true, message: '비밀번호가 성공적으로 변경되었습니다.' } satisfies PasswordChangeResponse);
+    res.json({
+      success: true,
+      message: '비밀번호가 성공적으로 변경되었습니다.',
+    } satisfies PasswordChangeResponse);
   } catch (err) {
     console.error('❌ 비밀번호 변경 실패:', err);
     res.status(500).json({ success: false, message: '서버 오류' } satisfies PasswordChangeResponse);
@@ -113,10 +118,15 @@ router.post('/reset', async (req: Request, res: Response) => {
 
     if (error) throw error;
 
-    res.json({ success: true, message: '비밀번호가 재설정되었습니다.' } satisfies PasswordResetResponse);
+    res.json({
+      success: true,
+      message: '비밀번호가 재설정되었습니다.',
+    } satisfies PasswordResetResponse);
   } catch (err) {
     console.error('❌ 비밀번호 재설정 오류:', err);
-    res.status(500).json({ success: false, message: '비밀번호 재설정 실패' } satisfies PasswordResetResponse);
+    res
+      .status(500)
+      .json({ success: false, message: '비밀번호 재설정 실패' } satisfies PasswordResetResponse);
   }
 });
 

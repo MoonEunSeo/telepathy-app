@@ -28,7 +28,10 @@ router.get('/megaphone-count', authMiddleware, async (req: Request, res: Respons
 
     if (error) throw error;
 
-    return res.json({ success: true, count: data.megaphone_count } satisfies MegaphoneCountResponse);
+    return res.json({
+      success: true,
+      count: data.megaphone_count,
+    } satisfies MegaphoneCountResponse);
   } catch (err) {
     console.error('❌ megaphone-count 오류:', err);
     res.status(500).json({ success: false, message: '서버 오류' });

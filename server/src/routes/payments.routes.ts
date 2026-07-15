@@ -9,7 +9,7 @@ const router = express.Router();
 // supabase 클라이언트 생성
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_KEY as string
+  process.env.SUPABASE_KEY as string,
 );
 
 interface PortOneTokenResponse {
@@ -37,7 +37,7 @@ router.post('/verify', async (req: Request, res: Response) => {
     // 2. 결제 내역 확인
     const paymentRes = await axios.get<PortOnePaymentResponse>(
       `https://api.portone.io/payments/${imp_uid}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` } },
     );
     const paymentData = paymentRes.data;
     console.log('💳 paymentData:', paymentData);

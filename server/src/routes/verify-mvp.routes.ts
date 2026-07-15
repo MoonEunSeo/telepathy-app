@@ -16,7 +16,7 @@ const codeStore = new Map<string, string>();
 // Solapi 서비스 인스턴스 생성
 const messageService = new SolapiMessageService(
   process.env.SOLAPI_API_KEY as string,
-  process.env.SOLAPI_API_SECRET as string
+  process.env.SOLAPI_API_SECRET as string,
 );
 
 // 인증번호 생성 함수
@@ -26,7 +26,10 @@ const generateCode = (): string => Math.floor(100000 + Math.random() * 900000).t
 router.post('/send', async (req: Request, res: Response) => {
   const { phone } = req.body as VerifyMvpSendRequest;
   if (!phone) {
-    return res.status(400).json({ success: false, message: '전화번호를 입력해주세요.' } satisfies VerifyMvpSendResponse);
+    return res.status(400).json({
+      success: false,
+      message: '전화번호를 입력해주세요.',
+    } satisfies VerifyMvpSendResponse);
   }
 
   const code = generateCode();
@@ -43,7 +46,10 @@ router.post('/send', async (req: Request, res: Response) => {
   } catch (error) {
     const e = error as { response?: { data?: unknown }; message?: string };
     console.error('문자 전송 실패:', e.response?.data || e.message);
-    res.status(500).json({ success: false, message: '문자 전송에 실패했습니다.' } satisfies VerifyMvpSendResponse);
+    res.status(500).json({
+      success: false,
+      message: '문자 전송에 실패했습니다.',
+    } satisfies VerifyMvpSendResponse);
   }
 });
 
@@ -56,7 +62,10 @@ router.post('/check', (req: Request, res: Response) => {
     codeStore.delete(phone);
     res.json({ success: true } satisfies VerifyMvpCheckResponse);
   } else {
-    res.status(400).json({ success: false, message: '인증번호가 일치하지 않습니다.' } satisfies VerifyMvpCheckResponse);
+    res.status(400).json({
+      success: false,
+      message: '인증번호가 일치하지 않습니다.',
+    } satisfies VerifyMvpCheckResponse);
   }
 });
 

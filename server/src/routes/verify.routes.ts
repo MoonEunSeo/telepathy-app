@@ -28,7 +28,9 @@ router.post('/confirm', async (req: Request, res: Response) => {
   const { identityVerificationId } = req.body as VerifyConfirmRequest;
 
   if (!identityVerificationId) {
-    return res.status(400).json({ success: false, message: 'ID가 없습니다.' } satisfies VerifyConfirmResponse);
+    return res
+      .status(400)
+      .json({ success: false, message: 'ID가 없습니다.' } satisfies VerifyConfirmResponse);
   }
 
   try {
@@ -38,21 +40,28 @@ router.post('/confirm', async (req: Request, res: Response) => {
         headers: {
           Authorization: `PortOne ${process.env.PORTONE_API_SECRET}`, // 비밀키
         },
-      }
+      },
     );
 
     if (response.data.status !== 'VERIFIED') {
-      return res.status(400).json({ success: false, message: '인증 실패' } satisfies VerifyConfirmResponse);
+      return res
+        .status(400)
+        .json({ success: false, message: '인증 실패' } satisfies VerifyConfirmResponse);
     }
 
     // 인증된 사용자 정보
     const { name, phone, birth, gender } = response.data;
     console.log('✅ 인증 성공:', name, phone, birth, gender);
-    res.json({ success: true, user: { name, phone, birth, gender } } satisfies VerifyConfirmResponse);
+    res.json({
+      success: true,
+      user: { name, phone, birth, gender },
+    } satisfies VerifyConfirmResponse);
   } catch (err) {
     const error = err as { response?: { data?: unknown }; message?: string };
     console.error('[인증 조회 실패]', error.response?.data || error.message);
-    res.status(500).json({ success: false, message: '인증 확인 실패' } satisfies VerifyConfirmResponse);
+    res
+      .status(500)
+      .json({ success: false, message: '인증 확인 실패' } satisfies VerifyConfirmResponse);
   }
 });
 

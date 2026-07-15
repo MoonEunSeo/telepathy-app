@@ -8,7 +8,7 @@ const router = express.Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 interface JwtUser {
@@ -20,7 +20,9 @@ interface JwtUser {
 router.post('/', async (req: Request, res: Response) => {
   const token = req.cookies?.token;
   if (!token) {
-    return res.status(401).json({ success: false, message: '인증이 필요합니다.' } satisfies WithdrawResponse);
+    return res
+      .status(401)
+      .json({ success: false, message: '인증이 필요합니다.' } satisfies WithdrawResponse);
   }
 
   try {
@@ -37,7 +39,9 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     res.clearCookie('token'); // 쿠키 제거
-    return res.status(200).json({ success: true, message: '회원탈퇴 완료' } satisfies WithdrawResponse);
+    return res
+      .status(200)
+      .json({ success: true, message: '회원탈퇴 완료' } satisfies WithdrawResponse);
   } catch (err) {
     console.error('❌ 토큰 검증 실패:', (err as Error).message);
     return res

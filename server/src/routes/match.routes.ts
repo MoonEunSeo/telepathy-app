@@ -11,7 +11,7 @@ const router = express.Router();
 // ✅ Supabase 연결
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 interface JwtUser {
@@ -37,7 +37,7 @@ router.post('/start', async (req: Request, res: Response) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
     const userId = decoded.user_id;
 
-    console.log("매칭을 원하는 유저:", decoded.username)
+    console.log('매칭을 원하는 유저:', decoded.username);
 
     // 유저 프로필 조회
     const { data: profile } = await supabase
@@ -64,7 +64,7 @@ router.post('/start', async (req: Request, res: Response) => {
           partner_nickname: null,
         },
       ],
-      { onConflict: 'round,user_id' }
+      { onConflict: 'round,user_id' },
     );
 
     if (error) {
@@ -243,7 +243,7 @@ router.post('/end', async (req: Request, res: Response) => {
         room_id: mySession.room_id,
         created_at: new Date(),
       },
-      { onConflict: 'round,user_id' }
+      { onConflict: 'round,user_id' },
     ); // 🔑 유니크키 기준으로 upsert
 
     console.log('📝 logError:', logError);

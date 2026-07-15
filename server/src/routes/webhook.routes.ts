@@ -6,7 +6,7 @@ const router = express.Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 interface ParsedDeposit {
@@ -26,7 +26,7 @@ function parseKbankDeposit(text: string, appName = ''): ParsedDeposit {
   };
 
   const amountMatch = text.match(
-    /입금\s*([\d,]+)\s*원|입금액\s*[:\s]*([\d,]+)\s*원|([\d,]+)\s*원\s*입금/
+    /입금\s*([\d,]+)\s*원|입금액\s*[:\s]*([\d,]+)\s*원|([\d,]+)\s*원\s*입금/,
   );
   if (amountMatch) {
     const amountStr = amountMatch[1] || amountMatch[2] || amountMatch[3];
@@ -153,7 +153,8 @@ router.post('/', async (req: Request, res: Response) => {
               })
               .eq('id', pendingPayment.id);
 
-            if (mismatchUpdateErr) console.error('⚠️ 불일치 입금자 기록 실패:', mismatchUpdateErr.message);
+            if (mismatchUpdateErr)
+              console.error('⚠️ 불일치 입금자 기록 실패:', mismatchUpdateErr.message);
             else console.log(`📌 불일치 입금자 기록 완료 (${finalSender})`);
           }
 

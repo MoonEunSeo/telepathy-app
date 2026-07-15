@@ -16,7 +16,7 @@ const router = express.Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 // ================================
@@ -50,11 +50,9 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // ✅ JWT 생성
-    const token = jwt.sign(
-      { user_id: user.id, username },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '60d' }
-    );
+    const token = jwt.sign({ user_id: user.id, username }, process.env.JWT_SECRET as string, {
+      expiresIn: '60d',
+    });
 
     // ✅ 환경별 쿠키 옵션 설정
     const isProd = process.env.NODE_ENV === 'production';
@@ -72,7 +70,9 @@ router.post('/login', async (req: Request, res: Response) => {
     return res.status(200).json({ success: true, message: '로그인 성공' } satisfies LoginResponse);
   } catch (err) {
     console.error('❌ 로그인 처리 오류:', err);
-    return res.status(500).json({ success: false, message: (err as Error).message } satisfies LoginResponse);
+    return res
+      .status(500)
+      .json({ success: false, message: (err as Error).message } satisfies LoginResponse);
   }
 });
 

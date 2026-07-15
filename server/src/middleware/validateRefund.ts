@@ -45,7 +45,9 @@ export function validateRefundPayload(req: Request, res: Response, next: NextFun
       }
       const w = wRaw.trim();
       if (!KOREAN_WORD_RE.test(w)) {
-        return res.status(400).json({ ok: false, message: `wordset[${i}]는 한글 1~6자만 허용됩니다.` });
+        return res
+          .status(400)
+          .json({ ok: false, message: `wordset[${i}]는 한글 1~6자만 허용됩니다.` });
       }
       // 덮어쓰기: 정제된 값으로 교체 (so downstream uses clean)
       wordset[i] = w;
@@ -54,7 +56,9 @@ export function validateRefundPayload(req: Request, res: Response, next: NextFun
     // 은행명/계좌 검증 (선택값 허용: 없으면 null)
     if (bank != null && bank !== '') {
       if (!BANK_RE.test(bank)) {
-        return res.status(400).json({ ok: false, message: '은행명은 한글/영문/공백 2~20자만 허용됩니다.' });
+        return res
+          .status(400)
+          .json({ ok: false, message: '은행명은 한글/영문/공백 2~20자만 허용됩니다.' });
       }
       req.body.refund_bank = bank;
     } else {
@@ -63,7 +67,9 @@ export function validateRefundPayload(req: Request, res: Response, next: NextFun
 
     if (account != null && account !== '') {
       if (!ACCOUNT_RE.test(account)) {
-        return res.status(400).json({ ok: false, message: '계좌번호는 숫자만(4~20자리) 입력하세요.' });
+        return res
+          .status(400)
+          .json({ ok: false, message: '계좌번호는 숫자만(4~20자리) 입력하세요.' });
       }
       req.body.refund_account = account;
     } else {

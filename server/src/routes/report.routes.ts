@@ -7,7 +7,7 @@ const router = express.Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 // 신고 접수 처리
@@ -16,7 +16,9 @@ router.post('/', async (req: Request, res: Response) => {
   const { reasons, extraMessage, reporterId, reportedId, roomId } = req.body as ReportRequest;
 
   if (!reporterId || !reportedId || !roomId) {
-    return res.status(400).json({ success: false, message: '필수 값 누락' } satisfies ReportResponse);
+    return res
+      .status(400)
+      .json({ success: false, message: '필수 값 누락' } satisfies ReportResponse);
   }
 
   try {
@@ -33,7 +35,9 @@ router.post('/', async (req: Request, res: Response) => {
 
     if (error) {
       console.error('❌ Supabase insert error:', error.message || error.details || error);
-      return res.status(500).json({ success: false, message: '서버 내부 오류' } satisfies ReportResponse);
+      return res
+        .status(500)
+        .json({ success: false, message: '서버 내부 오류' } satisfies ReportResponse);
     }
 
     // ✅ 신고 성공 후 socket으로 상대방에게 알림
@@ -43,10 +47,11 @@ router.post('/', async (req: Request, res: Response) => {
     if (io) {
       io.to(roomId).emit('chatEndedByReport', { reporterId });
     }
-
   } catch (err) {
     console.error('🔥 서버 에러:', err);
-    return res.status(500).json({ success: false, message: '서버 내부 오류' } satisfies ReportResponse);
+    return res
+      .status(500)
+      .json({ success: false, message: '서버 내부 오류' } satisfies ReportResponse);
   }
 
   return res.status(200).json({ success: true, message: '신고 완료' } satisfies ReportResponse);

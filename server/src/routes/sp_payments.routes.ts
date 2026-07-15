@@ -40,9 +40,7 @@ function validateRefundPayload(req: Request, res: Response, next: NextFunction) 
       .json({ ok: false, message: '은행명은 한글/영문/공백 2~20자만 허용됩니다.' });
 
   if (refund_account && !ACCOUNT_RE.test(refund_account))
-    return res
-      .status(400)
-      .json({ ok: false, message: '계좌번호는 숫자만 (4~20자리) 입력하세요.' });
+    return res.status(400).json({ ok: false, message: '계좌번호는 숫자만 (4~20자리) 입력하세요.' });
 
   next();
 }
@@ -79,7 +77,7 @@ router.post('/create', async (req: Request, res: Response) => {
     };
 
     const tossLink = `tossapp://transfer?bankCode=090&accountNo=100121028199&amount=${amount}&message=${encodeURIComponent(
-      `텔레파시 단어세트 (${name})`
+      `텔레파시 단어세트 (${name})`,
     )}`;
 
     res.json({
@@ -142,9 +140,10 @@ router.post('/update-refund', validateRefundPayload, async (req: Request, res: R
       .single();
 
     if (selectErr || !recentPayment)
-      return res
-        .status(404)
-        .json({ ok: false, message: '결제 내역을 찾을 수 없습니다.' } satisfies SpPaymentUpdateRefundResponse);
+      return res.status(404).json({
+        ok: false,
+        message: '결제 내역을 찾을 수 없습니다.',
+      } satisfies SpPaymentUpdateRefundResponse);
 
     // DB 업데이트
     const { data: updated, error: updateErr } = await supabase
@@ -160,14 +159,20 @@ router.post('/update-refund', validateRefundPayload, async (req: Request, res: R
 
     if (updateErr) throw updateErr;
     if (!updated?.length)
-      return res
-        .status(400)
-        .json({ ok: false, message: 'DB 업데이트에 실패했습니다.' } satisfies SpPaymentUpdateRefundResponse);
+      return res.status(400).json({
+        ok: false,
+        message: 'DB 업데이트에 실패했습니다.',
+      } satisfies SpPaymentUpdateRefundResponse);
 
-    res.json({ ok: true, message: '환불정보 및 단어세트 저장 완료' } satisfies SpPaymentUpdateRefundResponse);
+    res.json({
+      ok: true,
+      message: '환불정보 및 단어세트 저장 완료',
+    } satisfies SpPaymentUpdateRefundResponse);
   } catch (err) {
     console.error('💥 /update-refund 오류:', err);
-    res.status(500).json({ ok: false, message: (err as Error).message } satisfies SpPaymentUpdateRefundResponse);
+    res
+      .status(500)
+      .json({ ok: false, message: (err as Error).message } satisfies SpPaymentUpdateRefundResponse);
   }
 });
 

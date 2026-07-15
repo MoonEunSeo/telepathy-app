@@ -7,7 +7,9 @@
     "start": "tsx server/index.ts",
     "dev": "tsx watch server/index.ts",
     "build": "npm install --prefix telepathy-front && npm run build --prefix telepathy-front",
-    "typecheck": "tsc --noEmit -p server/tsconfig.json"
+    "typecheck": "tsc --noEmit -p server/tsconfig.json",
+    "format": "prettier --write \"server/**/*.{ts,js,json}\" \"shared/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"server/**/*.{ts,js,json}\" \"shared/**/*.{ts,js,json}\""
   },
   "dependencies": {
     "@portone/server-sdk": "^0.14.0",
@@ -37,6 +39,7 @@
     "@types/node": "^26.1.1",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.10",
+    "prettier": "^3.9.5",
     "typescript": "^7.0.2"
   }
 }

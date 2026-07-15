@@ -53,7 +53,9 @@ export function registerSocketHandlers(io: IOServer): void {
         }
 
         // 로그 저장 (필터링된 메시지)
-        await supabase.from('megaphone_logs').insert([{ user_id: userId, nickname, message: cleanMessage }]);
+        await supabase
+          .from('megaphone_logs')
+          .insert([{ user_id: userId, nickname, message: cleanMessage }]);
 
         // 브로드캐스트
         io.emit('megaphone:show', { nickname, message: cleanMessage });
@@ -71,7 +73,11 @@ export function registerSocketHandlers(io: IOServer): void {
     socket.on('join_match', async (data) => {
       const { userId, username, nickname, word, round } = data;
 
-      console.log("매칭 요청 확인:", data)
+      // 재선택: 같은 라운드에서 이 유저의 기존 waiting 행 제거 후 새로 등록
+      await supabase
+        .from('telepathy_sessions_queue')
+        .delete()
+        .match({ user_id: userId, round, status: 'waiting' });
 
       // 1. 현재 유저를 큐에 등록 (waiting)
       const { error: insertError } = await supabase.from('telepathy_sessions_queue').insert([

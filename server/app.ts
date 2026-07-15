@@ -37,7 +37,7 @@ const allowedOrigins = [
   'http://localhost:5000',
   'https://telepathy.my',
   'https://telepathy-app.onrender.com',
-  'http://70.12.102.131:5000'
+  'http://70.12.102.131:5000',
 ];
 
 // ✅ CORS 설정 (쿠키 포함 필수)
@@ -52,7 +52,7 @@ app.use(
       }
     },
     credentials: true, // ✅ 쿠키 허용 (Access-Control-Allow-Credentials)
-  })
+  }),
 );
 
 app.options(/.*/, cors());

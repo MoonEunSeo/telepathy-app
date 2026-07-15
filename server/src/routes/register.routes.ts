@@ -10,7 +10,7 @@ const router = express.Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
 router.post('/', async (req: Request, res: Response) => {
@@ -30,9 +30,10 @@ router.post('/', async (req: Request, res: Response) => {
       .or(`username.eq.${username},phone.eq.${phone}`);
 
     if (existing && existing.length > 0) {
-      return res
-        .status(409)
-        .json({ success: false, message: '이미 등록된 아이디 또는 전화번호입니다.' } satisfies RegisterResponse);
+      return res.status(409).json({
+        success: false,
+        message: '이미 등록된 아이디 또는 전화번호입니다.',
+      } satisfies RegisterResponse);
     }
 
     // 비밀번호 해시
@@ -55,11 +56,9 @@ router.post('/', async (req: Request, res: Response) => {
     if (error) throw error;
 
     // ✅ JWT 생성
-    const token = jwt.sign(
-      { user_id: newUser.id, username },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '60d' }
-    );
+    const token = jwt.sign({ user_id: newUser.id, username }, process.env.JWT_SECRET as string, {
+      expiresIn: '60d',
+    });
 
     // ✅ 쿠키에 저장
     res.cookie('token', token, {
@@ -69,9 +68,10 @@ router.post('/', async (req: Request, res: Response) => {
       maxAge: 60 * 24 * 60 * 60 * 1000, // 60일
     });
 
-    return res
-      .status(201)
-      .json({ success: true, message: '회원가입 완료 및 자동 로그인 성공' } satisfies RegisterResponse);
+    return res.status(201).json({
+      success: true,
+      message: '회원가입 완료 및 자동 로그인 성공',
+    } satisfies RegisterResponse);
   } catch (err) {
     console.error('회원가입 오류:', (err as Error).message || err);
     return res
