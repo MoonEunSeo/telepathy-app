@@ -123,7 +123,7 @@ export default function ChatPage() {
       });
 
       socket.emit('leaveRoom', { userId: myId!, roomId: roomId! }); // 상대방 알림용
-      socket.disconnect();
+      // socket.disconnect();
     } catch (err) {
       console.error('❌ 세션 종료 오류:', err);
     } finally {

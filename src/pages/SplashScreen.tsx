@@ -1,23 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { AuthCheckResponse } from '../types';
 
-// 진입 스플래시: 브랜드 워드마크를 잠깐 보여준 뒤 인증 상태에 따라 이동.
+// 진입 스플래시: 브랜드 워드마크를 잠깐 보여준 뒤 메인 페이지로 이동.
 export default function SplashScreen() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 최소 1.5초 노출 후 auth 체크 결과로 라우팅 (실패 시 로그인으로)
+    // 최소 1.5초 노출 후 페이지 이동
     const timer = setTimeout(async () => {
-      let target = '/login';
-      try {
-        const res = await fetch('/api/auth/check', { credentials: 'include' });
-        const data = (await res.json()) as AuthCheckResponse;
-        target = data.loggedIn ? '/main' : '/login';
-      } catch {
-        target = '/login';
-      }
-      navigate(target, { replace: true });
+      navigate('/main', { replace: true });
     }, 1500);
 
     return () => clearTimeout(timer);

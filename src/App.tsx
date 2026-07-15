@@ -102,7 +102,7 @@ function AppRoutes() {
             navigate('/main');
           }
         } else {
-          const protectedRoutes = ['/main', '/mypage', '/mywords', '/likes', '/chatpage'];
+          const protectedRoutes = ['/mypage', '/mywords', '/likes'];
           if (protectedRoutes.includes(location.pathname)) {
             navigate('/login');
           }

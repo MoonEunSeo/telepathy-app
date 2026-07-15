@@ -98,7 +98,7 @@ const useSocket = ({
 
       // ✅ 상대방에게 메시지를 보내고 일정 시간 후 disconnect
       setTimeout(() => {
-        socketRef.current?.disconnect();
+        // socketRef.current?.disconnect();
       }, 200);
     }
   };

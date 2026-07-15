@@ -31,6 +31,7 @@ import type {
   MatchCurrentRoundResponse,
   PaymentsVerifyResponse,
 } from '../types';
+import { buildGuestProfile, isGuestId, setGuestNickname } from '../utils/guest';
 
 // import useRandomSequence from '../hooks/useRandomSequence'; //단어셔플
 
@@ -256,11 +257,20 @@ export default function MainPage() {
 
   // ✅ 유저 프로필 가져오기
   useEffect(() => {
+
+        // 비로그인/실패 시 게스트 신원으로 진행
+    const applyGuestProfile = () => {
+      const guest = buildGuestProfile()
+      setProfile(guest)
+      if(!guest.nickname) setShowNicknameModal(true) // 닉네임 없으면 모달
+    }
+
     const fetchProfile = async () => {
       try {
         const res = await fetch('/api/nickname/profile', { credentials: 'include' });
         const data = (await res.json()) as ProfileResponse;
-        if (data.success) {
+        const uid = data.user_id || data.id || data.userId
+        if (data.success && uid) {
           setProfile({
             userId: (data.user_id || data.id || data.userId) as Id, // ✅ 양쪽 다 커버
             username: data.username,
@@ -273,9 +283,12 @@ export default function MainPage() {
             username: data.username,
             nickname: data.nickname,
           });
+        } else {
+          applyGuestProfile() // 미로그인 -> 게스트
         }
       } catch (err) {
-        console.error('프로필 불러오기 오류:', err);
+        console.error('프로필 불러오기 오류 -> 게스트로 진행', err);
+        applyGuestProfile() // 네트워크 실패도 게스트로 진행함
       }
     };
     fetchProfile();
@@ -283,6 +296,15 @@ export default function MainPage() {
 
   // ✅ 닉네임 저장
   const handleSaveNickname = async (nickname: string) => {
+    // 게스트면 서버 대신 로컬 저장
+    if (isGuestId(profile?.userId)){
+      setGuestNickname(nickname)
+      setProfile((prev) => ({...prev, nickname}) as UserProfile)
+      setShowNicknameModal(false)
+      toast.success("닉네임이 저장되었습니다!")
+      return
+    }
+
     try {
       const res = await fetch('/api/nickname/set-nickname', {
         method: 'POST',
@@ -443,6 +465,10 @@ export default function MainPage() {
     };
 
     console.log('📤 join_match emit payload:', payload);
+    // ⚠️ 소켓이 끊겨 있으면(예: 직전 채팅 종료 시 disconnect) emit 은 에러 없이
+    //    sendBuffer 에만 쌓이고 서버에 도달하지 않는다. 재연결을 먼저 보장한다
+    //    (버퍼된 패킷은 연결 성립 시 자동 flush 됨).
+    if (!socket.connected) socket.connect();
     socket.emit('join_match', payload);
   };
 
@@ -555,7 +581,6 @@ export default function MainPage() {
                 key={w}
                 className={`relative ${wordBtnClass(isPaidSet, selectedWord === w)}`}
                 onClick={() => handleWordSelect(w)}
-                disabled={!!selectedWord}
               >
                 {isPaidSet && (
                   <span className="absolute -top-2.5 right-2.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full [background:var(--paid-btn-selected-bg)] leading-none">

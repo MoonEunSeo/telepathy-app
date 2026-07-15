@@ -18,6 +18,8 @@ export interface LocalStorageSchema {
   needNicknameSetup: string; // 'true' 플래그
   seenMegaphoneIntro: string; // 'true' 플래그 (MainPage)
   megaphoneIntroShown: string; // 'true' 플래그 (MegaphoneButton)
+  guestId: string; // 게스트 신원 id
+  guestNickname: string // 게스트 닉네임
 }
 
 // JSON 으로 직렬화/역직렬화해야 하는 키 집합. 나머지는 평문 문자열.
