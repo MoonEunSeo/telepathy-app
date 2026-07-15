@@ -28,6 +28,15 @@
 @import './themes/base/index.css';
 
 @layer base {
+  /* content-box 로 인한 오버플로 방지 - w-full + padding이 
+  부모 폭 안에서 계산되도록 */
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box
+  }
+
+  /* 네이티브 button UA 기본 테두리 리셋 */
   button {
     border-width: 0;
     border-style: solid;
