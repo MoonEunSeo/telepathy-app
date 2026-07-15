@@ -37,7 +37,7 @@ export default function BottomLayout() {
 
       {/* 구 .bottom-nav-container — 리디자인: 웜톤 탭바 + 라벨 */}
       <div className="fixed right-0 bottom-0 left-0 z-50 flex items-center justify-around bg-[var(--tab-bar-bg)] pt-2 pb-3 [backdrop-filter:blur(8px)] [border-top:1px_solid_var(--tab-bar-border)]">
-        {navItems.map(({ icon, path, external, title, label }, i) => {
+        {navItems.map(({ icon, path, url, external, title, label }, i) => {
           const active = !external && location.pathname === path;
           const colorCls = active ? 'text-[var(--tab-icon-active)]' : 'text-[var(--tab-icon)]';
           const content = (
@@ -47,16 +47,16 @@ export default function BottomLayout() {
             </>
           );
           return external ? (
-            <span
+            <a
               key={i}
-              // href={url}
-              // target="_blank"
+              href={url}
+              target="_blank"
               rel="noopener noreferrer"
               title={title || ''}
-              className={`${navBtn} ${colorCls}`}
+              className={`${navBtn} ${colorCls} no-underline`}
             >
               {content}
-            </span>
+            </a>
           ) : (
             <button
               key={i}

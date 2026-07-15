@@ -219,7 +219,7 @@ const MyPage = () => {
           <p className="mb-2.5 text-[11px] font-bold tracking-[0.12em] text-[var(--section-label-color)] uppercase">
             계정
           </p>
-          <div className="mb-8 cursor-pointer overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-surface)] [box-shadow:var(--card-shadow)] [border:1px_solid_var(--word-btn-border)] hover:bg-[var(--color-surface-muted)]">
+          <div className="mb-8 cursor-pointer overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-surface)] [box-shadow:var(--card-shadow)] [border:1px_solid_var(--word-btn-border)]">
             {[
               { label: '결제 문의', onClick: handlePaymentInquiry },
               { label: '자주 묻는 질문', onClick: handleOpenFAQ },
@@ -228,7 +228,7 @@ const MyPage = () => {
               <button
                 key={row.label}
                 onClick={row.onClick}
-                className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text)] [border-bottom:1px_solid_var(--color-border-subtle)] hover:bg-[var(--color-surface-muted)]"
+                className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text)] [border-bottom:1px_solid_var(--color-border-subtle)] hover:bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface-muted)]"
               >
                 <span>{row.label}</span>
                 <ChevronRight size={18} className="shrink-0 text-[var(--row-arrow)]" />
@@ -236,7 +236,7 @@ const MyPage = () => {
             ))}
             <button
               onClick={handleChangeLogout}
-              className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)]"
+              className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text-secondary)]"
             >
               <span>로그아웃</span>
               <LogOut size={17} className="shrink-0 text-[var(--row-arrow)]" />
