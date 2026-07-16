@@ -20,12 +20,16 @@ export interface LocalStorageSchema {
   megaphoneIntroShown: string; // 'true' 플래그 (MegaphoneButton)
   guestId: string; // 게스트 신원 id
   guestNickname: string; // 게스트 닉네임
+  wordFavorites: string[]; // 즐겨찾기한 카드 key 목록
+  wordMemos: Record<string, string>; // 카드 key -> 메모 텍스트
 }
 
 // JSON 으로 직렬화/역직렬화해야 하는 키 집합. 나머지는 평문 문자열.
 const JSON_KEYS: ReadonlySet<keyof LocalStorageSchema> = new Set<keyof LocalStorageSchema>([
   'chatInfo',
   'feedbackInfo',
+  'wordFavorites',
+  'wordMemos',
 ]);
 
 // 값 읽기: 없으면 null. JSON 키는 parse, 실패 시 null.
