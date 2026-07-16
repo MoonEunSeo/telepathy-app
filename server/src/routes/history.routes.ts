@@ -1,7 +1,11 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
-import type { WordHistoryAddRequest, WordHistoryAddResponse } from '@shared/api';
+import type {
+  WordHistoryAddRequest,
+  WordHistoryAddResponse,
+  WordHistoryUpdateRequest,
+} from '@shared/api';
 
 const router = express.Router();
 
@@ -26,7 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const { data, error } = await supabase
       .from('word_history')
-      .select('word, connected_at, partner_id, partner_nickname') // 🔄 새 구조
+      .select('word, connected_at, partner_id, partner_nickname, is_favorite, memo')
       .eq('user_id', userId)
       .order('connected_at', { ascending: false });
 
@@ -89,6 +93,42 @@ router.post('/add', async (req: Request, res: Response) => {
       .json({ success: true, message: '히스토리 저장 완료' } satisfies WordHistoryAddResponse);
   } catch (err) {
     console.error('❌ word_history 저장 실패:', (err as Error).message);
+    return res.status(500).json({ success: false, message: '서버 오류' });
+  }
+});
+
+// ✅ 즐겨찾기 / 메모 수정 API
+router.patch('/:id', async (req: Request, res: Response) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ success: false, message: '인증 토큰 없음' });
+
+  const { id } = req.params;
+  const { isFavorite, memo } = req.body as WordHistoryUpdateRequest;
+
+  // 들어온 필드만 반영 (부분 수정)
+  const patch: { is_favorite?: boolean; memo?: string } = {}; // 응답용 타입 변환 컨버터 추가
+  if (typeof isFavorite === 'boolean') patch.is_favorite = isFavorite;
+  if (typeof memo === 'string') patch.memo = memo;
+
+  if (Object.keys(patch).length === 0) {
+    return res.status(400).json({ success: false, message: '수정할 내용 없음' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
+    const userId = decoded.user_id;
+
+    const { error } = await supabase
+      .from('word_history')
+      .update(patch)
+      .eq('id', id)
+      .eq('user_id', userId); // 본인 행만 수정
+
+    if (error) throw error;
+
+    return res.status(200).json({ success: true, message: '수정 완료' });
+  } catch (err) {
+    console.error('❌ word_history 수정 실패:', (err as Error).message);
     return res.status(500).json({ success: false, message: '서버 오류' });
   }
 });

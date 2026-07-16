@@ -111,9 +111,12 @@ export interface JoinMatchPayload {
 // 단어 기록 / 단어세트
 // /api/word-history 항목 (MyWords: item.word, item.partner_nickname, item.connected_at)
 export interface WordHistoryItem {
+  id: string; // word_history PK (즐겨찾기/메모 수정 대상 식별)
   word: string;
   partner_nickname: string;
   connected_at: string; // ISO 날짜 문자열 (new Date(item.connected_at))
+  is_favorite: boolean; // 즐겨찾기 여부
+  memo: string | null; // 메모
   // TODO: 백엔드 응답 확인 — id, user_nickname 등 추가 필드 가능성(프론트 미사용)
 }
 

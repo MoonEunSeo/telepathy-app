@@ -205,6 +205,14 @@ export interface WordHistoryAddRequest {
 // TODO: 백엔드 응답 확인 — 프론트가 응답 필드를 사용하지 않음
 export type WordHistoryAddResponse = ApiResult;
 
+// PATCH /api/word-history/:id (MyWords: 즐겨찾기/메모 수정)
+export interface WordHistoryUpdateRequest {
+  isFavorite?: boolean;
+  memo?: string;
+}
+
+export type WordHistoryUpdateResponse = ApiResult;
+
 // ─────────────────────────────────────────────────────────────
 // wordsets
 // GET /api/wordsets/mine/:id (LikePage: res.data.success, res.data.wordsets 배열)
