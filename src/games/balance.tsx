@@ -22,7 +22,7 @@ const TOPICS: Topic[] = [
 export const balanceGame: MiniGame<BalanceState> = {
   gameId: 'balance',
   label: '밸런스 게임',
-  icon: '🎲',
+  icon: '⚖️',
   createInitialState: () => ({ phase: 'select', topic: null, answers: {} }),
 
   reduce(state, ev, ctx) {

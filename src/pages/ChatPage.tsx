@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, AlertTriangle, ChevronLeft, Send } from 'lucide-react';
+import { LogOut, AlertTriangle, ChevronLeft, Send, Plus, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { socket } from '../config/socket';
 import ReportModal from '../components/ReportModal';
@@ -320,35 +320,39 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="relative shrink-0">
-          <button
-            onClick={() => setShowGameMenu((v) => !v)}
-            title="미니게임"
-            className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full [background:var(--chat-input-bg)] [border:1px_solid_var(--chat-input-border)] hover:opacity-90"
-          >
-            🎲
-          </button>
-          {showGameMenu && (
-            <div className="absolute bottom-full left-0 mb-2 rounded-[14px] bg-[var(--color-surface)] p-2 [box-shadow:var(--card-shadow)]">
-              {GAMES.map((g) => (
-                <button
-                  key={g.gameId}
-                  className="flex w-full gap-2 px-3 py-2 hover:bg-[var(--color-surface-muted)]"
-                  onClick={() => {
-                    game.start(g.gameId);
-                    setShowGameMenu(false);
-                  }}
-                >
-                  <span>{g.icon}</span>
-                  <span>{g.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* 🔹 입력 영역 — 리디자인: pill 입력 + 원형 전송 버튼 */}
+        {/* 🔹 입력 영역 — + 게임메뉴 · pill 입력 · 원형 전송 */}
         <div className="flex items-center gap-2 bg-[var(--chat-panel-bg)] px-4 py-3 [border-top:1px_solid_var(--chat-border)]">
+          {/* + 게임 메뉴 트리거 (입력창 왼쪽) */}
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowGameMenu((v) => !v)}
+              title="미니게임"
+              disabled={chatEnded}
+              className="flex h-[46px] w-[46px] items-center justify-center rounded-full [background:var(--chat-input-bg)] [border:1px_solid_var(--chat-input-border)] hover:opacity-90 disabled:opacity-40"
+            >
+              {showGameMenu ? <X size={20} /> : <Plus size={20} />}
+            </button>
+
+            {showGameMenu && (
+              <div className="absolute bottom-full left-0 mb-2 w-max rounded-[14px] bg-[var(--color-surface)] p-2 [box-shadow:var(--card-shadow)]">
+                {GAMES.map((g) => (
+                  <button
+                    key={g.gameId}
+                    className="flex w-full items-center gap-2 rounded-[8px] px-3 py-2 hover:bg-[var(--color-surface-muted)]"
+                    onClick={() => {
+                      game.start(g.gameId);
+                      setShowGameMenu(false);
+                    }}
+                  >
+                    <span>{g.icon}</span>
+                    <span className="whitespace-nowrap">{g.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 입력 */}
           <input
             className="h-[46px] flex-1 rounded-[var(--radius-pill)] px-4 text-[14px] text-[var(--chat-input-text)] outline-none [background:var(--chat-input-bg)] [border:1px_solid_var(--chat-input-border)] [transition:border_0.2s] focus:[border-color:var(--color-text-subtle)] disabled:cursor-not-allowed disabled:[background-color:var(--color-border-subtle)] disabled:opacity-60"
             placeholder="메시지를 입력하세요."
@@ -357,7 +361,8 @@ export default function ChatPage() {
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             disabled={chatEnded}
           />
-          {/* 원형 전송 버튼 (종이비행기) */}
+
+          {/* 전송 */}
           <button
             className="flex h-[46px] w-[46px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none text-[var(--color-on-accent)] [background:var(--chat-send-bg)] [transition:opacity_0.2s] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             onClick={handleSendMessage}
