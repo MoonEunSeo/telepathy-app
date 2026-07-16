@@ -12,6 +12,7 @@ import type {
   MegaphoneSendPayload,
   MegaphoneShowPayload,
   MegaphoneFailedPayload,
+  GameEvent,
 } from './domain';
 
 // 서버 → 클라이언트 (socket.on)
@@ -26,6 +27,7 @@ export interface ServerToClientEvents {
   matched: (data: MatchedPayload) => void;
   'megaphone:show': (payload: MegaphoneShowPayload) => void;
   'megaphone:failed': (payload: MegaphoneFailedPayload) => void;
+  'game:event': (e: GameEvent) => void;
 }
 
 // 클라이언트 → 서버 (socket.emit)
@@ -35,7 +37,8 @@ export interface ClientToServerEvents {
   stopTyping: (payload: { roomId: string }) => void;
   // ChatPage: { userId, roomId } / legacy useSocket: { roomId } → userId optional
   leaveRoom: (payload: { roomId: string; userId?: Id }) => void;
-  'megaphone:send': (payload: MegaphoneSendPayload) => void;
   getOnlineCount: () => void; // payload 없음
   join_match: (payload: JoinMatchPayload) => void;
+  'megaphone:send': (payload: MegaphoneSendPayload) => void;
+  'game:event': (e: GameEvent) => void;
 }

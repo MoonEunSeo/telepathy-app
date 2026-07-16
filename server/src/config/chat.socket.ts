@@ -252,6 +252,14 @@ export function registerSocketHandlers(io: IOServer): void {
     });
 
     /**
+     * 📌 미니 게임 이벤트
+     */
+    socket.on('game:event', (e) => {
+      // 같은 방 상대에게만 전달(보낸 사람 제외 -> 발신자는 로컬에서 낙관적 반영)
+      socket.to(e.roomId).emit('game:event', e);
+    });
+
+    /**
      * 📌 방 나가기
      */
     socket.on('leaveRoom', async ({ roomId, userId }) => {

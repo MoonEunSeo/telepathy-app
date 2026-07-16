@@ -204,3 +204,12 @@ export interface ImpRequestPayParams {
   buyer_email?: string;
   buyer_name?: string;
 }
+
+// 웹소켓 기반 미니 게임
+export interface GameEvent {
+  gameId: string;
+  type: string; // 'invite'
+  roomId: string;
+  senderId: Id;
+  payload?: unknown; // 게임별 자유 속성
+}

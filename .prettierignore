@@ -3,6 +3,5 @@ dist
 build
 coverage
 package-lock.json
-telepathy-front
 *.min.js
 .env
