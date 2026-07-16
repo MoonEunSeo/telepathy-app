@@ -8,6 +8,8 @@ import ReportModal from '../components/ReportModal';
 import { useWordSession } from '../contexts/WordSessionContext';
 import { getStorage, setStorage, removeStorage } from '../types';
 import type { ChatMessage, ReportResponse } from '../types';
+import { GAMES, getGame } from '../games/registry';
+import { useMiniGame } from '../hooks/useMiniGame';
 
 // ReportModal onSubmit({ reasons, extra }) 콜백 인자 모양.
 // TODO: ReportModal 실제 onSubmit 시그니처 확인 (reasons: string[], extra: string 가정).
@@ -150,6 +152,14 @@ export default function ChatPage() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+
+  //✅ 미니 게임 처리
+  const gameCtx =
+    roomId && myId && partnerId
+      ? { roomId, myId, partnerId, partnerNickname: partnerNickname ?? '' }
+      : null;
+  const game = useMiniGame(gameCtx);
+  const [showGameMenu, setShowGameMenu] = useState(false);
 
   //✅ 신고 처리
   const handleSubmitReport = async ({ reasons, extra }: ReportSubmitValues) => {
@@ -310,6 +320,33 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
+        <div className="relative shrink-0">
+          <button
+            onClick={() => setShowGameMenu((v) => !v)}
+            title="미니게임"
+            className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full [background:var(--chat-input-bg)] [border:1px_solid_var(--chat-input-border)] hover:opacity-90"
+          >
+            🎲
+          </button>
+          {showGameMenu && (
+            <div className="absolute bottom-full left-0 mb-2 rounded-[14px] bg-[var(--color-surface)] p-2 [box-shadow:var(--card-shadow)]">
+              {GAMES.map((g) => (
+                <button
+                  key={g.gameId}
+                  className="flex w-full gap-2 px-3 py-2 hover:bg-[var(--color-surface-muted)]"
+                  onClick={() => {
+                    game.start(g.gameId);
+                    setShowGameMenu(false);
+                  }}
+                >
+                  <span>{g.icon}</span>
+                  <span>{g.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* 🔹 입력 영역 — 리디자인: pill 입력 + 원형 전송 버튼 */}
         <div className="flex items-center gap-2 bg-[var(--chat-panel-bg)] px-4 py-3 [border-top:1px_solid_var(--chat-border)]">
           <input
@@ -330,6 +367,14 @@ export default function ChatPage() {
             <Send size={18} />
           </button>
         </div>
+        {game.active &&
+          gameCtx &&
+          getGame(game.active.gameId)?.render({
+            state: game.active.state,
+            ctx: gameCtx,
+            emit: game.emit,
+            close: game.close,
+          })}
 
         {/* 🔹 나가기 확인 모달 — 구 .modal-overlay(스코프) / .chat-ended-modal */}
         {showExitConfirm && (

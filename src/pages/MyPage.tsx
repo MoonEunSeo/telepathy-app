@@ -228,7 +228,7 @@ const MyPage = () => {
               <button
                 key={row.label}
                 onClick={row.onClick}
-                className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text)] [border-bottom:1px_solid_var(--color-border-subtle)] hover:bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface-muted)]"
+                className="flex w-full cursor-pointer items-center justify-between bg-transparent px-4 py-3.5 text-[14.5px] text-[var(--color-text)] [border-bottom:1px_solid_var(--color-border-subtle)] hover:bg-[var(--color-surface-muted)]"
               >
                 <span>{row.label}</span>
                 <ChevronRight size={18} className="shrink-0 text-[var(--row-arrow)]" />
