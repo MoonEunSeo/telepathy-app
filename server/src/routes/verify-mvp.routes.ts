@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { SolapiMessageService } from 'solapi';
+import { randomInt } from 'node:crypto';
 import type {
   VerifyMvpSendRequest,
   VerifyMvpSendResponse,
@@ -20,7 +21,7 @@ const messageService = new SolapiMessageService(
 );
 
 // 인증번호 생성 함수
-const generateCode = (): string => Math.floor(100000 + Math.random() * 900000).toString();
+const generateCode = (): string => randomInt(100000, 1000000).toString();
 
 // ✅ 문자 전송 API
 router.post('/send', async (req: Request, res: Response) => {
