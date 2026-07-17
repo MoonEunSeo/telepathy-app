@@ -1,0 +1,124 @@
+/* 🧩 Auto-generated CSS imports */
+
+/* ============================================================
+ * Tailwind CSS v4 — 유틸리티 + 테마만 도입 (Preflight/전역 리셋 제외)
+ * -----------------------------------------------------------
+ * 이미 스타일링된 앱이라 preflight.css(전역 리셋)를 일부러 로드하지
+ * 않는다. 기존 전역 CSS·CSS Modules 외관을 그대로 보존하고 유틸리티만
+ * 추가로 쓰기 위함. (전역 리셋이 필요해지면 아래 preflight 줄을 추가)
+ *   @import 'tailwindcss/preflight.css' layer(base);
+ *
+ * @import 규칙은 다른 규칙보다 먼저 와야 하므로 모든 @import 를 상단에
+ * 모으고, @theme 브리지는 그 아래에 둔다.
+ * ============================================================ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* 🎃 시즌 테마 배리언트 — body.halloween-mode 하위 요소에 `halloween:*` 유틸 적용.
+   AI-quiz-clone 의 `dark:` 와 동일 개념. 테마별 레이아웃 차이도 별도 클래스 훅
+   대신 tsx 안에서 Tailwind 로 표현(예: `halloween:absolute halloween:bottom-[10px]`).
+   `body.halloween-mode &` → 특이도(0,2,1)로 기본 유틸을 안전하게 덮음. */
+@custom-variant halloween (body.halloween-mode &);
+
+/* Design tokens — 반드시 최상단에서 먼저 로드 (다른 CSS가 var(--*)를 참조) */
+@import './themes/base/tokens.css';
+
+/* Base (전역 스타일시트) — ClosedModal.css 는 자기완결 유틸화로 제거됨 */
+@import './themes/base/index.css';
+
+@layer base {
+  /* content-box 로 인한 오버플로 방지 - w-full + padding이 
+  부모 폭 안에서 계산되도록 */
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box
+  }
+
+  /* 네이티브 button UA 기본 테두리 리셋 */
+  button {
+    border-width: 0;
+    border-style: solid;
+  }
+}
+
+/* ============================================================
+ * 🎨 디자인 토큰 → Tailwind 테마 브리지
+ * -----------------------------------------------------------
+ * @theme inline: 토큰 "값"을 복제하지 않고 기존 var(--color-*)/var(--shadow-*)
+ * 를 그대로 참조한다. 덕분에
+ *   ① tokens.css 가 계속 단일 진실 공급원(SSOT)
+ *   ② body.halloween-mode 런타임 오버라이드가 유틸리티(bg-*, text-*,
+ *      border-*, shadow-* …)에도 자동 반영
+ * 된다. 신규 토큰을 추가하면 여기 한 줄만 추가하면 유틸리티가 생긴다.
+ *
+ * 사용 예:  className="bg-surface text-text border border-border shadow-md"
+ *           className="text-danger"  /  className="bg-accent text-on-accent"
+ * ============================================================ */
+@theme inline {
+  /* ===== Surfaces → bg-*, text-* ===== */
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-sunken: var(--color-surface-sunken);
+
+  /* ===== Text → text-* ===== */
+  --color-text: var(--color-text);
+  --color-text-strong: var(--color-text-strong);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-subtle: var(--color-text-subtle);
+  --color-text-faint: var(--color-text-faint);
+
+  /* ===== Accent → bg-accent, text-on-accent ===== */
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-on-accent: var(--color-on-accent);
+
+  /* ===== Borders → border-* ===== */
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-subtle: var(--color-border-subtle);
+
+  /* ===== Feedback → text-danger, bg-danger-surface, text-link … ===== */
+  --color-danger: var(--color-danger);
+  --color-danger-hover: var(--color-danger-hover);
+  --color-danger-accent: var(--color-danger-accent);
+  --color-danger-accent-hover: var(--color-danger-accent-hover);
+  --color-danger-text: var(--color-danger-text);
+  --color-danger-surface: var(--color-danger-surface);
+  --color-danger-border: var(--color-danger-border);
+  --color-link: var(--color-link);
+
+  /* ===== Neutral action ===== */
+  --color-neutral: var(--color-neutral);
+  --color-neutral-hover: var(--color-neutral-hover);
+
+  /* ===== Chat bubble ===== */
+  --color-bubble-other-bg: var(--color-bubble-other-bg);
+  --color-bubble-other-text: var(--color-bubble-other-text);
+
+  /* ===== Warm paper palette ===== */
+  --color-text-warm: var(--color-text-warm);
+  --color-text-warm-soft: var(--color-text-warm-soft);
+  --color-warm-input-bg: var(--color-warm-input-bg);
+  --color-warm-input-bg-focus: var(--color-warm-input-bg-focus);
+  --color-warm-input-border: var(--color-warm-input-border);
+  --color-warm-input-border-focus: var(--color-warm-input-border-focus);
+  --color-warm-input-text: var(--color-warm-input-text);
+  --color-danger-warm: var(--color-danger-warm);
+
+  /* ===== Shadows → shadow-sm / shadow-md / shadow-lg ===== */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+/* CSS Modules 로 전환된 파일은 각 tsx 에서 import (여기 @import 하면 안 됨):
+   컴포넌트 — HelpPage / NicknameModal / BottomLayout / MegaphoneInputModal /
+   MegaphoneButton / ReportModal / MyWords / TermsTemplate / WordSetForm
+   페이지 — WordSetPage / LikePage / MyPage / MainPage / ChatPage */
+
+/* Themes (시즌 테마 halloween/christmas 는 App.tsx 의 useSeasonalTheme 이
+   날짜 기반으로 <link> 주입. 기본 테마는 tokens.css :root 토큰이 담당) */

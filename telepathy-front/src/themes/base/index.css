@@ -1,0 +1,346 @@
+/* 🧭 moved from: src\themes\base\index.css */
+/* 🧭 moved from: src\index.css */
+/* 로딩 중일 때 완전 검은 배경 */
+body.loading-mode {
+  background-color: #000 !important; /* 의도된 순수 블랙 로딩 화면 (토큰 대상 아님) */
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Gowun Dodum', sans-serif;
+  background-color: var(--color-bg);
+}
+
+/* 🔀 입력창(구 .auth-input/.birth-input/.verify-input)은
+     src/components/ui/AuthInput.tsx (Tailwind, variant: auth/birth/verify) 로 이관됨 */
+
+/* 🔀 액션 버튼(구 .login-button/.agree-button/.next-button/.check-button)은
+     src/components/ui/Button.tsx (Tailwind, variant: block/inline/check) 로 이관됨 */
+
+/* 🔀 인증 페이지 레이아웃/텍스트(구 .login-container/.login-subtitle/.login-title/
+     .auth-footer-question/.terms-footer/.or-divider/.id-check-row/.result-message)와
+     .bold-link 는 각 페이지 Tailwind 유틸 + src/components/ui/TextLink.tsx 로 이관됨
+     (Login/Register/Verify_mvp/FindPassword/ChangePassword) */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--modal-overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  color: var(--modal-text);
+  border: 1px solid var(--modal-border);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px !important;
+  max-width: 85% !important;
+  font-family: 'Gowun Dodum';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 모달 내부 버튼행(직속 div) 정렬 — 구 MyPage.module.css 의 :global(.modal-content) > div
+     규칙을 공유 모달 레이어로 이관(앱 전역 소비자: MyPage 모달·ClosedModal .comments 등 보존) */
+.modal-content > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 🔀 .alert-box(구 ModalPolicy 경고) → ModalPolicy.tsx Tailwind 유틸로 이관 */
+
+/* 🔀 성별 토글(구 .toggle-button/.active)은 src/components/ui/ToggleButton.tsx
+     (Tailwind + tokens.css --toggle-*) 로 이관됨 */
+
+.title {
+  font-family: 'Judson', serif;
+  font-size: 60px;
+  text-align: center;
+  margin-top: 90px;
+  margin-bottom: 20px;
+  color: var(--color-text);
+}
+
+/* 모달 배경 (어두운 반투명) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--modal-overlay-bg);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* 모달 박스 */
+.chat-ended-modal {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* 문구 */
+.chat-ended-modal p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* 버튼 컨테이너 */
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 버튼 */
+.exit-button-text {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* 네 버튼 (강조) */
+.exit-button-text.confirm {
+  background-color: var(--color-danger);
+  color: var(--color-on-accent);
+}
+.exit-button-text.confirm:hover {
+  background-color: var(--color-danger-hover);
+}
+
+/* 아니요 버튼 */
+.exit-button-text.cancel {
+  background-color: var(--color-neutral);
+  color: var(--color-text);
+}
+.exit-button-text.cancel:hover {
+  background-color: var(--color-neutral-hover);
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.modal-content {
+  background: var(--modal-bg);
+  color: var(--modal-text);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 80%;
+  max-width: 400px;
+}
+
+.modal-actions button {
+  margin: 10px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.confirm-btn {
+  background-color: var(--color-text-subtle);
+  color: var(--color-on-accent);
+}
+
+.cancel-btn {
+  background-color: var(--color-neutral-hover);
+}
+
+/* 🎬 ChatPage 애니메이션 — 구 ChatPage.module.css @keyframes 를 모듈 삭제에 따라
+     전역 이관(chat- 접두사로 base/ClosedModal 의 fadeIn/fadeInUp 충돌 회피).
+     tsx 는 animate-[chat-*_...] arbitrary 유틸로 참조. */
+@keyframes chat-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes chat-blink {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+@keyframes chat-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes chat-fade-in-overlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes chat-fade-in-up-modal {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 🎬 LikePage 애니메이션 + 별가루 배경 — 구 LikePage.module.css 이관(모듈 삭제).
+     keyframe 은 like- 접두사(전역 fadeIn/fadeUp 충돌 회피). fadeUp 은 모듈 내
+     3중 정의 중 마지막(translateY 10px)이 실제 적용값이라 그것으로 통일.
+     별가루 배경은 이중 radial-gradient(콤마) → arbitrary 회피 위해 var 로. */
+:root {
+  --like-stars-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 0.5px, transparent 1px),
+    radial-gradient(rgba(255, 240, 250, 0.2) 1px, transparent 1px);
+  --like-stars-size: 4px 4px, 8px 8px;
+  --like-btn-bg: linear-gradient(90deg, var(--color-text-warm) 0%, #000 100%);
+  --like-btn-bg-hover: linear-gradient(90deg, #4a3a25 0%, #1b1715 100%);
+  --like-btn-bg-hover-strong: linear-gradient(90deg, #433026 0%, #161210 100%);
+  --like-sweep: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  --like-title-grad: linear-gradient(90deg, #d4a3a8 0%, var(--color-text-warm) 100%);
+}
+@keyframes like-star-drift {
+  0% {
+    background-position:
+      0 0,
+      30px 50px;
+    opacity: 0.15;
+  }
+  50% {
+    background-position:
+      40px 60px,
+      80px 120px;
+    opacity: 0.25;
+  }
+  100% {
+    background-position:
+      0 0,
+      30px 50px;
+    opacity: 0.15;
+  }
+}
+@keyframes like-fade-in-page {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+@keyframes like-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes like-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 🎬 MainPage 피드백 모달 등장 (구 MainPage.module.css @keyframes fadeIn → main- 접두사) */
+@keyframes main-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🎬 MegaphoneInputModal 등장 (구 module @keyframes fadeIn → mega- 접두사) */
+@keyframes mega-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* 🎬 ClosedModal 편지 등장 (구 ClosedModal.css @keyframes fadeInUp → closed- 접두사) */
+@keyframes closed-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
