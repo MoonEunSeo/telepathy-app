@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import type {
   WordHistoryAddRequest,
   WordHistoryAddResponse,
   WordHistoryUpdateRequest,
 } from '@shared/api';
+import authMiddleware from '../middleware/auth';
 
 const router = express.Router();
 
@@ -14,19 +14,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
-interface JwtUser {
-  user_id: string;
-  username?: string;
-}
-
 // ✅ 단어 히스토리 조회 API
-router.get('/', async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
-  if (!token) return res.status(401).json({ success: false, message: '인증 토큰 없음' });
-
+router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const userId = decoded.user_id;
+    const userId = req.user?.user_id;
 
     const { data, error } = await supabase
       .from('word_history')
@@ -44,21 +35,15 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // ✅ 단어 히스토리 저장 API
-router.post('/add', async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
+router.post('/add', authMiddleware, async (req: Request, res: Response) => {
   const { partnerId, partnerNickname, word, userNickname } = req.body as WordHistoryAddRequest;
-
-  if (!token || !partnerId || !partnerNickname || !word || !userNickname) {
-    return res.status(400).json({ success: false, message: '필수 정보 누락' });
-  }
 
   if (partnerId === 'undefined') {
     return res.status(400).json({ success: false, message: '유효하지 않은 partnerId' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const userId = decoded.user_id;
+    const userId = req.user?.user_id;
 
     // 중복 저장 방지 (같은 조합이 있으면 패스)
     const { data: existing, error: checkError } = await supabase
@@ -98,10 +83,7 @@ router.post('/add', async (req: Request, res: Response) => {
 });
 
 // ✅ 즐겨찾기 / 메모 수정 API
-router.patch('/:id', async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
-  if (!token) return res.status(401).json({ success: false, message: '인증 토큰 없음' });
-
+router.patch('/:id', authMiddleware, async (req: Request, res: Response) => {
   const { id } = req.params;
   const { isFavorite, memo } = req.body as WordHistoryUpdateRequest;
 
@@ -115,8 +97,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const userId = decoded.user_id;
+    const userId = req.user?.user_id;
 
     const { error } = await supabase
       .from('word_history')

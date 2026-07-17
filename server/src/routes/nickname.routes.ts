@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
-import jwt from 'jsonwebtoken';
+import authMiddleware from '../middleware/auth';
 
 const router = express.Router();
 
@@ -9,32 +9,17 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
-interface JwtUser {
-  user_id: string;
-  username?: string;
-}
-
 // ✅ nickname 저장 API
-router.post('/set-nickname', async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
+router.post('/set-nickname', authMiddleware, async (req: Request, res: Response) => {
   const { nickname } = req.body;
-
-  console.log('✅ POST /set-nickname 호출됨');
-  console.log('✅ token:', token);
-  console.log('✅ nickname:', nickname);
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
-  }
 
   if (!nickname || nickname.length > 20) {
     return res.status(400).json({ success: false, message: '닉네임이 유효하지 않습니다.' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const user_id = decoded.user_id;
-    const safeUsername = decoded.username || 'unknown'; // fallback 처리
+    const user_id = req.user?.user_id;
+    const safeUsername = req.user?.username || 'unknown'; // fallback 처리
 
     console.log('✅ user_id:', user_id);
 
@@ -71,16 +56,9 @@ router.post('/set-nickname', async (req: Request, res: Response) => {
 });
 
 // ✅ GET /profile → 유저 닉네임 조회용
-router.get('/profile', async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: '토큰 없음' });
-  }
-
+router.get('/profile', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const userId = decoded.user_id;
+    const userId = req.user?.user_id;
 
     const { data, error } = await supabase
       .from('users')

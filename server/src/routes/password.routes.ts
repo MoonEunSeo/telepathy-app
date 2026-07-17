@@ -2,7 +2,6 @@
 import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import type {
   PasswordCheckUserRequest,
   PasswordCheckUserResponse,
@@ -11,6 +10,7 @@ import type {
   PasswordResetRequest,
   PasswordResetResponse,
 } from '@shared/api';
+import authMiddleware from '../middleware/auth';
 
 const router = express.Router();
 
@@ -18,11 +18,6 @@ const supabase = createClient(
   process.env.SUPABASE_URL as string,
   process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
-
-interface JwtUser {
-  user_id: string;
-  username?: string;
-}
 
 // ✅ 1. 아이디 존재 여부 확인
 router.post('/check-user', async (req: Request, res: Response) => {
@@ -41,19 +36,11 @@ router.post('/check-user', async (req: Request, res: Response) => {
 });
 
 // ✅ 2. 비밀번호 재설정 (로그인 상태)
-router.post('/change', async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
+router.post('/change', authMiddleware, async (req: Request, res: Response) => {
   const { currentPassword, newPassword } = req.body as PasswordChangeRequest;
 
-  if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: '로그인이 필요합니다.' } satisfies PasswordChangeResponse);
-  }
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const userId = decoded.user_id;
+    const userId = req.user?.user_id;
 
     // ✅ 1️⃣ 유저 정보 조회 (기존 해시 비밀번호 포함)
     const { data: user, error: userError } = await supabase

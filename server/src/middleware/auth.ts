@@ -6,7 +6,7 @@ import type { Request, Response, NextFunction } from 'express';
 function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   const token = req.cookies?.token; // 쿠키에서 토큰 읽기
   if (!token) {
-    res.status(401).json({ success: false, message: '인증 필요' });
+    res.status(401).json({ success: false, message: '인증이 필요합니다.' });
     return;
   }
 
@@ -16,10 +16,8 @@ function authMiddleware(req: Request, res: Response, next: NextFunction): void {
     req.user = typeof decoded === 'string' ? { username: decoded } : decoded;
     next();
   } catch (err) {
-    res.status(401).json({ success: false, message: '유효하지 않은 토큰' });
+    res.status(401).json({ success: false, message: '유효하지 않은 토큰입니다' });
   }
 }
 
-// ⚠️ 아직 .js 인 라우트들이 `require('../middleware/auth')` 로 불러오므로
-//    CJS 호환을 위해 `export =` 사용
-export = authMiddleware;
+export default authMiddleware;

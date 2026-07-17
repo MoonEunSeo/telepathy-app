@@ -1,9 +1,9 @@
 // 📦 routes/match.routes.ts
 import express, { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import { getCurrentRound } from '../utils/round';
 import type { MatchCurrentRoundResponse } from '@shared/api';
+import authMiddleware from '../middleware/auth';
 
 const router = express.Router();
 
@@ -13,11 +13,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
 
-interface JwtUser {
-  user_id: string;
-  username?: string;
-}
-
 // ✅ 0. 현재 라운드 API (이제 단어세트는 프론트에서 처리)
 router.get('/current-round', (req: Request, res: Response) => {
   const { round, remaining } = getCurrentRound();
@@ -25,7 +20,7 @@ router.get('/current-round', (req: Request, res: Response) => {
 });
 
 // ✅ 3. 세션 종료
-router.post('/end', async (req: Request, res: Response) => {
+router.post('/end', authMiddleware, async (req: Request, res: Response) => {
   const token = req.cookies?.token;
   const { roomId } = req.body as { roomId?: string };
 
@@ -37,8 +32,7 @@ router.post('/end', async (req: Request, res: Response) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtUser;
-    const userId = decoded.user_id;
+    const userId = req.user?.user_id;
 
     console.log('✅ decoded userId:', userId, 'roomId:', roomId);
 
