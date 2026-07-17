@@ -8,6 +8,7 @@ import type {
   SpPaymentStatusResponse,
   SpPaymentUpdateRefundResponse,
 } from '@shared/api';
+import authMiddleware from '../middleware/auth';
 
 const router = express.Router();
 
@@ -19,9 +20,7 @@ const BANK_RE = /^[가-힣A-Za-z\s]{2,20}$/;
 const ACCOUNT_RE = /^\d{4,20}$/;
 
 function validateRefundPayload(req: Request, res: Response, next: NextFunction) {
-  const { user_id, refund_bank, refund_account, wordset } = req.body;
-
-  if (!user_id) return res.status(400).json({ ok: false, message: 'user_id가 필요합니다.' });
+  const { refund_bank, refund_account, wordset } = req.body;
 
   if (!Array.isArray(wordset) || wordset.length === 0)
     return res.status(400).json({ ok: false, message: '단어세트를 입력해주세요.' });
@@ -48,9 +47,10 @@ function validateRefundPayload(req: Request, res: Response, next: NextFunction) 
 // ---------------------------
 // 🪙 [1] 결제 생성
 // ---------------------------
-router.post('/create', async (req: Request, res: Response) => {
+router.post('/create', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { user_id, name, amount } = req.body as SpPaymentCreateRequest;
+    const { name, amount } = req.body as SpPaymentCreateRequest;
+    const user_id = req.user?.user_id;
     if (!user_id || !name || !amount) return res.status(400).json({ error: '요청 파라미터 누락' });
 
     const { data, error } = await supabase
@@ -95,9 +95,9 @@ router.post('/create', async (req: Request, res: Response) => {
 // ---------------------------
 // 🧾 [2] 결제 상태 조회
 // ---------------------------
-router.get('/status/:user_id', async (req: Request, res: Response) => {
+router.get('/status', authMiddleware, async (req: Request, res: Response) => {
+  const user_id = req.user?.user_id;
   try {
-    const { user_id } = req.params;
     const { data, error } = await supabase
       .from('sp_payments')
       .select('status')
@@ -117,63 +117,70 @@ router.get('/status/:user_id', async (req: Request, res: Response) => {
 // ---------------------------
 // 💸 [3] 환불정보 & 단어세트 저장
 // ---------------------------
-router.post('/update-refund', validateRefundPayload, async (req: Request, res: Response) => {
-  try {
-    const { user_id, refund_bank, refund_account, wordset } = req.body;
+router.post(
+  '/update-refund',
+  authMiddleware,
+  validateRefundPayload,
+  async (req: Request, res: Response) => {
+    const user_id = req.user?.user_id;
+    try {
+      const { refund_bank, refund_account, wordset } = req.body;
 
-    // 단어 배열 → 문자열
-    const wordsetText = wordset.filter(Boolean).join(', ');
+      // 단어 배열 → 문자열
+      const wordsetText = wordset.filter(Boolean).join(', ');
 
-    // 계좌 암호화
-    const secretKey = process.env.ACCOUNT_SECRET_KEY || 'telepathy-key';
-    const encryptedAccount = refund_account
-      ? CryptoJS.AES.encrypt(refund_account, secretKey).toString()
-      : null;
+      // 계좌 암호화
+      const secretKey = process.env.ACCOUNT_SECRET_KEY || 'telepathy-key';
+      const encryptedAccount = refund_account
+        ? CryptoJS.AES.encrypt(refund_account, secretKey).toString()
+        : null;
 
-    // 최근 결제내역 찾기
-    const { data: recentPayment, error: selectErr } = await supabase
-      .from('sp_payments')
-      .select('id')
-      .eq('user_id', user_id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      // 최근 결제내역 찾기
+      const { data: recentPayment, error: selectErr } = await supabase
+        .from('sp_payments')
+        .select('id')
+        .eq('user_id', user_id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
 
-    if (selectErr || !recentPayment)
-      return res.status(404).json({
-        ok: false,
-        message: '결제 내역을 찾을 수 없습니다.',
+      if (selectErr || !recentPayment)
+        return res.status(404).json({
+          ok: false,
+          message: '결제 내역을 찾을 수 없습니다.',
+        } satisfies SpPaymentUpdateRefundResponse);
+
+      // DB 업데이트
+      const { data: updated, error: updateErr } = await supabase
+        .from('sp_payments')
+        .update({
+          refund_bank,
+          refund_account: encryptedAccount,
+          wordset_text: wordsetText,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', recentPayment.id)
+        .select();
+
+      if (updateErr) throw updateErr;
+      if (!updated?.length)
+        return res.status(400).json({
+          ok: false,
+          message: 'DB 업데이트에 실패했습니다.',
+        } satisfies SpPaymentUpdateRefundResponse);
+
+      res.json({
+        ok: true,
+        message: '환불정보 및 단어세트 저장 완료',
       } satisfies SpPaymentUpdateRefundResponse);
-
-    // DB 업데이트
-    const { data: updated, error: updateErr } = await supabase
-      .from('sp_payments')
-      .update({
-        refund_bank,
-        refund_account: encryptedAccount,
-        wordset_text: wordsetText,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', recentPayment.id)
-      .select();
-
-    if (updateErr) throw updateErr;
-    if (!updated?.length)
-      return res.status(400).json({
+    } catch (err) {
+      console.error('💥 /update-refund 오류:', err);
+      res.status(500).json({
         ok: false,
-        message: 'DB 업데이트에 실패했습니다.',
+        message: (err as Error).message,
       } satisfies SpPaymentUpdateRefundResponse);
-
-    res.json({
-      ok: true,
-      message: '환불정보 및 단어세트 저장 완료',
-    } satisfies SpPaymentUpdateRefundResponse);
-  } catch (err) {
-    console.error('💥 /update-refund 오류:', err);
-    res
-      .status(500)
-      .json({ ok: false, message: (err as Error).message } satisfies SpPaymentUpdateRefundResponse);
-  }
-});
+    }
+  },
+);
 
 export default router;

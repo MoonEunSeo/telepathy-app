@@ -3,6 +3,8 @@ import express, { Request, Response } from 'express';
 import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
 import type { PaymentsVerifyRequest, PaymentsVerifyResponse } from '@shared/api';
+import authMiddleware from '../middleware/auth';
+import type { MegaphoneSku } from '@shared/domain';
 
 const router = express.Router();
 
@@ -21,8 +23,22 @@ interface PortOnePaymentResponse {
   amount: { total: number };
 }
 
-router.post('/verify', async (req: Request, res: Response) => {
-  const { imp_uid, userId, count, amount } = req.body as PaymentsVerifyRequest;
+// 메가폰 가격
+const SKU_TABLE: Record<MegaphoneSku, { amount: number; count: number }> = {
+  megaphone_1: { amount: 500, count: 1 },
+  megaphone_5: { amount: 2000, count: 5 },
+  megaphone_10: { amount: 3500, count: 10 },
+};
+
+router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
+  const { imp_uid, item } = req.body as PaymentsVerifyRequest;
+  const userId = req.user?.user_id;
+
+  const sku = SKU_TABLE[item as MegaphoneSku];
+
+  if (!imp_uid || !sku) {
+    return res.status(400).json({ success: false, message: '잘못된 요청' });
+  }
 
   try {
     // 1. PortOne 토큰 발급
@@ -42,30 +58,30 @@ router.post('/verify', async (req: Request, res: Response) => {
     const paymentData = paymentRes.data;
     console.log('💳 paymentData:', paymentData);
 
-    // 3. 검증 후 DB 반영
-    if (paymentData.status === 'PAID' && paymentData.amount.total === amount) {
+    // 서버 가격표와 대조
+    if (paymentData.status === 'PAID' && paymentData.amount.total === sku.amount) {
       await supabase.rpc('increment_megaphone', {
-        uid: userId,
-        add_count: count,
+        uid: userId, // 토큰에서 온 값
+        add_count: sku.count, // 가격표에서 온 값, 클라는 개수 결정 못함
       });
 
-      await supabase.from('payments').insert([
+      const { error: logErr } = await supabase.from('payments').insert([
         {
+          // 결과 확인
           user_id: userId,
           imp_uid,
-          item: `megaphone_${count}`,
-          count,
-          amount,
+          item,
+          count: sku.count,
+          amount: sku.amount,
           status: 'PAID',
         },
       ]);
 
-      return res.json({ success: true } satisfies PaymentsVerifyResponse);
-    } else {
-      return res
-        .status(400)
-        .json({ success: false, message: '결제 검증 실패' } satisfies PaymentsVerifyResponse);
+      if (logErr) console.error('payments 기록 실패:', logErr.message);
+
+      return res.json({ success: true });
     }
+    return res.status(400).json({ success: false, message: '결제 검증 실패' });
   } catch (err) {
     const error = err as { response?: { data?: unknown }; message?: string };
     console.error(error.response?.data || error.message);

@@ -204,10 +204,7 @@ export interface WordsetsMineResponse {
 export interface PaymentsVerifyRequest {
   imp_uid: string;
   merchant_uid?: string;
-  item?: MegaphoneSku | string;
-  userId?: Id;
-  count?: number;
-  amount?: number;
+  item: MegaphoneSku | string;
 }
 export type PaymentsVerifyResponse = ApiResult;
 
@@ -215,7 +212,6 @@ export type PaymentsVerifyResponse = ApiResult;
 // sp_payments (단어세트 계좌이체 결제)
 // POST /api/sp_payments/create (LikePage) — 응답 미파싱
 export interface SpPaymentCreateRequest {
-  user_id: Id;
   name: string; // 입금자 실명 또는 닉네임
   amount: number;
 }

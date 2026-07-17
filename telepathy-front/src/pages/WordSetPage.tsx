@@ -77,7 +77,7 @@ export default function WordSetPage() {
 
       {/* 구 .wordset-card */}
       <div className="box-border w-full max-w-[440px] rounded-[var(--radius-lg)] bg-[var(--color-surface)] px-7 py-8 [box-shadow:var(--card-shadow)] [border:1px_solid_var(--color-border-subtle)] max-[480px]:px-5 max-[480px]:py-7 min-[1025px]:max-w-[520px]">
-        <WordSetForm currentUser={currentUser} />
+        <WordSetForm />
       </div>
     </div>
   );

@@ -39,8 +39,8 @@ router.get('/megaphone-count', authMiddleware, async (req: Request, res: Respons
 });
 
 // ✅ [추가 1] 실명 조회
-router.get('/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
+router.get('/me', authMiddleware, async (req: Request, res: Response) => {
+  const id = req.user?.user_id;
   try {
     const { data, error } = await supabase.from('users').select('real_name').eq('id', id).single();
 
@@ -53,8 +53,9 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // ✅ [추가 2] 실명 업데이트
-router.post('/update-realname', async (req: Request, res: Response) => {
-  const { user_id, real_name } = req.body as UpdateRealnameRequest;
+router.post('/update-realname', authMiddleware, async (req: Request, res: Response) => {
+  const { real_name } = req.body as UpdateRealnameRequest;
+  const user_id = req.user?.user_id;
   try {
     const { error } = await supabase.from('users').update({ real_name }).eq('id', user_id);
 

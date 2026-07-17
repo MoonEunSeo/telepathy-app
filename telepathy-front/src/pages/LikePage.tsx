@@ -124,7 +124,7 @@ const LikesPage = () => {
 
     try {
       // 🔍 user 테이블에서 실명 조회
-      const res = await axios.get<UserByIdResponse>(`/api/user/${currentUser.id}`, {
+      const res = await axios.get<UserByIdResponse>('/api/user/me', {
         withCredentials: true,
       });
       const savedName = res.data?.real_name;
@@ -167,7 +167,6 @@ const LikesPage = () => {
       await axios.post(
         `/api/sp_payments/create`,
         {
-          user_id: currentUser!.id,
           name: finalName,
           amount,
         },
@@ -201,12 +200,9 @@ const LikesPage = () => {
 
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get<SpPaymentStatusResponse>(
-          `/api/sp_payments/status/${currentUser.id}`,
-          {
-            withCredentials: true,
-          },
-        );
+        const res = await axios.get<SpPaymentStatusResponse>('/api/sp_payments/status', {
+          withCredentials: true,
+        });
 
         if (res.data.status === 'paid') {
           clearInterval(interval);

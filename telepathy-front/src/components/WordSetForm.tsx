@@ -3,9 +3,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import type { ChangeEvent, CompositionEvent, KeyboardEvent } from 'react';
-import type { CurrentUser, SpPaymentUpdateRefundResponse } from '../types';
-
-const API_BASE = import.meta.env.VITE_REALSITE;
+import type { SpPaymentUpdateRefundResponse } from '../types';
 
 const KOREAN_WORD_REGEX = /^[가-힣]{1,6}$/;
 const BANK_REGEX = /^[가-힣A-Za-z\s]{2,20}$/;
@@ -24,7 +22,7 @@ const saveBtn =
 // 구 .word-inputs
 const wordInputs = 'flex flex-col gap-3';
 
-export default function WordSetForm({ currentUser }: WordSetFormProps) {
+export default function WordSetForm() {
   const navigate = useNavigate();
 
   const [, setIsComposing] = useState(false);
@@ -94,9 +92,8 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
 
     try {
       const res = await axios.post<SpPaymentUpdateRefundResponse>(
-        `${API_BASE}/api/sp_payments/update-refund`,
+        `/api/sp_payments/update-refund`,
         {
-          user_id: currentUser.id,
           refund_bank: refundBank,
           refund_account: refundAccount,
           wordset: words,
@@ -216,8 +213,4 @@ export default function WordSetForm({ currentUser }: WordSetFormProps) {
       )}
     </div>
   );
-}
-
-interface WordSetFormProps {
-  currentUser: CurrentUser;
 }
