@@ -198,7 +198,6 @@ export default function MainPage() {
       } else {
         // 메시지 발사
         socket.emit('megaphone:send', {
-          userId: profile!.userId,
           message: payload,
         });
         toast.success('메시지가 발사되었습니다!');
@@ -573,7 +572,7 @@ export default function MainPage() {
 
         {/* 구 .word-set (+ fade-in/out 전환 상태) */}
         <div
-          className={`mt-5 mb-10 grid w-[90%] max-w-[320px] grid-cols-2 gap-3  min-h-[120px] min-[1025px]:min-h-[140px] [transition:opacity_0.6s_ease,transform_0.6s_ease] min-[1025px]:mt-10 min-[1025px]:mb-[60px] min-[1025px]:gap-5 ${fadeClass === 'fade-in' ? 'translate-y-0 opacity-100' : 'translate-y-[10px] opacity-0'}`}
+          className={`mt-5 mb-10 grid min-h-[120px] w-[90%] max-w-[320px] grid-cols-2 gap-3 [transition:opacity_0.6s_ease,transform_0.6s_ease] min-[1025px]:mt-10 min-[1025px]:mb-[60px] min-[1025px]:min-h-[140px] min-[1025px]:gap-5 ${fadeClass === 'fade-in' ? 'translate-y-0 opacity-100' : 'translate-y-[10px] opacity-0'}`}
         >
           {wordSet.map((w) => {
             const isPaidSet = !!recommendations[round % recommendations.length].paid;

@@ -5,8 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 import supabase from './supabase';
 import { filterMessage } from '../utils/badwords';
 
-type IOServer = Server<ClientToServerEvents, ServerToClientEvents>;
-type IOSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
+interface InterServerEvents {} // 서버 간 통신 미사용
+
+export interface SocketData {
+  user?: { user_id?: string; username?: string; [key: string]: unknown };
+}
+
+type IOServer = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
+type IOSocket = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
 export function registerSocketHandlers(io: IOServer): void {
   io.on('connection', (socket: IOSocket) => {
@@ -23,7 +29,12 @@ export function registerSocketHandlers(io: IOServer): void {
     /**
      * 📢 확성기 이벤트
      */
-    socket.on('megaphone:send', async ({ userId, message }) => {
+    socket.on('megaphone:send', async ({ message }) => {
+      const userId = socket.data.user?.user_id;
+      if (!userId) {
+        socket.emit('megaphone:failed', { message: '로그인이 필요합니다.' });
+        return;
+      }
       try {
         // 닉네임 조회
         const { data: user, error: userError } = await supabase

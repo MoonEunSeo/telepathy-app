@@ -181,7 +181,6 @@ export interface MegaphoneFailedPayload {
 
 // 소켓 'megaphone:send' emit payload (클라→서버)
 export interface MegaphoneSendPayload {
-  userId: Id;
   message: string;
 }
 

@@ -5,10 +5,10 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cron from 'node-cron';
-
+import jwt from 'jsonwebtoken';
 import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketEvents';
 import { flushRound } from './src/utils/flush';
-import { registerSocketHandlers } from './src/config/chat.socket';
+import { registerSocketHandlers, type SocketData } from './src/config/chat.socket';
 import app from './app';
 
 // ✅ CORS 설정
@@ -28,15 +28,49 @@ app.use(
 // ✅ HTTP 서버 생성
 const server = createServer(app);
 
+// 제네릭 4개로 맞춰야 chat.socket.ts 와 타입이 일치
+interface InterServerEvents {}
+
 // ✅ Socket.IO 설정
-const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
-  cors: {
-    origin: ['http://localhost:5179', 'https://telepathy.my', 'https://telepathy-app.onrender.com'],
-    methods: ['GET', 'POST'],
-    credentials: true,
+const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
+  server,
+  {
+    cors: {
+      origin: [
+        'http://localhost:5179',
+        'https://telepathy.my',
+        'https://telepathy-app.onrender.com',
+      ],
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+    transports: ['websocket'],
+    path: '/socket.io',
   },
-  transports: ['websocket'],
-  path: '/socket.io',
+);
+
+// 쿠키 헤더에서 token만 뽑는다 (coookie 패키지는 cookie-parser의 전이 의존성이라 직접 import 지양)
+function readToken(raw?: string): string | undefined {
+  if (!raw) return undefined;
+  for (const part of raw.split(';')) {
+    const [k, ...v] = part.trim().split('=');
+    if (k === 'token') return decodeURIComponent(v.join('='));
+  }
+  return undefined;
+}
+
+// ✅ 소켓 인증 - 토큰이 있으면 검증해 심고, 없으면 게스트로 통과시킨다
+io.use((socket, next) => {
+  const token = readToken(socket.handshake.headers.cookie);
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+      if (typeof decoded !== 'string') socket.data.user = decoded;
+    } catch {
+      // 썩은 토큰 -> 게스트로 취급 (연결은 막지 않는다.)
+    }
+  }
+  next();
 });
 
 // ✅ WebSocket 연결 수 카운트
