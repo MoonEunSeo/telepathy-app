@@ -121,31 +121,6 @@ export interface VerifyMvpCheckRequest {
 export type VerifyMvpCheckResponse = ApiResult;
 
 // ─────────────────────────────────────────────────────────────
-// match
-// POST /api/match/start (MainPage: { word } / IntentToggle: { intent })
-export interface MatchStartRequest {
-  word?: string;
-  intent?: string; // 예: 'light_connection'
-}
-export interface MatchStartResponse extends ApiResult {
-  roomId?: string; // IntentToggle: data.roomId 로 채팅방 이동
-}
-
-// POST /api/match/check (legacy MainPage) — matched 시에만 나머지 필드 존재
-export interface MatchCheckRequest {
-  word: string;
-}
-export interface MatchCheckResponse {
-  matched: boolean;
-  roomId?: string;
-  senderId?: Id;
-  senderUsername?: string;
-  senderNickname?: string;
-  receiverId?: Id;
-  receiverUsername?: string;
-  receiverNickname?: string;
-}
-
 // POST /api/match/end (ChatPage: { roomId } / legacy: { word }) — 응답 미파싱
 export interface MatchEndRequest {
   roomId?: string;
