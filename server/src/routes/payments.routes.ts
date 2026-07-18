@@ -60,11 +60,7 @@ router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
 
     // 서버 가격표와 대조
     if (paymentData.status === 'PAID' && paymentData.amount.total === sku.amount) {
-      await supabase.rpc('increment_megaphone', {
-        uid: userId, // 토큰에서 온 값
-        add_count: sku.count, // 가격표에서 온 값, 클라는 개수 결정 못함
-      });
-
+      // 결제 기록 추가 -> 결제 결과 확인
       const { error: logErr } = await supabase.from('payments').insert([
         {
           // 결과 확인
@@ -77,7 +73,21 @@ router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
         },
       ]);
 
-      if (logErr) console.error('payments 기록 실패:', logErr.message);
+      if (logErr) {
+        // 중복 결제면, 이미 처리된 결제 -> 지급하지 않고 즉시 종료
+        if (logErr.code === '23505') {
+          return res.status(409).json({ success: false, message: '이미 처리된 결제입니다.' });
+        }
+        // 그 밖의 DB 오류는 지급하면 안 되지 여기서 멈춘다
+        console.error('payments 기록 실패:', logErr.message);
+        return res.status(500).json({ success: false, message: '서버 오류' });
+      }
+
+      // 기록에 성공한 요청만 지급
+      await supabase.rpc('increment_megaphone', {
+        uid: userId, // 토큰에서 온 값
+        add_count: sku.count, // 가격표에서 온 값, 클라는 개수 결정 못함
+      });
 
       return res.json({ success: true });
     }
