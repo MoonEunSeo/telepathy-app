@@ -4,11 +4,13 @@ import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketE
 import { v4 as uuidv4 } from 'uuid';
 import supabase from './supabase';
 import { filterMessage } from '../utils/badwords';
+// chat.socket.ts
+import type { SessionUser } from '../middleware/auth';
 
 interface InterServerEvents {} // 서버 간 통신 미사용
 
 export interface SocketData {
-  user?: { user_id?: string; username?: string; [key: string]: unknown };
+  user?: SessionUser;
 }
 
 type IOServer = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;

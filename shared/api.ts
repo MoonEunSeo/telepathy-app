@@ -25,6 +25,7 @@ export interface ApiResult {
 // GET /api/auth/check (App.jsx: data.loggedIn)
 export interface AuthCheckResponse {
   loggedIn: boolean;
+  role?: 'member' | 'guest';
 }
 
 // POST /api/auth/login (LoginPage)

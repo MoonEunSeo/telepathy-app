@@ -31,7 +31,7 @@ import type {
   MatchCurrentRoundResponse,
   PaymentsVerifyResponse,
 } from '../types';
-import { buildGuestProfile, isGuestId, setGuestNickname } from '../utils/guest';
+import { ensureGuestSession, updateGuestNickname } from '../utils/guest';
 
 // import useRandomSequence from '../hooks/useRandomSequence'; //단어셔플
 
@@ -250,13 +250,16 @@ export default function MainPage() {
   // ✅ 유저 정보 state
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showNicknameModal, setShowNicknameModal] = useState(false);
+  const [isGuest, setIsGuest] = useState(false); // 게스트 여부 확인
 
   // ✅ 유저 프로필 가져오기
   useEffect(() => {
     // 비로그인/실패 시 게스트 신원으로 진행
-    const applyGuestProfile = () => {
-      const guest = buildGuestProfile();
+    const applyGuestProfile = async () => {
+      const guest = await ensureGuestSession();
+      if (!guest) return;
       setProfile(guest);
+      setIsGuest(true);
       if (!guest.nickname) setShowNicknameModal(true); // 닉네임 없으면 모달
     };
 
@@ -272,18 +275,11 @@ export default function MainPage() {
             nickname: data.nickname,
           });
           if (!data.nickname) setShowNicknameModal(true);
-          console.log('🎯 profile 응답:', data);
-          console.log('🎯 세팅된 profile:', {
-            userId: data.user_id || data.id || data.userId,
-            username: data.username,
-            nickname: data.nickname,
-          });
         } else {
-          applyGuestProfile(); // 미로그인 -> 게스트
+          await applyGuestProfile(); // 미로그인 -> 게스트
         }
       } catch (err) {
-        console.error('프로필 불러오기 오류 -> 게스트로 진행', err);
-        applyGuestProfile(); // 네트워크 실패도 게스트로 진행함
+        await applyGuestProfile(); // 네트워크 실패도 게스트로 진행함
       }
     };
     fetchProfile();
@@ -292,8 +288,9 @@ export default function MainPage() {
   // ✅ 닉네임 저장
   const handleSaveNickname = async (nickname: string) => {
     // 게스트면 서버 대신 로컬 저장
-    if (isGuestId(profile?.userId)) {
-      setGuestNickname(nickname);
+    if (isGuest) {
+      const ok = await updateGuestNickname(nickname);
+      if (!ok) return toast.error('닉네임 저장 실패');
       setProfile((prev) => ({ ...prev, nickname }) as UserProfile);
       setShowNicknameModal(false);
       toast.success('닉네임이 저장되었습니다!');

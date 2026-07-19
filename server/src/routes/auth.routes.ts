@@ -69,6 +69,30 @@ router.post('/guest', (req: Request, res: Response) => {
   });
 });
 
+// 게스트 닉네임 변경 (토큰 재발급)
+router.patch('/guest/nickname', (req: Request, res: Response) => {
+  const existing = decodeToken(req.cookies?.token);
+  if (existing?.role !== 'guest') {
+    return res.status(401).json({ success: false, message: '게스트 세션이 아닙니다.' });
+  }
+
+  const { nickname } = req.body as { nickname?: string };
+  const clean = (nickname || '').trim();
+  if (!clean || clean.length > 12) {
+    return res.status(400).json({ success: false, message: '닉네임을 확인해주세요.' });
+  }
+
+  // user_id는 유지하고 nickname만 갱신해 재서명
+  const token = jwt.sign(
+    { user_id: existing.user_id, nickname: clean, role: 'guest' },
+    process.env.JWT_SECRET as string,
+    { expiresIn: '7d' },
+  );
+  res.cookie('token', token, buildCookieOptions(1000 * 60 * 60 * 24 * 7));
+
+  return res.json({ success: true, user_id: existing.user_id, nickname: clean, role: 'guest' });
+});
+
 // ================================
 // 📌 로그인 API
 // ================================

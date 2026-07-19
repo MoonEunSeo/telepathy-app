@@ -16,6 +16,7 @@ console.log('🌐 socketURL =', socketURL);
 export const socket: AppSocket = io(socketURL, {
   withCredentials: true,
   transports: ['websocket'],
+  autoConnect: false, // 세션 보장 후 수동 연결
 });
 
 // 연결 수명 가시화 — 소켓이 언제 붙고 끊기는지 콘솔에 남긴다.

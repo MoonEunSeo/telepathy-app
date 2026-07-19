@@ -1,9 +1,7 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { AuthCheckResponse } from './types';
-
-import './config/socket';
 
 // ✅ 페이지 컴포넌트
 import LoginPage from './pages/LoginPage';
@@ -44,6 +42,8 @@ import './index.css';
 
 import halloweenCSS from './themes/themes/halloween.css?url';
 import christmasCSS from './themes/themes/christmas.css?url';
+import { ensureSession } from './utils/session';
+import { socket } from './config/socket';
 
 function useSeasonalTheme() {
   const { setTheme } = useTheme();
@@ -91,6 +91,21 @@ function useSeasonalTheme() {
 function AppRoutes() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [sessionReady, setSessionReady] = useState(false);
+
+  // 세션 (회원 or 게스트)을 먼저 보장하고 그 다음 소켓 연결
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await ensureSession();
+      if (cancelled) return;
+      if (!socket.connected) socket.connect(); // 소켓 연결
+      setSessionReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // ✅ 로그인 상태 확인
   useEffect(() => {
@@ -112,6 +127,8 @@ function AppRoutes() {
 
   // ✅ 날짜 기반 테마 적용
   useSeasonalTheme();
+
+  if (!sessionReady) return null; // 세션 준비 전엔 렌더 보류
 
   return (
     <>

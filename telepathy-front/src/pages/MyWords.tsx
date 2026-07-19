@@ -118,11 +118,7 @@ function WordCard({ item, favorite, memo, onToggleFavorite, onSaveMemo }: WordCa
 }
 
 // 🚧 임시: 디자인 미리보기용 목업 (확인 후 삭제)
-const MOCK: WordHistoryItem[] = [
-  { word: '고양이', partner_nickname: '별헤는밤 님', connected_at: '2026-07-01T00:00:00Z' },
-  { word: '노을', partner_nickname: '바다소리 님', connected_at: '2026-06-29T00:00:00Z' },
-  { word: '편지', partner_nickname: '밤하늘 님', connected_at: '2026-06-26T00:00:00Z' },
-];
+const MOCK: WordHistoryItem[] = [];
 
 export default function MyWords() {
   const [wordHistory, setWordHistory] = useState<WordHistoryItem[]>([]);

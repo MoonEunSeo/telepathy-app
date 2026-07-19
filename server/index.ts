@@ -5,11 +5,11 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cron from 'node-cron';
-import jwt from 'jsonwebtoken';
 import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketEvents';
 import { flushRound } from './src/utils/flush';
 import { registerSocketHandlers, type SocketData } from './src/config/chat.socket';
 import app from './app';
+import { decodeToken } from './src/middleware/auth';
 
 // ✅ CORS 설정
 app.use(
@@ -59,17 +59,11 @@ function readToken(raw?: string): string | undefined {
   return undefined;
 }
 
-// ✅ 소켓 인증 - 토큰이 있으면 검증해 심고, 없으면 게스트로 통과시킨다
+// ✅ 소켓 인증 - 토큰이 있으면 통과
 io.use((socket, next) => {
-  const token = readToken(socket.handshake.headers.cookie);
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-      if (typeof decoded !== 'string') socket.data.user = decoded;
-    } catch {
-      // 썩은 토큰 -> 게스트로 취급 (연결은 막지 않는다.)
-    }
-  }
+  const user = decodeToken(readToken(socket.handshake.headers.cookie));
+  if (!user) return next(new Error('인증 필요'));
+  socket.data.user = user;
   next();
 });
 
