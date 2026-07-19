@@ -11,7 +11,6 @@ import path from 'path';
 // ================================
 import authRoutes from './src/routes/auth.routes';
 import webhookRouter from './src/routes/webhook.routes';
-import depositRoutes from './src/routes/deposit.routes';
 import sp_paymentsRoutes from './src/routes/sp_payments.routes';
 import verifyRoutes from './src/routes/verify.routes';
 import verifyMvpRoutes from './src/routes/verify-mvp.routes';
@@ -64,7 +63,6 @@ app.use(cookieParser());
 // ✅ API 라우트 연결
 // ==============================
 app.use('/api/auth', authRoutes);
-app.use('/api/deposit', depositRoutes);
 app.use('/api/webhook', express.text({ type: '*/*' }), webhookRouter);
 app.use('/api/sp_payments', sp_paymentsRoutes);
 app.use('/api/verify', verifyRoutes);
