@@ -291,6 +291,11 @@ export default function MainPage() {
     if (isGuest) {
       const ok = await updateGuestNickname(nickname);
       if (!ok) return toast.error('닉네임 저장 실패');
+
+      // 토큰이 재발급됐으므로 소켓도 새 토큰으로 다시 연결
+      socket.disconnect();
+      socket.connect();
+
       setProfile((prev) => ({ ...prev, nickname }) as UserProfile);
       setShowNicknameModal(false);
       toast.success('닉네임이 저장되었습니다!');
@@ -444,8 +449,6 @@ export default function MainPage() {
     setSelectedWord(word);
 
     const payload: JoinMatchPayload = {
-      userId: profile.userId,
-      username: profile.username,
       nickname: profile.nickname,
       word,
       round,

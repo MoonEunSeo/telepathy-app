@@ -100,8 +100,6 @@ export interface MatchedPayload {
 
 // 소켓 'join_match' emit payload (클라→서버)
 export interface JoinMatchPayload {
-  userId: Id;
-  username: string;
   nickname: string; // (b) 매칭 전 닉네임 게이팅 → join 시점엔 항상 non-null
   word: string;
   round: number;

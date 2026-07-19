@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import supabase from './supabase';
 import { filterMessage } from '../utils/badwords';
 // chat.socket.ts
-import type { SessionUser } from '../middleware/auth';
+import { GUEST_NICKNAME, type SessionUser } from '../middleware/auth';
 
 interface InterServerEvents {} // 서버 간 통신 미사용
 
@@ -84,7 +84,18 @@ export function registerSocketHandlers(io: IOServer): void {
      * data = { userId, username, nickname, word, round }
      */
     socket.on('join_match', async (data) => {
-      const { userId, username, nickname, word, round } = data;
+      const { word, round } = data;
+
+      const me = socket.data.user;
+      if (!me) return; // io.use가 보장하지만 타입 좁히기 용
+      const userId = me.user_id;
+      const isGuest = me.role === 'guest';
+
+      // 게스트는 토큰 닉네임, 회원은 payload 닉네임
+      const nickname = isGuest ? me.nickname || GUEST_NICKNAME : data.nickname;
+      const username = isGuest ? userId : (me.username ?? userId);
+
+      if (!word || round == null) return;
 
       // 재선택: 같은 라운드에서 이 유저의 기존 waiting 행 제거 후 새로 등록
       await supabase
@@ -223,17 +234,13 @@ export function registerSocketHandlers(io: IOServer): void {
      * 📌 메시지 이벤트
      */
     socket.on('chatMessage', async (data) => {
-      console.log('💬 Chat message:', data);
-      const {
-        roomId,
-        senderId,
-        senderNickname,
-        receiverId,
-        receiverNickname,
-        word,
-        message,
-        timestamp,
-      } = data;
+      const { roomId, receiverId, receiverNickname, word, message, timestamp } = data;
+
+      const me = socket.data.user;
+      if (!me) return;
+      const senderId = me.user_id;
+      const senderNickname =
+        me.role === 'guest' ? me.nickname || GUEST_NICKNAME : data.senderNickname;
 
       const { error } = await supabase.from('chat_logs').insert({
         room_id: roomId,
@@ -250,7 +257,8 @@ export function registerSocketHandlers(io: IOServer): void {
         console.error('❌ chat_logs 저장 실패:', error.message);
       }
 
-      io.to(roomId).emit('chatMessage', data);
+      // ⚠️ 브로드캐스트도 서버가 확정한 신원으로
+      io.to(roomId).emit('chatMessage', { ...data, senderId, senderNickname });
     });
 
     /**
@@ -275,17 +283,18 @@ export function registerSocketHandlers(io: IOServer): void {
     /**
      * 📌 방 나가기
      */
-    socket.on('leaveRoom', async ({ roomId, userId }) => {
-      console.log(`🚪 leaveRoom: userId=${userId}, roomId=${roomId}`);
+    socket.on('leaveRoom', async ({ roomId }) => {
+      const me = socket.data.user;
+      if (!me) return;
+
       socket.to(roomId).emit('chatEnded'); // 상대방에게 알림
       socket.leave(roomId);
-      // socket.disconnect(true);
 
       // 🔹 DB 상태만 ended로 업데이트 (로그 기록은 하지 않음)
       await supabase
         .from('telepathy_sessions_queue')
         .update({ status: 'ended' })
-        .match({ user_id: userId, room_id: roomId });
+        .match({ user_id: me.user_id, room_id: roomId });
     });
 
     // ✅ 연결 끊기는 중 — 같은 방의 상대방에게 종료 알림

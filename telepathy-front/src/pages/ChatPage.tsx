@@ -121,7 +121,7 @@ export default function ChatPage() {
         body: JSON.stringify({ roomId }), // word/round ❌ → roomId만 보내기
       });
 
-      socket.emit('leaveRoom', { userId: myId!, roomId: roomId! }); // 상대방 알림용
+      socket.emit('leaveRoom', { roomId: roomId! }); // 상대방 알림용
       // socket.disconnect();
     } catch (err) {
       console.error('❌ 세션 종료 오류:', err);
