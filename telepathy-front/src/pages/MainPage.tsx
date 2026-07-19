@@ -159,7 +159,7 @@ export default function MainPage() {
 
         IMP.request_pay(
           {
-            pg: 'html5_inicis',
+            pg: 'kcp',
             pay_method: 'card',
             merchant_uid: 'order_' + new Date().getTime(),
             name: sku.name,

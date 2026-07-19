@@ -14,13 +14,22 @@ const supabase = createClient(
   process.env.SUPABASE_KEY as string,
 );
 
-interface PortOneTokenResponse {
-  accessToken: string;
+interface IamportTokenResponse {
+  code: number;
+  message: string | null;
+  response: { access_token: string; expired_at: number; now: number };
 }
 
-interface PortOnePaymentResponse {
-  status: string;
-  amount: { total: number };
+interface IamportPaymentResponse {
+  code: number;
+  message: string | null;
+  response: {
+    imp_uid: string;
+    merchant_uid: string;
+    status: string; // 'ready' / 'paid' / 'cancelled' / 'failed'
+    amount: number;
+    name: string;
+  } | null;
 }
 
 router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
@@ -36,24 +45,29 @@ router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
 
   try {
     // 1. PortOne 토큰 발급
-    const tokenRes = await axios.post<PortOneTokenResponse>('https://api.portone.io/login', {
-      apiKey: process.env.PORTONE_API_KEY,
-      apiSecret: process.env.PORTONE_API_SECRET,
-    });
-    console.log('🔑 tokenRes.data:', tokenRes.data);
-
-    const { accessToken } = tokenRes.data;
+    const tokenRes = await axios.post<IamportTokenResponse>(
+      'https://api.iamport.kr/users/getToken',
+      {
+        imp_key: process.env.PORTONE_API_KEY,
+        imp_secret: process.env.PORTONE_API_SECRET,
+      },
+    );
+    const accessToken = tokenRes.data.response.access_token;
 
     // 2. 결제 내역 확인
-    const paymentRes = await axios.get<PortOnePaymentResponse>(
-      `https://api.portone.io/payments/${imp_uid}`,
+    const paymentRes = await axios.get<IamportPaymentResponse>(
+      `https://api.iamport.kr/payments/${encodeURIComponent(imp_uid)}`,
       { headers: { Authorization: `Bearer ${accessToken}` } },
     );
-    const paymentData = paymentRes.data;
-    console.log('💳 paymentData:', paymentData);
+    const payment = paymentRes.data.response; // ⚠️ .response 한 겹
+
+    if (!payment) {
+      return res.status(400).json({ success: false, message: '결제 내역 없음' });
+    }
+    console.log('💳 payment:', payment);
 
     // 서버 가격표와 대조
-    if (paymentData.status === 'PAID' && paymentData.amount.total === sku.amount) {
+    if (payment.status === 'paid' && payment.amount === sku.amount) {
       // 결제 기록 추가 -> 결제 결과 확인
       const { error: logErr } = await supabase.from('payments').insert([
         {
