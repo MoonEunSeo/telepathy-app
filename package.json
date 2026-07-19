@@ -4,8 +4,8 @@
   "description": "Express + Vite integrated server",
   "main": "server/index.ts",
   "scripts": {
-    "start": "tsx server/index.ts",
-    "dev": "tsx watch server/index.ts",
+    "start": "tsx --tsconfig server/tsconfig.json server/index.ts",
+    "dev": "tsx watch --tsconfig server/tsconfig.json server/index.ts",
     "build": "npm install --prefix telepathy-front && npm run build --prefix telepathy-front",
     "typecheck": "tsc --noEmit -p server/tsconfig.json",
     "format": "prettier --write \"server/**/*.{ts,js,json}\" \"shared/**/*.{ts,js,json}\"",
