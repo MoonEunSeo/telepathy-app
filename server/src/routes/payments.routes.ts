@@ -4,7 +4,7 @@ import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
 import type { PaymentsVerifyRequest, PaymentsVerifyResponse } from '@shared/api';
 import authMiddleware from '../middleware/auth';
-import type { MegaphoneSku } from '@shared/domain';
+import { MEGAPHONE_SKUS, type MegaphoneSku } from '@shared/domain';
 
 const router = express.Router();
 
@@ -23,18 +23,12 @@ interface PortOnePaymentResponse {
   amount: { total: number };
 }
 
-// 메가폰 가격
-const SKU_TABLE: Record<MegaphoneSku, { amount: number; count: number }> = {
-  megaphone_1: { amount: 500, count: 1 },
-  megaphone_5: { amount: 2000, count: 5 },
-  megaphone_10: { amount: 3500, count: 10 },
-};
-
 router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
   const { imp_uid, item } = req.body as PaymentsVerifyRequest;
   const userId = req.user?.user_id;
 
-  const sku = SKU_TABLE[item as MegaphoneSku];
+  // 메가폰 가격
+  const sku = MEGAPHONE_SKUS[item as MegaphoneSku];
 
   if (!imp_uid || !sku) {
     return res.status(400).json({ success: false, message: '잘못된 요청' });

@@ -11,7 +11,7 @@ import MegaphoneInputModal from '../components/MegaphoneInputModal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { recommendations } from '../utils/recommendations';
-
+import { MEGAPHONE_SKUS } from '@shared/domain';
 import { getStorage, setStorage, removeStorage } from '../types';
 import type {
   Id,
@@ -30,6 +30,7 @@ import type {
   SetNicknameResponse,
   MatchCurrentRoundResponse,
   PaymentsVerifyResponse,
+  MegaphoneSku,
 } from '../types';
 import { ensureGuestSession, updateGuestNickname } from '../utils/guest';
 
@@ -150,12 +151,7 @@ export default function MainPage() {
     try {
       if (typeof payload === 'string' && payload.startsWith('megaphone_')) {
         // 구매 모드
-        const skuTable: Record<string, { name: string; amount: number; count: number }> = {
-          megaphone_1: { name: '확성기 1개', amount: 500, count: 1 },
-          megaphone_5: { name: '확성기 5개', amount: 2000, count: 5 },
-          megaphone_10: { name: '확성기 10개', amount: 3500, count: 10 },
-        };
-        const sku = skuTable[payload];
+        const sku = MEGAPHONE_SKUS[payload as MegaphoneSku];
         if (!sku) return;
 
         const { IMP } = window;
