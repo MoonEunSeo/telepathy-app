@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 import type {
   LoginRequest,
   LoginResponse,
@@ -11,6 +12,19 @@ import type {
   CheckUsernameResponse,
   LogoutResponse,
 } from '@shared/api';
+import { decodeToken, GUEST_NICKNAME } from '../middleware/auth';
+
+const isProd = process.env.NODE_ENV === 'production';
+
+function buildCookieOptions(maxAgeMs: number) {
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? ('none' as const) : ('lax' as const),
+    maxAge: maxAgeMs,
+    path: '/',
+  };
+}
 
 const router = express.Router();
 
@@ -18,6 +32,42 @@ const supabase = createClient(
   process.env.SUPABASE_URL as string,
   process.env.SUPABASE_SERVICE_ROLE_KEY as string,
 );
+
+// 게스트 세션 발급 (멱등)
+router.post('/guest', (req: Request, res: Response) => {
+  const existing = decodeToken(req.cookies?.token);
+
+  if (existing?.role === 'guest') {
+    // 이미 게스트면 같은 신원 유지
+    return res.json({
+      success: true,
+      user_id: existing.user_id,
+      nickname: existing.nickname || GUEST_NICKNAME,
+      role: 'guest',
+    });
+  }
+  if (existing?.role === 'member') {
+    // 회원 토큰을 게스트로 덮어쓰지 않는다
+    return res
+      .status(409)
+      .json({ success: false, message: '이미 회원 세션이 활성화되어 있습니다.' });
+  }
+
+  const guestId = uuidv4();
+  const token = jwt.sign(
+    { user_id: guestId, nickname: GUEST_NICKNAME, role: 'guest' },
+    process.env.JWT_SECRET as string,
+    { expiresIn: '7d' },
+  );
+  res.cookie('token', token, buildCookieOptions(1000 * 60 * 60 * 24 * 7));
+
+  return res.status(200).json({
+    success: true,
+    user_id: guestId,
+    nickname: GUEST_NICKNAME,
+    role: 'guest',
+  });
+});
 
 // ================================
 // 📌 로그인 API
@@ -50,9 +100,13 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // ✅ JWT 생성
-    const token = jwt.sign({ user_id: user.id, username }, process.env.JWT_SECRET as string, {
-      expiresIn: '60d',
-    });
+    const token = jwt.sign(
+      { user_id: user.id, username, role: 'member' },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: '60d',
+      },
+    );
 
     // ✅ 환경별 쿠키 옵션 설정
     const isProd = process.env.NODE_ENV === 'production';

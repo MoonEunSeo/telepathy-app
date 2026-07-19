@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { getCurrentRound } from '../utils/round';
 import type { MatchCurrentRoundResponse } from '@shared/api';
-import authMiddleware from '../middleware/auth';
+import { requireSession } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get('/current-round', (req: Request, res: Response) => {
 });
 
 // ✅ 3. 세션 종료
-router.post('/end', authMiddleware, async (req: Request, res: Response) => {
+router.post('/end', requireSession, async (req: Request, res: Response) => {
   const token = req.cookies?.token;
   const { roomId } = req.body as { roomId?: string };
 

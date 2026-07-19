@@ -56,9 +56,13 @@ router.post('/', async (req: Request, res: Response) => {
     if (error) throw error;
 
     // ✅ JWT 생성
-    const token = jwt.sign({ user_id: newUser.id, username }, process.env.JWT_SECRET as string, {
-      expiresIn: '60d',
-    });
+    const token = jwt.sign(
+      { user_id: newUser.id, username, role: 'member' },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: '60d',
+      },
+    );
 
     // ✅ 쿠키에 저장
     res.cookie('token', token, {
