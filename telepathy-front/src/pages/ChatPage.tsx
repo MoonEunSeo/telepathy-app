@@ -169,7 +169,6 @@ export default function ChatPage() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          reporterId: myId,
           reportedId: partnerId, // theirId 대신 partnerId
           roomId,
           reasons,

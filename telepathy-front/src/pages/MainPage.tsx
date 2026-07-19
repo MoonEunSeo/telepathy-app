@@ -481,8 +481,6 @@ export default function MainPage() {
     if (!feedbackInfo) return;
 
     const payload: FeedbackAddRequest = {
-      userId: feedbackInfo.myId,
-      userUsername: feedbackInfo.myUsername,
       userNickname: feedbackInfo.myNickname,
       partnerId: feedbackInfo.partnerId,
       partnerUsername: feedbackInfo.partnerUsername,

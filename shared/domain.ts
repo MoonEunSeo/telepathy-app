@@ -130,8 +130,6 @@ export type Emotion = '기뻐요' | '괜찮아요' | '슬퍼요' | '행복해요
 
 // /api/feedback/add 요청 본문 (MainPage handleSubmitFeedback)
 export interface Feedback {
-  userId: Id;
-  userUsername: string;
   userNickname: string;
   partnerId: Id;
   partnerUsername: string;
@@ -144,7 +142,6 @@ export interface Feedback {
 // 신고
 // ReportModal onSubmit({ reasons, extra }) → ChatPage 가 아래 형태로 /api/report 전송
 export interface ReportPayload {
-  reporterId: Id;
   reportedId: Id;
   roomId: string;
   reasons: string[]; // 선택된 신고 사유 목록

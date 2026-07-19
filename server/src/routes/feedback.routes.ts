@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
+import { GUEST_NICKNAME, requireSession } from '../middleware/auth';
+import { measureMemory } from 'node:vm';
 
 const router = express.Router();
 
@@ -9,28 +11,14 @@ const supabase = createClient(
 );
 
 // 감정 피드백 저장
-router.post('/add', async (req: Request, res: Response) => {
-  const {
-    userId,
-    userUsername,
-    userNickname,
-    partnerId,
-    partnerUsername,
-    partnerNickname,
-    word,
-    emotion,
-  } = req.body;
+router.post('/add', requireSession, async (req: Request, res: Response) => {
+  const { partnerId, partnerUsername, partnerNickname, word, emotion } = req.body;
+  const me = req.user!;
+  const userId = me.user_id;
+  const userUsername = me.role === 'guest' ? me.user_id : (me.username ?? me.user_id);
+  const userNickname = me.role === 'guest' ? me.nickname || GUEST_NICKNAME : req.body.userNickname;
 
-  if (
-    !userId ||
-    !userUsername ||
-    !userNickname ||
-    !partnerId ||
-    !partnerUsername ||
-    !partnerNickname ||
-    !word ||
-    !emotion
-  ) {
+  if (!partnerId || !partnerUsername || !partnerNickname || !word || !emotion) {
     return res.status(400).json({ success: false, message: '필수 값 누락' });
   }
 

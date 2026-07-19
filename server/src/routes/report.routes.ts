@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import type { ReportRequest, ReportResponse } from '@shared/api';
+import { requireSession } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -11,9 +12,13 @@ const supabase = createClient(
 );
 
 // 신고 접수 처리
-router.post('/', async (req: Request, res: Response) => {
-  console.log('🚨 신고 요청 본문:', req.body);
-  const { reasons, extraMessage, reporterId, reportedId, roomId } = req.body as ReportRequest;
+router.post('/', requireSession, async (req: Request, res: Response) => {
+  const { reasons, extraMessage, reportedId, roomId } = req.body as ReportRequest;
+  const reporterId = req.user!.user_id;
+
+  if (reporterId === reportedId) {
+    return res.status(400).json({ success: false, message: '자신을 신고할 수 없습니다.' });
+  }
 
   if (!reporterId || !reportedId || !roomId) {
     return res
