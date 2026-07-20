@@ -49,8 +49,6 @@ export async function flushRound(): Promise<void> {
       .neq('status', 'ended'); // ✅ ended는 지우지 않음
 
     if (deleteError) throw deleteError;
-
-    console.log(`✅ 라운드 ${targetRound} flush 완료 (총 ${logs.length}건)`);
   } catch (err) {
     console.error('❌ flushRound 오류:', (err as Error).message);
   }
