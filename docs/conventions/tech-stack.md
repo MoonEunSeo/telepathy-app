@@ -17,7 +17,7 @@
 | 린트/포맷 | `oxlint`, `prettier`(+`prettier-plugin-tailwindcss`) |
 
 **향후 도입 예정**(TEL-6 확정): Zod(검증), Vitest+Supertest/RTL(테스트), Playwright(E2E), Capacitor(Android).
-**도입하지 않는 것**: Next.js, NestJS, React Native, GraphQL, ORM 전환 → [migration-plan.md](migration-plan.md) 참조.
+**도입하지 않는 것**: Next.js, NestJS, React Native, GraphQL, ORM 전환 → [migration-plan.md](../project/migration-plan.md) 참조.
 
 ## Tailwind v4 주의점
 

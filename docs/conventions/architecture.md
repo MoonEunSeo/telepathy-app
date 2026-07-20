@@ -1,6 +1,6 @@
 # 아키텍처
 
-> 기술스택은 [tech-stack.md](tech-stack.md), 코딩 규약은 [conventions-ts.md](conventions-ts.md) 참조.
+> 기술스택은 [tech-stack.md](tech-stack.md), 코딩 규약은 [conventions-ts.md](typescript.md) 참조.
 
 
 ## 전체 구성

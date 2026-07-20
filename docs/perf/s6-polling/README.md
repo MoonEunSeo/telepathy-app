@@ -1,6 +1,6 @@
 # S6. MainPage 폴링 요청량
 
-> 측정 환경·원칙은 [README](README.md) 참조. 조건: **Slow 4G / CPU 4x / production build**
+> 측정 환경·원칙은 [README](../README.md) 참조. 조건: **Slow 4G / CPU 4x / production build**
 
 ## 대상 문제
 

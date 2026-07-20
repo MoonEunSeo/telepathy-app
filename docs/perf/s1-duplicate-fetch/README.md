@@ -1,6 +1,6 @@
 # S1. 화면 전환 시 중복 API 호출
 
-> 측정 환경·원칙은 [README](README.md) 참조. 조건: **Fast 4G / CPU 4x / production build**
+> 측정 환경·원칙은 [README](../README.md) 참조. 조건: **Fast 4G / CPU 4x / production build**
 
 ## 대상 문제
 
@@ -43,7 +43,9 @@ MyPage 복귀   → 또 마운트 → 요청 ③                          ← �
 | `current-round` | 3 | 185, 188, 182 | 555 |
 | **합계** | **15** (전체 21건 중 Fetch/XHR) | | **2,819** |
 
-전송량: 5.0 kB (전체 170 kB) · 첨부: `s1-before-network.png`
+전송량: 5.0 kB (전체 170 kB)
+
+![S1 Before — Network 패널](before-network.png)
 
 ## 핵심 지표
 
@@ -58,7 +60,7 @@ MyPage 복귀   → 또 마운트 → 요청 ③                          ← �
 
 > `제거 가능한 중복`은 캐시 적용 시 1회로 줄일 수 있는 요청 기준 산정
 > (word-history 3 + auth/check 3 + profile 1 + megaphone-count 1 = 8건).
-> `current-round`는 의도된 폴링이라 중복에서 제외 — [S6](s6-polling.md)에서 별도 측정.
+> `current-round`는 의도된 폴링이라 중복에서 제외 — [S6](../s6-polling/README.md)에서 별도 측정.
 
 ## 분석
 

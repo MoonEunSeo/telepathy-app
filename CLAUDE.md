@@ -42,13 +42,13 @@ cd telepathy-front && npx oxlint src/...
 
 | 문서 | 내용 |
 |---|---|
-| [docs/architecture.md](docs/architecture.md) | 전체 구성·디렉터리·**인증 구조**·**매칭 흐름**·디자인 토큰 |
-| [docs/tech-stack.md](docs/tech-stack.md) | 사용 라이브러리·**Tailwind v4 주의점** |
-| [docs/conventions-ts.md](docs/conventions-ts.md) | `shared/` 사용법·타입 스타일·CJS/ESM 인터롭 |
-| [docs/conventions-supabase.md](docs/conventions-supabase.md) | **에러 처리**·null 비교·소유권 필터 |
-| [docs/migration-plan.md](docs/migration-plan.md) | **TEL-6 마이그레이션 계획 요약** — 테이블 운명 매핑 |
-| [docs/known-issues.md](docs/known-issues.md) | 알려진 이슈·이월 과제 |
-| [docs/perf/](docs/perf/README.md) | 성능 측정 기록 (S1·S4·S6) |
+| [아키텍처](docs/conventions/architecture.md) | 전체 구성·디렉터리·**인증 구조**·**매칭 흐름**·디자인 토큰 |
+| [기술스택](docs/conventions/tech-stack.md) | 사용 라이브러리·**Tailwind v4 주의점** |
+| [TypeScript 규약](docs/conventions/typescript.md) | `shared/` 사용법·타입 스타일·CJS/ESM 인터롭 |
+| [Supabase 규약](docs/conventions/supabase.md) | **에러 처리**·null 비교·소유권 필터 |
+| [마이그레이션 계획](docs/project/migration-plan.md) | **TEL-6 마이그레이션 계획 요약** — 테이블 운명 매핑 |
+| [알려진 이슈](docs/project/known-issues.md) | 알려진 이슈·이월 과제 |
+| [성능 측정](docs/perf/README.md) | 성능 측정 기록 (S1·S4·S6) |
 
 ### 특히 자주 걸리는 함정
 
@@ -56,4 +56,4 @@ cd telepathy-front && npx oxlint src/...
 - **`.eq()` 로는 null 을 못 잡는다** (SQL 3값 논리) → `.is()`
 - **Tailwind arbitrary value 안에 공백 금지**, 동적 클래스 조합 금지
 - **`as` 는 런타임 검사가 없다** → 외부 경계 값은 사용처에서 방어
-- **기능 추가 전 [migration-plan.md](docs/migration-plan.md) 확인** — 축소·대체 예정 테이블이 있다
+- **기능 추가 전 [migration-plan.md](docs/project/migration-plan.md) 확인** — 축소·대체 예정 테이블이 있다

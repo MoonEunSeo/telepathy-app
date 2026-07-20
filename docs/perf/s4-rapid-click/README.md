@@ -1,6 +1,6 @@
 # S4. 하트 연타 시 중복 요청 / 경쟁 상태
 
-> 측정 환경·원칙은 [README](README.md) 참조. 조건: **Fast 4G + Slow 4G / CPU 4x / production build**
+> 측정 환경·원칙은 [README](../README.md) 참조. 조건: **Fast 4G + Slow 4G / CPU 4x / production build**
 
 ## 대상 문제
 
@@ -43,7 +43,9 @@ DB 최종값 = "마지막에 도착한" 요청의 값 (보낸 순서가 아님)
 | 3 | 5 | 5 | 624, 614, 621, 610, 594 | 3,063 |
 
 모든 요청 `200 OK`, 응답 0.4 kB, 동일 URL(`PATCH /api/word-history/{id}`).
-첨부: `s4-before-fast4g-1~3.png`, `s4-before-slow4g-1~3.png`
+첨부: `before-fast4g-1~3.png`, `before-slow4g-1~3.png`
+
+![S4 Before — Slow 4G 연타](before-slow4g-1.png)
 
 ## 핵심 지표
 
