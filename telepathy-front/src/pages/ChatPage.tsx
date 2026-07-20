@@ -67,6 +67,9 @@ export default function ChatPage() {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  // 같은 frame에서 handleSendMessage가 두 번 호출되는 경우
+  // (한글 IME 조합 종료 keydown + 진짜 Enter keydown) 차단용 in-flight 락
+  const sendingRef = useRef(false);
 
   // ✅ 채팅방 입장 검증
   useEffect(() => {
@@ -190,7 +193,12 @@ export default function ChatPage() {
 
   // ✅ 메시지 전송
   const handleSendMessage = () => {
-    if (!message.trim() || chatEnded) return;
+    if (sendingRef.current) return; // 같은 frame 재호출 차단
+    const text = message.trim(); // 보낼 값을 먼저 확정
+    if (!text || chatEnded) return;
+
+    sendingRef.current = true;
+    setMessage(''); // emit보다 먼저 - 재호출돼도 text가 비어 noop
 
     const msgData: ChatMessage = {
       roomId: roomId!,
@@ -201,13 +209,16 @@ export default function ChatPage() {
       receiverUsername: partnerUsername!,
       receiverNickname: partnerNickname!,
       word: word!,
-      message,
+      message: text,
       timestamp: Date.now(),
     };
 
     socket.emit('chatMessage', msgData);
     socket.emit('stopTyping', { roomId: roomId! });
-    setMessage('');
+
+    queueMicrotask(() => {
+      sendingRef.current = false; // 락 해제
+    });
   };
 
   const handleTyping = (e: ChangeEvent<HTMLInputElement>) => {
@@ -357,7 +368,11 @@ export default function ChatPage() {
             placeholder="메시지를 입력하세요."
             value={message}
             onChange={handleTyping}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+            onKeyDown={(e) => {
+              // 한글 IME 조합 중 발생하는 Enter는 무시 (keyCode 229는 IE/Edge 호환)
+              if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+              if (e.key === 'Enter') handleSendMessage();
+            }}
             disabled={chatEnded}
           />
 
