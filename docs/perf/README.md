@@ -14,7 +14,7 @@
 | [S1](s1-duplicate-fetch/README.md) | 화면 전환 시 중복 API 호출 | Network | TanStack Query 캐시 | ✅ 측정 완료 |
 | [S4](s4-rapid-click/README.md) | 하트 연타 시 중복 요청·경쟁 상태 | Network | TanStack Query 동시성 제어 | ✅ 측정 완료 |
 | [S6](s6-polling/README.md) | MainPage 폴링 요청량 | Network | 폴링 주기 조정 / 소켓 push | ✅ 측정 완료 |
-| S2 | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | 예정 |
+| [S2](s2-form-rerender/README.md) | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | ✅ 측정 완료 |
 | S3 | Context 리렌더 전파 | Profiler | Zustand (도입 여부 판단) | 예정 |
 | S5 | 페이지 로드 종합 | Lighthouse (3회 중앙값) | 전체 | 예정 |
 
@@ -30,6 +30,7 @@
 |---|---|
 | 기준 커밋 | `c9d5d06` + `/api/auth/check` role 반환 수정 |
 | 빌드 | **production** (`npm run build` → `npm start` → `localhost:5000`) |
+| 예외 | **S2 만 dev 서버(`localhost:5179`)** — Profiler 가 prod 빌드에서 동작하지 않음 |
 | 번들 | JS `index-C8_4mCFr.js` 485.8 kB (gzip 152.5 kB) / CSS 85.2 kB (gzip 16.7 kB) |
 | 브라우저 | Chrome 시크릿 창 (확장 없음) |
 | Network | **Fast 4G** (S4·S6 일부는 Slow 4G — 각 문서에 명시) |
@@ -86,3 +87,5 @@ Before 스크린샷은 각 시나리오 폴더 안에 있다.
 | `s6-polling/before-foreground-current-round.png` | 포그라운드 1초 폴링 59건 / 60초 |
 | `s6-polling/before-foreground-server-time.png` | 포그라운드 10초 폴링 8건 |
 | `s6-polling/before-background-current-round.png` | 백그라운드 전환 후 폴링 중단 |
+| `s2-form-rerender/before-register.png` | Register 12글자 입력 시 commit 12회 |
+| `s2-form-rerender/before-verify-mvp.png` | Verify_mvp 8글자 입력 시 commit 9회 |
