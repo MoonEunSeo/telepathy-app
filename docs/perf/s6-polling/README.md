@@ -39,10 +39,28 @@ S1·S4 는 사용자 행동에 비례하지만, S6 는 **가만히 있어도 시
 | 폴링 | 주기 | [A] 포그라운드 60초 | [B] 백그라운드 60초 |
 |---|---|---|---|
 | `current-round` | 1초 | **59건** | **0건** |
-| `server-time` | 10초 | ~6건 | **0건** |
+| `server-time` | 10초 | **8건** (약 80초 구간) | **0건** |
 
 `current-round` 각 요청: `200 OK`, 0.3 kB, **581~602 ms**
 전송량: **18.7 kB / 분**
+
+### [A] 포그라운드 — `current-round` 59건 / 60초
+
+![포그라운드 current-round 폴링](before-foreground-current-round.png)
+
+워터폴이 60초 내내 빈틈없이 이어진다. 마지막 요청은 `(pending)` 상태로,
+이전 요청이 끝나기 전에 다음이 발사되는 구간이 존재함을 보여준다.
+
+### [A] 포그라운드 — `server-time` 8건
+
+![포그라운드 server-time 폴링](before-foreground-server-time.png)
+
+### [B] 백그라운드 — 전환 직후 5건만 마무리되고 중단
+
+![백그라운드 전환 후 폴링 중단](before-background-current-round.png)
+
+타임라인이 6,000 ms 에서 끝난다. 탭 전환 시점에 이미 떠 있던 요청들이
+마무리된 것일 뿐, **이후 60초 동안 신규 요청은 발생하지 않았다.**
 
 ## 핵심 지표
 

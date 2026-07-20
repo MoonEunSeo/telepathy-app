@@ -83,3 +83,6 @@ Before 스크린샷은 각 시나리오 폴더 안에 있다.
 | `s1-duplicate-fetch/before-network.png` | 화면 전환 시 API 요청 15건 (Fast 4G) |
 | `s4-rapid-click/before-fast4g-1~3.png` | 연타 시 PATCH 요청, Fast 4G 3회차 |
 | `s4-rapid-click/before-slow4g-1~3.png` | 연타 시 PATCH 요청, Slow 4G 3회차 |
+| `s6-polling/before-foreground-current-round.png` | 포그라운드 1초 폴링 59건 / 60초 |
+| `s6-polling/before-foreground-server-time.png` | 포그라운드 10초 폴링 8건 |
+| `s6-polling/before-background-current-round.png` | 백그라운드 전환 후 폴링 중단 |
