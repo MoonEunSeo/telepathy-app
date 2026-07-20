@@ -194,6 +194,63 @@ export function registerSocketHandlers(io: IOServer): void {
           },
         ]);
 
+        // 4-1. 단어 기록 저장 (MyWords 단어장 - 양쪽 다 기록)
+        // · 게스트 본인 기록은 users 에 행이 없어 FK 제약상 저장 불가 → 제외
+        // · 상대가 게스트면 partner_id 는 null 로 두고 닉네임만 남긴다
+        // · 같은 상대 + 같은 단어 조합은 한 번만 남긴다
+
+        const partnerIsGuest = partner.username === partner.user_id;
+
+        try {
+          const historyRows = [
+            {
+              user_id: userId,
+              user_nickname: nickname,
+              partner_id: partnerIsGuest ? null : partner.user_id, // 👈
+              partner_nickname: partner.nickname,
+              word,
+              isGuest,
+            },
+            {
+              user_id: partner.user_id,
+              user_nickname: partner.nickname,
+              partner_id: isGuest ? null : userId,
+              partner_nickname: nickname,
+              word,
+              // 큐에 role 컬럼이 없어 저장된 값으로 판별한다.
+              // 게스트는 username에 user_id(uuid)를 그대로 넣으므로 두 값이 같다.
+              isGuest: partner.username === partner.user_id,
+            },
+          ].filter((row) => !row.isGuest);
+
+          for (const row of historyRows) {
+            const { isGuest: _omit, ...record } = row;
+
+            let query = supabase
+              .from('word_history')
+              .select('id')
+              .eq('user_id', record.user_id)
+              .eq('word', word);
+
+            // partner_id 가 null(게스트 상대)이면 = 비교가 안 되므로 IS NULL + 닉네임으로 판별
+            query =
+              record.partner_id === null
+                ? query.is('partner_id', null).eq('partner_nickname', record.partner_nickname)
+                : query.eq('partner_id', record.partner_id);
+
+            const { data: existing } = await query.maybeSingle();
+
+            if (!existing) {
+              const { error: insertError } = await supabase.from('word_history').insert([record]);
+              if (insertError) {
+                console.error('❌ word_history insert 실패:', insertError.message, record);
+              }
+            }
+          }
+        } catch (err) {
+          console.error('word_history 저장 실패:', (err as Error).message);
+        }
+
         // socket 방 join
         socket.join(roomId);
         const partnerSocket = io.sockets.sockets.get(partner.socket_id);
