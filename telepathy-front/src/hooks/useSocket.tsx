@@ -37,7 +37,24 @@ const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }: UseS
     socketRef.current = socket;
 
     // 핸들러 정의 (정리 가능하도록 변수화)
-    const handleMessage = (data: ChatMessage) => setMessages((prev) => [...prev, data]);
+    // 같은 (senderId, timestamp, message) 조합은 중복 수신으로 보고 버린다.
+    // tail 1건만 비교하면 [A, B, A] 순으로 늦게 도착하는 중복을 놓치므로
+    // 최근 20건 윈도우 안에서 검사한다.
+    const handleMessage = (data: ChatMessage) =>
+      setMessages((prev) => {
+        const lookback = Math.min(prev.length, 20);
+        for (let i = prev.length - 1; i >= prev.length - lookback; i--) {
+          const m = prev[i];
+          if (
+            m.senderId === data.senderId &&
+            m.timestamp === data.timestamp &&
+            m.message === data.message
+          ) {
+            return prev; // 중복 — 상태 변경 없음
+          }
+        }
+        return [...prev, data];
+      });
     const handleReceiverInfo = (info: ReceiverInfo) => setReceiverInfo(info);
     const handleTyping = () => setIsTyping(true);
     const handleStopTyping = () => setIsTyping(false);

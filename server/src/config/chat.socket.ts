@@ -16,6 +16,20 @@ export interface SocketData {
 type IOServer = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 type IOSocket = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
+// 같은 (room, sender, timestamp) 조합이 짧은 시간 내에 두 번 들어오면
+// 두 번째는 broadcast를 건너뛴다. 5초 지난 항목은 자동 정리.
+const recentBroadcasts = new Map<string, number>();
+
+function isRecentDuplicate(key: string): boolean {
+  const now = Date.now();
+  for (const [k, ts] of recentBroadcasts) {
+    if (now - ts > 5000) recentBroadcasts.delete(k);
+  }
+  if (recentBroadcasts.has(key)) return true;
+  recentBroadcasts.set(key, now);
+  return false;
+}
+
 export function registerSocketHandlers(io: IOServer): void {
   io.on('connection', (socket: IOSocket) => {
     console.log('🟢 New socket connected:', socket.id);
@@ -252,6 +266,17 @@ export function registerSocketHandlers(io: IOServer): void {
         }
 
         // socket 방 join
+        // 같은 user의 다른 socket이 이미 이 room에 있으면 내보낸다.
+        // (broadcast가 두 sid로 중복 도달하는 경로 차단 — Render 단일 인스턴스 가정.
+        //  다중 인스턴스로 확장 시 Redis adapter 필요)
+        for (const [sid, s] of io.sockets.sockets) {
+          if (sid === socket.id) continue;
+          if (s.data.user?.user_id !== userId) continue;
+          if (s.rooms.has(roomId)) {
+            s.leave(roomId);
+            console.log(`🧹 중복 sid 정리: user=${userId} oldSid=${sid} room=${roomId}`);
+          }
+        }
         socket.join(roomId);
         const partnerSocket = io.sockets.sockets.get(partner.socket_id);
         if (partnerSocket) partnerSocket.join(roomId);
@@ -298,6 +323,13 @@ export function registerSocketHandlers(io: IOServer): void {
       const senderId = me.user_id;
       const senderNickname =
         me.role === 'guest' ? me.nickname || GUEST_NICKNAME : data.senderNickname;
+
+      // 같은 (room, sender, timestamp) 중복 차단 — DB insert·broadcast 모두 건너뜀
+      const dedupKey = `${roomId}::${senderId}::${timestamp}`;
+      if (isRecentDuplicate(dedupKey)) {
+        console.log(`🛡️ chatMessage 중복 차단: ${dedupKey}`);
+        return;
+      }
 
       const { error } = await supabase.from('chat_logs').insert({
         room_id: roomId,
