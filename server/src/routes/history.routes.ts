@@ -21,7 +21,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
     const { data, error } = await supabase
       .from('word_history')
-      .select('word, connected_at, partner_id, partner_nickname, is_favorite, memo')
+      .select('id, word, connected_at, partner_id, partner_nickname, is_favorite, memo')
       .eq('user_id', userId)
       .order('connected_at', { ascending: false });
 
