@@ -112,7 +112,7 @@ function AppRoutes() {
     fetch('/api/auth/check', { credentials: 'include' })
       .then((res) => res.json())
       .then((data: AuthCheckResponse) => {
-        if (data.loggedIn) {
+        if (data.loggedIn && data.role !== 'guest') {
           if (location.pathname === '/login' || location.pathname === '/register') {
             navigate('/main');
           }

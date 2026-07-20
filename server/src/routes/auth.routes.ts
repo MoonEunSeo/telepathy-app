@@ -158,18 +158,12 @@ router.post('/login', async (req: Request, res: Response) => {
 // 📌 자동 로그인 확인 API
 // ================================
 router.get('/check', (req: Request, res: Response) => {
-  const token = req.cookies?.token;
+  const user = decodeToken(req.cookies?.token);
 
-  if (!token) return res.json({ loggedIn: false } satisfies AuthCheckResponse);
+  if (!user) return res.json({ loggedIn: false } satisfies AuthCheckResponse);
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    // 성공 시 user 를 함께 실어 보냄(프론트는 loggedIn 만 사용) → AuthCheckResponse superset
-    return res.json({ loggedIn: true, user: decoded });
-  } catch (err) {
-    console.error('❌ JWT 검증 실패:', (err as Error).message);
-    return res.json({ loggedIn: false } satisfies AuthCheckResponse);
-  }
+  // 성공 시 user 를 함께 실어 보냄(프론트는 loggedIn 만 사용) → AuthCheckResponse superset
+  return res.json({ loggedIn: true, role: user.role } satisfies AuthCheckResponse);
 });
 
 // ================================
