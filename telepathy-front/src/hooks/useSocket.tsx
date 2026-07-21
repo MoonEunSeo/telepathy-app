@@ -42,17 +42,20 @@ const useSocket = ({ roomId, senderId, senderNickname, word, onChatEnded }: UseS
     // 최근 20건 윈도우 안에서 검사한다.
     const handleMessage = (data: ChatMessage) =>
       setMessages((prev) => {
-        const lookback = Math.min(prev.length, 20);
+        const lookback = Math.min(prev.length, 20); // 최대 20개만 검사
         for (let i = prev.length - 1; i >= prev.length - lookback; i--) {
+          // --i 로 최근 것부터 검사
           const m = prev[i];
+          // 중복 검사
           if (
             m.senderId === data.senderId &&
             m.timestamp === data.timestamp &&
             m.message === data.message
           ) {
-            return prev; // 중복 — 상태 변경 없음
+            return prev; // 중복 - 상태 변경 없음
           }
         }
+        // 진짜 새 메시지
         return [...prev, data];
       });
     const handleReceiverInfo = (info: ReceiverInfo) => setReceiverInfo(info);
