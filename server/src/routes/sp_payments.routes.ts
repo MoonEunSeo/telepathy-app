@@ -13,6 +13,22 @@ import authMiddleware from '../middleware/auth';
 const router = express.Router();
 
 // ---------------------------
+// 🔐 계좌 암호화 키
+// ---------------------------
+// 환경변수 미설정 시 하드코딩 상수로 폴백하지 않는다.
+// 소스에 박힌 키로 은행 계좌를 암호화하는 것은 사실상 무암호화이며,
+// 2026-04 보안 감사에서 CRITICAL로 지적된 패턴이다. 없으면 부팅을 거부한다.
+const MIN_ACCOUNT_KEY_LENGTH = 16;
+const ACCOUNT_SECRET_KEY = process.env.ACCOUNT_SECRET_KEY;
+
+if (!ACCOUNT_SECRET_KEY || ACCOUNT_SECRET_KEY.length < MIN_ACCOUNT_KEY_LENGTH) {
+  throw new Error(
+    `ACCOUNT_SECRET_KEY 환경변수가 설정되지 않았거나 너무 짧습니다(최소 ${MIN_ACCOUNT_KEY_LENGTH}자). ` +
+      '환불 계좌 암호화 키이므로 서버를 시작하지 않습니다.',
+  );
+}
+
+// ---------------------------
 // 🧩 입력 검증 유틸
 // ---------------------------
 const KOREAN_WORD_RE = /^[가-힣]{1,6}$/;
@@ -129,10 +145,9 @@ router.post(
       // 단어 배열 → 문자열
       const wordsetText = wordset.filter(Boolean).join(', ');
 
-      // 계좌 암호화
-      const secretKey = process.env.ACCOUNT_SECRET_KEY || 'telepathy-key';
+      // 계좌 암호화 (키는 모듈 로드 시 검증됨 — 폴백 없음)
       const encryptedAccount = refund_account
-        ? CryptoJS.AES.encrypt(refund_account, secretKey).toString()
+        ? CryptoJS.AES.encrypt(refund_account, ACCOUNT_SECRET_KEY).toString()
         : null;
 
       // 최근 결제내역 찾기
