@@ -16,6 +16,7 @@
 | [S6](s6-polling/README.md) | MainPage 폴링 요청량 | Network | 폴링 주기 조정 / 소켓 push | ✅ 측정 완료 |
 | [S2](s2-form-rerender/README.md) | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | ✅ 측정 완료 |
 | [S3](s3-context-rerender/README.md) | Context 리렌더 전파 | Profiler | Zustand (도입 여부 판단) | ✅ 측정 완료 → **도입 안 함** |
+| [S7](s7-compression/README.md) | 응답 압축 미적용 | Network / curl | gzip·brotli 압축 | ✅ **적용 완료 → −70.4%** |
 | S5 | 페이지 로드 종합 | Lighthouse (3회 중앙값) | 전체 | 예정 |
 
 > S3(Zustand)은 **측정 결과 유의미한 리렌더 낭비가 없으면 도입하지 않는다.**
@@ -92,3 +93,5 @@ Before 스크린샷은 각 시나리오 폴더 안에 있다.
 | `s2-form-rerender/before-verify-mvp.png` | Verify_mvp 8글자 입력 시 commit 9회 |
 | `s3-context-rerender/before-word-click-1~2.png` | 단어 클릭 시 리렌더 (원인: MainPage) |
 | `s3-context-rerender/before-idle-10s.png` | 무조작 10초에 commit 26회 |
+
+> S7 은 스크린샷 대신 `curl` 출력값을 문서에 직접 기록했다 — 전송 바이트는 헤더로 검증 가능하기 때문이다.

@@ -2,6 +2,7 @@
 import './env'; // ⚠️ 반드시 최상단 — 라우트보다 먼저 .env 로드
 
 import express, { Request, Response } from 'express';
+import compression from 'compression';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -28,6 +29,11 @@ import commentRoutes from './src/routes/comment.routes';
 import paymentsRoutes from './src/routes/payments.routes';
 
 const app = express();
+
+// ✅ 응답 압축 (gzip/deflate)
+// 라우트·정적 서빙보다 먼저 등록해야 API JSON 과 dist 번들이 모두 압축된다.
+// 클라이언트가 Accept-Encoding 을 보낼 때만 동작하며, 미지원 시 자동으로 원본을 보낸다.
+app.use(compression());
 
 // ✅ 허용할 클라이언트 도메인 설정
 const allowedOrigins = [
