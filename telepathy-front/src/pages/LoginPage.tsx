@@ -1,23 +1,34 @@
-import { useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useForm } from 'react-hook-form';
 import { useModal } from '../contexts/ModalContext';
 import ModalPolicy from '../components/ModalPolicy';
 import { useNavigate } from 'react-router-dom';
 import type { LoginResponse } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
-import Modal from '../components/ui/Modal';
+import FieldError from '../components/ui/FieldError';
 import TextLink from '../components/ui/TextLink';
+
+interface LoginForm {
+  username: string;
+  password: string;
+}
 
 export default function LoginPage() {
   const { isOpen } = useModal();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({
+    mode: 'onSubmit',
+    defaultValues: { username: '', password: '' },
+  });
 
   // ✅ 로그인 요청
-  const handleLogin = async () => {
+  const onSubmit = async ({ username, password }: LoginForm) => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -31,19 +42,18 @@ export default function LoginPage() {
       if (data.success) {
         navigate('/main');
       } else {
-        setModalMessage(data.message || '로그인에 실패했습니다.');
+        // 어느 필드 잘못인지 서버가 특정해주지 않으므로 폼 전체 (root) 에러
+        setError('root', { message: data.message || '로그인에 실패했습니다.' });
       }
-    } catch (err) {
-      setModalMessage('서버 오류로 로그인에 실패했습니다.');
+    } catch {
+      setError('root', { message: '서버 오류로 로그인에 실패했습니다.' });
     }
   };
 
   return (
     <>
-      {/* ✅ 로그인 페이지 본문 (구 .login-page — 스타일 없던 빈 래퍼) */}
       <div>
-        {/* 구 .login-container — 리디자인: 세로 중앙 정렬 */}
-        <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10">
+        <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100vh] flex-col items-center justify-center py-10">
           {/* 구 .login-subtitle — 감성 리드카피 */}
           <p className="text-center [font-family:'Gowun_Batang'] text-[18px] text-[var(--auth-lead-color)]">
             바로 지금,
@@ -55,20 +65,26 @@ export default function LoginPage() {
             로그인
           </h1>
 
-          <AuthInput
-            placeholder="아이디"
-            value={username}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-          />
-          <AuthInput
-            placeholder="비밀번호"
-            type="password"
-            value={password}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          />
-          <Button type="submit" onClick={handleLogin}>
-            로그인 하기
-          </Button>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center">
+            <AuthInput
+              placeholder="아이디"
+              autoComplete="username"
+              {...register('username', { required: '아이디를 입력해주세요.' })}
+            />
+            <FieldError message={errors.username?.message} />
+            {/* 서버가 돌려준 실패 사유 - 다음 제출 때 RHF가 자동으로 지운다 */}
+            <AuthInput
+              type="password"
+              placeholder="비밀번호"
+              autoComplete="current-password"
+              {...register('password', { required: '비밀번호를 입력해주세요.' })}
+            />
+            <FieldError message={errors.password?.message} />
+            <FieldError message={errors.root?.message} />
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? '로그인 중...' : '로그인 하기'}
+            </Button>
+          </form>
 
           {/* 구 .or-divider — 좌우 선은 ::before/::after 유틸(before:/after:)로 이관 */}
           <div className="relative my-6 flex h-5 w-full items-center justify-center text-center text-[14px] text-[var(--or-divider-color)] before:mx-3 before:block before:h-px before:max-w-[200px] before:flex-1 before:bg-[var(--color-border)] before:content-[''] after:mx-3 after:block after:h-px after:max-w-[200px] after:flex-1 after:bg-[var(--color-border)] after:content-['']">
@@ -95,13 +111,6 @@ export default function LoginPage() {
           </p>
 
           {isOpen && <ModalPolicy />}
-
-          {modalMessage && (
-            <Modal>
-              <p className="[font-family:'Gowun_Dodum'] text-[16px]">{modalMessage}</p>
-              <Button onClick={() => setModalMessage('')}>확인</Button>
-            </Modal>
-          )}
         </div>
       </div>
     </>

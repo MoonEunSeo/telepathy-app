@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from 'react';
+import type { ComponentPropsWithRef } from 'react';
 
 /**
  * 공유 입력창 (design-system primitive)
@@ -12,7 +12,8 @@ import type { InputHTMLAttributes } from 'react';
  */
 type InputVariant = 'auth' | 'birth' | 'verify';
 
-interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
+// react 19: ref가 일반 prop -> ComponentPropsWithRef 로 받아 그대로 passthrough
+interface AuthInputProps extends ComponentPropsWithRef<'input'> {
   variant?: InputVariant;
 }
 
