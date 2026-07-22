@@ -14,7 +14,7 @@
 | [S1](s1-duplicate-fetch/README.md) | 화면 전환 시 중복 API 호출 | Network | TanStack Query 캐시 | ✅ 측정 완료 |
 | [S4](s4-rapid-click/README.md) | 하트 연타 시 중복 요청·경쟁 상태 | Network | TanStack Query 동시성 제어 | ✅ 측정 완료 |
 | [S6](s6-polling/README.md) | MainPage 폴링 요청량 | Network | 폴링 주기 조정 / 소켓 push | ✅ 측정 완료 |
-| [S2](s2-form-rerender/README.md) | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | ✅ 측정 완료 |
+| [S2](s2-form-rerender/README.md) | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | ✅ **적용 완료 → 글자당 1.0회 → 0회** |
 | [S3](s3-context-rerender/README.md) | Context 리렌더 전파 | Profiler | Zustand (도입 여부 판단) | ✅ 측정 완료 → **도입 안 함** |
 | [S7](s7-compression/README.md) | 응답 압축 미적용 | Network / curl | gzip·brotli 압축 | ✅ **적용 완료 → −70.4%** |
 | S5 | 페이지 로드 종합 | Lighthouse (3회 중앙값) | 전체 | 예정 |
