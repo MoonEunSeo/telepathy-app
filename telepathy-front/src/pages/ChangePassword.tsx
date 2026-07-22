@@ -6,6 +6,7 @@ import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import Modal from '../components/ui/Modal';
 import FieldMessage from '../components/ui/FieldMessage';
+import { validatePassword } from '../utils/validatePassword';
 
 interface ChangePasswordForm {
   currentPassword: string;
@@ -67,7 +68,8 @@ export default function ChangePassword() {
         placeholder="새 비밀번호"
         {...register('newPassword', {
           required: '새 비밀번호를 입력해주세요.',
-          minLength: { value: 6, message: '비밀번호는 6자 이상이어야 합니다.' },
+          // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
+          validate: validatePassword,
         })}
       />
       <FieldMessage message={errors.newPassword?.message} />

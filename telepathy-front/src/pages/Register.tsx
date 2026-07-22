@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import TextLink from '../components/ui/TextLink';
 import FieldMessage from '../components/ui/FieldMessage';
+import { validatePassword } from '../utils/validatePassword';
 
 interface RegisterForm {
   username: string;
@@ -123,15 +124,8 @@ export default function Register() {
             autoComplete="new-password"
             {...register('password', {
               required: '비밀번호를 입력해주세요.',
-              // 실패 이유별로 다른 메시지
-              // boolean만 돌려주던 구 validatePassword를 대체
-              validate: (value) => {
-                if (value.length < 8) return '비밀번호는 8자 이상이어야 합니다.';
-                const combo = [/[a-zA-Z]/, /[0-9]/, /[!@#$%^&*(),.?":{}|<>]/].filter((re) =>
-                  re.test(value),
-                ).length;
-                return combo >= 2 || '영문/숫자/특수문자 중 2가지 이상을 포함해야 합니다.';
-              },
+              // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
+              validate: validatePassword,
             })}
           />
 
