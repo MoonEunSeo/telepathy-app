@@ -6,7 +6,7 @@ import { setStorage } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import TextLink from '../components/ui/TextLink';
-import FieldError from '../components/ui/FieldError';
+import FieldMessage from '../components/ui/FieldMessage';
 
 interface RegisterForm {
   username: string;
@@ -23,6 +23,7 @@ export default function Register() {
     handleSubmit,
     getValues,
     setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<RegisterForm>({
     mode: 'onBlur',
@@ -47,6 +48,10 @@ export default function Register() {
 
       if (!data.success) throw new Error(data.message || '중복 확인 실패');
       setIsAvailable(data.isAvailable);
+      // 결과를 즉시 errors에 반영
+      // validate는 blur·submit 때만 돌기 때문
+      if (data.isAvailable) clearErrors('username');
+      else setError('username', { message: '이미 사용 중인 아이디입니다.' });
     } catch (error) {
       console.error('❌ 중복검사 오류:', error);
       setIsAvailable(null);
@@ -87,8 +92,14 @@ export default function Register() {
                 required: '아이디를 입력해주세요.',
                 // 아이디가 바뀌면 이전 중복검사 결과는 무효
                 // 규칙 객체 안에 넣어야 register의 onChange를 덮지 않는다.
-                onChange: () => setIsAvailable(null),
-                validate: () => isAvailable === true || '아이디 중복 검사를 완료해주세요.',
+                onChange: () => {
+                  setIsAvailable(null);
+                  clearErrors('username');
+                },
+                validate: () => {
+                  if (isAvailable === false) return '이미 사용 중인 아이디입니다.';
+                  return isAvailable === true || '아이디 중복 검사를 완료해주세요.';
+                },
               })}
             />
             {/* form 안이므로 type='button 필수
@@ -98,15 +109,13 @@ export default function Register() {
               중복검사
             </Button>
           </div>
-          <FieldError message={errors.username?.message} />
-
-          {isAvailable !== null && (
-            /* 구 .result-message (.error) */
-            <p
-              className={`mt-[6px] mb-[10px] w-[300px] p-0 text-left text-[14px] ${isAvailable ? 'text-[var(--color-link)]' : 'text-[var(--color-danger)]'}`}
-            >
-              {isAvailable ? '이 아이디는 사용 가능합니다.' : '이미 사용 중인 아이디입니다.'}
-            </p>
+          {/* 구 .result-message — 에러가 있으면 에러만, 없고 검사 통과면 성공만. 항상 하나만 표시 */}
+          {errors.username ? (
+            <FieldMessage message={errors.username.message} />
+          ) : (
+            isAvailable === true && (
+              <FieldMessage state="success" message="이 아이디는 사용 가능합니다." />
+            )
           )}
           <AuthInput
             placeholder="비밀번호"
@@ -126,7 +135,7 @@ export default function Register() {
             })}
           />
 
-          <FieldError message={errors.password?.message} />
+          <FieldMessage message={errors.password?.message} />
 
           <Button type="submit" className="mt-4" disabled={isSubmitting}>
             가입하기

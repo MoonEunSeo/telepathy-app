@@ -5,7 +5,7 @@ import type { PasswordChangeResponse } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
 import Modal from '../components/ui/Modal';
-import FieldError from '../components/ui/FieldError';
+import FieldMessage from '../components/ui/FieldMessage';
 
 interface ChangePasswordForm {
   currentPassword: string;
@@ -59,7 +59,7 @@ export default function ChangePassword() {
         placeholder="현재 비밀번호"
         {...register('currentPassword', { required: '현재 비밀번호를 입력해주세요.' })}
       />
-      <FieldError message={errors.currentPassword?.message} />
+      <FieldMessage message={errors.currentPassword?.message} />
 
       <AuthInput
         type="password"
@@ -70,7 +70,7 @@ export default function ChangePassword() {
           minLength: { value: 6, message: '비밀번호는 6자 이상이어야 합니다.' },
         })}
       />
-      <FieldError message={errors.newPassword?.message} />
+      <FieldMessage message={errors.newPassword?.message} />
 
       <AuthInput
         type="password"
@@ -83,7 +83,7 @@ export default function ChangePassword() {
             value === values.newPassword || '비밀번호가 일치하지 않습니다.',
         })}
       />
-      <FieldError message={errors.confirmPassword?.message} />
+      <FieldMessage message={errors.confirmPassword?.message} />
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? '변경 중...' : '변경하기'}

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import type { LoginResponse } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
-import FieldError from '../components/ui/FieldError';
+import FieldMessage from '../components/ui/FieldMessage';
 import TextLink from '../components/ui/TextLink';
 
 interface LoginForm {
@@ -71,7 +71,7 @@ export default function LoginPage() {
               autoComplete="username"
               {...register('username', { required: '아이디를 입력해주세요.' })}
             />
-            <FieldError message={errors.username?.message} />
+            <FieldMessage message={errors.username?.message} />
             {/* 서버가 돌려준 실패 사유 - 다음 제출 때 RHF가 자동으로 지운다 */}
             <AuthInput
               type="password"
@@ -79,8 +79,8 @@ export default function LoginPage() {
               autoComplete="current-password"
               {...register('password', { required: '비밀번호를 입력해주세요.' })}
             />
-            <FieldError message={errors.password?.message} />
-            <FieldError message={errors.root?.message} />
+            <FieldMessage message={errors.password?.message} />
+            <FieldMessage message={errors.root?.message} />
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? '로그인 중...' : '로그인 하기'}
             </Button>

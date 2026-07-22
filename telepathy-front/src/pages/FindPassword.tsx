@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import type { PasswordCheckUserResponse, PasswordResetResponse } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
-import FieldError from '../components/ui/FieldError';
+import FieldMessage from '../components/ui/FieldMessage';
 
 interface IdForm {
   username: string;
@@ -84,8 +84,8 @@ export default function FindPassword() {
           autoComplete="username"
           {...idForm.register('username', { required: '아이디를 입력해주세요.' })}
         />
-        <FieldError message={idForm.formState.errors.username?.message} />
-        <FieldError message={idForm.formState.errors.root?.message} />
+        <FieldMessage message={idForm.formState.errors.username?.message} />
+        <FieldMessage message={idForm.formState.errors.root?.message} />
 
         {showBack && (
           <div className="flex gap-[8px]">
@@ -147,7 +147,7 @@ export default function FindPassword() {
                 minLength: { value: 6, message: '비밀번호는 6자 이상이어야 합니다.' },
               })}
             />
-            <FieldError message={resetForm.formState.errors.newPassword?.message} />
+            <FieldMessage message={resetForm.formState.errors.newPassword?.message} />
 
             <AuthInput
               placeholder="비밀번호 확인"
@@ -159,8 +159,8 @@ export default function FindPassword() {
                   value === values.newPassword || '비밀번호가 일치하지 않습니다.',
               })}
             />
-            <FieldError message={resetForm.formState.errors.confirmPassword?.message} />
-            <FieldError message={resetForm.formState.errors.root?.message} />
+            <FieldMessage message={resetForm.formState.errors.confirmPassword?.message} />
+            <FieldMessage message={resetForm.formState.errors.root?.message} />
 
             <Button type="submit" disabled={resetForm.formState.isSubmitting}>
               확인
