@@ -1,7 +1,7 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import type { AuthCheckResponse } from './types';
+import { useAuthCheck } from './hooks/useAuthCheck';
 
 // ✅ 페이지 컴포넌트
 import LoginPage from './pages/LoginPage';
@@ -107,23 +107,23 @@ function AppRoutes() {
     };
   }, []);
 
-  // ✅ 로그인 상태 확인
+  // ✅ 로그인 상태 확인 — 1회 조회 후 캐시 (라우트 이동마다 재요청하지 않는다)
+  const { data: auth } = useAuthCheck();
+
+  // ✅ 라우트 가드 — 캐시된 인증 상태 + 현재 경로로 리다이렉트만 판단 (재요청 없음)
   useEffect(() => {
-    fetch('/api/auth/check', { credentials: 'include' })
-      .then((res) => res.json())
-      .then((data: AuthCheckResponse) => {
-        if (data.loggedIn && data.role !== 'guest') {
-          if (location.pathname === '/login' || location.pathname === '/register') {
-            navigate('/main');
-          }
-        } else {
-          const protectedRoutes = ['/mypage', '/mywords', '/likes'];
-          if (protectedRoutes.includes(location.pathname)) {
-            navigate('/login');
-          }
-        }
-      });
-  }, [navigate, location.pathname]);
+    if (!auth) return; // 인증 조회 완료 전엔 판단 보류
+    if (auth.loggedIn && auth.role !== 'guest') {
+      if (location.pathname === '/login' || location.pathname === '/register') {
+        navigate('/main');
+      }
+    } else {
+      const protectedRoutes = ['/mypage', '/mywords', '/likes'];
+      if (protectedRoutes.includes(location.pathname)) {
+        navigate('/login');
+      }
+    }
+  }, [auth, navigate, location.pathname]);
 
   // ✅ 날짜 기반 테마 적용
   useSeasonalTheme();

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, LogOut } from 'lucide-react';
 import { useWordSession } from '../contexts/WordSessionContext';
 import { useProfile } from '../hooks/useProfile';
 import { useWordHistory } from '../hooks/useWordHistory';
 import { useMegaphoneCount } from '../hooks/useMegaphoneCount';
+import { authCheckKey } from '../hooks/useAuthCheck';
 import profileImage from '../assets/profile_image.png';
 import Modal from '../components/ui/Modal';
 import type { Id, WithdrawResponse } from '../types';
@@ -27,6 +29,7 @@ const MyPage = () => {
   const [megaphoneCount, setMegaphoneCount] = useState(0);
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   // 원본은 isSessionActive(없는 필드)를 참조 — isActive로 정정
   const { isActive, word } = useWordSession();
 
@@ -79,6 +82,8 @@ const MyPage = () => {
 
       if (res.ok) {
         console.log('✅ 로그아웃 성공');
+        // 로그아웃으로 인증 상태 변경 → 캐시 무효화
+        queryClient.invalidateQueries({ queryKey: authCheckKey });
         navigate('/');
       } else {
         console.warn('⚠️ 로그아웃 실패');
@@ -104,6 +109,8 @@ const MyPage = () => {
 
       if (res.ok && data.success) {
         alert('회원탈퇴가 완료되었습니다.');
+        // 탈퇴로 인증 상태 변경 → 캐시 무효화
+        queryClient.invalidateQueries({ queryKey: authCheckKey });
         navigate('/register');
       } else {
         alert(`회원탈퇴 실패: ${data.message || '알 수 없는 오류'}`);

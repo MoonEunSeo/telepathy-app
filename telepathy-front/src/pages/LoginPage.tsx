@@ -1,7 +1,9 @@
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 import { useModal } from '../contexts/ModalContext';
 import ModalPolicy from '../components/ModalPolicy';
 import { useNavigate } from 'react-router-dom';
+import { authCheckKey } from '../hooks/useAuthCheck';
 import type { LoginResponse } from '../types';
 import Button from '../components/ui/Button';
 import AuthInput from '../components/ui/AuthInput';
@@ -16,6 +18,7 @@ interface LoginForm {
 export default function LoginPage() {
   const { isOpen } = useModal();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -40,6 +43,8 @@ export default function LoginPage() {
       const data = (await res.json()) as LoginResponse;
 
       if (data.success) {
+        // 로그인으로 인증 상태 변경 → 캐시 무효화 후 이동
+        queryClient.invalidateQueries({ queryKey: authCheckKey });
         navigate('/main');
       } else {
         // 어느 필드 잘못인지 서버가 특정해주지 않으므로 폼 전체 (root) 에러
