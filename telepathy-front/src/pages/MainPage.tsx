@@ -380,44 +380,46 @@ export default function MainPage() {
     };
   }, [navigate, startSession]);
 
-  // ✅ 서버와 라운드 동기화
+  // ✅ 라운드 동기화 — 소켓 push 기반 (S6: 1초 폴링 제거)
+  // 라운드 전환은 서버가 15초 경계마다 'round:change' 로 알려준다.
+  // 진입 시엔 라운드 중간일 수 있으므로 current-round 를 딱 1번 조회해 초기화한다.
   useEffect(() => {
-    const syncFromServer = async () => {
+    // 라운드 → 단어셋 적용 (순차 구조: round 로 인덱스 결정)
+    const applyWordSet = (r: number) => {
+      const idx = r % recommendations.length;
+      setWordSet(recommendations[idx].words);
+    };
+
+    // 진입 시 1회 초기화 (라운드 중간 진입 대응)
+    (async () => {
       try {
         const res = await fetch('/api/match/current-round');
         const data = (await res.json()) as MatchCurrentRoundResponse;
-
-        if (data.round !== round) {
-          setFadeClass('fade-out');
-          setTimeout(() => {
-            // 순차구조처리
-            const idx = data.round % recommendations.length;
-            setWordSet(recommendations[idx].words);
-            /* 랜덤처리 (순환X)const randomIdx = Math.floor(Math.random() * recommendations.length);
-            setWordSet(recommendations[randomIdx].words); */
-
-            //셔플 처리
-            /*
-            const nextWords = getNextWordSet();
-            setWordSet(nextWords);*/
-
-            setRound(data.round);
-            setRemaining(data.remaining);
-            setSelectedWord('');
-            setFadeClass('fade-in');
-          }, 500);
-        } else {
-          setRemaining((prev) => (Math.abs(prev - data.remaining) > 2 ? data.remaining : prev));
-        }
+        applyWordSet(data.round);
+        setRound(data.round);
+        setRemaining(data.remaining);
       } catch (err) {
-        console.error('서버 동기화 실패:', err);
+        console.error('라운드 초기화 실패:', err);
       }
+    })();
+
+    // 라운드 경계마다 서버가 push → 새 라운드로 전환 + 15초 리셋
+    const onRoundChange = ({ round: nextRound }: { round: number }) => {
+      setFadeClass('fade-out');
+      setTimeout(() => {
+        applyWordSet(nextRound);
+        setRound(nextRound);
+        setRemaining(15);
+        setSelectedWord('');
+        setFadeClass('fade-in');
+      }, 500);
     };
 
-    syncFromServer();
-    const syncInterval = setInterval(syncFromServer, 1000);
-    return () => clearInterval(syncInterval);
-  }, [round]);
+    socket.on('round:change', onRoundChange);
+    return () => {
+      socket.off('round:change', onRoundChange);
+    };
+  }, []);
 
   // ✅ 클라이언트 카운트다운
   useEffect(() => {

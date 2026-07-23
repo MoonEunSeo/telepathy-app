@@ -28,6 +28,8 @@ export interface ServerToClientEvents {
   'megaphone:show': (payload: MegaphoneShowPayload) => void;
   'megaphone:failed': (payload: MegaphoneFailedPayload) => void;
   'game:event': (e: GameEvent) => void;
+  // 라운드 경계(15초)마다 서버가 전송 → 클라는 단어셋 교체 + 15초 카운트 리셋 (폴링 대체)
+  'round:change': (payload: { round: number }) => void;
 }
 
 // 클라이언트 → 서버 (socket.emit)

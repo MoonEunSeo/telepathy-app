@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import cron from 'node-cron';
 import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketEvents';
 import { flushRound } from './src/utils/flush';
+import { getCurrentRound } from './src/utils/round';
 import { registerSocketHandlers, type SocketData } from './src/config/chat.socket';
 import app from './app';
 import { decodeToken } from './src/middleware/auth';
@@ -83,6 +84,17 @@ io.on('connection', (socket) => {
 
 // ✅ 채팅 관련 소켓 핸들러 등록
 registerSocketHandlers(io);
+
+// ✅ 라운드 경계(15초) 감시 → 전환 시 전 클라이언트에 push (클라이언트 1초 폴링 대체)
+// 서버에 타이머 1개만 존재하며(유저 수와 무관), 라운드가 바뀔 때만 emit(15초에 1회).
+let lastRound = getCurrentRound().round;
+setInterval(() => {
+  const { round } = getCurrentRound();
+  if (round !== lastRound) {
+    lastRound = round;
+    io.emit('round:change', { round });
+  }
+}, 1000);
 
 // ✅ 30초마다 flushRound 실행
 cron.schedule('*/30 * * * * *', () => {
