@@ -24,7 +24,6 @@ import type {
   FeedbackAddResponse,
   ImpPayResponse,
   ImpRequestPayParams,
-  MegaphoneCountResponse,
   ServerTimeResponse,
   SetNicknameResponse,
   MatchCurrentRoundResponse,
@@ -32,7 +31,9 @@ import type {
   MegaphoneSku,
 } from '../types';
 import { ensureGuestSession, updateGuestNickname } from '../utils/guest';
+import { useQueryClient } from '@tanstack/react-query';
 import { useProfile } from '../hooks/useProfile';
+import { megaphoneCountKey, fetchMegaphoneCount } from '../hooks/useMegaphoneCount';
 
 // import useRandomSequence from '../hooks/useRandomSequence'; //단어셔플
 
@@ -91,6 +92,9 @@ export default function MainPage() {
 
   const [showBizInfo, setShowBizInfo] = useState(false);
 
+  // S1: 확성기 개수 조회를 공용 캐시와 공유 (MyPage 와 같은 queryKey)
+  const queryClient = useQueryClient();
+
   //셔플에 필요한 애 (wordset포함)
   //const { getNextWordSet } = useRandomSequence();
 
@@ -103,17 +107,16 @@ export default function MainPage() {
       return;
     }
 
-    // 이미 본 경우 → 바로 DB 조회 후 모달 실행
+    // 이미 본 경우 → 바로 DB 조회 후 모달 실행 (staleTime 안이면 캐시 사용)
     try {
-      const res = await fetch('/api/user/megaphone-count', {
-        credentials: 'include',
+      const data = await queryClient.fetchQuery({
+        queryKey: megaphoneCountKey,
+        queryFn: fetchMegaphoneCount,
       });
-      const data = (await res.json()) as MegaphoneCountResponse;
 
       if (data.success) {
-        const hasMegaphone = data.count > 0;
         setShowMegaphoneModal(true);
-        setHasMegaphone(hasMegaphone);
+        setHasMegaphone(data.count > 0);
       } else {
         console.error('메가폰 조회 실패:', data.message);
       }
@@ -127,17 +130,16 @@ export default function MainPage() {
     setStorage('seenMegaphoneIntro', 'true');
     setShowFirstTimeModal(false);
 
-    // 설명 모달 닫고 DB 조회 → 실제 모달 실행
+    // 설명 모달 닫고 DB 조회 → 실제 모달 실행 (staleTime 안이면 캐시 사용)
     try {
-      const res = await fetch('/api/user/megaphone-count', {
-        credentials: 'include',
+      const data = await queryClient.fetchQuery({
+        queryKey: megaphoneCountKey,
+        queryFn: fetchMegaphoneCount,
       });
-      const data = (await res.json()) as MegaphoneCountResponse;
 
       if (data.success) {
-        const hasMegaphone = data.count > 0;
         setShowMegaphoneModal(true);
-        setHasMegaphone(hasMegaphone);
+        setHasMegaphone(data.count > 0);
       } else {
         console.error('메가폰 조회 실패:', data.message);
       }
@@ -183,6 +185,8 @@ export default function MainPage() {
               if (data.success) {
                 toast.success(`구매 완료! 확성기 ${sku.count}개 지급됨 🎉`);
                 setHasMegaphone(true);
+                // 개수 증가 → 캐시 무효화, 다음 조회는 신선한 값
+                queryClient.invalidateQueries({ queryKey: megaphoneCountKey });
               } else {
                 toast.error('검증 실패: ' + data.message);
               }
@@ -197,6 +201,8 @@ export default function MainPage() {
           message: payload,
         });
         toast.success('메시지가 발사되었습니다!');
+        // 개수 감소(-1) → 캐시 무효화, 다음 조회는 신선한 값
+        queryClient.invalidateQueries({ queryKey: megaphoneCountKey });
       }
     } catch (err) {
       console.error('Megaphone 처리 오류:', err);

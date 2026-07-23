@@ -4,9 +4,10 @@ import { ChevronRight, LogOut } from 'lucide-react';
 import { useWordSession } from '../contexts/WordSessionContext';
 import { useProfile } from '../hooks/useProfile';
 import { useWordHistory } from '../hooks/useWordHistory';
+import { useMegaphoneCount } from '../hooks/useMegaphoneCount';
 import profileImage from '../assets/profile_image.png';
 import Modal from '../components/ui/Modal';
-import type { Id, MegaphoneCountResponse, WithdrawResponse } from '../types';
+import type { Id, WithdrawResponse } from '../types';
 
 // 구 .login-button1 (모달 버튼, :global(.modal-content) 오버라이드 반영 = flex 1 1 45%/max140/pad10·0)
 const modalBtn =
@@ -46,25 +47,11 @@ const MyPage = () => {
     setWordCount(wordHistory?.length ?? 0);
   }, [wordHistory]);
 
+  // S1: 확성기 개수도 공용 캐시(useMegaphoneCount)에서 받는다 — MainPage 와 요청 공유
+  const { data: megaphone } = useMegaphoneCount();
   useEffect(() => {
-    const fetchMegaphoneCount = async () => {
-      try {
-        const res = await fetch('/api/user/megaphone-count', { credentials: 'include' });
-        const data = (await res.json()) as MegaphoneCountResponse;
-        if (data.success) {
-          setMegaphoneCount(data.count);
-        } else {
-          setMegaphoneCount(0);
-        }
-      } catch (err) {
-        console.error('❌ megaphone-count fetch 오류:', err);
-        setMegaphoneCount(0);
-      }
-    };
-
-    // ✅ megaphone-count 만 직접 fetch (profile·word-history 는 공용 훅으로 이관)
-    fetchMegaphoneCount();
-  }, []);
+    setMegaphoneCount(megaphone ?? 0);
+  }, [megaphone]);
 
   const handleNavigateWords = () => {
     console.log('Go to Words Page');
