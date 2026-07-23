@@ -26,13 +26,13 @@ import type {
   ImpRequestPayParams,
   MegaphoneCountResponse,
   ServerTimeResponse,
-  ProfileResponse,
   SetNicknameResponse,
   MatchCurrentRoundResponse,
   PaymentsVerifyResponse,
   MegaphoneSku,
 } from '../types';
 import { ensureGuestSession, updateGuestNickname } from '../utils/guest';
+import { useProfile } from '../hooks/useProfile';
 
 // import useRandomSequence from '../hooks/useRandomSequence'; //단어셔플
 
@@ -248,7 +248,8 @@ export default function MainPage() {
   const [showNicknameModal, setShowNicknameModal] = useState(false);
   const [isGuest, setIsGuest] = useState(false); // 게스트 여부 확인
 
-  // ✅ 유저 프로필 가져오기
+  // ✅ 유저 프로필 가져오기 — S1: 공용 캐시(useProfile)에서 받는다
+  const { data: profileData, isError: profileError } = useProfile();
   useEffect(() => {
     // 비로그인/실패 시 게스트 신원으로 진행
     const applyGuestProfile = async () => {
@@ -259,27 +260,23 @@ export default function MainPage() {
       if (!guest.nickname) setShowNicknameModal(true); // 닉네임 없으면 모달
     };
 
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch('/api/nickname/profile', { credentials: 'include' });
-        const data = (await res.json()) as ProfileResponse;
-        const uid = data.user_id || data.id || data.userId;
-        if (data.success && uid) {
-          setProfile({
-            userId: (data.user_id || data.id || data.userId) as Id, // ✅ 양쪽 다 커버
-            username: data.username,
-            nickname: data.nickname,
-          });
-          if (!data.nickname) setShowNicknameModal(true);
-        } else {
-          await applyGuestProfile(); // 미로그인 -> 게스트
-        }
-      } catch (err) {
-        await applyGuestProfile(); // 네트워크 실패도 게스트로 진행함
-      }
-    };
-    fetchProfile();
-  }, []);
+    if (profileError) {
+      applyGuestProfile(); // 네트워크 실패도 게스트로 진행함
+      return;
+    }
+    if (profileData === undefined) return; // 아직 로딩 중
+
+    if (profileData.profile) {
+      setProfile({
+        userId: profileData.profile.userId as Id,
+        username: profileData.profile.username,
+        nickname: profileData.profile.nickname,
+      });
+      if (!profileData.profile.nickname) setShowNicknameModal(true);
+    } else {
+      applyGuestProfile(); // 미로그인 -> 게스트
+    }
+  }, [profileData, profileError]);
 
   // ✅ 닉네임 저장
   const handleSaveNickname = async (nickname: string) => {

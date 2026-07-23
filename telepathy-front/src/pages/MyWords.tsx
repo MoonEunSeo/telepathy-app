@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Heart, Pencil, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useWordHistory, wordHistoryKey } from '../hooks/useWordHistory';
 import type { WordHistoryItem, WordHistoryResponse, WordHistoryUpdateRequest } from '../types';
 
 const ORB_CLASSES = [
@@ -115,30 +117,15 @@ function WordCard({ item, onToggleFavorite, onSaveMemo }: WordCardProps) {
 
 export default function MyWords() {
   // 초기값을 localStorage에서 즉시 읽어온다 (lazy initializer)
-  const [wordHistory, setWordHistory] = useState<WordHistoryItem[]>([]);
+  // S1: 목록은 공용 캐시(useWordHistory)에서 받는다 — MyPage 와 요청 공유
+  const queryClient = useQueryClient();
+  const { data: wordHistory = [] } = useWordHistory();
 
-  // 서버에서 목록 로드 (id / is_favorite / memo 포함)
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await fetch('/api/word-history', {
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          throw new Error('서버 응답 실패');
-        }
-
-        const data = (await res.json()) as WordHistoryResponse;
-        setWordHistory(data.history.length ? data.history : []);
-      } catch (err) {
-        console.error('❌ 단어 기록 불러오기 실패:', (err as Error).message);
-        setWordHistory([]);
-      }
-    };
-
-    fetchHistory();
-  }, []);
+  // 낙관적 업데이트: 로컬 state 대신 쿼리 캐시를 직접 갱신 → 재방문 시에도 편집 유지
+  const updateHistory = (updater: (prev: WordHistoryItem[]) => WordHistoryItem[]) =>
+    queryClient.setQueryData<WordHistoryResponse>(wordHistoryKey, (old) => ({
+      history: updater(old?.history ?? []),
+    }));
 
   // 공통: 서버에 PATCH, 실패하면 rollbak 실행
   const patchItem = async (id: string, patch: WordHistoryUpdateRequest, rollback: () => void) => {
@@ -160,11 +147,11 @@ export default function MyWords() {
   // 즐겨찾기: 화면 먼저 바꾸고(낙관적) → 서버 저장 → 실패 시 원복
   const toggleFavorite = (item: WordHistoryItem) => {
     const next = !item.is_favorite;
-    setWordHistory((prev) =>
+    updateHistory((prev) =>
       prev.map((it) => (it.id === item.id ? { ...it, is_favorite: next } : it)),
     );
     patchItem(item.id, { isFavorite: next }, () =>
-      setWordHistory((prev) =>
+      updateHistory((prev) =>
         prev.map((it) => (it.id === item.id ? { ...it, is_favorite: !next } : it)),
       ),
     );
@@ -173,9 +160,9 @@ export default function MyWords() {
   // 메모: 동일 패턴
   const saveMemo = (item: WordHistoryItem, memo: string) => {
     const prevMemo = item.memo;
-    setWordHistory((prev) => prev.map((it) => (it.id === item.id ? { ...it, memo } : it)));
+    updateHistory((prev) => prev.map((it) => (it.id === item.id ? { ...it, memo } : it)));
     patchItem(item.id, { memo }, () =>
-      setWordHistory((prev) =>
+      updateHistory((prev) =>
         prev.map((it) => (it.id === item.id ? { ...it, memo: prevMemo } : it)),
       ),
     );

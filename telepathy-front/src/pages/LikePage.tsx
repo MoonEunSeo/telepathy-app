@@ -3,10 +3,10 @@ import type { ChangeEvent } from 'react';
 import axios from 'axios';
 import tossQr from '../assets/toss_qr.jpg';
 
+import { useProfile } from '../hooks/useProfile';
 import type {
   CurrentUser,
   Wordset,
-  ProfileResponse,
   WordsetsMineResponse,
   UserByIdResponse,
   SpPaymentStatusResponse,
@@ -62,41 +62,20 @@ const LikesPage = () => {
   // ✅ [1] 사용자 정보 불러오기
   const [myWordSets, setMyWordSets] = useState<Wordset[]>([]); // ✅ 안전한 초기값 설정
 
+  // S1: profile 은 공용 캐시(useProfile)에서 받는다. currentUser 가 세팅되면
+  // 아래 [2] effect 가 단어세트를 조회하므로, 여기서 연쇄 조회하던 로직은 제거했다.
+  const { data: profileData } = useProfile();
   useEffect(() => {
-    const fetchProfileAndWordsets = async () => {
-      try {
-        const res = await fetch('/api/nickname/profile', { credentials: 'include' });
-        const data = (await res.json()) as ProfileResponse;
-
-        if (data.success && (data.id || data.userId)) {
-          const user: CurrentUser = {
-            id: data.id || data.userId!,
-            nickname: data.nickname,
-            username: data.username,
-          };
-          setCurrentUser(user);
-
-          // ✅ 프로필이 성공적으로 불러와졌다면 즉시 단어세트 조회 실행
-          try {
-            const wordRes = await axios.get<WordsetsMineResponse>(`/api/wordsets/mine/${user.id}`, {
-              withCredentials: true,
-            });
-            if (wordRes.data.success && Array.isArray(wordRes.data.wordsets)) {
-              setMyWordSets(wordRes.data.wordsets);
-            }
-          } catch (err) {
-            console.error('❌ 단어세트 조회 실패:', err);
-          }
-        }
-      } catch (err) {
-        console.error('❌ 사용자 정보 불러오기 실패:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfileAndWordsets();
-  }, []);
+    if (profileData === undefined) return; // 아직 로딩 중
+    if (profileData.profile) {
+      setCurrentUser({
+        id: profileData.profile.userId,
+        nickname: profileData.profile.nickname,
+        username: profileData.profile.username,
+      });
+    }
+    setLoading(false);
+  }, [profileData]);
 
   // ✅ [2] 내 단어세트 불러오기
   useEffect(() => {

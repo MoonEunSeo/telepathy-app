@@ -2,15 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, LogOut } from 'lucide-react';
 import { useWordSession } from '../contexts/WordSessionContext';
+import { useProfile } from '../hooks/useProfile';
+import { useWordHistory } from '../hooks/useWordHistory';
 import profileImage from '../assets/profile_image.png';
 import Modal from '../components/ui/Modal';
-import type {
-  Id,
-  ProfileResponse,
-  WordHistoryResponse,
-  MegaphoneCountResponse,
-  WithdrawResponse,
-} from '../types';
+import type { Id, MegaphoneCountResponse, WithdrawResponse } from '../types';
 
 // 구 .login-button1 (모달 버튼, :global(.modal-content) 오버라이드 반영 = flex 1 1 45%/max140/pad10·0)
 const modalBtn =
@@ -32,36 +28,25 @@ const MyPage = () => {
   const navigate = useNavigate();
   // 원본은 isSessionActive(없는 필드)를 참조 — isActive로 정정
   const { isActive, word } = useWordSession();
+
+  // S1: profile 은 공용 캐시(useProfile)에서 받는다 — 화면 전환 시 재요청 없음
+  const { data: profileData } = useProfile();
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch('/api/nickname/profile', { credentials: 'include' });
-        const data = (await res.json()) as ProfileResponse;
-        if (data.success && data.nickname) {
-          setNickname(data.nickname);
-          setUsername(data.username);
-          setUserId(data.userId as Id);
-        }
-      } catch (err) {
-        console.error('❌ 프로필 fetch 오류:', err);
-      }
-    };
+    // 기존 동작 유지: 닉네임이 있을 때만 표시 상태에 반영
+    if (profileData?.profile?.nickname) {
+      setNickname(profileData.profile.nickname);
+      setUsername(profileData.profile.username);
+      setUserId(profileData.profile.userId);
+    }
+  }, [profileData]);
 
-    const fetchWordCount = async () => {
-      try {
-        const res = await fetch('/api/word-history', { credentials: 'include' });
-        const data = (await res.json()) as WordHistoryResponse;
-        if (Array.isArray(data.history)) {
-          setWordCount(data.history.length);
-        } else {
-          setWordCount(0);
-        }
-      } catch (err) {
-        console.error('❌ 단어 기록 불러오기 실패:', err);
-        setWordCount(0);
-      }
-    };
+  // S1: 단어 개수도 공용 캐시(useWordHistory)에서 받는다 — MyWords 와 요청 공유
+  const { data: wordHistory } = useWordHistory();
+  useEffect(() => {
+    setWordCount(wordHistory?.length ?? 0);
+  }, [wordHistory]);
 
+  useEffect(() => {
     const fetchMegaphoneCount = async () => {
       try {
         const res = await fetch('/api/user/megaphone-count', { credentials: 'include' });
@@ -77,9 +62,7 @@ const MyPage = () => {
       }
     };
 
-    // ✅ 세 가지 API 병렬 실행
-    fetchProfile();
-    fetchWordCount();
+    // ✅ megaphone-count 만 직접 fetch (profile·word-history 는 공용 훅으로 이관)
     fetchMegaphoneCount();
   }, []);
 
