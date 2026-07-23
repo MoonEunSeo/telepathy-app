@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Heart, Pencil, Check } from 'lucide-react';
-import { toast } from 'react-toastify';
-import { useWordHistory, wordHistoryKey } from '../hooks/useWordHistory';
-import type { WordHistoryItem, WordHistoryResponse, WordHistoryUpdateRequest } from '../types';
+import { useWordHistory, usePatchWordHistory } from '../hooks/useWordHistory';
+import type { WordHistoryItem } from '../types';
 
 const ORB_CLASSES = [
   'bg-[linear-gradient(140deg,#f0c58f,#de87b2)]', // warm
@@ -21,20 +19,21 @@ function orbClass(name: string | null | undefined) {
 // 카드 컴포넌트
 interface WordCardProps {
   item: WordHistoryItem;
-  onToggleFavorite: () => void;
-  onSaveMemo: (next: string) => void;
 }
 
-function WordCard({ item, onToggleFavorite, onSaveMemo }: WordCardProps) {
+function WordCard({ item }: WordCardProps) {
   const [editing, setEditing] = useState(false);
   const memo = item.memo;
   const [draft, setDraft] = useState(memo ?? '');
 
-  // 부모기 들고 있는 memo가 바뀌면 편집용 draft도 맞춘다
+  // S4: 카드별 mutation — 같은 카드 연타를 직렬화(scope)하고 낙관적 갱신·롤백을 담당
+  const patch = usePatchWordHistory(item.id);
+
+  // 부모가 들고 있는 memo가 바뀌면 편집용 draft도 맞춘다
   useEffect(() => setDraft(memo ?? ''), [memo]);
 
   const save = () => {
-    onSaveMemo(draft.trim()); // 부모가 올려 저장(-> localStorage)
+    patch.mutate({ memo: draft.trim() });
     setEditing(false);
   };
 
@@ -51,7 +50,7 @@ function WordCard({ item, onToggleFavorite, onSaveMemo }: WordCardProps) {
       {/* 즐겨찾기 하트 */}
       <button
         type="button"
-        onClick={onToggleFavorite}
+        onClick={() => patch.mutate({ isFavorite: !item.is_favorite })}
         aria-pressed={item.is_favorite}
         aria-label={item.is_favorite ? '즐겨찾기 해제' : '즐겨찾기'}
         title={item.is_favorite ? '즐겨찾기 해제' : '즐겨찾기'}
@@ -116,57 +115,9 @@ function WordCard({ item, onToggleFavorite, onSaveMemo }: WordCardProps) {
 }
 
 export default function MyWords() {
-  // 초기값을 localStorage에서 즉시 읽어온다 (lazy initializer)
   // S1: 목록은 공용 캐시(useWordHistory)에서 받는다 — MyPage 와 요청 공유
-  const queryClient = useQueryClient();
+  // S4: 즐겨찾기·메모 수정(직렬화·낙관적·롤백)은 카드별 usePatchWordHistory 로 이관됨
   const { data: wordHistory = [] } = useWordHistory();
-
-  // 낙관적 업데이트: 로컬 state 대신 쿼리 캐시를 직접 갱신 → 재방문 시에도 편집 유지
-  const updateHistory = (updater: (prev: WordHistoryItem[]) => WordHistoryItem[]) =>
-    queryClient.setQueryData<WordHistoryResponse>(wordHistoryKey, (old) => ({
-      history: updater(old?.history ?? []),
-    }));
-
-  // 공통: 서버에 PATCH, 실패하면 rollbak 실행
-  const patchItem = async (id: string, patch: WordHistoryUpdateRequest, rollback: () => void) => {
-    try {
-      const res = await fetch(`/api/word-history/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(patch),
-      });
-      if (!res.ok) throw new Error('수정 실패');
-    } catch (err) {
-      console.error('❌ 저장 실패:', (err as Error).message);
-      toast.error('저장에 실패했어요.');
-      rollback(); // 화면 되돌리기
-    }
-  };
-
-  // 즐겨찾기: 화면 먼저 바꾸고(낙관적) → 서버 저장 → 실패 시 원복
-  const toggleFavorite = (item: WordHistoryItem) => {
-    const next = !item.is_favorite;
-    updateHistory((prev) =>
-      prev.map((it) => (it.id === item.id ? { ...it, is_favorite: next } : it)),
-    );
-    patchItem(item.id, { isFavorite: next }, () =>
-      updateHistory((prev) =>
-        prev.map((it) => (it.id === item.id ? { ...it, is_favorite: !next } : it)),
-      ),
-    );
-  };
-
-  // 메모: 동일 패턴
-  const saveMemo = (item: WordHistoryItem, memo: string) => {
-    const prevMemo = item.memo;
-    updateHistory((prev) => prev.map((it) => (it.id === item.id ? { ...it, memo } : it)));
-    patchItem(item.id, { memo }, () =>
-      updateHistory((prev) =>
-        prev.map((it) => (it.id === item.id ? { ...it, memo: prevMemo } : it)),
-      ),
-    );
-  };
 
   // 즐겨찾기한 카드를 위로 (안정 정렬)
   const sorted = [...wordHistory].sort((a, b) => Number(b.is_favorite) - Number(a.is_favorite));
@@ -186,12 +137,7 @@ export default function MyWords() {
       {sorted.length > 0 ? (
         <div className="grid gap-[13px]">
           {sorted.map((item) => (
-            <WordCard
-              key={item.id}
-              item={item}
-              onToggleFavorite={() => toggleFavorite(item)}
-              onSaveMemo={(text) => saveMemo(item, text)}
-            />
+            <WordCard key={item.id} item={item} />
           ))}
         </div>
       ) : (
