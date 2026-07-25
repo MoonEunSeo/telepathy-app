@@ -130,7 +130,8 @@ export default function ChatPage() {
       console.error('❌ 세션 종료 오류:', err);
     } finally {
       endSession();
-      navigate('/main');
+      // 매칭 종료 신호 → 메인에서 게스트면 로그인 권유 모달 판단에 사용
+      navigate('/main', { state: { fromMatch: true } });
     }
   };
 
