@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import { useWordSession } from '../contexts/WordSessionContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { HelpCircle, Megaphone } from 'lucide-react';
 import { socket } from '../config/socket';
 
 import ClosedModal from '../components/ClosedModal';
 import NicknameModal from '../components/NicknameModal';
+import GuestLoginModal from '../components/GuestLoginModal';
 import MegaphoneInputModal from '../components/MegaphoneInputModal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -77,6 +78,7 @@ const iconBtn =
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [onlineCount, setOnlineCount] = useState(0);
 
   const [round, setRound] = useState(0);
@@ -263,7 +265,8 @@ export default function MainPage() {
       if (!guest) return;
       setProfile(guest);
       setIsGuest(true);
-      if (!guest.nickname) setShowNicknameModal(true); // 닉네임 없으면 모달
+      // 게스트 닉네임 입력 모달 비활성화 (게스트는 기본 닉네임으로 진행)
+      // if (!guest.nickname) setShowNicknameModal(true);
     };
 
     if (profileError) {
@@ -283,6 +286,17 @@ export default function MainPage() {
       applyGuestProfile(); // 미로그인 -> 게스트
     }
   }, [profileData, profileError]);
+
+  // ✅ 게스트가 매칭(대화) 종료 후 메인으로 돌아오면 → 회원 로그인 권유 (세션당 1회)
+  //    ChatPage 의 endCurrentSession 이 navigate('/main', { state: { fromMatch: true } }) 로 신호를 준다.
+  const [showGuestLoginModal, setShowGuestLoginModal] = useState(false);
+  useEffect(() => {
+    const fromMatch = (location.state as { fromMatch?: boolean } | null)?.fromMatch;
+    if (!fromMatch || !isGuest) return;
+    if (sessionStorage.getItem('guestLoginPromptShown') === '1') return; // 세션당 1회 캡
+    sessionStorage.setItem('guestLoginPromptShown', '1');
+    setShowGuestLoginModal(true);
+  }, [location.state, isGuest]);
 
   // ✅ 닉네임 저장
   const handleSaveNickname = async (nickname: string) => {
@@ -514,6 +528,13 @@ export default function MainPage() {
     <>
       {showNicknameModal && (
         <NicknameModal onClose={() => setShowNicknameModal(false)} onSave={handleSaveNickname} />
+      )}
+
+      {showGuestLoginModal && (
+        <GuestLoginModal
+          onLogin={() => navigate('/login')}
+          onClose={() => setShowGuestLoginModal(false)}
+        />
       )}
 
       {showClosedModal && <ClosedModal />}
