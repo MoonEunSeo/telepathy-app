@@ -48,7 +48,9 @@ cd telepathy-front && npx oxlint src/...
 | [Supabase 규약](docs/conventions/supabase.md) | **에러 처리**·null 비교·소유권 필터 |
 | [마이그레이션 계획](docs/project/migration-plan.md) | **TEL-6 마이그레이션 계획 요약** — 테이블 운명 매핑 |
 | [알려진 이슈](docs/project/known-issues.md) | 알려진 이슈·이월 과제 |
-| [성능 측정](docs/perf/README.md) | 성능 측정 기록 (S1·S4·S6) |
+| [성능 측정](docs/perf/README.md) | 성능 측정 기록 (S1~S7) |
+| [최적화 백로그](docs/perf/optimization-backlog.md) | **아직 착수하지 않은 개선 지점** (O1~O13) — 위치·근거·측정법 |
+| [기술 도입 검토](docs/project/tech-adoption-review.md) | Kafka·Spark·ES·GraphQL **기각 근거**와 재검토 조건 |
 
 ### 특히 자주 걸리는 함정
 
