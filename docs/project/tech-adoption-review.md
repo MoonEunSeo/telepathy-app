@@ -32,22 +32,41 @@
 ## 실측 데이터 규모 (판단의 기준값)
 
 Supabase 운영 프로젝트 `Telepathy`(`ap-northeast-2`) `public` 스키마 전체.
+**`count(*)` 실측값이다** (측정 방법은 아래 주의 참조).
 
 | 테이블 | 행 수 |
 |---|---:|
 | `telepathy_sessions_log` | 12,351 |
 | `telepathy_sessions_queue` | 11,218 |
-| `chat_logs` | 761 |
+| `telepathy_sessions` | 10,270 |
+| `chat_logs` | 8,222 |
+| `nickname_histories` | 1,325 |
+| `users` | 1,191 |
 | `emotion_feedback` | 314 |
+| `sp_payments` | 131 |
+| `payment_webhooks` | 129 |
+| `comments` | 91 |
+| `reported_reports` | 20 |
 | `word_history` | 18 |
-| `balance_game_logs` | 7 |
-| `reported_reports` | 6 |
-| `megaphone_logs` | 3 |
-| `users` | 1 |
-| `nickname_histories` · `telepathy_sessions` · `comments` · `payments` · `sp_payments` · `payment_webhooks` | 0 |
-| **합계** | **24,679** |
+| `megaphone_logs` | 15 |
+| `balance_game_logs` | 11 |
+| `payments` | 0 |
+| **합계** | **45,306** |
 
-**전 서비스 데이터가 약 2만 5천 행이다.** 이 숫자가 아래 판단 대부분을 결정한다.
+**전 서비스 데이터가 약 4만 5천 행이다.** 이 숫자가 아래 판단 대부분을 결정한다.
+
+마이그레이션 대상인 `telepathy-v2-dev` 프로젝트에도 신규 구조 + `legacy_*` 미러가
+비슷한 규모로 들어 있다 (`match_rounds` 22,550 · `match_attempts` 16,565 ·
+`chat_messages` 8,003 · `actors` 1,446 등). 두 프로젝트를 합쳐도 십만 행 안쪽이다.
+
+> ⚠️ **측정 방법 주의 — 행 수는 반드시 `count(*)` 로 센다.**
+> Supabase MCP `list_tables` 나 `pg_class.reltuples` 가 반환하는 값은 **플래너 추정치**이며,
+> `VACUUM`/`ANALYZE` 가 돌아야 갱신된다. 이 프로젝트는 `telepathy_sessions_queue` 에
+> insert/delete 가 30초 주기로 반복돼 통계가 크게 낡아 있었다.
+>
+> 실제로 2026-07-27 최초 기록 시 추정치를 그대로 인용해 **합계를 24,679 로 잘못 적었다**
+> (`users` 는 1 로 표시됐으나 실제 1,191 — 1,000배 이상 차이).
+> 2026-07-28 `count(*)` 실측으로 정정했다. 기각 결론은 변하지 않는다.
 
 ---
 
@@ -83,7 +102,7 @@ Supabase 운영 프로젝트 `Telepathy`(`ap-northeast-2`) `public` 스키마 �
 **① 규모가 4~5자릿수 어긋난다.**
 Spark의 존재 이유는 "데이터가 한 대의 메모리에 안 들어갈 때 여러 대로 나눠 처리"다.
 손익분기점은 통상 수억 행 / TB급이고, 그 아래에서는 **분산 오버헤드(직렬화·셔플·스케줄링)가
-실제 처리 시간보다 크다.** 현재 전체 데이터는 24,679행이다.
+실제 처리 시간보다 크다.** 현재 전체 데이터는 45,306행이다.
 
 **② 도메인이 맞지 않는다.**
 Spark는 배치 분산처리 엔진이다. 이 서비스의 핵심은 15초 라운드 실시간 매칭이며,
@@ -111,8 +130,8 @@ Spark                →  그 위
 
 ### 기각 사유
 
-**① 검색 대상이 761행이다.**
-`chat_logs` 761행은 인덱스 없이 `ILIKE '%키워드%'`로 seq scan해도 1ms 미만이다.
+**① 검색 대상이 8,222행이다.**
+`chat_logs` 8,222행은 인덱스 없이 `ILIKE '%키워드%'`로 seq scan해도 수 ms 수준이다.
 수십만 행까지는 `pg_trgm` GIN 인덱스로 충분하다.
 
 **② 새 장애 지점이 생긴다.**

@@ -231,12 +231,26 @@ Postgres 함수로 묶어 `INSERT INTO log SELECT … ; DELETE …`를 한 트�
 > 🔴 **보안 — 성능 항목 아님. [TEL-12](https://linear.app/newtelepathy/issue/TEL-12) 로 등록됨 (Urgent / Todo).**
 
 **현상**
-`public` 스키마 **14개 테이블 전부 Row Level Security 비활성**.
-Supabase가 critical 등급으로 경고한다.
-`chat_logs` · `users` · `reported_reports` · `payment_webhooks` 포함 —
+운영 `Telepathy` 의 `public` 스키마 **14개 테이블**, 그리고 마이그레이션 대상
+`telepathy-v2-dev` 의 **52개 테이블 전부** Row Level Security 비활성.
+두 프로젝트 모두 Supabase 가 critical 등급으로 경고한다.
 anon 키만 있으면 전체 행을 읽고 수정할 수 있다.
 
-익명 대화가 서비스의 핵심 가치인데 그 대화 내용이 노출 대상이다.
+노출 규모 (`count(*)` 실측, 2026-07-28):
+
+| | 운영 `Telepathy` | `telepathy-v2-dev` |
+|---|---|---|
+| 회원 개인정보 | `users` **1,191** (`password_hash`·`phone`·`real_name`) | `users`·`user_credentials`·`legacy_users` 각 1,191 (**3중 복제**) |
+| 대화 | `chat_logs` **8,222** | `chat_messages` 8,003 + `legacy_chat_logs` 8,175 |
+| 환불 계좌 | `sp_payments` **131** (`refund_account`) | `legacy_sp_payments` 131 |
+| 신고 | `reported_reports` 20 (신고자↔피신고자 대응) | `reports` 18 + `report_reason_items` 33 |
+
+익명 대화가 서비스의 핵심 가치인데 그 대화 내용과 매칭 상대가 노출 대상이며,
+v2-dev 의 `user_credentials` 는 **인증 정보만 모아둔 테이블**이라 특히 위험하다.
+
+> ⚠️ 최초 기록 시 `list_tables` 추정치를 인용해 규모를 과소평가했다
+> (`chat_logs` 761 → 실제 8,222, `users` 1 → 실제 1,191).
+> 행 수는 반드시 `count(*)` 로 확인한다 — [tech-adoption-review](../project/tech-adoption-review.md) 참조.
 
 **위험도를 낮추는 요소**
 프론트엔드는 Supabase를 직접 사용하지 않으며(`telepathy-front/src`에 참조 0건),
@@ -264,6 +278,15 @@ ALTER TABLE public.payment_webhooks ENABLE ROW LEVEL SECURITY;
 ```
 
 ⚠️ 운영 DB 변경이므로 **실행 전 PM 공유 필요.**
+
+**`telepathy-v2-dev` 를 먼저 하는 편이 안전하다.** 아직 어떤 서버도 붙어 있지 않아
+(Render·로컬 모두 운영 DB 를 본다) **깨질 기능이 0** 이고, 운영에 적용할 SQL 의 리허설이 된다.
+신규 테이블을 계속 만드는 프로젝트이므로 기본 권한도 함께 잠근다.
+
+```sql
+-- v2-dev: 앞으로 만들 테이블도 자동 차단
+alter default privileges in schema public revoke all on tables from anon, authenticated;
+```
 
 ---
 
