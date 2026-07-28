@@ -1,18 +1,12 @@
 // server/src/routes/payments.routes.ts
 import express, { Request, Response } from 'express';
 import axios from 'axios';
-import { createClient } from '@supabase/supabase-js';
 import type { PaymentsVerifyRequest, PaymentsVerifyResponse } from '@shared/api';
 import authMiddleware from '../middleware/auth';
+import supabase from '../config/supabase';
 import { MEGAPHONE_SKUS, type MegaphoneSku } from '@shared/domain';
 
 const router = express.Router();
-
-// supabase 클라이언트 생성
-const supabase = createClient(
-  process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_KEY as string,
-);
 
 interface IamportTokenResponse {
   code: number;

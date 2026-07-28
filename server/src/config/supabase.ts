@@ -1,9 +1,15 @@
 // src/config/supabase.ts
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL as string;
+const supabaseUrl = process.env.SUPABASE_URL;
 // 👉 서버에서는 보통 SERVICE_ROLE_KEY 씀 (insert, delete 권한 필요할 때)
-const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY) as string;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl) {
+  throw new Error('SUPABASE_URL 가 없습니다.');
+} else if (!supabaseKey) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY 가 없습니다.');
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
