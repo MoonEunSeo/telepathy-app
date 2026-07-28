@@ -46,6 +46,7 @@ cd telepathy-front && npx oxlint src/...
 | [기술스택](docs/conventions/tech-stack.md) | 사용 라이브러리·**Tailwind v4 주의점** |
 | [TypeScript 규약](docs/conventions/typescript.md) | `shared/` 사용법·타입 스타일·CJS/ESM 인터롭 |
 | [Supabase 규약](docs/conventions/supabase.md) | **에러 처리**·null 비교·소유권 필터 |
+| [Git 규약](docs/conventions/git.md) | 브랜치·커밋 형식·**Linear 자동 연결**·`v3` 자동배포 주의 |
 | [마이그레이션 계획](docs/project/migration-plan.md) | **TEL-6 마이그레이션 계획 요약** — 테이블 운명 매핑 |
 | [알려진 이슈](docs/project/known-issues.md) | 알려진 이슈·이월 과제 |
 | [성능 측정](docs/perf/README.md) | 성능 측정 기록 (S1~S7) |
