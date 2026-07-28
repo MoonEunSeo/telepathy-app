@@ -27,6 +27,12 @@ dist-ssr
 .env
 .env*
 
+# DB 덤프·백필 산출물 — 실제 개인정보(전화번호·실명·대화 내용)를 담는다.
+# 이 저장소는 PUBLIC 이므로 절대 커밋하지 않는다.
+scripts/backfill/
+*.dump
+*-data.sql
+
 # 분석/측정 도구 산출물
 .scannerwork/
 type-coverage-detail.txt
