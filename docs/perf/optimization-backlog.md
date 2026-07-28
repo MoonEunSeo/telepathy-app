@@ -14,9 +14,9 @@ ID는 측정 시나리오(S1~S7)와 구분하기 위해 **O(Optimization)** 를 
 
 | ID | 항목 | 분류 | 비용 | 효과 | 상태 |
 |---|---|---|---|---|---|
-| [O8](#o8-rls-전-테이블-비활성) | RLS 전 테이블 비활성 | 보안 | 매우 낮음 | 매우 높음 | ⛔ 미착수 |
-| [O9](#o9-jwt-원문을-로그에-출력) | JWT 원문 로그 출력 | 보안 | 매우 낮음 | 매우 높음 | ⛔ 미착수 |
-| [O10](#o10-session-status-인증-누락) | `/session-status` 인증 누락 | 보안 | 낮음 | 높음 | ⛔ 미착수 |
+| [O8](#o8-rls-전-테이블-비활성) | RLS 전 테이블 비활성 | 보안 | 매우 낮음 | 매우 높음 | 📋 [TEL-12](https://linear.app/newtelepathy/issue/TEL-12) |
+| [O9](#o9-jwt-원문을-로그에-출력) | JWT 원문 로그 출력 | 보안 | 매우 낮음 | 매우 높음 | 📋 [TEL-13](https://linear.app/newtelepathy/issue/TEL-13) |
+| [O10](#o10-session-status-인증-누락) | `/session-status` 인증 누락 | 보안 | 낮음 | 높음 | 📋 [TEL-14](https://linear.app/newtelepathy/issue/TEL-14) |
 | [O4](#o4-코드-스플리팅-미착수) | 코드 스플리팅 | 프론트 | 낮음 | 높음 | ⛔ 미착수 |
 | [O3](#o3-supabase-클라이언트-12개-중복-생성) | Supabase 클라이언트 12개 | 서버 | 낮음 | 중간 | ⛔ 미착수 |
 | [O6](#o6-구조화되지-않은-로그-40개) | 구조화되지 않은 로그 | 서버 | 낮음 | 중간 | ⛔ 미착수 |
@@ -29,7 +29,9 @@ ID는 측정 시나리오(S1~S7)와 구분하기 위해 **O(Optimization)** 를 
 | [O11](#o11-수평-확장을-막는-4개-지점) | 수평 확장 차단 4개 지점 | 확장성 | 높음 | — | ⛔ 미착수 |
 
 > **O8~O10은 성능이 아니라 보안이다.** 이 문서에는 발견 기록만 두고,
-> 실제 처리는 Linear 이슈로 분리한다.
+> 실제 처리는 Linear 이슈로 분리했다 — **TEL-12 · TEL-13 · TEL-14** (2026-07-28 등록).
+> TEL-13·TEL-14는 [TEL-7](https://linear.app/newtelepathy/issue/TEL-7)(인증·권한 보안 강화 1차)의 후속이며,
+> TEL-12(RLS)는 DB 테이블 정규화 과정에서 발생한 별건이다.
 
 ### 착수 순서 권장
 
@@ -226,7 +228,7 @@ Postgres 함수로 묶어 `INSERT INTO log SELECT … ; DELETE …`를 한 트�
 
 ## O8. RLS 전 테이블 비활성
 
-> 🔴 **보안 — 성능 항목 아님. Linear 이슈로 분리 예정.**
+> 🔴 **보안 — 성능 항목 아님. [TEL-12](https://linear.app/newtelepathy/issue/TEL-12) 로 등록됨 (Urgent / Todo).**
 
 **현상**
 `public` 스키마 **14개 테이블 전부 Row Level Security 비활성**.
@@ -267,7 +269,7 @@ ALTER TABLE public.payment_webhooks ENABLE ROW LEVEL SECURITY;
 
 ## O9. JWT 원문을 로그에 출력
 
-> 🔴 **보안 — Linear 이슈로 분리 예정.**
+> 🔴 **보안 — [TEL-13](https://linear.app/newtelepathy/issue/TEL-13) 으로 등록됨 (Urgent / Todo).**
 
 **위치** [`server/src/routes/match.routes.ts:28`](../../server/src/routes/match.routes.ts)
 
@@ -287,7 +289,7 @@ console.log('📥 /end token:', token);
 
 ## O10. `/session-status` 인증 누락
 
-> 🔴 **보안 — Linear 이슈로 분리 예정.**
+> 🔴 **보안 — [TEL-14](https://linear.app/newtelepathy/issue/TEL-14) 로 등록됨 (High / Todo).**
 
 **위치** [`server/src/routes/match.routes.ts:95-119`](../../server/src/routes/match.routes.ts)
 
