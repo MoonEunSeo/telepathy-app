@@ -58,7 +58,7 @@ export default function LoginPage() {
   return (
     <>
       <div>
-        <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100vh] flex-col items-center justify-center py-10">
+        <div className="halloween:gap-[3px] halloween:w-full flex min-h-[calc(100dvh-72px)] flex-col items-center justify-start pt-[10vh] pb-24">
           {/* 구 .login-subtitle — 감성 리드카피 */}
           <p className="text-center [font-family:'Gowun_Batang'] text-[18px] text-[var(--auth-lead-color)]">
             바로 지금,
@@ -71,21 +71,24 @@ export default function LoginPage() {
           </h1>
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center">
-            <AuthInput
-              placeholder="아이디"
-              autoComplete="username"
-              {...register('username', { required: '아이디를 입력해주세요.' })}
-            />
-            <FieldMessage message={errors.username?.message} />
-            {/* 서버가 돌려준 실패 사유 - 다음 제출 때 RHF가 자동으로 지운다 */}
-            <AuthInput
-              type="password"
-              placeholder="비밀번호"
-              autoComplete="current-password"
-              {...register('password', { required: '비밀번호를 입력해주세요.' })}
-            />
-            <FieldMessage message={errors.password?.message} />
-            <FieldMessage message={errors.root?.message} />
+            {/* 입력 영역 고정 높이(입력 2행 = 128px) — 폼 간 제출 버튼 위치 통일 */}
+            <div className="flex min-h-[128px] w-full flex-col items-center">
+              <AuthInput
+                placeholder="아이디"
+                autoComplete="username"
+                {...register('username', { required: '아이디를 입력해주세요.' })}
+              />
+              <FieldMessage message={errors.username?.message} />
+              {/* 서버가 돌려준 실패 사유 - 다음 제출 때 RHF가 자동으로 지운다 */}
+              <AuthInput
+                type="password"
+                placeholder="비밀번호"
+                autoComplete="current-password"
+                {...register('password', { required: '비밀번호를 입력해주세요.' })}
+              />
+              <FieldMessage message={errors.password?.message} />
+              <FieldMessage message={errors.root?.message} />
+            </div>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? '로그인 중...' : '로그인 하기'}
             </Button>

@@ -137,19 +137,19 @@ function AppRoutes() {
         <Route path="/" element={<SplashScreen />} />
 
         {/* ✅ 인증 관련 */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/verify/callback" element={<VerifyCallback />} />
         <Route path="/verify-mvp" element={<Verify_mvp />} />
-        <Route path="/findpassword" element={<FindPassword />} />
-        <Route path="/changepassword" element={<ChangePassword />} />
 
         {/* ✅ 네비게이션 없는 페이지 */}
         <Route path="/chatpage" element={<ChatPage />} />
 
         {/* ✅ 네비게이션 있는 페이지 */}
         <Route element={<BottomLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/findpassword" element={<FindPassword />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/main" element={<MainPage />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mywords" element={<MyWords />} />

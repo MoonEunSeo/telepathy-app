@@ -70,7 +70,7 @@ export default function Register() {
   return (
     <div data-page="register">
       {/* 🎃 할로윈 모드용 페이지 식별자 */}
-      <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10">
+      <div className="halloween:gap-[3px] halloween:w-full flex min-h-[calc(100dvh-72px)] flex-col items-center justify-start pt-[10vh] pb-24">
         {/* 구 .login-subtitle — 감성 리드카피 */}
         <p className="text-center [font-family:'Gowun_Batang'] text-[18px] text-[var(--auth-lead-color)]">
           바로 지금,
@@ -83,55 +83,58 @@ export default function Register() {
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center">
-          {/* 구 .id-check-row — 아이디 입력(flex) + 중복검사(사각 보조) 같은 높이 정렬 */}
-          <div className="mb-[10px] flex w-[300px] items-center gap-[10px]">
+          {/* 입력 영역 고정 높이(입력 2행 = 128px) — 폼 간 제출 버튼 위치 통일 */}
+          <div className="flex min-h-[128px] w-full flex-col items-center">
+            {/* 구 .id-check-row — 아이디 입력(flex) + 중복검사(사각 보조) 같은 높이 정렬 */}
+            <div className="mb-[10px] flex w-[300px] items-center gap-[10px]">
+              <AuthInput
+                className="mb-0! min-w-0 flex-1"
+                placeholder="아이디"
+                autoComplete="username"
+                {...register('username', {
+                  required: '아이디를 입력해주세요.',
+                  // 아이디가 바뀌면 이전 중복검사 결과는 무효
+                  // 규칙 객체 안에 넣어야 register의 onChange를 덮지 않는다.
+                  onChange: () => {
+                    setIsAvailable(null);
+                    clearErrors('username');
+                  },
+                  validate: () => {
+                    if (isAvailable === false) return '이미 사용 중인 아이디입니다.';
+                    return isAvailable === true || '아이디 중복 검사를 완료해주세요.';
+                  },
+                })}
+              />
+              {/* form 안이므로 type='button 필수
+              없으면 중복검사가 폼을 제출한다.
+              */}
+              <Button type="button" variant="check" onClick={checkUsername}>
+                중복검사
+              </Button>
+            </div>
+            {/* 구 .result-message — 에러가 있으면 에러만, 없고 검사 통과면 성공만. 항상 하나만 표시 */}
+            {errors.username ? (
+              <FieldMessage message={errors.username.message} />
+            ) : (
+              isAvailable === true && (
+                <FieldMessage state="success" message="이 아이디는 사용 가능합니다." />
+              )
+            )}
             <AuthInput
-              className="min-w-0 flex-1"
-              placeholder="아이디"
-              autoComplete="username"
-              {...register('username', {
-                required: '아이디를 입력해주세요.',
-                // 아이디가 바뀌면 이전 중복검사 결과는 무효
-                // 규칙 객체 안에 넣어야 register의 onChange를 덮지 않는다.
-                onChange: () => {
-                  setIsAvailable(null);
-                  clearErrors('username');
-                },
-                validate: () => {
-                  if (isAvailable === false) return '이미 사용 중인 아이디입니다.';
-                  return isAvailable === true || '아이디 중복 검사를 완료해주세요.';
-                },
+              placeholder="비밀번호"
+              type="password"
+              autoComplete="new-password"
+              {...register('password', {
+                required: '비밀번호를 입력해주세요.',
+                // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
+                validate: validatePassword,
               })}
             />
-            {/* form 안이므로 type='button 필수
-            없으면 중복검사가 폼을 제출한다.
-            */}
-            <Button type="button" variant="check" onClick={checkUsername}>
-              중복검사
-            </Button>
+
+            <FieldMessage message={errors.password?.message} />
           </div>
-          {/* 구 .result-message — 에러가 있으면 에러만, 없고 검사 통과면 성공만. 항상 하나만 표시 */}
-          {errors.username ? (
-            <FieldMessage message={errors.username.message} />
-          ) : (
-            isAvailable === true && (
-              <FieldMessage state="success" message="이 아이디는 사용 가능합니다." />
-            )
-          )}
-          <AuthInput
-            placeholder="비밀번호"
-            type="password"
-            autoComplete="new-password"
-            {...register('password', {
-              required: '비밀번호를 입력해주세요.',
-              // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
-              validate: validatePassword,
-            })}
-          />
 
-          <FieldMessage message={errors.password?.message} />
-
-          <Button type="submit" className="mt-4" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting}>
             가입하기
           </Button>
         </form>

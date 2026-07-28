@@ -47,45 +47,52 @@ export default function ChangePassword() {
     /* 구 .login-container */
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10"
+      className="halloween:gap-[3px] halloween:w-full flex min-h-[calc(100dvh-72px)] flex-col items-center justify-start pt-[10vh] pb-24"
     >
+      {/* 다른 인증 페이지의 subtitle(리드카피 2줄) 자리만큼 여백 확보 → h1 위치를 로그인과 통일 */}
+      <div className="h-[88px]" aria-hidden />
+
       {/* 구 .login-title — 세리프 */}
       <h1 className="mt-[10px] mb-6 [font-family:'Judson',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
         비밀번호 변경
       </h1>
 
-      <AuthInput
-        type="password"
-        autoComplete="current-password"
-        placeholder="현재 비밀번호"
-        {...register('currentPassword', { required: '현재 비밀번호를 입력해주세요.' })}
-      />
-      <FieldMessage message={errors.currentPassword?.message} />
+      {/* 입력 영역 고정 높이(입력 2행 = 128px) — 폼 간 제출 버튼 위치 통일.
+          단 이 폼은 입력이 3개라 128px를 넘어, 버튼이 자연히 한 줄 아래에 온다. */}
+      <div className="flex min-h-[128px] w-full flex-col items-center">
+        <AuthInput
+          type="password"
+          autoComplete="current-password"
+          placeholder="현재 비밀번호"
+          {...register('currentPassword', { required: '현재 비밀번호를 입력해주세요.' })}
+        />
+        <FieldMessage message={errors.currentPassword?.message} />
 
-      <AuthInput
-        type="password"
-        autoComplete="new-password"
-        placeholder="새 비밀번호"
-        {...register('newPassword', {
-          required: '새 비밀번호를 입력해주세요.',
-          // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
-          validate: validatePassword,
-        })}
-      />
-      <FieldMessage message={errors.newPassword?.message} />
+        <AuthInput
+          type="password"
+          autoComplete="new-password"
+          placeholder="새 비밀번호"
+          {...register('newPassword', {
+            required: '새 비밀번호를 입력해주세요.',
+            // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
+            validate: validatePassword,
+          })}
+        />
+        <FieldMessage message={errors.newPassword?.message} />
 
-      <AuthInput
-        type="password"
-        autoComplete="new-password"
-        placeholder="비밀번호 확인"
-        {...register('confirmPassword', {
-          required: '비밀번호를 한 번 더 입력해주세요.',
-          // 두 번째 인자로 폼 전체 값이 들어온다 -> watch 없이 교차 검증 가능
-          validate: (value, values) =>
-            value === values.newPassword || '비밀번호가 일치하지 않습니다.',
-        })}
-      />
-      <FieldMessage message={errors.confirmPassword?.message} />
+        <AuthInput
+          type="password"
+          autoComplete="new-password"
+          placeholder="비밀번호 확인"
+          {...register('confirmPassword', {
+            required: '비밀번호를 한 번 더 입력해주세요.',
+            // 두 번째 인자로 폼 전체 값이 들어온다 -> watch 없이 교차 검증 가능
+            validate: (value, values) =>
+              value === values.newPassword || '비밀번호가 일치하지 않습니다.',
+          })}
+        />
+        <FieldMessage message={errors.confirmPassword?.message} />
+      </div>
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? '변경 중...' : '변경하기'}

@@ -80,13 +80,16 @@ export default function FindPassword() {
       <p className={subtitle}>{lead}</p>
       <h1 className={`${title} mt-[10px]`}>비밀번호 찾기</h1>
       <form onSubmit={idForm.handleSubmit(onCheckId)} className="flex flex-col items-center">
-        <AuthInput
-          placeholder="아이디"
-          autoComplete="username"
-          {...idForm.register('username', { required: '아이디를 입력해주세요.' })}
-        />
-        <FieldMessage message={idForm.formState.errors.username?.message} />
-        <FieldMessage message={idForm.formState.errors.root?.message} />
+        {/* 입력 영역 고정 높이(입력 2행 = 128px) — 폼 간 제출 버튼 위치 통일 */}
+        <div className="flex min-h-[128px] w-full flex-col items-center">
+          <AuthInput
+            placeholder="아이디"
+            autoComplete="username"
+            {...idForm.register('username', { required: '아이디를 입력해주세요.' })}
+          />
+          <FieldMessage message={idForm.formState.errors.username?.message} />
+          <FieldMessage message={idForm.formState.errors.root?.message} />
+        </div>
 
         {showBack && (
           <div className="flex gap-[8px]">
@@ -106,7 +109,7 @@ export default function FindPassword() {
 
   return (
     /* 구 .login-container — 리디자인: 세로 중앙 정렬 */
-    <div className="halloween:gap-[3px] halloween:w-full flex min-h-[100dvh] flex-col items-center justify-center py-10">
+    <div className="halloween:gap-[3px] halloween:w-full flex min-h-[calc(100dvh-72px)] flex-col items-center justify-start pt-[10vh] pb-24">
       {step === 1 &&
         renderIdStep(
           <>
@@ -139,30 +142,33 @@ export default function FindPassword() {
             onSubmit={resetForm.handleSubmit(onResetPassword)}
             className="flex flex-col items-center"
           >
-            <AuthInput
-              placeholder="새 비밀번호"
-              type="password"
-              autoComplete="new-password"
-              {...resetForm.register('newPassword', {
-                required: '새 비밀번호를 입력해주세요.',
-                // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
-                validate: validatePassword,
-              })}
-            />
-            <FieldMessage message={resetForm.formState.errors.newPassword?.message} />
+            {/* 입력 영역 고정 높이(입력 2행 = 128px) — 폼 간 제출 버튼 위치 통일 */}
+            <div className="flex min-h-[128px] w-full flex-col items-center">
+              <AuthInput
+                placeholder="새 비밀번호"
+                type="password"
+                autoComplete="new-password"
+                {...resetForm.register('newPassword', {
+                  required: '새 비밀번호를 입력해주세요.',
+                  // 공용 검증으로 3개 페이지 규칙 통일 (8자 + 영문/숫자/특수문자 2종)
+                  validate: validatePassword,
+                })}
+              />
+              <FieldMessage message={resetForm.formState.errors.newPassword?.message} />
 
-            <AuthInput
-              placeholder="비밀번호 확인"
-              type="password"
-              autoComplete="new-password"
-              {...resetForm.register('confirmPassword', {
-                required: '비밀번호를 한 번 더 입력해주세요.',
-                validate: (value, values) =>
-                  value === values.newPassword || '비밀번호가 일치하지 않습니다.',
-              })}
-            />
-            <FieldMessage message={resetForm.formState.errors.confirmPassword?.message} />
-            <FieldMessage message={resetForm.formState.errors.root?.message} />
+              <AuthInput
+                placeholder="비밀번호 확인"
+                type="password"
+                autoComplete="new-password"
+                {...resetForm.register('confirmPassword', {
+                  required: '비밀번호를 한 번 더 입력해주세요.',
+                  validate: (value, values) =>
+                    value === values.newPassword || '비밀번호가 일치하지 않습니다.',
+                })}
+              />
+              <FieldMessage message={resetForm.formState.errors.confirmPassword?.message} />
+              <FieldMessage message={resetForm.formState.errors.root?.message} />
+            </div>
 
             <Button type="submit" disabled={resetForm.formState.isSubmitting}>
               확인
