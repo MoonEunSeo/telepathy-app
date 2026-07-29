@@ -24,13 +24,31 @@ router.post('/', async (req: Request, res: Response) => {
   }
 
   try {
-    // 중복 확인
-    const { data: existing } = await supabase
-      .from('users')
-      .select('id')
-      .or(`username.eq.${username},phone.eq.${phone}`);
+    // 중복확인
+    // .or()는 값이 아니라 "식"을 문자열로 받는다. 여기에 입력을 조립하면
+    // 쉼표·점이 필터 문법으로 읽혀 질의 구조가 바뀐다.
+    // username = "zzz,phone.eq.010-1234-5678"
+    // → 남의 번호가 등록됐는지 물어보는 조건이 하나 끼어든다.
+    // 컬럼과 값을 분리해 넘기는 .eq()는 입력이 무엇이든 구조가 안 바뀐다.
+    const [byUsername, byPhone] = await Promise.all([
+      supabase.from('users').select('id').eq('username', username).maybeSingle(),
+      supabase.from('users').select('id').eq('phone', phone).maybeSingle(),
+    ]);
 
-    if (existing && existing.length > 0) {
+    // Supabase는 DB 오류를 예외가 아니라 error로 준다.
+    // 확인하지 않으면 data가 null이 되어 중복 검사를 그냥 통과하고,
+    // UNIQUE 위반으로 500이 나간다.
+    if (byUsername.error || byPhone.error) {
+      console.error('❌ 중복 확인 실패:', byUsername.error?.message ?? byPhone.error?.message);
+      return res
+        .status(500)
+        .json({ success: false, message: '서버 오류' } satisfies RegisterResponse);
+    }
+
+    // 어느 쪽이 겹쳤는지는 구분해 알리지 않는다.
+    // 전화번호를 구분해 답하면 "이 번호가 가입돼 있는지"를 아무나
+    // 물어볼 수 있게 되어, 지금 막으려는 유출이 정문으로 들어온다.
+    if (byUsername.data || byPhone.data) {
       return res.status(409).json({
         success: false,
         message: '이미 등록된 아이디 또는 전화번호입니다.',
