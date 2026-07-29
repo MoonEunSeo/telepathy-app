@@ -1,4 +1,4 @@
-import supabase from '../../config/supabase';
+import supabase from '../../config/supabase.v2';
 import { AppError } from '../../errors/AppError';
 
 export interface LoginCredential {
@@ -29,25 +29,15 @@ export async function findLoginCredential(username: string): Promise<LoginCreden
   }
   if (!data) return null;
 
-  // 생성 타입이 없어 data는 any다. 경계에서 형태 고정
-  const row = data as unknown as {
-    user_id: string;
-    password_hash: string;
-    password_algorithm: string;
-    failed_attempt_count: number;
-    locked_until: string | null;
-    users: { actors: { status: string } };
-  };
-
   //   DB 언어 (snake_case) 를 도메인 언어(camelCase) 로 번역한다.
   // 이 경계 덕분에 service 는 컬럼이 어느 테이블에 있는지 모른다.
   return {
-    userId: row.user_id,
-    passwordHash: row.password_hash,
-    passwordAlgorithm: row.password_algorithm,
-    failedAttemptCount: row.failed_attempt_count,
-    lockedUntil: row.locked_until,
-    actorStatus: row.users.actors.status,
+    userId: data.user_id,
+    passwordHash: data.password_hash,
+    passwordAlgorithm: data.password_algorithm,
+    failedAttemptCount: data.failed_attempt_count,
+    lockedUntil: data.locked_until,
+    actorStatus: data.users.actors.status,
   };
 }
 
