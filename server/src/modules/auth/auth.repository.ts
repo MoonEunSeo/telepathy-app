@@ -101,3 +101,56 @@ export async function markLoginSuccess(userId: string): Promise<void> {
     .eq('actor_id', userId);
   if (userErr) console.error('❌ 최근 로그인 갱신 실패:', userErr.message);
 }
+
+export type SignupFailure =
+  'USERNAME_TAKEN' | 'PHONE_TAKEN' | 'NICKNAME_TAKEN' | 'PHONE_NOT_VERIFIED';
+
+const SIGNUP_FAILURES: readonly string[] = [
+  'USERNAME_TAKEN',
+  'PHONE_TAKEN',
+  'NICKNAME_TAKEN',
+  'PHONE_NOT_VERIFIED',
+];
+
+export type SignupOutcome = { ok: true; actorId: string } | { ok: false; reason: SignupFailure };
+
+export interface SignupParams {
+  username: string;
+  passwordHash: string;
+  phone: string;
+  nickname: string;
+  gender?: string;
+  birthdate?: string;
+}
+
+/**
+ * 회원가입 — actors·users·user_credentials·nickname_histories
+ *
+ * supabase-js 에 트랜잭션 API가 없어서 RPC로 처리
+ * 함수 호출 = 트랜잭션, 중도 실패 시 전부 취소됨
+ *
+ * 중복은 미리 조회하지 않는다. 조회와 INSERT 사이에 남이 끼어들기 때문이다.
+ * 검사를 UNIQUE 제약에 맡기고 어느 제약에 걸렸는지만 돌려받는다.
+ */
+export async function signup(params: SignupParams): Promise<SignupOutcome> {
+  const { data, error } = await supabase.rpc('signup_user', {
+    p_username: params.username,
+    p_password_hash: params.passwordHash,
+    p_phone: params.phone,
+    p_nickname: params.nickname,
+    p_gender: params.gender,
+    p_birthdate: params.birthdate,
+  });
+
+  if (error) {
+    // P0001 = 함수가 raise exception으로 의도해서 던진 것
+    // 그 외(연결 실패·제약 위반 등)는 진짜 오류다
+    if (error.code === 'P0001' && SIGNUP_FAILURES.includes(error.message)) {
+      return { ok: false, reason: error.message as SignupFailure };
+    }
+    console.error('❌ 회원가입 실패:', error.message);
+    throw new AppError(500, '서버 오류가 발생했습니다.');
+  }
+
+  return { ok: true, actorId: data };
+}

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import type { LoginResponse } from '@shared/api';
 import * as authService from './auth.service';
-import type { LoginInput } from './auth.schema';
+import type { LoginResponse, RegisterResponse } from '@shared/api';
+import type { LoginInput, SignupInput } from './auth.schema';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -13,6 +13,14 @@ function buildCookieOptions(maxAgeMs: number) {
     maxAge: maxAgeMs,
     path: '/',
   };
+}
+
+export async function signup(req: Request, res: Response): Promise<void> {
+  const input: SignupInput = req.body;
+  const { token, maxAgeMs } = await authService.signup(input);
+
+  res.cookie('token', token, buildCookieOptions(maxAgeMs));
+  res.status(201).json({ success: true, message: '회원가입 완료' } satisfies RegisterResponse);
 }
 
 export async function login(req: Request, res: Response): Promise<void> {
