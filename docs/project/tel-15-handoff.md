@@ -32,11 +32,28 @@ npm i zod                            # 아직 설치 안 됨
 
 | 항목 | 상태 |
 |---|---|
-| 브랜치 | `feat/tel-15-auth-module` (미생성 가능) |
-| zod 설치 | ❌ 미설치 |
-| 파일 8개 작성 | ❌ **하나도 안 씀** |
+| 브랜치 | ✅ `feat/tel-15-auth-module` (v3 에서 분기) |
+| zod 설치 | ✅ `^4.4.3` |
+| `npm run typecheck` | ✅ 통과 |
 | `app.ts` 마운트 | ❌ 하지 않는다 (의도된 것 — §5.9) |
 | 운영 영향 | **0** — 미마운트 상태라 배포해도 아무 일 없음 |
+
+### 파일별 진행 (2026-07-28 기준)
+
+| 파일 | 상태 |
+|---|---|
+| §5.1 `errors/AppError.ts` | ✅ 완료 |
+| §5.2 `middleware/errorHandler.ts` | ✅ 완료 |
+| §5.3 `middleware/validate.ts` | ✅ 완료 |
+| §5.4 `modules/auth/auth.schema.ts` | 🚧 **작성 중** — `username` 까지만. `password` 필드와 `LoginInput` 타입이 없다 |
+| §5.5 `auth.repository.ts` | ❌ |
+| §5.6 `auth.service.ts` | ❌ |
+| §5.7 `auth.controller.ts` | ❌ |
+| §5.8 `auth.route.ts` | ❌ |
+
+> **재개 지점: §5.4 를 끝까지 채우는 것부터.**
+> `LoginInput` 을 이후 service·controller 가 import 하므로 이게 먼저다.
+> 지금 타입체크가 통과하는 건 아직 아무도 그 타입을 쓰지 않기 때문이다.
 
 선행 조건은 이미 충족돼 있다.
 
