@@ -1270,33 +1270,33 @@ export type Database = {
       }
       orders: {
         Row: {
+          actor_id: string
           created_at: string
           id: string
           status: string
           total_amount: number
           updated_at: string
-          user_id: string
         }
         Insert: {
+          actor_id: string
           created_at?: string
           id?: string
           status?: string
           total_amount?: number
           updated_at?: string
-          user_id: string
         }
         Update: {
+          actor_id?: string
           created_at?: string
           id?: string
           status?: string
           total_amount?: number
           updated_at?: string
-          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "orders_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "orders_actor_id_fkey"
+            columns: ["actor_id"]
             isOneToOne: false
             referencedRelation: "actors"
             referencedColumns: ["id"]
@@ -1848,39 +1848,39 @@ export type Database = {
       }
       user_credentials: {
         Row: {
+          actor_id: string
           created_at: string
           failed_attempt_count: number
           locked_until: string | null
           password_algorithm: string
           password_changed_at: string | null
           password_hash: string
-          user_id: string
           username: string
         }
         Insert: {
+          actor_id: string
           created_at?: string
           failed_attempt_count?: number
           locked_until?: string | null
           password_algorithm?: string
           password_changed_at?: string | null
           password_hash: string
-          user_id: string
           username: string
         }
         Update: {
+          actor_id?: string
           created_at?: string
           failed_attempt_count?: number
           locked_until?: string | null
           password_algorithm?: string
           password_changed_at?: string | null
           password_hash?: string
-          user_id?: string
           username?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_credentials_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "user_credentials_actor_id_fkey"
+            columns: ["actor_id"]
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["actor_id"]
@@ -1889,6 +1889,7 @@ export type Database = {
       }
       user_item_ledger: {
         Row: {
+          actor_id: string
           created_at: string
           id: string
           item_type: string
@@ -1896,9 +1897,9 @@ export type Database = {
           reason_type: string
           reference_id: string | null
           reference_type: string | null
-          user_id: string
         }
         Insert: {
+          actor_id: string
           created_at?: string
           id?: string
           item_type: string
@@ -1906,9 +1907,9 @@ export type Database = {
           reason_type: string
           reference_id?: string | null
           reference_type?: string | null
-          user_id: string
         }
         Update: {
+          actor_id?: string
           created_at?: string
           id?: string
           item_type?: string
@@ -1916,12 +1917,11 @@ export type Database = {
           reason_type?: string
           reference_id?: string | null
           reference_type?: string | null
-          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_item_ledger_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "user_item_ledger_actor_id_fkey"
+            columns: ["actor_id"]
             isOneToOne: false
             referencedRelation: "actors"
             referencedColumns: ["id"]

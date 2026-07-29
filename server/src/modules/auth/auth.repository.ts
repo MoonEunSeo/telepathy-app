@@ -15,7 +15,7 @@ export async function findLoginCredential(username: string): Promise<LoginCreden
   const { data, error } = await supabase
     .from('user_credentials')
     .select(
-      `user_id, password_hash, password_algorithm, locked_until,users!inner ( actors!inner ( status ))`,
+      `actor_id, password_hash, password_algorithm, locked_until,users!inner ( actors!inner ( status ))`,
     )
     .eq('username', username)
     .maybeSingle();
@@ -31,7 +31,7 @@ export async function findLoginCredential(username: string): Promise<LoginCreden
   //   DB 언어 (snake_case) 를 도메인 언어(camelCase) 로 번역한다.
   // 이 경계 덕분에 service 는 컬럼이 어느 테이블에 있는지 모른다.
   return {
-    userId: data.user_id,
+    userId: data.actor_id,
     passwordHash: data.password_hash,
     passwordAlgorithm: data.password_algorithm,
     lockedUntil: data.locked_until,
@@ -91,7 +91,7 @@ export async function markLoginSuccess(userId: string): Promise<void> {
   const { error: credErr } = await supabase
     .from('user_credentials')
     .update({ failed_attempt_count: 0, locked_until: null })
-    .eq('user_id', userId);
+    .eq('actor_id', userId);
   if (credErr) console.error('❌ 실패 카운터 초기화 실패:', credErr.message);
 
   // users의 PK는 id가 아닐 actor_id다

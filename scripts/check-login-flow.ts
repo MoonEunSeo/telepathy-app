@@ -45,7 +45,7 @@ const db = createClient(url, key);
 async function readState() {
   const { data: cred } = await db
     .from('user_credentials')
-    .select('user_id, failed_attempt_count, locked_until')
+    .select('actor_id, failed_attempt_count, locked_until')
     .eq('username', USERNAME)
     .maybeSingle();
   if (!cred) return null;
@@ -53,17 +53,17 @@ async function readState() {
   const { data: user } = await db
     .from('users')
     .select('last_login_at')
-    .eq('actor_id', cred.user_id)
+    .eq('actor_id', cred.actor_id)
     .maybeSingle();
 
   const { data: actor } = await db
     .from('actors')
     .select('status')
-    .eq('id', cred.user_id)
+    .eq('id', cred.actor_id)
     .maybeSingle();
 
   return {
-    actorId: cred.user_id as string,
+    actorId: cred.actor_id as string,
     failed: cred.failed_attempt_count as number,
     lockedUntil: cred.locked_until as string | null,
     lastLoginAt: (user?.last_login_at ?? null) as string | null,
@@ -76,7 +76,7 @@ async function restore(actorId: string) {
   await db
     .from('user_credentials')
     .update({ failed_attempt_count: 0, locked_until: null })
-    .eq('user_id', actorId);
+    .eq('actor_id', actorId);
   await db.from('actors').update({ status: 'ACTIVE' }).eq('id', actorId);
 }
 
