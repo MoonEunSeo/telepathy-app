@@ -9,7 +9,7 @@ const TOKEN_TTL = '60d';
 const TOKEN_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 60;
 
 const MAX_FAILED_ATTEMPTS = 5;
-const LOCK_DURATION_MS = 5 * 60 * 1000;
+const LOCK_DURATION_MINUTES = 5;
 
 // 아이디 존재 여부를 흘리지 않도록 실패는 전부 같은 문구다.
 const INVALID_CREDENTIAL = '아이디 또는 비밀번호가 올바르지 않습니다.';
@@ -40,13 +40,19 @@ export async function login({ username, password }: LoginInput): Promise<LoginRe
 
   const matched = await bcrypt.compare(password, credential.passwordHash);
   if (!matched) {
-    const next = credential.failedAttemptCount + 1;
-    const shouldLock = next >= MAX_FAILED_ATTEMPTS;
-    await authRepository.updateFailedAttempt(
+    // 카운터 증가·잠금 판정을 DB 가 원자적으로 처리한다.
+    const record = await authRepository.recordLoginFailure(
       credential.userId,
-      shouldLock ? 0 : next,
-      shouldLock ? new Date(Date.now() + LOCK_DURATION_MS).toISOString() : null,
+      MAX_FAILED_ATTEMPTS,
+      LOCK_DURATION_MINUTES,
     );
+
+    // 기록이 안 되면 이번 시도는 잠금 카운트에 반영되지 않는다.
+    // 응답은 그대로 401이지만, 방어가 한 번 헛돈 사실은 남긴다.
+    if (!record) {
+      console.warn('⚠️ 로그인 실패 기록 누락 — 잠금 방어가 이번엔 작동하지 않음');
+    }
+
     throw new AppError(401, INVALID_CREDENTIAL);
   }
 

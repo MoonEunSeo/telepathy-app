@@ -2180,6 +2180,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      record_login_failure: {
+        Args: {
+          p_actor_id: string
+          p_lock_minutes: number
+          p_max_attempts: number
+        }
+        Returns: {
+          new_failed_count: number
+          new_locked_until: string
+        }[]
+      }
       user_item_balance: {
         Args: { p_item_type: string; p_user_id: string }
         Returns: number

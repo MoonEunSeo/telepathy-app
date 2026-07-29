@@ -5,7 +5,6 @@ export interface LoginCredential {
   userId: string; // actors.id (JWT의 user_id 가 이 값이 된다)
   passwordHash: string;
   passwordAlgorithm: string;
-  failedAttemptCount: number;
   lockedUntil: string | null;
   actorStatus: string;
 }
@@ -16,7 +15,7 @@ export async function findLoginCredential(username: string): Promise<LoginCreden
   const { data, error } = await supabase
     .from('user_credentials')
     .select(
-      `user_id, password_hash, password_algorithm, failed_attempt_count, locked_until,users!inner ( actors!inner ( status ))`,
+      `user_id, password_hash, password_algorithm, locked_until,users!inner ( actors!inner ( status ))`,
     )
     .eq('username', username)
     .maybeSingle();
@@ -35,33 +34,54 @@ export async function findLoginCredential(username: string): Promise<LoginCreden
     userId: data.user_id,
     passwordHash: data.password_hash,
     passwordAlgorithm: data.password_algorithm,
-    failedAttemptCount: data.failed_attempt_count,
     lockedUntil: data.locked_until,
     actorStatus: data.users.actors.status,
   };
 }
 
+export interface FailureRecord {
+  failedAttemptCount: number;
+  lockedUntil: string | null;
+}
+
 /**
- * 로그인 실패 기록
+ * 로그인 실패를 원자적으로 기록한다.
  *
- * 임시 구현
- * 읽은 값에 +1 하는 방식이라 동시 요청에서 카운트가 어긋난다.
- * 원자적 UPDATE 또는 RPC로 교체해야 한다
+ * 읽고 +1 해서 쓰면 동시 요청에서 증가가 유실된다
+ * RPC 안의 단일 UPDATE가 행을 잠가 순서를 보장한다.
+ *
+ * 잠금 판정도 DB가 한다. 다만 정책 (횟수·분)은 service 가 넘긴다
+ * 규칙은 앱에 남기고 DB는 원자적 실행만 담당한다.
  */
 
-export async function updateFailedAttempt(
-  userId: string,
-  count: number,
-  lockedUntil: string | null,
-): Promise<void> {
-  const { error } = await supabase
-    .from('user_credentials')
-    .update({ failed_attempt_count: count, locked_until: lockedUntil })
-    .eq('user_id', userId);
+export async function recordLoginFailure(
+  actorId: string,
+  maxAttempts: number,
+  lockMinutes: number,
+): Promise<FailureRecord | null> {
+  const { data, error } = await supabase.rpc('record_login_failure', {
+    p_actor_id: actorId,
+    p_max_attempts: maxAttempts,
+    p_lock_minutes: lockMinutes,
+  });
 
   // 기록에 실패해도 로그인 실패 응답은 그대로 내보낸다.
   // 여기서 던지면 "비밀번호 틀림"이 "서버 오류"로 바뀌어 버린다.
-  if (error) console.error('❌ 실패 횟수 기록 실패:', error.message);
+  if (error) {
+    console.error('❌ 실패 횟수 기록 실패:', error.message);
+    return null;
+  }
+
+  const row = data?.[0];
+  if (!row) return null;
+
+  // 생성 타입은 new_locked_until을 string으로 본다.
+  // RETURNS TABLE이 NULL 허용 여부를 담지 못하기 때문이다.
+  // 잠기지 않았을 때 실제 값은 null이다.
+  return {
+    failedAttemptCount: row.new_failed_count,
+    lockedUntil: row.new_locked_until,
+  };
 }
 
 // 로그인 성공 - 실패 카운터 초기화 + 최근 로그인 시각 갱신
