@@ -2191,6 +2191,17 @@ export type Database = {
           new_locked_until: string
         }[]
       }
+      signup_user: {
+        Args: {
+          p_birthdate?: string
+          p_gender?: string
+          p_nickname: string
+          p_password_hash: string
+          p_phone: string
+          p_username: string
+        }
+        Returns: string
+      }
       user_item_balance: {
         Args: { p_item_type: string; p_user_id: string }
         Returns: number
