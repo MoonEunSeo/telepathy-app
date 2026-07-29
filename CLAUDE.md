@@ -48,7 +48,7 @@ cd telepathy-front && npx oxlint src/...
 | [Supabase 규약](docs/conventions/supabase.md) | **에러 처리**·null 비교·소유권 필터 |
 | [Git 규약](docs/conventions/git.md) | 브랜치·커밋 형식·**Linear 자동 연결**·`v3` 자동배포 주의 |
 | [마이그레이션 계획](docs/project/migration-plan.md) | **TEL-6 마이그레이션 계획 요약** — 테이블 운명 매핑 |
-| [TEL-15 인계](docs/project/tel-15-handoff.md) | **진행 중인 작업** — 앱 계층 V2 이행. 배경·V2 스키마 실측·타이핑용 소스코드·남은 7항목 |
+| [TEL-15 진행 상태](docs/project/tel-15-handoff.md) | **진행 중인 작업** — 앱 계층 V2 이행. 완료 범위와 확인 스크립트. **인계 본체는 Linear TEL-16** |
 | [알려진 이슈](docs/project/known-issues.md) | 알려진 이슈·이월 과제 |
 | [성능 측정](docs/perf/README.md) | 성능 측정 기록 (S1~S7) |
 | [최적화 백로그](docs/perf/optimization-backlog.md) | **아직 착수하지 않은 개선 지점** (O1~O13) — 위치·근거·측정법 |
