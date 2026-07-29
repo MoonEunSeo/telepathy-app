@@ -14,6 +14,13 @@ interface IamportTokenResponse {
   response: { access_token: string; expired_at: number; now: number };
 }
 
+// grant_megaphone_payment 의 반환 형태
+// 정의: supabase/migrations/20260729_grant_megaphone_payment.sql
+interface GrantResult {
+  status: 'GRANTED' | 'DUPLICATE';
+  new_count: number | null;
+}
+
 interface IamportPaymentResponse {
   code: number;
   message: string | null;
@@ -62,34 +69,36 @@ router.post('/verify', authMiddleware, async (req: Request, res: Response) => {
 
     // 서버 가격표와 대조
     if (payment.status === 'paid' && payment.amount === sku.amount) {
-      // 결제 기록 추가 -> 결제 결과 확인
-      const { error: logErr } = await supabase.from('payments').insert([
-        {
-          // 결과 확인
-          user_id: userId,
-          imp_uid,
-          item,
-          count: sku.count,
-          amount: sku.amount,
-          status: 'PAID',
-        },
-      ]);
+      // 결제 기록과 지급을 한 트랜잭션으로 처리한다.
+      // 둘을 따로 호출하면 지급이 실패해도 기록만 남아 "돈은 받고 미지급" 이 된다.
+      // 중복 결제(imp_uid unique 위반)는 함수 안에서 잡아 'DUPLICATE' 로 돌려준다.
+      const { data, error: grantErr } = await supabase.rpc('grant_megaphone_payment', {
+        p_user_id: userId, // 토큰에서 온 값
+        p_imp_uid: imp_uid,
+        p_item: item,
+        p_count: sku.count, // 가격표에서 온 값, 클라는 개수 결정 못함
+        p_amount: sku.amount,
+      });
 
-      if (logErr) {
-        // 중복 결제면, 이미 처리된 결제 -> 지급하지 않고 즉시 종료
-        if (logErr.code === '23505') {
-          return res.status(409).json({ success: false, message: '이미 처리된 결제입니다.' });
-        }
-        // 그 밖의 DB 오류는 지급하면 안 되지 여기서 멈춘다
-        console.error('payments 기록 실패:', logErr.message);
+      // ⚠️ Supabase 는 DB 오류를 예외가 아닌 반환값으로 준다 → error 확인이 없으면 조용히 실패한다
+      if (grantErr) {
+        console.error('결제 지급 실패:', grantErr.message);
         return res.status(500).json({ success: false, message: '서버 오류' });
       }
 
-      // 기록에 성공한 요청만 지급
-      await supabase.rpc('increment_megaphone', {
-        uid: userId, // 토큰에서 온 값
-        add_count: sku.count, // 가격표에서 온 값, 클라는 개수 결정 못함
-      });
+      // rpc 반환값은 런타임 검사가 없으므로 사용처에서 방어한다
+      const result = data as GrantResult | null;
+
+      // 이미 처리된 결제 -> 지급하지 않고 종료 (트랜잭션은 이미 롤백됨)
+      if (result?.status === 'DUPLICATE') {
+        return res.status(409).json({ success: false, message: '이미 처리된 결제입니다.' });
+      }
+
+      // GRANTED 가 아니면 지급을 확신할 수 없으므로 성공으로 응답하지 않는다
+      if (result?.status !== 'GRANTED') {
+        console.error('결제 지급 응답 이상:', data);
+        return res.status(500).json({ success: false, message: '서버 오류' });
+      }
 
       return res.json({ success: true });
     }
