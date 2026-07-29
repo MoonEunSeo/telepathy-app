@@ -12,19 +12,8 @@ import type {
   CheckUsernameResponse,
   LogoutResponse,
 } from '@shared/api';
+import { buildCookieOptions, TOKEN_COOKIE_OPTIONS } from '../utils/cookie';
 import { decodeToken, GUEST_NICKNAME } from '../middleware/auth';
-
-const isProd = process.env.NODE_ENV === 'production';
-
-function buildCookieOptions(maxAgeMs: number) {
-  return {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? ('none' as const) : ('lax' as const),
-    maxAge: maxAgeMs,
-    path: '/',
-  };
-}
 
 const router = express.Router();
 
@@ -133,17 +122,7 @@ router.post('/login', async (req: Request, res: Response) => {
     );
 
     // ✅ 환경별 쿠키 옵션 설정
-    const isProd = process.env.NODE_ENV === 'production';
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: isProd, // ✅ 배포만 true
-      sameSite: isProd ? 'none' : 'lax', // ✅ cross-site 허용
-      maxAge: 1000 * 60 * 60 * 24 * 60, // 60일
-      path: '/',
-    });
-
-    console.log(`🍪 쿠키 발급 완료: ${isProd ? 'PROD' : 'DEV'} 모드`);
+    res.cookie('token', token, buildCookieOptions(1000 * 60 * 60 * 24 * 60));
 
     return res.status(200).json({ success: true, message: '로그인 성공' } satisfies LoginResponse);
   } catch (err) {
@@ -195,14 +174,8 @@ router.post('/check-username', async (req: Request, res: Response) => {
 // 📌 로그아웃 API
 // ================================
 router.post('/logout', (req: Request, res: Response) => {
-  const isProd = process.env.NODE_ENV === 'production';
-
-  res.clearCookie('token', {
-    httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
-    secure: isProd,
-    path: '/',
-  });
+  // 발급 때와 속성이 맞아야 실제로 지워진다.
+  res.clearCookie('token', TOKEN_COOKIE_OPTIONS);
 
   return res.json({ success: true, message: '로그아웃 완료' } satisfies LogoutResponse);
 });

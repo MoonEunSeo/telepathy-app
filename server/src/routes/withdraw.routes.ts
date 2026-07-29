@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import type { WithdrawResponse } from '@shared/api';
 import authMiddleware from '../middleware/auth';
+import { TOKEN_COOKIE_OPTIONS } from '../utils/cookie';
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
         .json({ success: false, message: '회원탈퇴에 실패했습니다.' } satisfies WithdrawResponse);
     }
 
-    res.clearCookie('token'); // 쿠키 제거
+    res.clearCookie('token', TOKEN_COOKIE_OPTIONS); // 쿠키 제거
     return res
       .status(200)
       .json({ success: true, message: '회원탈퇴 완료' } satisfies WithdrawResponse);

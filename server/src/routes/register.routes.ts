@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import getRandomNickname from '../utils/randomNickname';
+import { buildCookieOptions } from '../utils/cookie';
 import type { RegisterRequest, RegisterResponse } from '@shared/api';
 
 const router = express.Router();
@@ -65,12 +66,7 @@ router.post('/', async (req: Request, res: Response) => {
     );
 
     // ✅ 쿠키에 저장
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false, // 배포시 true + https 필요
-      maxAge: 60 * 24 * 60 * 60 * 1000, // 60일
-    });
+    res.cookie('token', token, buildCookieOptions(1000 * 60 * 60 * 24 * 60));
 
     return res.status(201).json({
       success: true,
