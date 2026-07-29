@@ -10,3 +10,27 @@ export const loginSchema = z.object({
 
 // 스키마에서 타입을 뽑는다 -> 타입과 검사 규칙이 어긋날 수 없다.
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const signupSchema = z.object({
+  username: z
+    .string({ message: '아이디를 입력해주세요.' })
+    .trim()
+    .min(4, '아이디는 4글자 이상입니다.')
+    .max(20, '아이디는 20자 이하입니다.'),
+  password: z
+    .string({ message: '비밀번호를 입력해주세요.' })
+    .min(8, '비밀번호는 8자 이상입니다.')
+    .max(72, '비밀번호가 너무 깁니다.'),
+  phone: z
+    .string({ message: '휴대폰 번호를 입력해주세요.' })
+    .trim()
+    .regex(/^01[016-9]-?\d{3,4}-?\d{4}$/, '휴대폰 번호 형식이 올바르지 않습니다.'),
+  // DB의 CHECK 제약과 같은 값이다 (users_gender_check)
+  gender: z.enum(['남성', '여성']).optional(),
+  birthdate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, '생년월일은 YYYY-MM-DD 형식입니다.')
+    .optional(),
+});
+
+export type SignupInput = z.infer<typeof signupSchema>;
