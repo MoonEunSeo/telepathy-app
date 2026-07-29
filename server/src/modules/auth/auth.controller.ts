@@ -2,18 +2,7 @@ import type { Request, Response } from 'express';
 import * as authService from './auth.service';
 import type { LoginResponse, RegisterResponse } from '@shared/api';
 import type { LoginInput, SignupInput } from './auth.schema';
-
-const isProd = process.env.NODE_ENV === 'production';
-
-function buildCookieOptions(maxAgeMs: number) {
-  return {
-    httpOnly: true, // JS에서 못 읽음 -> XSS로 토큰 탈취 방지
-    secure: isProd, // HTTPS 에서만 전송
-    sameSite: isProd ? ('none' as const) : ('lax' as const),
-    maxAge: maxAgeMs,
-    path: '/',
-  };
-}
+import { buildCookieOptions } from '../../utils/cookie';
 
 export async function signup(req: Request, res: Response): Promise<void> {
   const input: SignupInput = req.body;
