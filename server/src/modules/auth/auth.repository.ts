@@ -154,3 +154,91 @@ export async function signup(params: SignupParams): Promise<SignupOutcome> {
 
   return { ok: true, actorId: data };
 }
+
+export interface ActorCredential {
+  passwordHash: string;
+  passwordAlgorithm: string;
+  actorStatus: string;
+}
+
+/**
+ * 로그인한 사용자의 자격증명.
+ * findLoginCredential은 username이 키라 여기 못 쓴다.
+ * 우리가 가진 건 토큰 속 actor_id다
+ */
+export async function findCredentialByActorId(actorId: string): Promise<ActorCredential | null> {
+  const { data, error } = await supabase
+    .from('user_credentials')
+    .select(`password_hash, password_algorithm,users!inner ( actors!inner ( status ))`)
+    .eq('actor_id', actorId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('❌ 자격증명 조회 실패:', error.message);
+    throw new AppError(500, '서버 오류가 발생했습니다.');
+  }
+  if (!data) return null;
+
+  return {
+    passwordHash: data.password_hash,
+    passwordAlgorithm: data.password_algorithm,
+    actorStatus: data.users.actors.status,
+  };
+}
+
+/**
+ * 비밀번호 교체 (로그인 상태)
+ *
+ * 한 테이블 한 UPDATE라 RPC 가 필요 없다.
+ * 잠금을 함께 푸는 이유 - 현재 비밀번호를 맞힌 본인이다.
+ * 남겨 두면 방금 바꾼 비밀번호로도 로그인이 막히고, 사용자는 이유를 모른다.
+ */
+export async function updatePassword(actorId: string, passwordHash: string): Promise<void> {
+  const { error } = await supabase
+    .from('user_credentials')
+    .update({
+      password_hash: passwordHash,
+      password_algorithm: 'bcrypt',
+      password_changed_at: new Date().toISOString(),
+      failed_attempt_count: 0,
+      locked_until: null,
+    })
+    .eq('actor_id', actorId);
+
+  if (error) {
+    console.error('❌ 비밀번호 변경 실패:', error.message);
+    throw new AppError(500, '서버 오류가 발생했습니다.');
+  }
+}
+
+export type ResetFailure = 'RECOVERY_NOT_VERIFIED';
+export type ResetOutcome = { ok: true } | { ok: false; reason: ResetFailure };
+
+const RESET_FAILURES: readonly string[] = ['RECOVERY_NOT_VERIFIED'];
+
+/**
+ * 비밀번호 재설정 (비로그인)
+ *
+ * 인증 확인·비밀번호 교체·인증 소비 셋이 한 트랜잭션이어야 해서 RPC 다.
+ * 나뉘면 인증만 소비되고 비밀번호는 그대로인 상태가 생긴다.
+ *
+ * 전화번호를 인자로 받지 않는다. 계정에서 끌어오는 일을 RPC 안에서 해야
+ * 앱이 넘김 값으로 남의 계정을 가리킬 수 없다.
+ */
+export async function resetPassword(username: string, passwordHash: string): Promise<ResetOutcome> {
+  const { error } = await supabase.rpc('reset_password', {
+    p_username: username,
+    p_password_hash: passwordHash,
+  });
+
+  if (error) {
+    // P0001 함수가 raise exception 으로 의도해 던진 것
+    if (error.code === 'P0001' && RESET_FAILURES.includes(error.message)) {
+      return { ok: false, reason: error.message as ResetFailure };
+    }
+    console.error('❌ 비밀번호 재설정 실패:', error.message);
+    throw new AppError(500, '서버 오류가 발생했습니다.');
+  }
+
+  return { ok: true };
+}
