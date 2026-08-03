@@ -2180,6 +2180,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_item: {
+        Args: { p_actor_id: string; p_item_type: string; p_quantity?: number }
+        Returns: Json
+      }
+      item_balance: {
+        Args: { p_actor_id: string; p_item_type: string }
+        Returns: number
+      }
+      record_item_purchase: {
+        Args: {
+          p_actor_id: string
+          p_event_key: string
+          p_paid_amount: number
+          p_product_code: string
+          p_source?: string
+        }
+        Returns: Json
+      }
       record_login_failure: {
         Args: {
           p_actor_id: string
@@ -2190,6 +2208,10 @@ export type Database = {
           new_failed_count: number
           new_locked_until: string
         }[]
+      }
+      reset_password: {
+        Args: { p_password_hash: string; p_username: string }
+        Returns: undefined
       }
       signup_user: {
         Args: {
