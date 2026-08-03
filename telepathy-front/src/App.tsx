@@ -6,8 +6,6 @@ import { useAuthCheck } from './hooks/useAuthCheck';
 // ✅ 페이지 컴포넌트
 import LoginPage from './pages/LoginPage';
 import Register from './pages/Register';
-import Verify from './pages/Verify';
-import VerifyCallback from './pages/VerifyCallback';
 import Verify_mvp from './pages/Verify_mvp';
 import FindPassword from './pages/FindPassword';
 import ChangePassword from './pages/ChangePassword';
@@ -137,8 +135,6 @@ function AppRoutes() {
         <Route path="/" element={<SplashScreen />} />
 
         {/* ✅ 인증 관련 */}
-        <Route path="/verify" element={<Verify />} />
-        <Route path="/verify/callback" element={<VerifyCallback />} />
         <Route path="/verify-mvp" element={<Verify_mvp />} />
 
         {/* ✅ 네비게이션 없는 페이지 */}

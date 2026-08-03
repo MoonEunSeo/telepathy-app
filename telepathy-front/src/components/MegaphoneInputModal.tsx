@@ -11,8 +11,6 @@ interface MegaphoneInputModalProps {
 // 구 .megaphone-modal :where(button) 베이스 / .purchase-options button / .close-btn
 const megaBtn =
   '[background:var(--mega-purchase-bg)] text-[var(--mega-purchase-text)] border-none rounded-[12px] py-2.5 px-[18px] text-[14px] font-semibold m-1.5 cursor-pointer [transition:all_0.2s_ease] hover:[background:var(--mega-purchase-bg-hover)]';
-const purchaseBtn =
-  'flex-1 [background:var(--mega-purchase-bg)] text-[var(--mega-purchase-text)] [border:1px_solid_var(--color-border)] rounded-[10px] font-semibold text-[14px] py-3.5 px-2 m-1.5 cursor-pointer [transition:all_0.2s_ease] hover:[background:var(--mega-purchase-bg-hover)] hover:scale-105';
 const closeBtn =
   '[background:var(--mega-close-bg)] text-[var(--mega-close-text)] font-bold p-3 rounded-[10px] border-none w-full m-1.5 cursor-pointer [transition:all_0.2s_ease] hover:[background:var(--mega-close-bg-hover)]';
 
@@ -55,21 +53,13 @@ export default function MegaphoneInputModal({
         </>
       ) : (
         <>
-          <p className="mb-5 text-[14px] text-[var(--mega-desc-color)]">
-            보유한 확성기가 없습니다. 구매해주세요.
+          <p className="mb-2 text-[14px] text-[var(--mega-desc-color)]">보유한 확성기가 없습니다.</p>
+          {/* 카드결제(PortOne)를 걷어냈다. 계좌이체 웹훅 결제가 붙기 전까지 안내만 띄운다.
+              구매 버튼을 지우지 않고 문구로 두는 이유 — 눌러서 500 이 나던 이전보다 낫고,
+              결제가 붙으면 이 자리에 그대로 돌아온다. */}
+          <p className="mb-5 text-[13px] text-[var(--mega-desc-color)] opacity-80">
+            확성기 구매는 준비 중이에요. 조금만 기다려주세요 🙏
           </p>
-          {/* 구 .purchase-options */}
-          <div className="mb-5 flex justify-between gap-2.5">
-            <button className={purchaseBtn} onClick={() => onSend('megaphone_1')}>
-              1개 (₩500)
-            </button>
-            <button className={purchaseBtn} onClick={() => onSend('megaphone_5')}>
-              5개 (₩2,000)
-            </button>
-            <button className={purchaseBtn} onClick={() => onSend('megaphone_10')}>
-              10개 (₩3,500)
-            </button>
-          </div>
         </>
       )}
 
