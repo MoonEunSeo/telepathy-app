@@ -2,7 +2,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../../errors/AppError';
 import * as authRepository from './auth.repository';
-import type { LoginInput, SignupInput } from './auth.schema';
+import type {
+  LoginInput,
+  SignupInput,
+  ChangePasswordInput,
+  ResetPasswordInput,
+} from './auth.schema';
 import getRandomNickname from '../../utils/randomNickname';
 
 // 리터럴이어야 한다. `${60}d` 는 string 으로 넓어져 expiresIn 타입을 만족하지 못한다.
@@ -21,6 +26,11 @@ const SIGNUP_MESSAGE: Record<authRepository.SignupFailure, string> = {
   NICKNAME_TAKEN: '닉네임 생성에 실패했습니다. 잠시 후 다시 시도해주세요.',
   PHONE_NOT_VERIFIED: '휴대폰 인증이 필요합니다.',
 };
+
+const CURRENT_PASSWORD_MISMATCH = '현재 비밀번호가 올바르지 않습니다.';
+const SAME_PASSWORD = '새 비밀번호가 기존 비밀번호와 같습니다.';
+// 아이디 존재 여부와 인증 여부를 구분해 흘리지 않는다.
+const RECOVERY_FAILED = '휴대폰 인증이 확인되지 않았습니다.';
 
 export async function signup(input: SignupInput): Promise<LoginResult> {
   // 해시는 비싼 연산이라 재시도 밖에서 한 번만 한다.
@@ -123,4 +133,44 @@ export async function login({ username, password }: LoginInput): Promise<LoginRe
   });
 
   return { token, maxAgeMs: TOKEN_MAX_AGE_MS };
+}
+
+export async function changePassword(
+  actorId: string,
+  { currentPassword, newPassword }: ChangePasswordInput,
+): Promise<void> {
+  if (currentPassword === newPassword) throw new AppError(400, SAME_PASSWORD);
+
+  const credential = await authRepository.findCredentialByActorId(actorId);
+
+  // 토큰 수명이 60일이라 그 사이 탈퇴·정지된 계정의 토큰이 살아 있을 수 있다.
+  // 서명이 유효하다는 것과 계정이 살아 있다는 것은 다른 얘기다.
+  if (!credential || credential.actorStatus !== 'ACTIVE') {
+    throw new AppError(401, '로그인이 필요합니다.');
+  }
+
+  if (credential.passwordAlgorithm !== 'bcrypt') {
+    throw new AppError(500, '지원하지 않는 인증 방식입니다.');
+  }
+
+  const matched = await bcrypt.compare(currentPassword, credential.passwordHash);
+  if (!matched) {
+    // 쿠키를 훔친 쪽에서 현재 비밀번호를 무제한 대입할 수 있으면
+    // 이 엔드포인트가 비밀번호 오라클이 된다. 로그인과 같은 카운터를 쓴다.
+    await authRepository.recordLoginFailure(actorId, MAX_FAILED_ATTEMPTS, LOCK_DURATION_MINUTES);
+    throw new AppError(401, CURRENT_PASSWORD_MISMATCH);
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+  await authRepository.updatePassword(actorId, passwordHash);
+}
+
+export async function resetPassword({ username, newPassword }: ResetPasswordInput): Promise<void> {
+  // 성공 여부를 알기 전에 해시한다 — 인증 확인과 교체가 한 트랜잭션이라
+  // 해시를 미리 넘겨야 한다. 비로그인 경로라 bcrypt 비용이 그대로 노출되므로
+  // 레이트 리밋이 붙기 전까지는 이 지점이 부하 창구다.
+  const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+
+  const outcome = await authRepository.resetPassword(username, passwordHash);
+  if (!outcome.ok) throw new AppError(403, RECOVERY_FAILED);
 }

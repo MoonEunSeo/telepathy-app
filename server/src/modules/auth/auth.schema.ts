@@ -34,3 +34,32 @@ export const signupSchema = z.object({
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
+
+// 새 비밀번호에만 규칙을 건다.
+// currentPassword는 규칙이 강해지기 전에 만들어졌을 수 있어 길이만 본다.
+// 여기서 8자를 요구하면 예전 회원이 비밀번호를 바꾸지 못한다.
+const newPasswordField = z
+  .string({ message: '새 비밀번호를 입력해주세요.' })
+  .min(8, '비밀번호는 8자 이상입니다.')
+  .max(72, '비밀번호가 너무 깁니다.');
+
+export const changePasswordSchema = z.object({
+  currentPassword: z
+    .string({ message: '현재 비밀번호를 입력해주세요.' })
+    .min(1, '현재 비밀번호를 입력해주세요.')
+    .max(72, '비밀번호가 너무 깁니다.'),
+  newPassword: newPasswordField,
+});
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+
+export const resetPasswordSchema = z.object({
+  username: z
+    .string({ message: '아이디를 입력해주세요.' })
+    .trim()
+    .min(1, '아이디를 입력해주세요.')
+    .max(20, '아이디는 20자 이하입니다.'),
+  newPassword: newPasswordField,
+});
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
