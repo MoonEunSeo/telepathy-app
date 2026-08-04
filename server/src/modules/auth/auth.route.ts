@@ -27,6 +27,10 @@ router.patch(
 // 비로그인. 본인 확인은 ACCOUNT_RECOVERY 인증이 하고, 계정과의 결합은 RPC 가 한다.
 router.post('/password/reset', validateBody(resetPasswordSchema), authController.resetPassword);
 
+// 레거시와 같은 URL 이다 (app.ts 가 /api/auth/withdraw 로 마운트했다).
+// 본문이 없어 검증할 것이 없다 — 대상은 토큰에서 나온다.
+router.post('/withdraw', requireMember, authController.withdraw);
+
 router.use(errorHandler);
 
 export default router;

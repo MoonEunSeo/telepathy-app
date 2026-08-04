@@ -26,6 +26,8 @@ export type ErrorCode =
   | 'PHONE_NOT_VERIFIED'
   // ── 계정 복구 ───────────────────────────────────────────
   | 'RECOVERY_NOT_VERIFIED'
+  // ── 탈퇴 ────────────────────────────────────────────────
+  | 'WITHDRAW_SUSPENDED'
   // ── 휴대폰 인증 ─────────────────────────────────────────
   | 'TOO_MANY_REQUESTS'
   | 'DAILY_LIMIT_EXCEEDED'
