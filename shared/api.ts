@@ -103,6 +103,28 @@ export interface VerifyMvpCheckRequest {
 export type VerifyMvpCheckResponse = ApiResult;
 
 // ─────────────────────────────────────────────────────────────
+// phone (휴대폰 인증 — V2. verify-mvp 를 대체한다)
+// 인증번호를 서버 메모리가 아니라 phone_verification_challenges 에 둔다.
+
+// DB 의 CHECK 제약과 같은 값이다 (phone_verification_challenges_purpose_check)
+export type PhoneVerificationPurpose = 'SIGNUP' | 'ACCOUNT_RECOVERY' | 'PHONE_CHANGE';
+
+// POST /api/phone/send
+export interface PhoneSendRequest {
+  phone: string;
+  purpose: PhoneVerificationPurpose;
+}
+export type PhoneSendResponse = ApiResult;
+
+// POST /api/phone/verify
+export interface PhoneVerifyRequest {
+  phone: string;
+  purpose: PhoneVerificationPurpose;
+  code: string;
+}
+export type PhoneVerifyResponse = ApiResult;
+
+// ─────────────────────────────────────────────────────────────
 // POST /api/match/end (ChatPage: { roomId } / legacy: { word }) — 응답 미파싱
 export interface MatchEndRequest {
   roomId?: string;

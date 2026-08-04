@@ -2188,6 +2188,11 @@ export type Database = {
         Args: { p_actor_id: string; p_item_type: string }
         Returns: number
       }
+      mark_challenge_verified: { Args: { p_id: string }; Returns: boolean }
+      record_challenge_attempt: {
+        Args: { p_id: string; p_max: number }
+        Returns: number
+      }
       record_item_purchase: {
         Args: {
           p_actor_id: string
