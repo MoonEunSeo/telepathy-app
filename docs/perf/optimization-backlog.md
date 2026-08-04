@@ -167,7 +167,8 @@ password · report · register · withdraw · webhook
 
 **개선안**
 1. **라우트 기반 분할** — `React.lazy` + `Suspense`로 페이지별 청크 (효과 최대)
-2. 무거운 의존성 지연 로드 — `@portone/browser-sdk` 등 초기에 불필요한 모듈
+2. 무거운 의존성 지연 로드 — 초기에 불필요한 모듈
+   (`@portone/browser-sdk` 는 2026-08-04 PortOne 제거로 해소됐다)
 3. unused CSS 정리
 
 **측정 방법**

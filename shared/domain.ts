@@ -191,29 +191,6 @@ export interface MegaphoneSendPayload {
   message: string;
 }
 
-// ─────────────────────────────────────────────────────────────
-// PortOne v1 (아임포트) window.IMP — MainPage 확성기 카드결제 경로에서 사용.
-// 설치된 @types 가 없어 여기서 최소 필드만 정의한다.
-// 결제 콜백 응답 (rsp.success / rsp.imp_uid / rsp.merchant_uid 관찰됨)
-export interface ImpPayResponse {
-  success: boolean;
-  imp_uid: string;
-  merchant_uid: string;
-  // TODO: 백엔드/SDK 확인 — error_code, error_msg 등 기타 아임포트 필드
-  [key: string]: unknown;
-}
-
-// IMP.request_pay 파라미터 (MainPage handleMegaphoneSend)
-export interface ImpRequestPayParams {
-  pg: string;
-  pay_method: string;
-  merchant_uid: string;
-  name: string;
-  amount: number;
-  buyer_email?: string;
-  buyer_name?: string;
-}
-
 // 웹소켓 기반 미니 게임
 export interface GameEvent {
   gameId: string;

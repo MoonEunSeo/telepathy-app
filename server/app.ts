@@ -13,7 +13,6 @@ import path from 'path';
 import authRoutes from './src/routes/auth.routes';
 import webhookRouter from './src/routes/webhook.routes';
 import sp_paymentsRoutes from './src/routes/sp_payments.routes';
-import verifyRoutes from './src/routes/verify.routes';
 import verifyMvpRoutes from './src/routes/verify-mvp.routes';
 import matchRoutes from './src/routes/match.routes';
 import registerRoutes from './src/routes/register.routes';
@@ -26,7 +25,6 @@ import feedbackRoutes from './src/routes/feedback.routes';
 import timeRoutes from './src/routes/time';
 import userRoutes from './src/routes/user.routes';
 import commentRoutes from './src/routes/comment.routes';
-import paymentsRoutes from './src/routes/payments.routes';
 
 const app = express();
 
@@ -71,7 +69,6 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/webhook', express.text({ type: '*/*' }), webhookRouter);
 app.use('/api/sp_payments', sp_paymentsRoutes);
-app.use('/api/verify', verifyRoutes);
 app.use('/api/verify-mvp', verifyMvpRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/register', registerRoutes);
@@ -84,7 +81,6 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api', timeRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/api/payments', paymentsRoutes);
 
 // ================================
 // 📦 정적 파일 및 기본 라우트 처리

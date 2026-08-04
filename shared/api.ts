@@ -6,7 +6,6 @@ import type {
   Id,
   Comment,
   Feedback,
-  MegaphoneSku,
   ReportPayload,
   Wordset,
   WordHistoryItem,
@@ -87,27 +86,9 @@ export interface PasswordResetRequest {
 export type PasswordResetResponse = ApiResult;
 
 // ─────────────────────────────────────────────────────────────
-// verify (본인인증)
-// POST /api/verify/prepare (Verify: data.identityVerificationId)
-export interface VerifyPrepareResponse {
-  identityVerificationId: string;
-}
-
-// POST /api/verify/confirm (VerifyCallback: data.user.name / VerifyComplete: data.user)
-export interface VerifyConfirmRequest {
-  identityVerificationId?: string; // VerifyCallback 경로
-  imp_uid?: string; // VerifyComplete 경로
-}
-export interface VerifyConfirmResponse {
-  success: boolean;
-  user?: {
-    name: string;
-    // TODO: 백엔드 응답 확인 — 인증 사용자 기타 필드(phone, birthdate 등)
-    [key: string]: unknown;
-  };
-  message?: string;
-}
-
+// verify-mvp (휴대폰 SMS 인증)
+// PortOne 본인인증(/api/verify)은 제거했다 — 도달 경로가 없었고,
+// 전화번호 인증은 자체 SMS 로 확정됐다 (계획안 §11).
 // POST /api/verify-mvp/send (Verify_mvp)
 export interface VerifyMvpSendRequest {
   phone: string;
@@ -196,18 +177,6 @@ export interface WordsetsMineResponse {
   success: boolean;
   wordsets: Wordset[];
 }
-
-// ─────────────────────────────────────────────────────────────
-// payments (아임포트/포트원 결제 검증)
-// POST /api/payments/verify — 두 경로의 요청 필드가 다름
-//  · MainPage 확성기 카드결제: { imp_uid, merchant_uid, item }
-//  · utils/requestPayment.js: { imp_uid, userId, count, amount }
-export interface PaymentsVerifyRequest {
-  imp_uid: string;
-  merchant_uid?: string;
-  item: MegaphoneSku | string;
-}
-export type PaymentsVerifyResponse = ApiResult;
 
 // ─────────────────────────────────────────────────────────────
 // sp_payments (단어세트 계좌이체 결제)

@@ -74,8 +74,8 @@ Vite 빌드 결과(`telepathy-front/dist`)를 Express 가 직접 서빙한다.
 | DB | Supabase PostgreSQL (`@supabase/supabase-js`) |
 | 실시간 | Socket.IO 4 |
 | 인증 | `jsonwebtoken` + `cookie-parser`, 해시 `bcrypt`, 검증 `zod` |
-| 결제 | `@portone/server-sdk` / `@portone/browser-sdk` + 계좌이체 웹훅 |
-| 문자 | `solapi` (본인인증 OTP) |
+| 결제 | 계좌이체 + 은행 알림 웹훅 (PG 는 계획안 §27.1 로 범위 밖) |
+| 문자 | `solapi` (휴대폰 인증 OTP) |
 | 스케줄 | `node-cron` |
 | 프론트 | **React 19** + Vite + TS, `react-router-dom` 7, TanStack Query |
 | 스타일 | **Tailwind v4** + CSS 변수 토큰 (preflight 미로드) |
@@ -117,8 +117,8 @@ cd telepathy-front && npx tsc -b     # 프론트
 ```
 SUPABASE_URL · SUPABASE_SERVICE_ROLE_KEY   # 서버만 보유. 프론트는 DB 에 직접 접근하지 않는다
 JWT_SECRET
-PORTONE_API_KEY · PORTONE_API_SECRET
-SOLAPI_API_KEY · SOLAPI_API_SECRET
+SOLAPI_API_KEY · SOLAPI_API_SECRET · SENDER_PHONE   # 문자 발송 (발신번호 사전등록 필요)
+ACCOUNT_SECRET_KEY                                  # 환불 계좌 암호화. 없으면 부팅 거부
 ```
 
 ---
