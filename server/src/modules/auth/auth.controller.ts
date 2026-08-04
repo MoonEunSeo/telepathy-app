@@ -5,6 +5,7 @@ import type {
   AuthRegisterResponse,
   AuthPasswordChangeResponse,
   AuthPasswordResetResponse,
+  AuthWithdrawResponse,
 } from '@shared/api';
 import type {
   LoginInput,
@@ -12,7 +13,7 @@ import type {
   ChangePasswordInput,
   ResetPasswordInput,
 } from './auth.schema';
-import { buildCookieOptions } from '../../utils/cookie';
+import { buildCookieOptions, TOKEN_COOKIE_OPTIONS } from '../../utils/cookie';
 import { sendOk } from '../../utils/respond';
 
 export async function signup(req: Request, res: Response): Promise<void> {
@@ -54,4 +55,16 @@ export async function resetPassword(req: Request, res: Response): Promise<void> 
   await authService.resetPassword(input);
 
   sendOk<AuthPasswordResetResponse>(res, 200, null, '비밀번호가 재설정되었습니다.');
+}
+
+export async function withdraw(req: Request, res: Response): Promise<void> {
+  // requireMember 를 통과한 뒤에만 도달한다.
+  const actorId = req.user!.user_id;
+
+  // 쿠키를 먼저 지우지 않는다. 탈퇴가 실패하면 로그인만 풀린 상태가 된다.
+  await authService.withdraw(actorId);
+
+  // 발급 때와 속성이 맞아야 실제로 지워진다 (utils/cookie.ts 참조).
+  res.clearCookie('token', TOKEN_COOKIE_OPTIONS);
+  sendOk<AuthWithdrawResponse>(res, 200, null, '회원탈퇴 완료');
 }

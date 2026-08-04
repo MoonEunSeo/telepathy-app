@@ -68,6 +68,7 @@ export type AuthLoginResponse = ApiSuccess<null>;
 export type AuthRegisterResponse = ApiSuccess<null>;
 export type AuthPasswordChangeResponse = ApiSuccess<null>;
 export type AuthPasswordResetResponse = ApiSuccess<null>;
+export type AuthWithdrawResponse = ApiSuccess<null>;
 
 // ─────────────────────────────────────────────────────────────
 // auth

@@ -242,3 +242,33 @@ export async function resetPassword(username: string, passwordHash: string): Pro
 
   return { ok: true };
 }
+
+export type WithdrawFailure = 'WITHDRAW_SUSPENDED';
+export type WithdrawOutcome = { ok: true } | { ok: false; reason: WithdrawFailure };
+
+const WITHDRAW_FAILURES: readonly string[] = ['WITHDRAW_SUSPENDED'];
+
+/**
+ * 회원 탈퇴 — actors 상태 전이 + users 삭제
+ *
+ * 두 테이블이 한 트랜잭션이어야 해서 RPC 다.
+ * 나뉘면 프로필만 사라지고 상태는 ACTIVE 로 남는 계정이 생긴다.
+ *
+ * 레거시는 users 행만 지웠다. actors 를 남기는 것이 이 전환의 핵심이다 —
+ * 매칭·채팅·결제가 actors 를 참조하므로, 지우면 활동 이력이 전부 유령이 된다.
+ */
+export async function withdraw(actorId: string): Promise<WithdrawOutcome> {
+  const { error } = await supabase.rpc('withdraw_user', { p_actor_id: actorId });
+
+  if (error) {
+    if (error.code === 'P0001' && WITHDRAW_FAILURES.includes(error.message)) {
+      return { ok: false, reason: error.message as WithdrawFailure };
+    }
+    console.error('❌ 회원탈퇴 실패:', error.message);
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
+  }
+
+  // RPC 의 반환값(false = 이미 탈퇴된 계정)은 보지 않는다.
+  // 사용자가 원한 상태에 이미 도달해 있으므로 성공과 구분할 이유가 없다.
+  return { ok: true };
+}

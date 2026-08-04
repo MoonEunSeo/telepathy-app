@@ -184,3 +184,21 @@ export async function resetPassword({ username, newPassword }: ResetPasswordInpu
   const outcome = await authRepository.resetPassword(username, passwordHash);
   if (!outcome.ok) throw new AppError(403, 'RECOVERY_NOT_VERIFIED', RECOVERY_FAILED);
 }
+
+// 왜 안 되는지 알려준다. 본인 계정이라 숨길 게 없고,
+// 침묵하면 사용자는 버튼이 고장난 줄 안다.
+const WITHDRAW_SUSPENDED_MESSAGE = '정지 기간 중에는 탈퇴할 수 없습니다. 고객센터로 문의해주세요.';
+
+/**
+ * 회원 탈퇴
+ *
+ * 프로필(users)은 지우고 신원(actors)은 DELETED 로 남긴다.
+ * 로그인 차단은 별도 처리가 필요 없다 — 자격증명이 CASCADE 로 함께 사라져
+ * findLoginCredential 이 null 을 돌려주고, 그 경로가 이미 401 이다.
+ */
+export async function withdraw(actorId: string): Promise<void> {
+  const outcome = await authRepository.withdraw(actorId);
+  if (!outcome.ok) {
+    throw new AppError(403, 'WITHDRAW_SUSPENDED', WITHDRAW_SUSPENDED_MESSAGE);
+  }
+}

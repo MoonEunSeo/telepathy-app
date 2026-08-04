@@ -2233,6 +2233,7 @@ export type Database = {
         Args: { p_item_type: string; p_user_id: string }
         Returns: number
       }
+      withdraw_user: { Args: { p_actor_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
