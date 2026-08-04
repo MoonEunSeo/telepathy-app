@@ -11,6 +11,11 @@ import { registerSocketHandlers, type SocketData } from './src/config/chat.socke
 import app from './app';
 import { decodeToken } from './src/middleware/auth';
 
+// V2 매칭 모듈은 match_attempts·match_rounds 를 요구한다.
+// 운영 DB 에는 아직 없어 호출하면 15초마다 실패한다 (TEL-18).
+// 스키마가 붙은 환경에서만 켠다 — 계획안 §4 의 Feature Flag.
+const V2_MATCHING_ENABLED = process.env.V2_MATCHING_ENABLED === 'true';
+
 // ✅ CORS 설정
 app.use(
   cors({
@@ -93,10 +98,13 @@ setInterval(() => {
     // lastRound 를 덮어쓰기 전에 잡아둔다. 순서가 바뀌면 방금 시작한 라운드를 지운다.
     const endedRound = lastRound;
     lastRound = round;
+    // 폴링 대체용 push 라 V2 여부와 무관하게 항상 보낸다.
     io.emit('round:change', { round });
-    // 타이머 콜백은 await 할 수 없다. expireRound 가 내부에서 모든 예외를 잡으므로
-    // unhandled rejection 은 나지 않으며, void 로 "의도적으로 안 기다린다" 를 명시한다.
-    void expireRound(endedRound);
+    if (V2_MATCHING_ENABLED) {
+      // 타이머 콜백은 await 할 수 없다. expireRound 가 내부에서 모든 예외를 잡으므로
+      // unhandled rejection 은 나지 않으며, void 로 "의도적으로 안 기다린다" 를 명시한다.
+      void expireRound(endedRound);
+    }
   }
 }, 1000);
 
@@ -104,4 +112,5 @@ setInterval(() => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+  console.log(`   V2 매칭 만료 처리: ${V2_MATCHING_ENABLED ? 'ON' : 'OFF (운영 스키마 미적용)'}`);
 });
