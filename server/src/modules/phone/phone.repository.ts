@@ -26,7 +26,7 @@ async function countSends(
 
   if (error) {
     console.error('❌ 발송 건수 조회 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
 
   return count ?? 0;
@@ -63,7 +63,7 @@ export async function createChallenge(params: CreateChallengeParams): Promise<st
 
   if (error) {
     console.error('❌ 인증 생성 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
 
   return data.id;
@@ -106,7 +106,7 @@ export async function findActiveChallenge(
 
   if (error) {
     console.error('❌ 인증 조회 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
   if (!data) return null;
 
@@ -131,7 +131,7 @@ export async function markVerified(id: string): Promise<boolean> {
 
   if (error) {
     console.error('❌ 인증 확정 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
 
   return data === true;

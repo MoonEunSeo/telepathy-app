@@ -17,7 +17,7 @@ export function validateBody<T>(schema: ZodType<T>) {
       // 첫 번째 문제만 알린다.
       // (문제를 전부 나열하면 공격자에게 스키마를 알려주는 것이기 때문)
       const message = result.error.issues[0]?.message ?? '입력값이 올바르지 않습니다.';
-      next(new AppError(400, message));
+      next(new AppError(400, 'VALIDATION_FAILED', message));
       return;
     }
 

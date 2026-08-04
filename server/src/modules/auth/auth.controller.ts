@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
 import * as authService from './auth.service';
 import type {
-  LoginResponse,
-  RegisterResponse,
-  PasswordChangeResponse,
-  PasswordResetResponse,
+  AuthLoginResponse,
+  AuthRegisterResponse,
+  AuthPasswordChangeResponse,
+  AuthPasswordResetResponse,
 } from '@shared/api';
 import type {
   LoginInput,
@@ -13,13 +13,15 @@ import type {
   ResetPasswordInput,
 } from './auth.schema';
 import { buildCookieOptions } from '../../utils/cookie';
+import { sendOk } from '../../utils/respond';
 
 export async function signup(req: Request, res: Response): Promise<void> {
   const input: SignupInput = req.body;
   const { token, maxAgeMs } = await authService.signup(input);
 
   res.cookie('token', token, buildCookieOptions(maxAgeMs));
-  res.status(201).json({ success: true, message: '회원가입 완료' } satisfies RegisterResponse);
+  // 토큰은 쿠키로 나가므로 본문 페이로드가 없다 -> data: null
+  sendOk<AuthRegisterResponse>(res, 201, null, '회원가입 완료');
 }
 
 export async function login(req: Request, res: Response): Promise<void> {
@@ -32,7 +34,7 @@ export async function login(req: Request, res: Response): Promise<void> {
   const { token, maxAgeMs } = await authService.login(input);
 
   res.cookie('token', token, buildCookieOptions(maxAgeMs));
-  res.status(200).json({ success: true, message: '로그인 성공' } satisfies LoginResponse);
+  sendOk<AuthLoginResponse>(res, 200, null, '로그인 성공');
 }
 
 export async function changePassword(req: Request, res: Response): Promise<void> {
@@ -43,9 +45,7 @@ export async function changePassword(req: Request, res: Response): Promise<void>
 
   await authService.changePassword(actorId, input);
 
-  res
-    .status(200)
-    .json({ success: true, message: '비밀번호가 변경되었습니다.' } satisfies PasswordChangeResponse);
+  sendOk<AuthPasswordChangeResponse>(res, 200, null, '비밀번호가 변경되었습니다.');
 }
 
 export async function resetPassword(req: Request, res: Response): Promise<void> {
@@ -53,7 +53,5 @@ export async function resetPassword(req: Request, res: Response): Promise<void> 
 
   await authService.resetPassword(input);
 
-  res
-    .status(200)
-    .json({ success: true, message: '비밀번호가 재설정되었습니다.' } satisfies PasswordResetResponse);
+  sendOk<AuthPasswordResetResponse>(res, 200, null, '비밀번호가 재설정되었습니다.');
 }

@@ -7,6 +7,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 
+import { requestId } from './src/middleware/requestId';
+
 // ================================
 // 📦 라우트 모듈 등록
 // ================================
@@ -60,6 +62,9 @@ app.use(
 app.options(/.*/, cors());
 
 // ✅ 공통 미들웨어
+// requestId 는 express.json() 보다 앞이다.
+// 잘못된 JSON 으로 본문 파싱이 실패하는 것도 오류 응답이므로 id 를 가져야 한다.
+app.use(requestId);
 app.use(express.json());
 app.use(cookieParser());
 
