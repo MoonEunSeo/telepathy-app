@@ -2,33 +2,58 @@
 
 `telepathy-v2-dev`(`gczftwqeulqzedcirqrr`)에 적용된 마이그레이션을 여기에 둔다.
 
-## ⚠️ 이 디렉터리는 완전하지 않다
+## 현황 — DB 14건 = 저장소 14건 (2026-08-04)
 
-2026-07-29 기준 **DB 에는 11건, 여기에는 4건**만 있다.
+이 디렉터리가 생기기 전에 적용된 10건이 Supabase 에만 남아 있었으나,
+2026-08-04 에 이력에서 내보내 채웠다. **이제 여기만으로 V2 스키마를 재현할 수 있다.**
 
-| 버전 | 이름 | 여기 있나 |
+| 버전 | 이름 | 내용 |
 |---|---|---|
-| `20260727122241` | `v2_identity` | ❌ |
-| `20260727122652` | `v2_matching_chat` | ❌ |
-| `20260727125312` | `v2_report_feedback` | ❌ |
-| `20260727125542` | `v2_payment_items` | ❌ |
-| `20260727125753` | `v2_content_notification` | ❌ |
-| `20260728061000` | `enable_rls_and_revoke_anon_privileges` | ❌ |
-| `20260728065746` | `v2_add_word_bookmarks_and_refund_account` | ❌ |
-| `20260729003910` | `add_record_login_failure_rpc` | ✅ |
-| `20260729003957` | `revoke_anon_execute_on_login_failure_rpc` | ✅ |
-| `20260729013403` | `rename_user_id_to_actor_id` | ✅ |
-| `20260729015501` | `add_signup_user_rpc` | ✅ |
+| `20260727122241` | `v2_identity` | `actors` `users` `user_credentials` `guest_profiles` `nickname_histories` `phone_verification_challenges` |
+| `20260727122652` | `v2_matching_chat` | `match_attempts` `match_rounds` `chat_sessions` `chat_session_members` `chat_messages` `words` 외 4 |
+| `20260727125312` | `v2_report_feedback` | `reports` `report_reason_codes/items` `session_feedback` `balance_games/choices` `user_sanctions` |
+| `20260727125542` | `v2_payment_items` | `orders` `order_items` `payments` `payment_events` `products` `user_item_ledger` `daily_match_usage` |
+| `20260727125753` | `v2_content_notification` | `announcements(+comments)` `notifications` `presence_snapshots` `theme_campaigns` `trend_word_candidates` |
+| `20260728061000` | `enable_rls_and_revoke_anon_privileges` | 전 테이블 RLS + `anon` 권한 회수 |
+| `20260728065746` | `v2_add_word_bookmarks_and_refund_account` | `word_bookmarks`, `payments` 환불계좌 컬럼 |
+| `20260729003910` | `add_record_login_failure_rpc` | `record_login_failure()` |
+| `20260729003957` | `revoke_anon_execute_on_login_failure_rpc` | 함수 권한 회수 + `alter default privileges` |
+| `20260729013403` | `rename_user_id_to_actor_id` | 컬럼명 통일 + 참조 함수 재생성 |
+| `20260729015501` | `add_signup_user_rpc` | `signup_user()` |
+| `20260729055827` | `add_reset_password_rpc` | `reset_password()` |
+| `20260803070550` | `v2_item_purchase_and_consume` | `item_balance()` `record_item_purchase()` `consume_item()` |
+| `20260803233207` | `phone_verification_rpcs_and_indexes` | `record_challenge_attempt()` `mark_challenge_verified()` |
 
-앞의 7건은 이 디렉터리가 생기기 전에 적용됐고 **Supabase 에만 남아 있다.**
-TEL-11 에서 작성됐으나 어느 브랜치에도 커밋되지 않았다.
-
-**그래서 이 디렉터리만 보고 스키마를 재현할 수 없다.** 나머지 7건을 내보내
-채우는 것이 남은 과제다. 원본은 Supabase 의 마이그레이션 이력에 있다.
+원본 조회는 이렇게 한다.
 
 ```sql
 select version, name, statements from supabase_migrations.schema_migrations order by version;
 ```
+
+### ⚠️ 이 14건만으로는 빈 DB 에 적용되지 않는다
+
+두 가지가 이 디렉터리 밖에 있다.
+
+| 빠진 것 | 설명 |
+|---|---|
+| `legacy_*` 테이블 생성 | `legacy_users` 등 16개. 어느 마이그레이션에도 `rename to` 가 없다 |
+| 레거시 → V2 **데이터 변환** | `actors` 1,447 · `match_attempts` 16,565 등을 채운 로직이 이력에 없다 |
+
+특히 `20260728065746` 은 `public.legacy_sp_payments` 를 참조하므로,
+**`legacy_*` 가 먼저 존재하지 않으면 실패한다.** 순서대로 적용하려면
+레거시 테이블을 `legacy_` 접두사로 옮기는 선행 단계가 필요하다.
+
+### ⚠️ dev 의 데이터는 마스킹된 사본이다
+
+`20260728065746` 주석에 명시돼 있다 — *"dev 환경의 값은 마스킹된 사본이며,
+운영 Backfill 시 실제 값이 들어온다."* **dev-v2 의 데이터를 운영으로 그대로
+옮기면 안 된다.** 최소한 `payments.refund_bank`/`refund_account` 는 실제 값이 아니다.
+
+### 이력에 없는 파일
+
+`20260729_grant_megaphone_payment.sql` 은 DB 이력에 대응 버전이 없고
+파일명도 `{version}_{name}` 규칙에 어긋난다(버전 8자리). 이 함수는
+`20260803070550` 에서 `drop function` 으로 제거됐다 — **폐기된 파일이다.**
 
 ## 규칙
 
