@@ -49,6 +49,7 @@ cd telepathy-front && npx oxlint src/...
 | [Git 규약](docs/conventions/git.md) | 브랜치·커밋 형식·**Linear 자동 연결**·`v3` 자동배포 주의 |
 | [마이그레이션 계획](docs/project/migration-plan.md) | **TEL-6 마이그레이션 계획 요약** — 테이블 운명 매핑 |
 | [TEL-15 진행 상태](docs/project/tel-15-handoff.md) | **진행 중인 작업** — 앱 계층 V2 이행. 완료 범위와 확인 스크립트. **인계 본체는 Linear TEL-16** |
+| [운영 전환 SQL](supabase/cutover/README.md) | 레거시 → V2 데이터 이행 7단계. 적용 순서·알려진 손실·리허설 방법 |
 | [알려진 이슈](docs/project/known-issues.md) | 알려진 이슈·이월 과제 |
 | [성능 측정](docs/perf/README.md) | 성능 측정 기록 (S1~S7) |
 | [최적화 백로그](docs/perf/optimization-backlog.md) | **아직 착수하지 않은 개선 지점** (O1~O13) — 위치·근거·측정법 |

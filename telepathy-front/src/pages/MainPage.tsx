@@ -12,7 +12,6 @@ import MegaphoneInputModal from '../components/MegaphoneInputModal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { recommendations } from '../utils/recommendations';
-import { MEGAPHONE_SKUS } from '@shared/domain';
 import { getStorage, setStorage, removeStorage } from '../types';
 import type {
   Id,
@@ -23,13 +22,9 @@ import type {
   Emotion,
   FeedbackAddRequest,
   FeedbackAddResponse,
-  ImpPayResponse,
-  ImpRequestPayParams,
   ServerTimeResponse,
   SetNicknameResponse,
   MatchCurrentRoundResponse,
-  PaymentsVerifyResponse,
-  MegaphoneSku,
 } from '../types';
 import { ensureGuestSession, updateGuestNickname } from '../utils/guest';
 import { useQueryClient } from '@tanstack/react-query';
@@ -37,16 +32,6 @@ import { useProfile } from '../hooks/useProfile';
 import { megaphoneCountKey, fetchMegaphoneCount } from '../hooks/useMegaphoneCount';
 
 // import useRandomSequence from '../hooks/useRandomSequence'; //단어셔플
-
-// PortOne v1(아임포트) SDK 전역 객체 — 확성기 카드결제 경로에서 사용.
-declare global {
-  interface Window {
-    IMP: {
-      init: (code: string) => void;
-      request_pay: (params: ImpRequestPayParams, callback: (rsp: ImpPayResponse) => void) => void;
-    };
-  }
-}
 
 // ── 구 MainPage.module.css → Tailwind 유틸 상수 (실사용 클래스만; word-timer/intent/
 //    search/recommend 등은 죽은 컴포넌트분이라 변환에서 제외) ──────────────────
@@ -150,62 +135,15 @@ export default function MainPage() {
     }
   };
 
-  // === 결제 & 메시지 로직 ===
-  const handleMegaphoneSend = async (payload: string) => {
+  // === 메시지 발사 ===
+  // 구매(PortOne 카드결제) 경로는 걷어냈다. 계좌이체 웹훅 결제로 대체 예정이며,
+  // 그때까지 모달이 SKU 를 보내지 않으므로 여기 오는 값은 항상 메시지다.
+  const handleMegaphoneSend = (message: string) => {
     try {
-      if (typeof payload === 'string' && payload.startsWith('megaphone_')) {
-        // 구매 모드
-        const sku = MEGAPHONE_SKUS[payload as MegaphoneSku];
-        if (!sku) return;
-
-        const { IMP } = window;
-        IMP.init('imp17086516'); // PortOne 가맹점 코드
-
-        IMP.request_pay(
-          {
-            pg: 'kcp',
-            pay_method: 'card',
-            merchant_uid: 'order_' + new Date().getTime(),
-            name: sku.name,
-            amount: sku.amount,
-            buyer_email: profile?.username || 'guest@telepathy.my',
-            buyer_name: profile?.nickname || '사용자',
-          },
-          async (rsp: ImpPayResponse) => {
-            if (rsp.success) {
-              const res = await fetch('/api/payments/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                  imp_uid: rsp.imp_uid,
-                  merchant_uid: rsp.merchant_uid,
-                  item: payload,
-                }),
-              });
-              const data = (await res.json()) as PaymentsVerifyResponse;
-              if (data.success) {
-                toast.success(`구매 완료! 확성기 ${sku.count}개 지급됨 🎉`);
-                setHasMegaphone(true);
-                // 개수 증가 → 캐시 무효화, 다음 조회는 신선한 값
-                queryClient.invalidateQueries({ queryKey: megaphoneCountKey });
-              } else {
-                toast.error('검증 실패: ' + data.message);
-              }
-            } else {
-              toast.error('결제 실패 또는 취소됨');
-            }
-          },
-        );
-      } else {
-        // 메시지 발사
-        socket.emit('megaphone:send', {
-          message: payload,
-        });
-        toast.success('메시지가 발사되었습니다!');
-        // 개수 감소(-1) → 캐시 무효화, 다음 조회는 신선한 값
-        queryClient.invalidateQueries({ queryKey: megaphoneCountKey });
-      }
+      socket.emit('megaphone:send', { message });
+      toast.success('메시지가 발사되었습니다!');
+      // 개수 감소(-1) → 캐시 무효화, 다음 조회는 신선한 값
+      queryClient.invalidateQueries({ queryKey: megaphoneCountKey });
     } catch (err) {
       console.error('Megaphone 처리 오류:', err);
       toast.error('오류가 발생했습니다.');
