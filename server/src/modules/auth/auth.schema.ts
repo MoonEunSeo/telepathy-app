@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { phoneField } from '../../utils/phone';
 
 export const loginSchema = z.object({
   username: z.string({ message: '아이디를 입력해주세요.' }).trim().min(1, '아이디를 입력해주세요.'),
@@ -21,10 +22,8 @@ export const signupSchema = z.object({
     .string({ message: '비밀번호를 입력해주세요.' })
     .min(8, '비밀번호는 8자 이상입니다.')
     .max(72, '비밀번호가 너무 깁니다.'),
-  phone: z
-    .string({ message: '휴대폰 번호를 입력해주세요.' })
-    .trim()
-    .regex(/^01[016-9]-?\d{3,4}-?\d{4}$/, '휴대폰 번호 형식이 올바르지 않습니다.'),
+  // 저장 형식은 숫자만이다. utils/phone.ts 참조 — 인증 경로와 같은 규칙을 써야 한다.
+  phone: phoneField,
   // DB의 CHECK 제약과 같은 값이다 (users_gender_check)
   gender: z.enum(['남성', '여성']).optional(),
   birthdate: z

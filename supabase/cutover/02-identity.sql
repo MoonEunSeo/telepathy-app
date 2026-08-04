@@ -17,8 +17,34 @@
 -- 2. 게스트 미이관 — dev-v2 에서도 actors 의 GUEST 는 0건이고 guest_profiles 도
 --    비어 있다. 원본이 없어 역설계 대상이 아니다. 별도 설계가 필요하다.
 -- 3. orphan 은 프로필 없이 actors 만 만든다. 활동 이력의 FK 를 살리기 위함이다.
+-- 4. 전화번호 중복 3쌍 — 정규화하면 users.phone UNIQUE 를 위반한다. 나중 가입분을
+--    MERGED 로 접는다. 프로필·자격증명은 없지만 actor 가 남아 활동 이력은 보존된다.
+--    로그인은 actors.status 로 막힌다 (auth.service 가 ACTIVE 만 통과시킨다).
+--    정규화해도 01x 형식이 아닌 2건은 그대로 옮긴다 — V2 users.phone 에 CHECK 이 없다.
 
 begin;
+
+-- ─────────────────────────────────────────────────────────
+-- 0) 전화번호 정규화 결과를 미리 만든다 — 뒤의 여러 단계가 참조한다
+--
+-- 저장 형식은 숫자만이다 (utils/phone.ts 의 normalizePhone 과 같은 규칙).
+-- rn 은 같은 번호 안에서의 가입 순서다. rn = 1 이 프로필을 갖고
+-- rn > 1 은 MERGED 로 접힌다.
+-- ─────────────────────────────────────────────────────────
+create temp table phone_norm on commit drop as
+select id,
+       norm,
+       row_number() over (partition by norm order by created_at, id) as rn
+from (
+  select l.id,
+         l.created_at,
+         case
+           when regexp_replace(l.phone, '[^0-9]', '', 'g') like '82%'
+             then '0' || substring(regexp_replace(l.phone, '[^0-9]', '', 'g') from 3)
+           else regexp_replace(l.phone, '[^0-9]', '', 'g')
+         end as norm
+  from public.legacy_users l
+) x;
 
 -- ─────────────────────────────────────────────────────────
 -- 1) 회원 actor
@@ -30,6 +56,27 @@ select gen_random_uuid(),
        l.created_at at time zone 'UTC',
        l.id
 from public.legacy_users l;
+
+-- ─────────────────────────────────────────────────────────
+-- 1-b) 같은 전화번호로 두 번 가입한 계정을 병합한다
+--
+-- 운영에 3쌍(6계정) 있다. 정규화하면 users.phone UNIQUE 를 위반하므로
+-- 나중 가입분을 MERGED 로 접고 먼저 가입한 actor 를 가리키게 한다.
+-- 프로필(users)·자격증명(user_credentials)은 만들지 않지만 actor 는 남으므로
+-- 매칭·채팅 이력의 FK 가 그대로 살아 있다. 로그인은 status 로 막힌다.
+-- ─────────────────────────────────────────────────────────
+update public.actors a
+   set status               = 'MERGED',
+       merged_into_actor_id = keep.actor_id
+  from phone_norm p
+  join (
+    select p1.norm, a1.id as actor_id
+    from phone_norm p1
+    join public.actors a1 on a1.legacy_user_id = p1.id
+    where p1.rn = 1
+  ) keep on keep.norm = p.norm
+ where a.legacy_user_id = p.id
+   and p.rn > 1;
 
 -- ─────────────────────────────────────────────────────────
 -- 2) orphan actor — 로그에만 등장하고 legacy_users 에 없는 id
@@ -68,7 +115,7 @@ where not exists (select 1 from public.legacy_users l where l.id = o.id);
 insert into public.users (actor_id, phone, nickname, gender, birthdate, real_name,
                           last_login_at, created_at)
 select a.id,
-       r.phone,
+       p.norm,                     -- 정규화된 번호를 저장한다
        case
          when r.nickname is null then '사용자' || left(r.id::text, 6)
          when r.rn > 1           then r.nickname || '_' || left(r.id::text, 6)
@@ -84,7 +131,9 @@ from (
          row_number() over (partition by l.nickname order by l.created_at, l.id) as rn
   from public.legacy_users l
 ) r
-join public.actors a on a.legacy_user_id = r.id;
+join public.actors a on a.legacy_user_id = r.id
+-- 같은 번호로 두 번 가입한 경우 먼저 가입한 쪽만 프로필을 갖는다 (1-b 에서 병합했다)
+join phone_norm    p on p.id = r.id and p.rn = 1;
 
 -- ─────────────────────────────────────────────────────────
 -- 4) 인증 정보
@@ -95,7 +144,9 @@ insert into public.user_credentials (actor_id, username, password_hash,
                                      password_algorithm, created_at)
 select a.id, l.username, l.password_hash, 'bcrypt', l.created_at at time zone 'UTC'
 from public.legacy_users l
-join public.actors a on a.legacy_user_id = l.id;
+join public.actors a on a.legacy_user_id = l.id
+-- user_credentials.user_id 가 users(actor_id) 를 참조하므로 프로필이 있는 것만
+join phone_norm    p on p.id = l.id and p.rn = 1;
 
 -- ─────────────────────────────────────────────────────────
 -- 5) 매핑표 — 이후 도메인 이관이 legacy id 로 actor 를 찾을 때 쓴다
@@ -130,10 +181,18 @@ commit;
 -- ─────────────────────────────────────────────────────────
 -- 검증 — 아래가 모두 통과해야 다음 도메인으로 넘어간다
 -- ─────────────────────────────────────────────────────────
--- 회원 수가 보존됐는가 (users = legacy_users)
+-- 회원 수 (legacy 1,191 → users·creds 1,188, 차이 3 = 병합된 중복 전화번호)
 --   select (select count(*) from legacy_users) as legacy,
 --          (select count(*) from users)        as v2,
---          (select count(*) from user_credentials) as creds;
+--          (select count(*) from user_credentials) as creds,
+--          (select count(*) from actors where status = 'MERGED') as merged;
+--
+-- 전화번호가 정규화됐는가 (기대: 비정규 0, 단 01x 아닌 2건은 숫자만이라 통과)
+--   select count(*) from users where phone <> regexp_replace(phone, '[^0-9]', '', 'g');
+--
+-- 병합된 actor 가 원본을 가리키는가 (기대: 0)
+--   select count(*) from actors
+--    where status = 'MERGED' and merged_into_actor_id is null;
 --
 -- 닉네임이 유일한가 (접미사 처리가 충돌을 남기지 않았는가)
 --   select count(*) - count(distinct nickname) as nickname_dupes from users;
