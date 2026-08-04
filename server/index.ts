@@ -4,9 +4,8 @@ import './env'; // ⚠️ 반드시 최상단 — 라우트/설정보다 먼저 
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import cron from 'node-cron';
 import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketEvents';
-import { flushRound } from './src/utils/flush';
+import { expireRound } from './src/modules/matching/matching.service';
 import { getCurrentRound } from './src/utils/round';
 import { registerSocketHandlers, type SocketData } from './src/config/chat.socket';
 import app from './app';
@@ -91,15 +90,15 @@ let lastRound = getCurrentRound().round;
 setInterval(() => {
   const { round } = getCurrentRound();
   if (round !== lastRound) {
+    // lastRound 를 덮어쓰기 전에 잡아둔다. 순서가 바뀌면 방금 시작한 라운드를 지운다.
+    const endedRound = lastRound;
     lastRound = round;
     io.emit('round:change', { round });
+    // 타이머 콜백은 await 할 수 없다. expireRound 가 내부에서 모든 예외를 잡으므로
+    // unhandled rejection 은 나지 않으며, void 로 "의도적으로 안 기다린다" 를 명시한다.
+    void expireRound(endedRound);
   }
 }, 1000);
-
-// ✅ 30초마다 flushRound 실행
-cron.schedule('*/30 * * * * *', () => {
-  flushRound();
-});
 
 // ✅ 포트 설정 및 서버 실행
 const PORT = process.env.PORT || 5000;
