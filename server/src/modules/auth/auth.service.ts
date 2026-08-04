@@ -9,6 +9,7 @@ import type {
   ResetPasswordInput,
 } from './auth.schema';
 import getRandomNickname from '../../utils/randomNickname';
+import type { ErrorCode } from '@shared/api';
 
 // 리터럴이어야 한다. `${60}d` 는 string 으로 넓어져 expiresIn 타입을 만족하지 못한다.
 const TOKEN_TTL = '60d';
@@ -25,6 +26,15 @@ const SIGNUP_MESSAGE: Record<authRepository.SignupFailure, string> = {
   PHONE_TAKEN: '이미 가입된 휴대폰 번호입니다.',
   NICKNAME_TAKEN: '닉네임 생성에 실패했습니다. 잠시 후 다시 시도해주세요.',
   PHONE_NOT_VERIFIED: '휴대폰 인증이 필요합니다.',
+};
+
+// 문구와 코드를 나란히 둔다. 한쪽만 늘어나면 여기서 타입 에러가 난다.
+const SIGNUP_CODE: Record<authRepository.SignupFailure, ErrorCode> = {
+  USERNAME_TAKEN: 'USERNAME_TAKEN',
+  PHONE_TAKEN: 'PHONE_TAKEN',
+  // 닉네임은 서버가 짓는다. 사용자가 고른 게 아니므로 "중복" 이 아니라 "생성 실패" 다.
+  NICKNAME_TAKEN: 'NICKNAME_GENERATION_FAILED',
+  PHONE_NOT_VERIFIED: 'PHONE_NOT_VERIFIED',
 };
 
 const CURRENT_PASSWORD_MISMATCH = '현재 비밀번호가 올바르지 않습니다.';
@@ -60,11 +70,11 @@ export async function signup(input: SignupInput): Promise<LoginResult> {
 
   if (!outcome.ok) {
     const status = outcome.reason === 'PHONE_NOT_VERIFIED' ? 403 : 409;
-    throw new AppError(status, SIGNUP_MESSAGE[outcome.reason]);
+    throw new AppError(status, SIGNUP_CODE[outcome.reason], SIGNUP_MESSAGE[outcome.reason]);
   }
 
   const secret = process.env.JWT_SECRET;
-  if (!secret) throw new AppError(500, '서버 설정 오류가 발생했습니다.');
+  if (!secret) throw new AppError(500, 'SERVER_MISCONFIGURED', '서버 설정 오류가 발생했습니다.');
 
   // 가입 직후 자동 로그인
   const token = jwt.sign(
@@ -86,21 +96,21 @@ export interface LoginResult {
 
 export async function login({ username, password }: LoginInput): Promise<LoginResult> {
   const credential = await authRepository.findLoginCredential(username);
-  if (!credential) throw new AppError(401, INVALID_CREDENTIAL);
+  if (!credential) throw new AppError(401, 'INVALID_CREDENTIALS', INVALID_CREDENTIAL);
 
   // 잠금은 해시 대조보다 먼저 본다 (잠긴 계정에 bcrypt 비용을 쓰지 않는다.)
   if (credential.lockedUntil && new Date(credential.lockedUntil) > new Date()) {
-    throw new AppError(401, INVALID_CREDENTIAL);
+    throw new AppError(401, 'INVALID_CREDENTIALS', INVALID_CREDENTIAL);
   }
 
   // 정지·탈퇴 계정 차단 (actors.status)
   if (credential.actorStatus !== 'ACTIVE') {
-    throw new AppError(401, INVALID_CREDENTIAL);
+    throw new AppError(401, 'INVALID_CREDENTIALS', INVALID_CREDENTIAL);
   }
 
   // 사용된 알고리즘 종류 검사. Argon2id는 별도 진행
   if (credential.passwordAlgorithm !== 'bcrypt') {
-    throw new AppError(500, '지원하지 않는 인증 방식입니다.');
+    throw new AppError(500, 'UNSUPPORTED_PASSWORD_ALGORITHM', '지원하지 않는 인증 방식입니다.');
   }
 
   const matched = await bcrypt.compare(password, credential.passwordHash);
@@ -118,13 +128,13 @@ export async function login({ username, password }: LoginInput): Promise<LoginRe
       console.warn('⚠️ 로그인 실패 기록 누락 — 잠금 방어가 이번엔 작동하지 않음');
     }
 
-    throw new AppError(401, INVALID_CREDENTIAL);
+    throw new AppError(401, 'INVALID_CREDENTIALS', INVALID_CREDENTIAL);
   }
 
   await authRepository.markLoginSuccess(credential.userId);
 
   const secret = process.env.JWT_SECRET;
-  if (!secret) throw new AppError(500, '서버 설정 오류가 발생했습니다.');
+  if (!secret) throw new AppError(500, 'SERVER_MISCONFIGURED', '서버 설정 오류가 발생했습니다.');
 
   // user_id가 users.id에서 actors.id로 바뀐다.
   // 페이로드 형태는 유지해 기존 middleware/auth.ts와 호환시킨다.
@@ -139,18 +149,18 @@ export async function changePassword(
   actorId: string,
   { currentPassword, newPassword }: ChangePasswordInput,
 ): Promise<void> {
-  if (currentPassword === newPassword) throw new AppError(400, SAME_PASSWORD);
+  if (currentPassword === newPassword) throw new AppError(400, 'SAME_PASSWORD', SAME_PASSWORD);
 
   const credential = await authRepository.findCredentialByActorId(actorId);
 
   // 토큰 수명이 60일이라 그 사이 탈퇴·정지된 계정의 토큰이 살아 있을 수 있다.
   // 서명이 유효하다는 것과 계정이 살아 있다는 것은 다른 얘기다.
   if (!credential || credential.actorStatus !== 'ACTIVE') {
-    throw new AppError(401, '로그인이 필요합니다.');
+    throw new AppError(401, 'UNAUTHENTICATED', '로그인이 필요합니다.');
   }
 
   if (credential.passwordAlgorithm !== 'bcrypt') {
-    throw new AppError(500, '지원하지 않는 인증 방식입니다.');
+    throw new AppError(500, 'UNSUPPORTED_PASSWORD_ALGORITHM', '지원하지 않는 인증 방식입니다.');
   }
 
   const matched = await bcrypt.compare(currentPassword, credential.passwordHash);
@@ -158,7 +168,7 @@ export async function changePassword(
     // 쿠키를 훔친 쪽에서 현재 비밀번호를 무제한 대입할 수 있으면
     // 이 엔드포인트가 비밀번호 오라클이 된다. 로그인과 같은 카운터를 쓴다.
     await authRepository.recordLoginFailure(actorId, MAX_FAILED_ATTEMPTS, LOCK_DURATION_MINUTES);
-    throw new AppError(401, CURRENT_PASSWORD_MISMATCH);
+    throw new AppError(401, 'CURRENT_PASSWORD_MISMATCH', CURRENT_PASSWORD_MISMATCH);
   }
 
   const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
@@ -172,5 +182,5 @@ export async function resetPassword({ username, newPassword }: ResetPasswordInpu
   const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
 
   const outcome = await authRepository.resetPassword(username, passwordHash);
-  if (!outcome.ok) throw new AppError(403, RECOVERY_FAILED);
+  if (!outcome.ok) throw new AppError(403, 'RECOVERY_NOT_VERIFIED', RECOVERY_FAILED);
 }

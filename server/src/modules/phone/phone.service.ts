@@ -39,10 +39,10 @@ export async function sendCode({ phone, purpose }: SendCodeInput, ipHash: string
   // 제한에 걸린 사실은 알려준다. 이 번호는 요청자가 이미 알고 있어 숨길 게 없고,
   // 침묵하면 문자가 왜 안 오는지 모른 채 계속 누른다.
   if (byPhone >= MAX_SEND_PER_WINDOW || byIp >= MAX_SEND_PER_IP_WINDOW) {
-    throw new AppError(429, TOO_MANY);
+    throw new AppError(429, 'TOO_MANY_REQUESTS', TOO_MANY);
   }
   if (byPhoneDay >= MAX_SEND_PER_DAY || byIpDay >= MAX_SEND_PER_IP_DAY) {
-    throw new AppError(429, TOO_MANY_TODAY);
+    throw new AppError(429, 'DAILY_LIMIT_EXCEEDED', TOO_MANY_TODAY);
   }
 
   // Math.random 은 예측 가능하다. 인증번호에는 암호학적 난수를 쓴다.
@@ -68,22 +68,22 @@ export async function sendCode({ phone, purpose }: SendCodeInput, ipHash: string
     // 외부 호출이라 DB 트랜잭션 안에 넣을 수 없다. 실패하면 직접 죽인다.
     await phoneRepository.expireChallenge(id);
     console.error('❌ 문자 발송 실패:', (err as Error).message);
-    throw new AppError(502, '문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    throw new AppError(502, 'SMS_SEND_FAILED', '문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요.');
   }
 }
 
 export async function verifyCode({ phone, purpose, code }: VerifyCodeInput): Promise<void> {
   const challenge = await phoneRepository.findActiveChallenge(phone, purpose);
-  if (!challenge) throw new AppError(400, MISMATCH);
+  if (!challenge) throw new AppError(400, 'VERIFICATION_MISMATCH', MISMATCH);
 
   const matched = await bcrypt.compare(code, challenge.codeHash);
   if (!matched) {
     await phoneRepository.recordAttempt(challenge.id, MAX_VERIFY_ATTEMPTS);
-    throw new AppError(400, MISMATCH);
+    throw new AppError(400, 'VERIFICATION_MISMATCH', MISMATCH);
   }
 
   // 조회와 확정 사이에 만료되거나 다른 요청이 먼저 검증했을 수 있다.
   // 그 판정은 RPC 의 조건부 UPDATE 가 한다.
   const ok = await phoneRepository.markVerified(challenge.id);
-  if (!ok) throw new AppError(400, MISMATCH);
+  if (!ok) throw new AppError(400, 'VERIFICATION_MISMATCH', MISMATCH);
 }

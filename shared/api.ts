@@ -10,14 +10,64 @@ import type {
   Wordset,
   WordHistoryItem,
 } from './domain';
+import type { ErrorCode } from './errorCodes';
+
+// 계약을 쓰는 쪽이 '@shared/api' 하나만 보면 되도록 다시 내보낸다.
+export type { ErrorCode };
 
 // ─────────────────────────────────────────────────────────────
-// 공통
-// 다수 엔드포인트가 { success, message? } 형태를 반환한다.
+// 공통 — 레거시
+// 아직 전환하지 않은 라우트 14개가 { success, message? } 형태를 반환한다.
+// 새 코드는 아래 ApiSuccess/ApiError 를 쓴다.
 export interface ApiResult {
   success: boolean;
   message?: string;
 }
+
+// ─────────────────────────────────────────────────────────────
+// 공통 응답 규약 — 계획안 §35
+//
+// 최상위 message 는 §35 에 없는 과도기 필드다.
+// 레거시 프론트가 data.message 를 읽고 있어 지금 빼면 화면이 한꺼번에 깨진다.
+// 각 화면이 error.message 로 옮겨가면 제거한다 (TEL-26 완료 조건).
+
+export interface ApiSuccess<T> {
+  success: true;
+  data: T;
+  /** @deprecated 과도기 필드. §35 에는 없다 */
+  message?: string;
+}
+
+export interface ApiError {
+  success: false;
+  error: {
+    code: ErrorCode;
+    message: string;
+    // 이 오류 한 건을 서버 로그에서 찾기 위한 값. middleware/requestId 가 발급한다.
+    requestId: string;
+  };
+  /** @deprecated 과도기 필드. error.message 로 대체된다 */
+  message?: string;
+}
+
+// success 가 리터럴 타입이라 `if (res.success)` 로 좁혀진다.
+export type ApiResponse<T> = ApiSuccess<T> | ApiError;
+
+// ─────────────────────────────────────────────────────────────
+// V2 modules/auth 응답
+//
+// 아래 LoginResponse·RegisterResponse·Password*Response 와 이름이 겹치지 않게 둔다.
+// 그쪽은 레거시 라우트가 성공·실패 양쪽에 쓰고 있어(ApiResult 는 success: boolean)
+// §35 형태로 바꾸면 레거시가 컴파일되지 않는다.
+//
+// 레거시 라우트가 사라지면(TEL-21) 짧은 이름을 이쪽이 물려받는다.
+//
+// 토큰은 쿠키로 나가므로 본문 페이로드가 없다. data: null 은 "돌려줄 게 없다" 를
+// 명시한 것이다 — 필드를 생략하면 ApiSuccess<T> 의 data 필수 계약이 무너진다.
+export type AuthLoginResponse = ApiSuccess<null>;
+export type AuthRegisterResponse = ApiSuccess<null>;
+export type AuthPasswordChangeResponse = ApiSuccess<null>;
+export type AuthPasswordResetResponse = ApiSuccess<null>;
 
 // ─────────────────────────────────────────────────────────────
 // auth
@@ -114,7 +164,7 @@ export interface PhoneSendRequest {
   phone: string;
   purpose: PhoneVerificationPurpose;
 }
-export type PhoneSendResponse = ApiResult;
+export type PhoneSendResponse = ApiSuccess<null>; // V2 modules/phone
 
 // POST /api/phone/verify
 export interface PhoneVerifyRequest {
@@ -122,7 +172,9 @@ export interface PhoneVerifyRequest {
   purpose: PhoneVerificationPurpose;
   code: string;
 }
-export type PhoneVerifyResponse = ApiResult;
+// TEL-21 에서 ApiSuccess<{ challengeId: string }> 이 된다.
+// 인증한 사람과 재설정을 요청한 사람이 같은지 확인할 수단이 지금은 없다 (TEL-16 §7.1).
+export type PhoneVerifyResponse = ApiSuccess<null>;
 
 // ─────────────────────────────────────────────────────────────
 // POST /api/match/end (ChatPage: { roomId } / legacy: { word }) — 응답 미파싱

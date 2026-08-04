@@ -24,7 +24,7 @@ export async function findLoginCredential(username: string): Promise<LoginCreden
   // 확인하지 않으면 data 가 null 이 되어 "없는 사용자"로 둔갑한다.
   if (error) {
     console.error('❌ 자격증명 조회 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
   if (!data) return null;
 
@@ -149,7 +149,7 @@ export async function signup(params: SignupParams): Promise<SignupOutcome> {
       return { ok: false, reason: error.message as SignupFailure };
     }
     console.error('❌ 회원가입 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
 
   return { ok: true, actorId: data };
@@ -175,7 +175,7 @@ export async function findCredentialByActorId(actorId: string): Promise<ActorCre
 
   if (error) {
     console.error('❌ 자격증명 조회 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
   if (!data) return null;
 
@@ -207,7 +207,7 @@ export async function updatePassword(actorId: string, passwordHash: string): Pro
 
   if (error) {
     console.error('❌ 비밀번호 변경 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
 }
 
@@ -237,7 +237,7 @@ export async function resetPassword(username: string, passwordHash: string): Pro
       return { ok: false, reason: error.message as ResetFailure };
     }
     console.error('❌ 비밀번호 재설정 실패:', error.message);
-    throw new AppError(500, '서버 오류가 발생했습니다.');
+    throw new AppError(500, 'INTERNAL_ERROR', '서버 오류가 발생했습니다.');
   }
 
   return { ok: true };
