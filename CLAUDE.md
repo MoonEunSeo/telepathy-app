@@ -40,6 +40,10 @@ cd telepathy-front && npx oxlint src/...
 
 작업 전에 해당 영역 문서를 확인한다.
 
+> **기능을 건드리기 전에 [`.claude/issues/`](.claude/issues/README.md) 의 해당 파일을 먼저 읽는다.**
+> 리니어 이슈에서 뽑은 기능별 로직·결정·함정 요약본이다 (`auth` `users` `matching` `chat` `payment` `report` `content` `frontend` `common`).
+> 리니어에 쓸 때 이 파일에도 같이 쓴다. **파일과 리니어가 다르면 리니어가 맞다.**
+
 | 문서 | 내용 |
 |---|---|
 | [아키텍처](docs/conventions/architecture.md) | 전체 구성·디렉터리·**인증 구조**·**매칭 흐름**·디자인 토큰 |
