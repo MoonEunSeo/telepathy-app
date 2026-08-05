@@ -24,6 +24,10 @@ export type ErrorCode =
   | 'PHONE_TAKEN'
   | 'NICKNAME_GENERATION_FAILED'
   | 'PHONE_NOT_VERIFIED'
+  // ── 프로필 ──────────────────────────────────────────────
+  // 사용자가 고른 이름이 이미 쓰이는 경우.
+  // NICKNAME_GENERATION_FAILED(가입 시 서버가 지은 이름 충돌)와 의미가 다르다.
+  | 'NICKNAME_TAKEN'
   // ── 계정 복구 ───────────────────────────────────────────
   | 'RECOVERY_NOT_VERIFIED'
   // ── 탈퇴 ────────────────────────────────────────────────

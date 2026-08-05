@@ -176,6 +176,49 @@ from public.legacy_nickname_histories h
 join public.actors a on a.legacy_user_id = h.user_id
 where h.user_id is not null and h.nickname is not null;
 
+-- ─────────────────────────────────────────────────────────
+-- 6-b) 이력 불변식 복구 — TEL-29
+--
+-- 위 6) 은 레거시 이력을 그대로 베껴 온다. 그래서 레거시가 어긋나 있으면
+-- V2 도 똑같이 어긋난다. 실제로 어긋나 있다 —
+-- 레거시 nickname.routes.ts 가 이력 INSERT 실패를 삼켰기 때문이다
+-- ("절대 throw 하지 않음", 47행).
+--
+-- dev 실측(2026-08-04, 1,192명): 이력 없음 34 · 열린 이력 불일치 60.
+--
+-- 진실은 users.nickname 이다 (계획안 §10). 언제 바뀌었는지는 기록이 없다.
+-- 어긋난 열린 이력을 닫고 현재 닉네임으로 새로 연다 — 과거 이름이 보존되고
+-- change_reason = 'SYSTEM' 이 "복구된 행" 임을 표시한다.
+--
+-- 이 단계가 없으면 V2 마이그레이션의 부분 UNIQUE 인덱스는 통과하지만
+-- (깨진 건 중복이 아니라 누락·불일치다) 운영자가 이력을 못 읽는 상태가 그대로 온다.
+-- ─────────────────────────────────────────────────────────
+
+-- 열린 이력이 현재 닉네임과 다르면 닫는다. 과거 이름은 그 행에 남는다.
+update public.nickname_histories h
+   set ended_at = now()
+  from public.users u
+ where h.actor_id = u.actor_id
+   and h.ended_at is null
+   and h.nickname is distinct from u.nickname;
+
+-- 이력은 있는데 열린 것이 없는 계정 — 이관 시점부터 현재 닉네임을 연다.
+insert into public.nickname_histories (actor_id, nickname, started_at, change_reason)
+select u.actor_id, u.nickname, now(), 'SYSTEM'
+  from public.users u
+ where exists (select 1 from public.nickname_histories h
+                where h.actor_id = u.actor_id)
+   and not exists (select 1 from public.nickname_histories h
+                    where h.actor_id = u.actor_id and h.ended_at is null);
+
+-- 이력이 아예 없던 계정 — 가입 시각부터 연다.
+-- 한 번도 바꾸지 않았을 가능성이 높아 now() 보다 사실에 가깝다.
+insert into public.nickname_histories (actor_id, nickname, started_at, change_reason)
+select u.actor_id, u.nickname, u.created_at, 'SYSTEM'
+  from public.users u
+ where not exists (select 1 from public.nickname_histories h
+                    where h.actor_id = u.actor_id);
+
 commit;
 
 -- ─────────────────────────────────────────────────────────
@@ -196,6 +239,21 @@ commit;
 --
 -- 닉네임이 유일한가 (접미사 처리가 충돌을 남기지 않았는가)
 --   select count(*) - count(distinct nickname) as nickname_dupes from users;
+--
+-- 닉네임 이력 불변식 (6-b 이후. 셋 다 0 이어야 한다)
+--   select
+--     (select count(*) from users u
+--        where not exists (select 1 from nickname_histories h
+--                           where h.actor_id = u.actor_id))                as 이력_없음,
+--     (select count(*) from users u
+--        where not exists (select 1 from nickname_histories h
+--                           where h.actor_id = u.actor_id and h.ended_at is null)) as 열린이력_없음,
+--     (select count(*) from users u
+--        join nickname_histories h on h.actor_id = u.actor_id and h.ended_at is null
+--       where h.nickname is distinct from u.nickname)                      as 불일치;
+--
+-- 복구된 행 수 (dev 기준 94. 운영은 다를 수 있으나 0 이면 6-b 가 안 돈 것이다)
+--   select count(*) from nickname_histories where change_reason = 'SYSTEM';
 --
 -- 접미사가 붙은 계정 수 (예상 57 + null 1 = 58)
 --   select count(*) from users where nickname ~ '_[0-9a-f]{6}$' or nickname like '사용자%';

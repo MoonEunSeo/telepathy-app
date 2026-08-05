@@ -2180,6 +2180,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      change_nickname: {
+        Args: { p_actor_id: string; p_nickname: string }
+        Returns: undefined
+      }
       consume_item: {
         Args: { p_actor_id: string; p_item_type: string; p_quantity?: number }
         Returns: Json

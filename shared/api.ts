@@ -71,6 +71,19 @@ export type AuthPasswordResetResponse = ApiSuccess<null>;
 export type AuthWithdrawResponse = ApiSuccess<null>;
 
 // ─────────────────────────────────────────────────────────────
+// V2 modules/users 응답
+//
+// ! ProfileResponse(아래 레거시)와 모양이 다르다. 레거시는 userId·username·nickname 을
+//   최상위에 실었고 V2 는 data 안에 넣는다. /api/nickname 마운트를 교체하는 시점에
+//   프론트 4곳(useProfile · MainPage · Verify_mvp · WordSetPage)을 함께 고쳐야 한다.
+export type UserNicknameResponse = ApiSuccess<null>;
+export type UserProfileResponse = ApiSuccess<{
+  actorId: string;
+  username: string;
+  nickname: string;
+}>;
+
+// ─────────────────────────────────────────────────────────────
 // auth
 // GET /api/auth/check (App.jsx: data.loggedIn)
 export interface AuthCheckResponse {
