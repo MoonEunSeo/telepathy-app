@@ -29,6 +29,7 @@ ID는 측정 시나리오(S1~S9)와 구분하기 위해 **O(Optimization)** 를 
 | [O13](#o13-프로덕션에서-tsx로-ts-직접-실행) | prod에서 `tsx` 직접 실행 | 배포 | 중간 | 미확인 | ⛔ 미착수 |
 | [O11](#o11-수평-확장을-막는-4개-지점) | 수평 확장 차단 4개 지점 | 확장성 | 높음 | — | ⛔ 미착수 |
 | [O15](#o15-할로윈-테마-본문-대비-미달) | 할로윈 테마 본문 대비 미달 | 접근성 | 낮음 | 중간 | ⛔ 미착수 |
+| [O16](#o16-스플래시-고정-15초가-speed-index-를-끈다) | 스플래시 고정 1.5초 → SI +2,191 ms | 프론트 | 낮음 | **큼** | ⛔ 미착수 |
 
 > **O8~O10은 성능이 아니라 보안이다.** 이 문서에는 발견 기록만 두고,
 > 실제 처리는 Linear 이슈로 분리했다 — **TEL-12 · TEL-13 · TEL-14** (2026-07-28 등록).
@@ -532,6 +533,73 @@ document.body.className = 'halloween-mode';
 이후 Lighthouse 접근성 감사 또는 DevTools 의 대비 검사로 확인한다. 목표는 본문 4.5 · 큰 글씨(18 px 이상 또는 14 px bold) 3.0 이다.
 
 배경이 그라데이션이라 **화면 위치마다 대비가 다르다.** 한 지점만 재면 안 되고, 텍스트가 놓이는 영역의 평균 밝기로 판정한다.
+
+---
+
+## O16. 스플래시 고정 1.5초가 Speed Index 를 끈다
+
+**위치** [`src/pages/SplashScreen.tsx`](../../telepathy-front/src/pages/SplashScreen.tsx)
+
+```tsx
+// 최소 1.5초 노출 후 페이지 이동
+const timer = setTimeout(async () => {
+  navigate('/main', { replace: true });
+}, 1500);
+```
+
+**현상**
+
+프로덕션 Lighthouse 5회에서 FCP 는 2,245 ms 인데 Speed Index 가 4,436 ms 다. **차이 2,191 ms.**
+
+필름스트립이 원인을 보여준다.
+
+```
+  583 ms   빈 화면
+ 1,748 ms  빈 화면
+ 2,331 ms  빈 화면
+ 2,913 ms  콘텐츠 (8,131 B)
+ 3,496 ms  동일
+ 4,078 ms  동일
+ 4,661 ms  화면이 한 번 더 바뀜 (8,048 B)   ← 스플래시 → /main 전환
+```
+
+Speed Index 는 화면이 안정될 때까지의 시각적 진행을 재므로 이 전환이 그대로 감점된다.
+**LCP 는 2,245 ms 로 이미 "좋음" 범위인데 SI 가 점수를 93 에 묶고 있다.** 남은 진단은
+`unused-javascript` 150 ms, `server-response-time` 56 ms 로 작다.
+
+**근거**
+
+[S13](s13-self-host-fonts/README.md) 에서 폰트 self-host 후 프로덕션을 재다가 발견했다.
+**폰트와 무관한 별개 원인이다** — 로컬 측정에서는 SI == FCP 였고, 프로덕션에서만 전환이
+트레이스 안에 잡혔다.
+
+v3 구조에서는 스플래시가 라우트라 대기 시간이 순수 추가다. `App.tsx:129` 의
+`if (!sessionReady) return null` 때문에 **세션 준비가 끝난 다음에 스플래시가 뜬다.**
+
+**개선안**
+
+1. **데이터 준비까지만 노출한다** — 최소 300 ms, 필요한 API 응답이 오면 종료, 최대 1.5초.
+   빠른 회선에서 1.2초를 절약하고 느린 회선에서는 로딩 상태를 계속 가려준다
+2. **완전 제거** — 느린 회선에서 빈 화면·깜빡임이 그대로 노출되므로 스켈레톤이 함께 필요하다
+3. 그대로 두고 SI 를 감수한다
+
+1번을 권한다. 브랜드 노출이 서비스 컨셉상 갖는 의미는 성능 판단 밖이지만,
+**성능 관점에서 문제인 것은 "스플래시"가 아니라 "고정값"이다.**
+
+**측정 방법**
+
+```bash
+CHROME_PATH="…/chrome.exe" npx lighthouse@12 https://telepathy.my/ \
+  --only-categories=performance --output=json --output-path=./lh.json \
+  --chrome-flags="--headless=new --no-sandbox --disable-gpu" --quiet
+```
+
+`screenshot-thumbnails` 감사의 프레임 크기가 언제 바뀌는지 보고, SI − FCP 를 Before/After 로
+비교한다. 5회 중앙값을 쓴다 (프로덕션 편차는 SI 224 ms 로 작다).
+
+> ⚠️ `feat/tel-31-seo-route-metadata` 가 스플래시를 라우트에서 오버레이로 재작성하고 있다
+> (`{showSplash && <SplashScreen />}`, `/` = MainPage). **그 브랜치가 머지된 뒤에 손댄다.**
+> 그 구조에서는 MainPage 가 뒤에서 이미 마운트돼 있어 대기 시간의 성격도 달라진다.
 
 ---
 
