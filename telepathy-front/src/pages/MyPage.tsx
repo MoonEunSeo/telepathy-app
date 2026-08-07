@@ -7,7 +7,7 @@ import { useProfile } from '../hooks/useProfile';
 import { useWordHistory } from '../hooks/useWordHistory';
 import { useMegaphoneCount } from '../hooks/useMegaphoneCount';
 import { authCheckKey } from '../hooks/useAuthCheck';
-import profileImage from '../assets/profile_image.png';
+import profileImage from '../assets/profile_image.webp';
 import Modal from '../components/ui/Modal';
 import type { Id, WithdrawResponse } from '../types';
 

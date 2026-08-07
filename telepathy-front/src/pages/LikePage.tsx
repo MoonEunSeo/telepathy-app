@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import axios from 'axios';
-import tossQr from '../assets/toss_qr.jpg';
+// ?no-inline — 4 kB 미만이면 Vite 가 base64 로 번들에 넣는데, 이 QR 은 두 곳에서 쓰여
+// 인라인되면 메인 번들에 3.8 kB 가 중복으로 들어간다. 후원 화면에서만 필요하므로 별도 파일로 둔다.
+import tossQr from '../assets/toss_qr.png?no-inline';
 
 import { useProfile } from '../hooks/useProfile';
 import type {
