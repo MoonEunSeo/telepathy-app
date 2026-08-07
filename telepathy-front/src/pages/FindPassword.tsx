@@ -20,7 +20,7 @@ interface ResetForm {
 const subtitle =
   "[font-family:'Gowun_Batang'] text-[18px] text-center text-[var(--auth-lead-color)]";
 const title =
-  "[font-family:'Judson',serif] text-[34px] min-[1025px]:text-[38px] font-bold mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]";
+  "[font-family:'Judson','Gowun_Dodum',serif] text-[34px] min-[1025px]:text-[38px] font-bold mb-6 text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)]";
 
 export default function FindPassword() {
   const [step, setStep] = useState<number>(1); // 1: 아이디 입력, 2: 실패, 3: 재설정, 4: 완료

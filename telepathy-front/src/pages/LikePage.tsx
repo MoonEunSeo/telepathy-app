@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import axios from 'axios';
-import tossQr from '../assets/toss_qr.jpg';
+// ?no-inline — 4 kB 미만이면 Vite 가 base64 로 번들에 넣는데, 이 QR 은 두 곳에서 쓰여
+// 인라인되면 메인 번들에 3.8 kB 가 중복으로 들어간다. 후원 화면에서만 필요하므로 별도 파일로 둔다.
+import tossQr from '../assets/toss_qr.png?no-inline';
 
 import { useProfile } from '../hooks/useProfile';
 import type {
@@ -37,7 +39,7 @@ const modalCancel =
   'bg-[#f1efec] text-[var(--color-text-warm)] py-2.5 px-[22px] border-none rounded-full text-[15px] font-semibold cursor-pointer [transition:all_0.25s_ease] m-[10px_6px_0] hover:bg-[#e4e0db]';
 // 구 .deposit-title / .deposit-text / .deposit-container / .qr-card / .modal-overlay(스코프)
 const depositTitle =
-  "[font-family:'Judson',serif] text-[20px] text-[var(--color-text-warm)] font-semibold mb-2 relative text-center";
+  "[font-family:'Judson','Gowun_Dodum',serif] text-[20px] text-[var(--color-text-warm)] font-semibold mb-2 relative text-center";
 const depositText = 'text-[16px] text-[#5b5146] leading-[1.6] text-center';
 const depositContainer =
   'flex flex-col justify-center items-center text-center min-h-[calc(100vh_-_60px)] px-5 [transform:translateY(-5%)] bg-[#fcf9f4]';
@@ -226,7 +228,7 @@ const LikesPage = () => {
       <div className={likeContainer}>
         {/* 구 .like-title (그라디언트 텍스트) + 스태거 delay 0.1s */}
         <h1
-          className={`mb-7 [background-image:var(--like-title-grad)] [background-clip:text] [font-family:'Judson',serif] text-[64px] tracking-[0.5px] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] max-[480px]:text-[44px] ${animUp} [animation-delay:0.1s]`}
+          className={`mb-7 [background-image:var(--like-title-grad)] [background-clip:text] [font-family:'Judson','Gowun_Dodum',serif] text-[64px] tracking-[0.5px] [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] max-[480px]:text-[44px] ${animUp} [animation-delay:0.1s]`}
         >
           Telepathy
         </h1>

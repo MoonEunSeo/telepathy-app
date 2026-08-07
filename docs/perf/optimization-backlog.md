@@ -1,12 +1,12 @@
 # 최적화 백로그
 
 > 작성일: **2026-07-27** / 기준 커밋: `bb35c3b`
-> [S1~S7](README.md)이 **측정하고 개선한 기록**이라면, 이 문서는 **코드에서 발견했으나 아직 착수하지 않은 것**의 목록이다.
+> [S1~S9](README.md)이 **측정하고 개선한 기록**이라면, 이 문서는 **코드에서 발견했으나 아직 착수하지 않은 것**의 목록이다.
 
 각 항목은 다음을 갖춘다 — **위치 · 현상 · 근거 · 개선안 · 측정 방법.**
 근거 없는 항목은 넣지 않는다. "그럴 것 같다"는 개선 근거가 되지 못한다.
 
-ID는 측정 시나리오(S1~S7)와 구분하기 위해 **O(Optimization)** 를 쓴다.
+ID는 측정 시나리오(S1~S9)와 구분하기 위해 **O(Optimization)** 를 쓴다.
 
 ---
 
@@ -28,6 +28,7 @@ ID는 측정 시나리오(S1~S7)와 구분하기 위해 **O(Optimization)** 를 
 | [O14](#o14-큐와-채팅-세션의-수명-불일치) | 큐·채팅 세션 수명 불일치 | 정합성 | 중간 | 중간 | ⛔ 미착수 |
 | [O13](#o13-프로덕션에서-tsx로-ts-직접-실행) | prod에서 `tsx` 직접 실행 | 배포 | 중간 | 미확인 | ⛔ 미착수 |
 | [O11](#o11-수평-확장을-막는-4개-지점) | 수평 확장 차단 4개 지점 | 확장성 | 높음 | — | ⛔ 미착수 |
+| [O15](#o15-할로윈-테마-본문-대비-미달) | 할로윈 테마 본문 대비 미달 | 접근성 | 낮음 | 중간 | ⛔ 미착수 |
 
 > **O8~O10은 성능이 아니라 보안이다.** 이 문서에는 발견 기록만 두고,
 > 실제 처리는 Linear 이슈로 분리했다 — **TEL-12 · TEL-13 · TEL-14** (2026-07-28 등록).
@@ -474,9 +475,69 @@ await supabase.from('telepathy_sessions_queue')
 
 ---
 
+## O15. 할로윈 테마 본문 대비 미달
+
+**위치** [`src/themes/themes/halloween.css:91`](../../telepathy-front/src/themes/themes/halloween.css)
+
+```css
+body.halloween-mode {
+  background: url('../../assets/Halloween.webp') no-repeat center center fixed;
+  background-size: cover !important;
+  color: #fff !important;
+}
+```
+
+**현상**
+
+배경이 노을 일러스트(주황~보라 그라데이션)인데, 그 위에 직접 놓인 텍스트가 배경과 비슷한 밝기다. `color: #fff !important` 는 상속되는 요소에만 적용되고, **자체 색이 지정된 요소는 원래 색을 유지**한다.
+
+MainPage 390×844 뷰포트에서 잰 값이다.
+
+| 텍스트 | 글자색 | 배경 평균색 | 대비비 | WCAG AA |
+|---|---|---|---:|---|
+| `Telepathy` 제목 (34 px) | `rgb(208,93,75)` | `rgb(178,81,81)` | **1.28** | ❌ (큰 글씨 기준 3.0 도 미달) |
+| 안내 문구 (15 px) | `rgb(255,230,179)` | `rgb(237,154,75)` | **1.85** | ❌ |
+| 집중운영시간 (9 px) | `rgb(125,106,88)` | `rgb(172,83,71)` | **1.00** | ❌ 사실상 보이지 않는다 |
+| ⓒ 푸터 (12 px) | `rgb(85,85,85)` | `rgb(244,159,78)` | 3.52 | ❌ (본문 기준 4.5 미달) |
+
+집중운영시간 안내는 대비비 **1.00** 이다. 배경과 밝기가 같아 글자를 읽을 수 없다.
+
+**근거**
+
+[S8](s8-image-assets/README.md) 에서 배경을 SVG(내부 JPEG) → WebP 로 교체하며 발견했다. **이번 교체 때문이 아니다** — 교체 전 배경으로 같은 계산을 돌리면 1.28 / 1.85 / 1.01 / 3.51 로 차이가 0.02 이하다. 처음부터 있던 문제다.
+
+테마가 10월 23~31일에만 켜지므로 평소에는 드러나지 않는다.
+
+**개선안**
+
+1. **텍스트 뒤에 반투명 레이어를 깐다** — 배경 이미지를 유지하면서 대비를 확보하는 가장 단순한 방법이다. `body.halloween-mode` 에 `linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45))` 를 배경 이미지 앞에 겹친다
+2. **테마 전용 텍스트 토큰을 정의한다** — `!important` 로 흰색을 덮어쓰는 대신 `--color-text-*` 계열 토큰을 할로윈 값으로 재정의한다. [tokens.css](../../telepathy-front/src/themes) 브리지가 이미 있으므로 유틸리티에도 자동 반영된다
+3. 9 px 안내 문구처럼 **배경 위에 얹을 이유가 없는 텍스트**는 불투명 칩 안으로 옮긴다
+
+2번이 근본적이다. 지금은 테마 CSS 가 색을 개별 선택자로 덮고 있어 새 화면을 만들 때마다 누락이 생긴다.
+
+**측정 방법**
+
+테마를 강제로 켜고 대비비를 다시 잰다. 오늘 날짜가 10/23~31 이 아니면 자동으로 켜지지 않는다.
+
+```js
+// devtools 콘솔
+const l = document.createElement('link');
+l.id = 'theme-style'; l.rel = 'stylesheet';
+l.href = '/assets/halloween-<hash>.css';       // dist/assets 에서 확인
+document.head.insertBefore(l, document.head.firstChild);
+document.body.className = 'halloween-mode';
+```
+
+이후 Lighthouse 접근성 감사 또는 DevTools 의 대비 검사로 확인한다. 목표는 본문 4.5 · 큰 글씨(18 px 이상 또는 14 px bold) 3.0 이다.
+
+배경이 그라데이션이라 **화면 위치마다 대비가 다르다.** 한 지점만 재면 안 되고, 텍스트가 놓이는 영역의 평균 밝기로 판정한다.
+
+---
+
 ## 관련 문서
 
-- [성능 측정](README.md) — 측정 원칙, S1~S7 기록
+- [성능 측정](README.md) — 측정 원칙, S1~S9 기록
 - [기술 도입 검토 및 기각 기록](../project/tech-adoption-review.md) — Kafka·Spark·ES·GraphQL
 - [알려진 이슈](../project/known-issues.md) — 이월 과제
 - [마이그레이션 계획 요약](../project/migration-plan.md) — TEL-6

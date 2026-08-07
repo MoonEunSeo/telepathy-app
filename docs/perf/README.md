@@ -17,6 +17,8 @@
 | [S2](s2-form-rerender/README.md) | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | ✅ **적용 완료 → 글자당 1.0회 → 0회** |
 | [S3](s3-context-rerender/README.md) | Context 리렌더 전파 | Profiler | Zustand (도입 여부 판단) | ✅ 측정 완료 → **도입 안 함** |
 | [S7](s7-compression/README.md) | 응답 압축 미적용 | Network / curl | gzip·brotli 압축 | ✅ **적용 완료 → −70.4%** |
+| [S8](s8-image-assets/README.md) | 이미지 자산 5건 (압축이 듣지 않음) | curl / canvas | 포맷·해상도 재인코딩 | ✅ **적용 완료 → 1.45 MB → 142 kB (−90.2%)**<br>파비콘 전송 485 kB → 666 B |
+| [S9](s9-fonts/README.md) | 화면별 웹폰트 전송량 | DOM 순회 + unicode-range 계산 | 서브셋 수 줄이기 | ✅ 측정 완료 → **첫 화면 117.9 kB**<br>앞선 추정 617 kB 는 5.2배 과대 계상이었다 |
 | [S5](s5-lighthouse/README.md) | 페이지 로드 종합 | Lighthouse (3회 중앙값) | 전체 | ✅ **측정 완료 → 점수 76, TBT 0·CLS 0** |
 
 > S3(Zustand)은 **측정 결과 유의미한 리렌더 낭비가 없으면 도입하지 않는다.**
@@ -26,7 +28,7 @@
 ### 아직 착수하지 않은 것
 
 위 표가 **측정하고 개선한 기록**이라면, 코드에서 발견했으나 아직 손대지 않은 항목은
-[최적화 백로그](optimization-backlog.md)(O1~O13)에 있다.
+[최적화 백로그](optimization-backlog.md)(O1~O15)에 있다.
 기술 도입을 검토했다가 기각한 근거는 [기술 도입 검토](../project/tech-adoption-review.md)에 있다.
 
 ---
@@ -81,6 +83,15 @@
 - **S6** 백그라운드 폴링 낭비 → 브라우저가 이미 차단 중이라 개선 여지 없음
 - **S3** Context 연쇄 리렌더 → 미발생. 이를 근거로 **Zustand 도입하지 않기로 결정**
 
+### 틀린 수치는 정정하고 원인을 남긴다
+
+추정으로 적은 값이 실측과 어긋나면 **왜 틀렸는지까지** 기록한다. 같은 방식으로 다시 계산하지 않기 위해서다.
+
+- **S9** 첫 화면 폰트 617 kB → 실측 117.9 kB. 소스 코드의 문자를 세고 `font-family` 스택
+  순서를 무시한 계산이었다. Inter 제거 23 kB 도 같은 이유로 실제는 0 kB 였다 (커밋 `efbc6b0`)
+- **S9** 측정 방법 자체도 두 번 실패했다 — `document.fonts` 와 리소스 타이밍 모두 브라우저
+  폰트 캐시에 오염돼 측정 순서대로 값이 증가했다. 실패한 방법과 그 증상을 문서에 남겼다
+
 ---
 
 ## 첨부
@@ -100,4 +111,6 @@ Before 스크린샷은 각 시나리오 폴더 안에 있다.
 | `s3-context-rerender/before-word-click-1~2.png` | 단어 클릭 시 리렌더 (원인: MainPage) |
 | `s3-context-rerender/before-idle-10s.png` | 무조작 10초에 commit 26회 |
 
-> S7 은 스크린샷 대신 `curl` 출력값을 문서에 직접 기록했다 — 전송 바이트는 헤더로 검증 가능하기 때문이다.
+> S7·S8 은 스크린샷 대신 `curl` 출력값을 문서에 직접 기록했다 — 전송 바이트는 헤더로 검증 가능하기 때문이다.
+> S8 의 렌더 검증도 스크린샷을 쓰지 않았다. 브라우저 canvas 로 픽셀을 디코딩해
+> 크기·색·알파를 값으로 남겼고, 결제 QR 은 `jsQR` 로 페이로드까지 대조했다.

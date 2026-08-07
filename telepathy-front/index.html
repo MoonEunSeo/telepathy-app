@@ -24,10 +24,10 @@
     <meta name="twitter:image" content="https://telepathy.my/og-image.png" />
 
     <!-- 아이콘 설정 -->
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <!-- favicon.svg 는 벡터이며 다크 모드 색 전환을 파일 안에서 처리한다.
+         SVG 파비콘을 지원하지 않는 Safari·구형 브라우저는 favicon.ico 로 폴백한다. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="icon" type="image/x-icon" href="/favicon-dark.ico" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
 
     <!-- 애플 아이콘 -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -43,11 +43,11 @@
     <!-- 폰트 설정 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Inter&family=Judson:ital,wght@0,400;0,700;1,400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Judson:ital,wght@0,400;0,700;1,400&display=swap">
 
     <style>
       html, body {
-        font-family: 'Gowun Dodum', 'Gowun Batang', 'Inter', 'Judson', sans-serif;
+        font-family: 'Gowun Dodum', 'Gowun Batang', 'Judson', sans-serif;
       }
     </style>
   </head>

@@ -27,7 +27,7 @@
   font-family: 'Gowun Dodum', sans-serif;
   opacity: 0;
   animation: fadeInOut 2.3s ease-in-out forwards;
-  isolation: isolate !important; /* ✅ Halloween.svg 영향 차단 */
+  isolation: isolate !important; /* ✅ Halloween.webp 배경 영향 차단 */
 }
 
 /* ✨ fade in → 유지 → fade out */
@@ -89,7 +89,7 @@
 
 /* 🧙‍♀️ 전체 테마 배경 */
 body.halloween-mode {
-  background: url('../../assets/Halloween.svg') no-repeat center center fixed;
+  background: url('../../assets/Halloween.webp') no-repeat center center fixed;
   background-size: cover !important;
   color: #fff !important;
 }

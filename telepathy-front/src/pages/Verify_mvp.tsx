@@ -138,7 +138,7 @@ export default function Verify_mvp() {
           본인인증이 필요해요
         </p>
         {/* 구 .login-title — 세리프 */}
-        <h2 className="mt-[10px] mb-6 [font-family:'Judson',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
+        <h2 className="mt-[10px] mb-6 [font-family:'Judson','Gowun_Dodum',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
           본인인증
         </h2>
 

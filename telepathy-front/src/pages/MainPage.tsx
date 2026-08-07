@@ -512,7 +512,7 @@ export default function MainPage() {
             }
           >
             <div className="absolute inset-[9px] flex items-center justify-center rounded-full bg-[var(--color-bg)]">
-              <span className="[font-family:'Judson',serif] text-[36px] leading-none font-bold text-[var(--word-timer-num)] min-[1025px]:text-[40px]">
+              <span className="[font-family:'Judson','Gowun_Dodum',serif] text-[36px] leading-none font-bold text-[var(--word-timer-num)] min-[1025px]:text-[40px]">
                 {remaining}
               </span>
               <span className="ml-0.5 text-[14px] text-[var(--word-timer-num)]">초</span>
@@ -520,7 +520,7 @@ export default function MainPage() {
           </div>
         </div>
         {/* 구 .title */}
-        <h1 className="mt-4 mb-2.5 [font-family:'Judson',serif] text-[clamp(34px,6vw,42px)] font-bold text-[var(--main-title-color)] min-[1025px]:text-[clamp(42px,3vw,54px)]">
+        <h1 className="mt-4 mb-2.5 [font-family:'Judson','Gowun_Dodum',serif] text-[clamp(34px,6vw,42px)] font-bold text-[var(--main-title-color)] min-[1025px]:text-[clamp(42px,3vw,54px)]">
           Telepathy
         </h1>
         {/* 구 .subtitle */}
@@ -556,7 +556,7 @@ export default function MainPage() {
           <div className="fixed top-0 left-0 z-[1000] flex h-full w-full items-center justify-center [background-color:var(--overlay)]">
             {/* 구 .feedback-content */}
             <div className="w-[300px] animate-[main-fade-in_0.3s_ease-out] rounded-[16px] px-5 py-6 text-center [font-family:'Gowun_Dodum',sans-serif] [box-shadow:var(--feedback-shadow)] [background:var(--feedback-bg)] [border:1px_solid_var(--feedback-border)]">
-              <h2 className="mb-5 [font-family:'Judson',serif] text-[2.8rem] font-bold text-[var(--feedback-title-color)]">
+              <h2 className="mb-5 [font-family:'Judson','Gowun_Dodum',serif] text-[2.8rem] font-bold text-[var(--feedback-title-color)]">
                 Telepathy
               </h2>
               <p className="mb-[18px] text-base text-[var(--feedback-desc-color)]">

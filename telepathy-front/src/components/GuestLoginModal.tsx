@@ -9,7 +9,7 @@ export default function GuestLoginModal({ onLogin, onClose }: GuestLoginModalPro
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center [backdrop-filter:blur(6px)] [background:var(--modal-overlay-bg)]">
       <div className="w-[300px] animate-[chat-fade-in-up-modal_0.3s_ease-out] rounded-[20px] px-8 py-7 text-center [font-family:'Gowun_Dodum',sans-serif] [background:var(--color-surface)] [box-shadow:var(--shadow-md)]">
-        <h2 className="mb-1 [font-family:'Judson',serif] text-[1.7rem] font-bold text-[var(--color-text)]">
+        <h2 className="mb-1 [font-family:'Judson','Gowun_Dodum',serif] text-[1.7rem] font-bold text-[var(--color-text)]">
           Telepathy
         </h2>
         <p className="mt-3 mb-6 text-[0.95rem] leading-[1.6] text-[var(--color-text-secondary)]">
