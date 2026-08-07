@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 
 import { requestId } from './src/middleware/requestId';
+import { renderIndexHtml } from './src/utils/indexHtml';
+import { ROUTE_META, normalizePath } from '@shared/seo';
 
 // ================================
 // 📦 라우트 모듈 등록
@@ -52,7 +54,11 @@ app.use(
         callback(null, true);
       } else {
         console.warn(`🚫 CORS 차단됨: ${origin}`);
-        callback(new Error('CORS 차단됨'));
+        // 에러를 던지지 않는다 — 전역 에러 핸들러가 없어 500 HTML 이 나가는데,
+        // dist/index.html 이 에셋을 crossorigin 으로 불러 동일 출처에서도 Origin 이 붙는 탓에
+        // 허용 목록에 없는 주소로 띄우면 CSS·JS 가 통째로 500 이 된다.
+        // false 를 주면 CORS 헤더만 빼고 요청은 정상 처리된다 — 크로스 오리진 차단은 브라우저 몫이다.
+        callback(null, false);
       }
     },
     credentials: true, // ✅ 쿠키 허용 (Access-Control-Allow-Credentials)
@@ -101,13 +107,45 @@ app.use(express.static(distPath));
 // ✅ assets 폴더 정적 서빙
 app.use('/assets', express.static(path.join(distPath, 'assets')));
 
-// ✅ sitemap.xml, robots.txt 등은 index.html로 리디렉션되지 않게 예외 처리
-app.use('/sitemap.xml', express.static(path.join(__dirname, '../telepathy-front/public')));
-app.use('/robots.txt', express.static(path.join(__dirname, '../telepathy-front/public')));
+// ================================
+// 📄 SPA 폴백
+// ================================
 
-// ✅ SPA 라우팅 처리 (404나 미스매치 시 index.html 반환)
+// 서버가 클라이언트 라우트를 아는 이유 — React 가 실행되기 전에 HTTP 상태 코드가 먼저 나간다.
+// 모르면 존재하지 않는 주소에도 200 을 돌려주게 되고,
+// 검색엔진은 그것을 정상 페이지로 색인한다 (소프트 404).
+//
+// 목록은 shared/seo.ts 의 ROUTE_META 키다 — 경로별 메타와 같은 곳에서 관리한다.
+// ⚠️ telepathy-front/src/App.tsx 의 <Route path> 와 짝을 이룬다. 한쪽만 고치면 어긋난다.
+const indexPath = path.join(distPath, 'index.html');
+
+// /main 은 루트로 통합됐다. 이미 공유·색인된 주소가 있어 301 로 넘긴다.
+app.get(/^\/main\/?$/, (_req: Request, res: Response) => {
+  res.redirect(301, '/');
+});
+
 app.use((req: Request, res: Response) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+  // API 미등록 경로는 HTML 이 아니라 JSON 으로 답한다.
+  // 여기까지 왔다는 건 위의 어떤 라우터도 받지 않았다는 뜻이다.
+  if (req.path.startsWith('/api/')) {
+    res.status(404).json({
+      success: false,
+      error: {
+        code: 'NOT_FOUND',
+        message: '존재하지 않는 경로입니다.',
+        requestId: req.requestId ?? '',
+      },
+      message: '존재하지 않는 경로입니다.',
+    });
+    return;
+  }
+
+  // 경로를 아는지 여부가 곧 상태 코드다. 모르는 경로에 200 을 주면 소프트 404 가 된다.
+  const known = normalizePath(req.path) in ROUTE_META;
+  res
+    .status(known ? 200 : 404)
+    .type('html')
+    .send(renderIndexHtml(indexPath, req.path));
 });
 
 export default app;

@@ -4,7 +4,7 @@ import type { ChangeEvent } from 'react';
 interface MegaphoneInputModalProps {
   onClose: () => void;
   hasMegaphone: boolean;
-  // 메시지 문자열 또는 SKU 문자열("megaphone_1" 등)을 전달
+  // 메시지 문자열을 전달한다. PortOne 제거 후 구매 SKU 를 보내는 경로는 없다.
   onSend: (value: string) => void;
 }
 

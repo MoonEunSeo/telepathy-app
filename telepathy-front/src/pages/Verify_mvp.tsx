@@ -117,7 +117,7 @@ export default function Verify_mvp() {
           console.error('닉네임 확인 실패:', err);
         }
 
-        navigate('/main');
+        navigate('/');
       } else {
         showError(registerData.message || '회원가입에 실패했습니다.');
       }

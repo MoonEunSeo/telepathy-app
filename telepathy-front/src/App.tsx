@@ -1,7 +1,8 @@
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { useAuthCheck } from './hooks/useAuthCheck';
+import { useRouteTitle } from './hooks/useRouteTitle';
 
 // ✅ 페이지 컴포넌트
 import LoginPage from './pages/LoginPage';
@@ -10,6 +11,7 @@ import Verify_mvp from './pages/Verify_mvp';
 import FindPassword from './pages/FindPassword';
 import ChangePassword from './pages/ChangePassword';
 import SplashScreen from './pages/SplashScreen';
+import NotFound from './pages/NotFound';
 
 import MainPage from './pages/MainPage';
 import MyPage from './pages/MyPage';
@@ -113,7 +115,7 @@ function AppRoutes() {
     if (!auth) return; // 인증 조회 완료 전엔 판단 보류
     if (auth.loggedIn && auth.role !== 'guest') {
       if (location.pathname === '/login' || location.pathname === '/register') {
-        navigate('/main');
+        navigate('/');
       }
     } else {
       const protectedRoutes = ['/mypage', '/mywords', '/likes'];
@@ -126,27 +128,41 @@ function AppRoutes() {
   // ✅ 날짜 기반 테마 적용
   useSeasonalTheme();
 
+  // ✅ 라우트별 탭 제목
+  useRouteTitle();
+
+  // ✅ 진입 스플래시 — 첫 진입이 루트일 때만 덮는다.
+  // 라우트 전환으로 다시 루트에 와도 뜨지 않는다 — 초기값을 마운트 시점에 한 번만 읽는다.
+  const [showSplash, setShowSplash] = useState(() => window.location.pathname === '/');
+
+  useEffect(() => {
+    if (!showSplash) return;
+    const timer = setTimeout(() => setShowSplash(false), 1500);
+    return () => clearTimeout(timer);
+  }, [showSplash]);
+
   if (!sessionReady) return null; // 세션 준비 전엔 렌더 보류
 
   return (
     <>
       <Routes>
-        {/* ✅ 진입 스플래시 */}
-        <Route path="/" element={<SplashScreen />} />
-
         {/* ✅ 인증 관련 */}
         <Route path="/verify-mvp" element={<Verify_mvp />} />
 
         {/* ✅ 네비게이션 없는 페이지 */}
         <Route path="/chatpage" element={<ChatPage />} />
 
+        {/* ✅ 구 메인 주소 — 서버가 301 로 넘기지만,
+            SPA 내부 이동은 서버를 거치지 않아 안전망을 둔다 */}
+        <Route path="/main" element={<Navigate to="/" replace />} />
+
         {/* ✅ 네비게이션 있는 페이지 */}
         <Route element={<BottomLayout />}>
+          <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/findpassword" element={<FindPassword />} />
           <Route path="/changepassword" element={<ChangePassword />} />
-          <Route path="/main" element={<MainPage />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mywords" element={<MyWords />} />
           <Route path="/likes" element={<LikePage />} />
@@ -161,7 +177,12 @@ function AppRoutes() {
         <Route path="/terms/youth-protection" element={<YouthPolicy />} />
         <Route path="/terms/improve-consent" element={<ImproveConsent />} />
         <Route path="/terms/notification-consent" element={<NotificationConsent />} />
+
+        {/* ✅ 그 밖의 모든 주소 — 서버가 404 상태로 셸을 보낸다 (server/app.ts) */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
+
+      {showSplash && <SplashScreen />}
 
       <ToastContainer position="top-center" autoClose={2000} />
     </>

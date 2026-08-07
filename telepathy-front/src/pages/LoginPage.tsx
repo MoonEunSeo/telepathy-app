@@ -45,7 +45,7 @@ export default function LoginPage() {
       if (data.success) {
         // 로그인으로 인증 상태 변경 → 캐시 무효화 후 이동
         queryClient.invalidateQueries({ queryKey: authCheckKey });
-        navigate('/main');
+        navigate('/');
       } else {
         // 어느 필드 잘못인지 서버가 특정해주지 않으므로 폼 전체 (root) 에러
         setError('root', { message: data.message || '로그인에 실패했습니다.' });

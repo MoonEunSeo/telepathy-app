@@ -19,7 +19,7 @@ export default function BottomLayout() {
   const location = useLocation();
 
   const navItems: NavItem[] = [
-    { icon: <Home />, path: '/main', label: '홈' },
+    { icon: <Home />, path: '/', label: '홈' },
     { icon: <Heart />, path: '/likes', label: '좋아요' },
     {
       icon: <MessageSquareHeart />,
