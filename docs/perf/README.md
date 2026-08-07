@@ -17,7 +17,7 @@
 | [S2](s2-form-rerender/README.md) | 폼 타이핑당 리렌더 | React DevTools Profiler | React Hook Form | ✅ **적용 완료 → 글자당 1.0회 → 0회** |
 | [S3](s3-context-rerender/README.md) | Context 리렌더 전파 | Profiler | Zustand (도입 여부 판단) | ✅ 측정 완료 → **도입 안 함** |
 | [S7](s7-compression/README.md) | 응답 압축 미적용 | Network / curl | gzip·brotli 압축 | ✅ **적용 완료 → −70.4%** |
-| [S8](s8-favicon/README.md) | 파비콘 660 kB (SVG 안의 래스터) | curl / canvas | 벡터 SVG 교체 | ✅ **적용 완료 → 485 kB → 666 B (−99.9%)** |
+| [S8](s8-image-assets/README.md) | 이미지 자산 5건 (압축이 듣지 않음) | curl / canvas | 포맷·해상도 재인코딩 | ✅ **적용 완료 → 1.45 MB → 142 kB (−90.2%)**<br>파비콘 전송 485 kB → 666 B |
 | [S5](s5-lighthouse/README.md) | 페이지 로드 종합 | Lighthouse (3회 중앙값) | 전체 | ✅ **측정 완료 → 점수 76, TBT 0·CLS 0** |
 
 > S3(Zustand)은 **측정 결과 유의미한 리렌더 낭비가 없으면 도입하지 않는다.**
@@ -102,4 +102,5 @@ Before 스크린샷은 각 시나리오 폴더 안에 있다.
 | `s3-context-rerender/before-idle-10s.png` | 무조작 10초에 commit 26회 |
 
 > S7·S8 은 스크린샷 대신 `curl` 출력값을 문서에 직접 기록했다 — 전송 바이트는 헤더로 검증 가능하기 때문이다.
-> S8 의 렌더 검증은 브라우저 canvas 로 픽셀 색을 추출해 수치로 남겼다.
+> S8 의 렌더 검증도 스크린샷을 쓰지 않았다. 브라우저 canvas 로 픽셀을 디코딩해
+> 크기·색·알파를 값으로 남겼고, 결제 QR 은 `jsQR` 로 페이로드까지 대조했다.
