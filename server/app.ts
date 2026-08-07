@@ -45,21 +45,25 @@ const allowedOrigins = [
 ];
 
 // ✅ CORS 설정 (쿠키 포함 필수)
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`🚫 CORS 차단됨: ${origin}`);
-        callback(new Error('CORS 차단됨'));
-      }
-    },
-    credentials: true, // ✅ 쿠키 허용 (Access-Control-Allow-Credentials)
-  }),
-);
+// 경로를 '/api'로 한정한다. 전체에 걸면 정적 파일 응답에도 Vary: Origin이 붙는데,
+// Cloudflare는 Vary가 Accept-Encoding이 아니면 캐시하지 않는다. (cf-cache-status: DYNAMIC)
+// max-age=31536000을 줘도 엣지를 못 타고 매번 Render 원본까지 간다.
+// 정적 자산은 페이지와 같은 출처에서만 받으므로 CORS가 필요 없다.
+// Socket.IO는 index.ts에서 자체 cors 옵션을 쓰므로 영향받지 않는다.
+const corsMiddleware = cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`🚫 CORS 차단됨: ${origin}`);
+      callback(new Error('CORS 차단됨'));
+    }
+  },
+  credentials: true, // 쿠키 허용 (Access-Control-Allow-Credentials)
+});
 
-app.options(/.*/, cors());
+app.use('/api', corsMiddleware);
+app.options('/api/*splat', corsMiddleware);
 
 // ✅ 공통 미들웨어
 // requestId 는 express.json() 보다 앞이다.

@@ -1,7 +1,6 @@
 // server/index.ts
 import './env'; // ⚠️ 반드시 최상단 — 라우트/설정보다 먼저 .env 로드
 
-import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketEvents';
@@ -16,21 +15,10 @@ import { decodeToken } from './src/middleware/auth';
 // 스키마가 붙은 환경에서만 켠다 — 계획안 §4 의 Feature Flag.
 const V2_MATCHING_ENABLED = process.env.V2_MATCHING_ENABLED === 'true';
 
-// ✅ CORS 설정
-app.use(
-  cors({
-    origin: [
-      'http://localhost:5179',
-      'https://telepathy.my',
-      'https://telepathy-app.onrender.com',
-      'http://70.12.102.131:5000',
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  }),
-);
-
 // ✅ HTTP 서버 생성
+// CORS 는 app.ts 에서 /api 에만 건다. 여기에 있던 app.use(cors(...)) 는 실행되지 않았다 —
+// app.ts 의 SPA 폴백이 모든 요청을 받아 응답을 끝내므로 이 뒤로 내려오지 않는다.
+// 아래 Socket.IO 의 cors 는 new Server(...) 의 옵션이라 별개다.
 const server = createServer(app);
 
 // 제네릭 4개로 맞춰야 chat.socket.ts 와 타입이 일치
