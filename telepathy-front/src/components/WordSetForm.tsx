@@ -123,7 +123,7 @@ export default function WordSetForm() {
         <p className="text-[11px] font-bold tracking-[0.12em] text-[var(--section-label-color)] uppercase">
           나의 단어 4개
         </p>
-        <span className="[font-family:'Judson',serif] text-[15px] font-bold text-[var(--main-title-color)]">
+        <span className="[font-family:'Judson','Gowun_Dodum',serif] text-[15px] font-bold text-[var(--main-title-color)]">
           {filledCount}/4
         </span>
       </div>

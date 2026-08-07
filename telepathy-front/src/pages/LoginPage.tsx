@@ -66,7 +66,7 @@ export default function LoginPage() {
             우리는 같은 단어를 떠올렸어요
           </p>
           {/* 구 .login-title — 세리프 */}
-          <h1 className="mt-[10px] mb-6 [font-family:'Judson',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
+          <h1 className="mt-[10px] mb-6 [font-family:'Judson','Gowun_Dodum',serif] text-[34px] font-bold text-[var(--login-title-color)] [text-shadow:var(--login-title-shadow)] min-[1025px]:text-[38px]">
             로그인
           </h1>
 

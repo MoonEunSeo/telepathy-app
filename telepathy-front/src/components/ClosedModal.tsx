@@ -91,7 +91,7 @@ export default function ClosedModal({ username, nickname }: ClosedModalProps) {
       {/* 구 .modal-content.letter-style (ClosedModal.css 의도: 편지 카드 480px) */}
       <div className="w-[90%] max-w-[480px] animate-[closed-fade-in-up_0.4s_ease] rounded-[20px] bg-[var(--color-surface)] p-8 text-center [font-family:'Gowun_Dodum',sans-serif] [box-shadow:var(--shadow-md)]">
         {/* 편지 영역 — 구 .title + .modal-content h1 */}
-        <h1 className="mb-[-0.5rem] [font-family:'Judson',serif] text-[3rem] font-bold text-[var(--color-text)]">
+        <h1 className="mb-[-0.5rem] [font-family:'Judson','Gowun_Dodum',serif] text-[3rem] font-bold text-[var(--color-text)]">
           Telepathy
         </h1>
         <h2 className="mb-[0.8rem] text-[1.2rem] text-[var(--color-text)]">

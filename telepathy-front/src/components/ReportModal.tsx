@@ -51,7 +51,7 @@ const ReportModal = ({ onClose, onSubmit }: ReportModalProps) => {
       {/* 구 .report-modal */}
       <div className="w-[100%] max-w-[360px] rounded-[16px] p-6 [font-family:'Gowun_Dodum',sans-serif] text-[var(--report-modal-text)] [box-shadow:var(--report-modal-shadow)] [background:var(--report-modal-bg)] [border:1px_solid_var(--report-modal-border)]">
         {/* 구 .report-modal h1 (judson-title 훅) */}
-        <h1 className="mt-0 mb-6 [font-family:'Judson',serif] text-[28px] font-semibold tracking-[0.5px] text-[var(--report-title-color)]">
+        <h1 className="mt-0 mb-6 [font-family:'Judson','Gowun_Dodum',serif] text-[28px] font-semibold tracking-[0.5px] text-[var(--report-title-color)]">
           Telepathy
         </h1>
         <p>상대방의 어떤 점이 불편하셨나요?</p>

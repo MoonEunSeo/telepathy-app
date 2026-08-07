@@ -141,7 +141,7 @@ const MyPage = () => {
 
           {/* 앱바 워드마크 */}
           <div className="pt-2 pb-4 text-center">
-            <span className="[font-family:'Judson',serif] text-[22px] font-bold text-[var(--main-title-color)] min-[1025px]:text-[24px]">
+            <span className="[font-family:'Judson','Gowun_Dodum',serif] text-[22px] font-bold text-[var(--main-title-color)] min-[1025px]:text-[24px]">
               Telepathy
             </span>
           </div>
@@ -169,7 +169,7 @@ const MyPage = () => {
           </p>
           <div className="mb-3 grid grid-cols-2 gap-3">
             <div className="rounded-[var(--radius-md)] bg-[var(--stat-chip-bg)] py-4 text-center [border:1px_solid_var(--color-border-subtle)]">
-              <div className="[font-family:'Judson',serif] text-[26px] leading-none font-bold text-[var(--main-title-color)]">
+              <div className="[font-family:'Judson','Gowun_Dodum',serif] text-[26px] leading-none font-bold text-[var(--main-title-color)]">
                 {wordCount}
               </div>
               <div className="mt-1.5 text-[12.5px] text-[var(--color-text-muted)]">
@@ -177,7 +177,7 @@ const MyPage = () => {
               </div>
             </div>
             <div className="rounded-[var(--radius-md)] bg-[var(--stat-chip-bg)] py-4 text-center [border:1px_solid_var(--color-border-subtle)]">
-              <div className="[font-family:'Judson',serif] text-[26px] leading-none font-bold text-[var(--main-title-color)]">
+              <div className="[font-family:'Judson','Gowun_Dodum',serif] text-[26px] leading-none font-bold text-[var(--main-title-color)]">
                 {megaphoneCount}
               </div>
               <div className="mt-1.5 text-[12.5px] text-[var(--color-text-muted)]">보유 확성기</div>

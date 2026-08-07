@@ -61,10 +61,10 @@ export default function WordSetPage() {
     <div className="box-border flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg)] px-5 py-20 pb-28 text-center max-[480px]:px-4 max-[480px]:py-[60px] max-[480px]:pb-24">
       {/* 구 .wordset-title — serif + 그라디언트("나만의"만 강조) */}
       <h1 className="mb-3 text-[23px] leading-tight font-bold min-[1025px]:text-[26px]">
-        <span className="[background-image:var(--wordset-title-grad)] [background-clip:text] [font-family:'Judson',serif] text-transparent [-webkit-background-clip:text]">
+        <span className="[background-image:var(--wordset-title-grad)] [background-clip:text] [font-family:'Judson','Gowun_Dodum',serif] text-transparent [-webkit-background-clip:text]">
           나만의
         </span>{' '}
-        <span className="[font-family:'Judson',serif] text-[var(--main-title-color)]">
+        <span className="[font-family:'Judson','Gowun_Dodum',serif] text-[var(--main-title-color)]">
           단어세트 만들기
         </span>{' '}
         <span className="text-[19px]">✨</span>

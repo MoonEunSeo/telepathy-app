@@ -41,7 +41,7 @@ export default function HelpPage() {
         </button>
 
         {/* 구 .title */}
-        <h1 className="mt-10 mb-5 text-center [font-family:'Judson',serif] text-[60px] text-white">
+        <h1 className="mt-10 mb-5 text-center [font-family:'Judson','Gowun_Dodum',serif] text-[60px] text-white">
           Telepathy
         </h1>
         {/* 구 .subtitle */}

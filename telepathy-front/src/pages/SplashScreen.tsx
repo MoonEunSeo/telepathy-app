@@ -16,7 +16,7 @@ export default function SplashScreen() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[var(--color-bg)] px-6">
-      <h1 className="[font-family:'Judson',serif] text-[56px] leading-none font-bold text-[var(--main-title-color)] min-[1025px]:text-[76px]">
+      <h1 className="[font-family:'Judson','Gowun_Dodum',serif] text-[56px] leading-none font-bold text-[var(--main-title-color)] min-[1025px]:text-[76px]">
         Telepathy
       </h1>
       <p className="text-center text-[15px] text-[var(--auth-lead-color)] min-[1025px]:text-[17px]">
