@@ -28,7 +28,7 @@
 ### 아직 착수하지 않은 것
 
 위 표가 **측정하고 개선한 기록**이라면, 코드에서 발견했으나 아직 손대지 않은 항목은
-[최적화 백로그](optimization-backlog.md)(O1~O13)에 있다.
+[최적화 백로그](optimization-backlog.md)(O1~O15)에 있다.
 기술 도입을 검토했다가 기각한 근거는 [기술 도입 검토](../project/tech-adoption-review.md)에 있다.
 
 ---
