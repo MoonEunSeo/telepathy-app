@@ -3,8 +3,10 @@
 // 서버는 index.html 의 <!--seo--> 블록을 이 값으로 채우고 (server/src/utils/indexHtml.ts),
 // 프론트는 SPA 내부 이동 시 document.title 을 맞춘다 (hooks/useRouteTitle.ts).
 //
-// ⚠️ shared/ 의 유일한 런타임 모듈이다. 나머지는 전부 타입 전용이다.
+// ⚠️ shared/ 에서 값으로 import 하는 유일한 모듈이다 (나머지는 import type 전용).
 //    경로 목록은 값이라 유니온으로 표현할 수 없어 예외를 뒀다.
+//    규칙과 근거는 docs/conventions/typescript.md § shared/ 사용 규칙 에 있다.
+//    배럴(shared/index.ts)에 넣지 않는다 — 타입만 쓰는 곳까지 런타임 모듈을 끌어온다.
 //    이 파일의 키 목록이 곧 "서버가 아는 클라이언트 라우트"다 — App.tsx 의 <Route path> 와 짝을 이룬다.
 //    한쪽만 고치면 새 페이지가 404 로 나간다.
 
