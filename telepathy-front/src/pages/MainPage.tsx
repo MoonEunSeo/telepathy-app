@@ -226,7 +226,7 @@ export default function MainPage() {
   }, [profileData, profileError]);
 
   // ✅ 게스트가 매칭(대화) 종료 후 메인으로 돌아오면 → 회원 로그인 권유 (세션당 1회)
-  //    ChatPage 의 endCurrentSession 이 navigate('/main', { state: { fromMatch: true } }) 로 신호를 준다.
+  //    ChatPage 의 endCurrentSession 이 navigate('/', { state: { fromMatch: true } }) 로 신호를 준다.
   const [showGuestLoginModal, setShowGuestLoginModal] = useState(false);
   useEffect(() => {
     const fromMatch = (location.state as { fromMatch?: boolean } | null)?.fromMatch;

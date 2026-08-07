@@ -13,6 +13,7 @@ export type ErrorCode =
   | 'VALIDATION_FAILED'
   | 'INTERNAL_ERROR'
   | 'SERVER_MISCONFIGURED'
+  | 'NOT_FOUND'
   // ── 인증 ────────────────────────────────────────────────
   | 'UNAUTHENTICATED'
   | 'INVALID_CREDENTIALS'
