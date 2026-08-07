@@ -37,9 +37,8 @@ import { ROUTE_META, normalizePath } from '@shared/seo';   // import type 이 �
 - **`shared/index.ts` 배럴에 넣지 않는다.** 배럴은 `export *` 라, 타입만 쓰는 곳까지 런타임 모듈을 끌어온다.
 - 새 런타임 모듈을 만들기 전에 유니온으로 되는지 먼저 따진다. 되면 유니온이 낫다 —
   `errorCodes.ts` 가 그 예다.
-
-> `domain.ts` 의 `MEGAPHONE_SKUS` 도 `export const` 지만 **import 하는 곳이 없다.**
-> PortOne 제거(`ce67ba0`) 때 소비자가 사라진 잔여물이라 위 예외에 해당하지 않는다.
+- **`seo.ts` 외에 런타임 값을 내보내는 모듈은 없다.** 새로 만들 때 이 목록을 늘리는 것이므로
+  위 세 조건을 다시 따진다.
 
 ## 타입 스타일 (정책: 실용적 균형)
 
