@@ -1,30 +1,34 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 
 import { useAuthCheck } from './hooks/useAuthCheck';
 
 // ✅ 페이지 컴포넌트
-import LoginPage from './pages/LoginPage';
-import Register from './pages/Register';
-import Verify_mvp from './pages/Verify_mvp';
-import FindPassword from './pages/FindPassword';
-import ChangePassword from './pages/ChangePassword';
+// SplashScreen은 진입 화면이라 초기 번들에 둔다. 쪼개면 이것 하나 받으려고
+// 왕복이 한 번 더 생겨 첫 페인트가 오히려 늦어진다.
 import SplashScreen from './pages/SplashScreen';
 
-import MainPage from './pages/MainPage';
-import MyPage from './pages/MyPage';
-import MyWords from './pages/MyWords';
-import LikePage from './pages/LikePage';
-import HelpPage from './pages/HelpPage';
-import ChatPage from './pages/ChatPage';
-import WordSetPage from './pages/WordSetPage';
+// 나머지는 라우트 진입 시점에 받는다.
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const Register = lazy(() => import('./pages/Register'));
+const Verify_mvp = lazy(() => import('./pages/Verify_mvp'));
+const FindPassword = lazy(() => import('./pages/FindPassword'));
+const ChangePassword = lazy(() => import('./pages/ChangePassword'));
 
-import TermsPage from './pages/TermsPage';
-import ServiceAgreement from './pages/terms/ServiceAgreement';
-import PrivacyPolicy from './pages/terms/PrivacyPolicy';
-import YouthPolicy from './pages/terms/YouthProtection';
-import ImproveConsent from './pages/terms/ImproveConsent';
-import NotificationConsent from './pages/terms/NotificationConsent';
+const MainPage = lazy(() => import('./pages/MainPage'));
+const MyPage = lazy(() => import('./pages/MyPage'));
+const MyWords = lazy(() => import('./pages/MyWords'));
+const LikePage = lazy(() => import('./pages/LikePage'));
+const HelpPage = lazy(() => import('./pages/HelpPage'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const WordSetPage = lazy(() => import('./pages/WordSetPage'));
+
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const ServiceAgreement = lazy(() => import('./pages/terms/ServiceAgreement'));
+const PrivacyPolicy = lazy(() => import('./pages/terms/PrivacyPolicy'));
+const YouthPolicy = lazy(() => import('./pages/terms/YouthProtection'));
+const ImproveConsent = lazy(() => import('./pages/terms/ImproveConsent'));
+const NotificationConsent = lazy(() => import('./pages/terms/NotificationConsent'));
 
 import BottomLayout from './components/BottomLayout';
 import { IntentProvider } from './contexts/IntentContext';
@@ -130,39 +134,44 @@ function AppRoutes() {
 
   return (
     <>
-      <Routes>
-        {/* ✅ 진입 스플래시 */}
-        <Route path="/" element={<SplashScreen />} />
+      {/* 
+    라우트 청크를 받는 동안 보여줄 것. 화면 전체를 비우면 깜빡임이 크게 보이므로 배경색만 유지한다.
+    스플래시에서 MainPage를 미리 받아두면 대부분 보이지 않는다.
+     */}
+      <Suspense fallback={<div className="min-h-screen bg-[var(--color-bg)]" />}>
+        <Routes>
+          {/* ✅ 진입 스플래시 */}
+          <Route path="/" element={<SplashScreen />} />
 
-        {/* ✅ 인증 관련 */}
-        <Route path="/verify-mvp" element={<Verify_mvp />} />
+          {/* ✅ 인증 관련 */}
+          <Route path="/verify-mvp" element={<Verify_mvp />} />
 
-        {/* ✅ 네비게이션 없는 페이지 */}
-        <Route path="/chatpage" element={<ChatPage />} />
+          {/* ✅ 네비게이션 없는 페이지 */}
+          <Route path="/chatpage" element={<ChatPage />} />
 
-        {/* ✅ 네비게이션 있는 페이지 */}
-        <Route element={<BottomLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/findpassword" element={<FindPassword />} />
-          <Route path="/changepassword" element={<ChangePassword />} />
-          <Route path="/main" element={<MainPage />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/mywords" element={<MyWords />} />
-          <Route path="/likes" element={<LikePage />} />
-          <Route path="/helppage" element={<HelpPage />} />
-          <Route path="/wordset" element={<WordSetPage />} />
-        </Route>
+          {/* ✅ 네비게이션 있는 페이지 */}
+          <Route element={<BottomLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/findpassword" element={<FindPassword />} />
+            <Route path="/changepassword" element={<ChangePassword />} />
+            <Route path="/main" element={<MainPage />} />
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/mywords" element={<MyWords />} />
+            <Route path="/likes" element={<LikePage />} />
+            <Route path="/helppage" element={<HelpPage />} />
+            <Route path="/wordset" element={<WordSetPage />} />
+          </Route>
 
-        {/* ✅ 약관 & 정책 페이지 */}
-        <Route path="/terms/:type" element={<TermsPage />} />
-        <Route path="/terms/service-agreement" element={<ServiceAgreement />} />
-        <Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms/youth-protection" element={<YouthPolicy />} />
-        <Route path="/terms/improve-consent" element={<ImproveConsent />} />
-        <Route path="/terms/notification-consent" element={<NotificationConsent />} />
-      </Routes>
-
+          {/* ✅ 약관 & 정책 페이지 */}
+          <Route path="/terms/:type" element={<TermsPage />} />
+          <Route path="/terms/service-agreement" element={<ServiceAgreement />} />
+          <Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms/youth-protection" element={<YouthPolicy />} />
+          <Route path="/terms/improve-consent" element={<ImproveConsent />} />
+          <Route path="/terms/notification-consent" element={<NotificationConsent />} />
+        </Routes>
+      </Suspense>
       <ToastContainer position="top-center" autoClose={2000} />
     </>
   );
