@@ -96,10 +96,35 @@ app.get('/healthz', (req: Request, res: Response) => res.status(200).send('OK'))
 
 // ✅ 정적 파일 서빙 (Vite 빌드 결과)
 const distPath = path.join(__dirname, '../telepathy-front/dist');
-app.use(express.static(distPath));
+
+const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // ✅ assets 폴더 정적 서빙
-app.use('/assets', express.static(path.join(distPath, 'assets')));
+// Vite 가 붙이는 내용 해시 덕에 같은 파일명이면 내용이 같다.
+// 재검증할 이유가 없으므로 1년 + immutable 로 준다.
+// dist 전체 서빙보다 먼저 등록해야 이 헤더가 적용된다.
+app.use(
+  '/assets',
+  express.static(path.join(distPath, 'assets'), {
+    maxAge: ONE_YEAR_MS,
+    immutable: true,
+  }),
+);
+
+// ✅ 정적 파일 서빙 (Vite 빌드 결과)
+// 나머지 정적 파일은 파일명에 해시가 없어 같은 URL 의 내용이 바뀔 수 있다.
+// index.html 은 새 자산 파일명을 알려주는 진입점이라 항상 재검증한다.
+app.use(
+  express.static(distPath, {
+    maxAge: ONE_DAY_MS,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('index.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    },
+  }),
+);
 
 // ✅ sitemap.xml, robots.txt 등은 index.html로 리디렉션되지 않게 예외 처리
 app.use('/sitemap.xml', express.static(path.join(__dirname, '../telepathy-front/public')));
@@ -107,6 +132,8 @@ app.use('/robots.txt', express.static(path.join(__dirname, '../telepathy-front/p
 
 // ✅ SPA 라우팅 처리 (404나 미스매치 시 index.html 반환)
 app.use((req: Request, res: Response) => {
+  // sendFile 기본값은 max-age=0 이지만 명시해 둔다.
+  res.setHeader('Cache-Control', 'no-cache');
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
