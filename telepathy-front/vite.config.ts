@@ -6,6 +6,12 @@ import { fileURLToPath } from 'node:url';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    // woff2는 절대 인라인하지 않는다. 4 kb 미만 서브셋이 3개 있는데,
+    // base64로 박히면 33% 부풀고 렌더 차단 CSS 안으로 들어간다.
+    // 별도 파일이어야 브라우저가 필요한 조각만 받는 unicode-range 분할이 의미를 갖는다.
+    assetsInlineLimit: (filePath) => (filePath.endsWith('.woff2') ? false : undefined),
+  },
   resolve: {
     alias: {
       '@shared': fileURLToPath(new URL('../shared', import.meta.url)),

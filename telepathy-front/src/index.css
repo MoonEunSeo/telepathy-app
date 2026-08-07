@@ -1,3 +1,7 @@
+/* 자체 호스팅 웹폰트. Vite 가 url() 을 해시 파일명으로 바꿔 /assets/ 로 내보내므로
+   서버의 1년 immutable 캐시 규칙이 그대로 적용된다. */
+@import './fonts.css';
+
 /* 🧩 Auto-generated CSS imports */
 
 /* ============================================================
@@ -33,7 +37,7 @@
   *,
   ::before,
   ::after {
-    box-sizing: border-box
+    box-sizing: border-box;
   }
 
   /* 네이티브 button UA 기본 테두리 리셋 */
