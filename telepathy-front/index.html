@@ -19,6 +19,10 @@
     <!--/seo-->
 
     <!-- 경로와 무관한 값 -->
+    <!-- 네이버 서치어드바이저 소유확인. 재확인 시 이 태그가 없으면 소유확인이 해제되므로
+         모든 경로에 남아야 한다 — 위 seo 블록 안에 두면 경로별 치환에서 지워진다.
+         구글은 DNS TXT 로 확인돼 있어 별도 태그가 필요 없다. -->
+    <meta name="naver-site-verification" content="71b6a9f5afc9294cb846768f1d41bba789d013c2" />
     <meta name="author" content="Telepathy 팀" />
     <meta
       name="keywords"
@@ -63,6 +67,10 @@
         font-family: 'Gowun Dodum', 'Gowun Batang', 'Judson', sans-serif;
       }
     </style>
+
+    <!-- 애드센스. 마이그레이션 중 누락됐던 것을 복원했다.
+         계정 연결이 이 스크립트로 확인되므로 경로별 치환 밖에 둔다. 짝이 되는 ads.txt 는 public/ 에 있다. -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9633518507670143" crossorigin="anonymous"></script>
   </head>
 
   <body>
