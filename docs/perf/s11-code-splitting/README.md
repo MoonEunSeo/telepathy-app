@@ -139,10 +139,39 @@ npx lighthouse@12 http://localhost:5000/ --only-categories=performance \
 | 첫 화면에서 빠진 `axios` | 17.02 kB |
 | `/main` 추가 요청 | 8,523 B (4개 청크) |
 
+> 위 값은 루트가 스플래시였을 때다. 루트가 `MainPage` 로 바뀐 뒤는 아래 「재측정」을 본다.
+
 ## 남은 것
 
 **외부 폰트가 번들보다 큰 변수다.** 이번 측정에서 `fonts.googleapis.com` 응답 470 ms 차이가 우리 개선폭의 3배를 흔들었다. [S9](../s9-fonts/README.md) 가 남긴 self-host + preload 항목의 근거가 여기서 나왔다.
 
 **`react-dom` 179 kB 는 줄일 수 없다.** 초기 청크 347 kB 중 절반이며, 남은 감축 여지는 `react-toastify`(16 kB) 정도다.
 
-**MainPage 프리페치** — tel-31 머지 후 필요 여부를 다시 본다.
+**MainPage 프리페치** — tel-31 머지 후 필요 여부를 다시 본다. → 아래 「재측정」에서 결론냈다.
+
+## 재측정 — TEL-31 재착륙 이후 (2026-08-08)
+
+> 조건: **production build / localhost / `curl -H "Accept-Encoding: gzip"`** — 위 전송량 측정과 같은 방법.
+> 브랜치 `fix/tel-31-reland-seo` (v3 에 `perf/image-assets` 를 병합한 것).
+
+`/` 가 `SplashScreen`(정적 import)에서 `MainPage`(lazy)로 바뀌었다. 위의 111,495 B 는 루트가 스플래시만 받던 값이라 이 구조를 더 이상 설명하지 못한다.
+
+| 파일 | gzip |
+|---|---:|
+| `index-Dv5DZRKT.js` | 109,406 B |
+| `MainPage-BksNscRi.js` | 7,541 B |
+| `react-CZI7_Jkm.js` | 2,885 B |
+| `rolldown-runtime-QTnfLwEv.js` | 694 B |
+| `storage-BPiaaExb.js` | 361 B |
+| `useProfile-I3p0WCKK.js` | 347 B |
+| `useMegaphoneCount-BFJzdtn5.js` | 270 B |
+| **합계** | **121,504 B** |
+
+| | 분할 전 | 분할 후 (루트=스플래시) | 재착륙 후 (루트=MainPage) |
+|---|---:|---:|---:|
+| 루트 진입 JS (gzip) | 170,915 B | 111,495 B | **121,504 B** |
+| 분할 전 대비 | — | −34.8% | **−28.9%** |
+
+10,009 B 늘었다. 스플래시 대신 메인 화면을 그리므로 그 화면의 청크와 훅 3개를 함께 받는다. 위 「대가」의 *`/main` 도달까지 120,018 B* 와 사실상 같은 지점이다 — 루트가 곧 메인이 되면서 도달 경로가 한 단계 짧아졌다.
+
+**MainPage 프리페치는 넣지 않는다.** MainPage 요청이 진입 직후 시작되므로 미리 받을 구간이 없다. 별도 청크라 왕복이 한 번 더 있지만, 그 구간은 스플래시 오버레이가 덮는다.

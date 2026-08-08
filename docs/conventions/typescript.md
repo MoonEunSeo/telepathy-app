@@ -8,11 +8,13 @@ shared/
 ├─ domain.ts        도메인 모델 (WordHistoryItem, ChatInfo …)
 ├─ socketEvents.ts  소켓 이벤트 맵 + 페이로드
 ├─ api.ts           REST 요청/응답 DTO
-└─ index.ts         배럴
+├─ errorCodes.ts    서버 오류 코드 유니온 (ApiError.error.code 의 단일 출처)
+├─ seo.ts           경로별 메타 테이블 — 유일한 런타임 모듈 (아래 예외)
+└─ index.ts         배럴 (seo.ts 는 넣지 않는다)
 ```
 
-- **`interface`/`type`만** — 런타임 값(함수·상수·클래스) 금지.
-- 양쪽 모두 **`import type`** 으로 가져온다 → 컴파일 시 제거되어 tsx·Vite가 resolve할 필요 없음.
+- **원칙은 `interface`/`type`만** — 런타임 값(함수·상수·클래스)을 두지 않는다.
+- 원칙을 따르는 모듈은 양쪽 모두 **`import type`** 으로 가져온다 → 컴파일 시 제거되어 tsx·Vite가 resolve할 필요 없음.
 - 경로는 **`@shared/*` 별칭** (상대경로 `../../../` 금지).
   ```ts
   import type { WordHistoryItem } from '@shared/domain';
@@ -20,6 +22,23 @@ shared/
 - 별칭 설정처: `server/tsconfig.json`·`telepathy-front/tsconfig.app.json`의 `paths`,
   `telepathy-front/vite.config.ts`의 `resolve.alias`.
 - 프론트는 `src/types/index.ts` 배럴이 `@shared`를 재노출 + 로컬 타입(`AppSocket`, `storage`) 추가.
+
+### ⚠️ 예외 — `seo.ts` 는 값으로 import 한다
+
+경로별 메타(`ROUTE_META`)와 `normalizePath()`는 **값**이라 유니온으로 표현할 수 없다.
+그런데 서버(메타 주입·404 판정)와 프론트(탭 제목)가 **같은 경로 목록**을 봐야 한다.
+한쪽에 두고 복사하면 라우트를 추가할 때 어긋나고, 어긋나면 새 페이지가 404 로 나간다.
+
+```ts
+import { ROUTE_META, normalizePath } from '@shared/seo';   // import type 이 아니다
+```
+
+- tsx(`nodenext`)와 Vite 모두 `@shared/*` 별칭을 **런타임에도** resolve 한다 (양쪽 실측 확인).
+- **`shared/index.ts` 배럴에 넣지 않는다.** 배럴은 `export *` 라, 타입만 쓰는 곳까지 런타임 모듈을 끌어온다.
+- 새 런타임 모듈을 만들기 전에 유니온으로 되는지 먼저 따진다. 되면 유니온이 낫다 —
+  `errorCodes.ts` 가 그 예다.
+- **`seo.ts` 외에 런타임 값을 내보내는 모듈은 없다.** 새로 만들 때 이 목록을 늘리는 것이므로
+  위 세 조건을 다시 따진다.
 
 ## 타입 스타일 (정책: 실용적 균형)
 

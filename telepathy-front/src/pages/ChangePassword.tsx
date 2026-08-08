@@ -105,7 +105,7 @@ export default function ChangePassword() {
             type="button"
             onClick={() => {
               setModalMessage('');
-              if (modalMessage.includes('변경되었습니다')) navigate('/main');
+              if (modalMessage.includes('변경되었습니다')) navigate('/');
             }}
           >
             확인

@@ -160,21 +160,6 @@ export interface Comment {
 
 // ─────────────────────────────────────────────────────────────
 // 확성기(Megaphone)
-// 구매 SKU 문자열 (MegaphoneInputModal / MainPage skuTable)
-export type MegaphoneSku = 'megaphone_1' | 'megaphone_5' | 'megaphone_10';
-
-export interface MegaphoneSkuInfo {
-  name: string;
-  amount: number;
-  count: number;
-}
-
-export const MEGAPHONE_SKUS: Record<MegaphoneSku, MegaphoneSkuInfo> = {
-  megaphone_1: { name: '확성기 1개', amount: 500, count: 1 },
-  megaphone_5: { name: '확성기 5개', amount: 2000, count: 5 },
-  megaphone_10: { name: '확성기 10개', amount: 3500, count: 10 },
-};
-
 // 소켓 'megaphone:show' payload (서버→클라)
 export interface MegaphoneShowPayload {
   nickname: string;
