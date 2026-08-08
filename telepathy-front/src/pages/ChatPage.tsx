@@ -75,7 +75,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (!roomId || !partnerId) {
       alert('필수 정보가 누락되어 있어 채팅방에 입장할 수 없습니다.');
-      navigate('/main');
+      navigate('/');
     }
   }, []);
 
@@ -131,7 +131,7 @@ export default function ChatPage() {
     } finally {
       endSession();
       // 매칭 종료 신호 → 메인에서 게스트면 로그인 권유 모달 판단에 사용
-      navigate('/main', { state: { fromMatch: true } });
+      navigate('/', { state: { fromMatch: true } });
     }
   };
 
@@ -248,7 +248,7 @@ export default function ChatPage() {
     removeStorage('chatInfo');
 
     // ✅ 메인으로 이동 → MainPage에서 피드백 모달 뜸
-    navigate('/main');
+    navigate('/');
   };
 
   // ✅ 메시지 렌더링

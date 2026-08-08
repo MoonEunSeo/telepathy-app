@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+# API 응답은 HTML 이 아니라 noindex 메타를 줄 수 없다. 여기서 막는다.
+Disallow: /api/
+
+# 로그인·마이페이지 등은 Disallow 하지 않는다.
+# shared/seo.ts 에서 noindex 를 주고 있어서, 크롤링까지 막으면
+# 크롤러가 그 메타를 읽지 못해 오히려 URL 만 색인될 수 있다.
+
 Sitemap: https://telepathy.my/sitemap.xml

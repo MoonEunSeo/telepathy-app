@@ -1,5 +1,6 @@
 // src/pages/TermsPage.tsx
 import { useParams, Navigate } from 'react-router-dom';
+import NotFound from './NotFound';
 
 export default function TermsPage() {
   const { type } = useParams<{ type: string }>();
@@ -12,8 +13,9 @@ export default function TermsPage() {
     alarm: '/terms/notification-consent',
   };
 
+  // 없는 슬러그는 서버가 이미 404 상태로 보낸다 (server/app.ts 의 CLIENT_ROUTES).
   if (!type || !routeMap[type]) {
-    return <p>존재하지 않는 약관 종류입니다.</p>;
+    return <NotFound />;
   }
 
   return <Navigate to={routeMap[type]} replace />;
