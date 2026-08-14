@@ -38,15 +38,7 @@
 
 ## 아키텍처
 
-```
-                    ┌──────────────────────────────┐
-   브라우저  ──────▶ │   Express 5 + TypeScript     │ ──▶ Supabase PostgreSQL
-      │             │                              │
-      │  REST /api  │  ├ /api/*      REST           │
-      │             │  ├ /socket.io  Socket.IO      │
-      └─ WebSocket ─┤  └ /*          dist 정적 서빙  │
-                    └──────────────────────────────┘
-```
+![텔레파시 시스템 아키텍처](docs/telepathy-system-architecture.svg)
 
 Vite 빌드 결과(`telepathy-front/dist`)를 Express 가 직접 서빙한다.
 즉 운영에서 **웹과 API 가 같은 오리진**이며, 배포 단위는 하나다.
