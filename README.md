@@ -1,160 +1,134 @@
-# telepathy
+# 텔레파시
 
-> 같은 단어를 떠올린 사람끼리 익명으로 대화하는 서비스.
+> 관심 단어 기반 랜덤채팅 서비스
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React 19">
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
-  <img src="https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express 5">
-  <img src="https://img.shields.io/badge/Socket.IO-4-010101?style=for-the-badge&logo=socketdotio&logoColor=white" alt="Socket.IO 4">
-  <img src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
-</p>
+15초의 한 턴 안에 같은 단어를 고른 사용자끼리 실시간으로 연결됩니다.
 
-**Live** · <https://telepathy.my>
+| 구분 | 내용 |
+| --- | --- |
+| 기간 | 2026.07 ~ |
+| 인원 | 개발 1인 · 기획 1인 |
+| 상태 | 개발 중 |
 
----
+[사이트 이동하기 ↗](https://telepathy.my/) · [관련 뉴스 ↗](https://platum.kr/archives/272577) · [GitHub](https://github.com/MoonEunSeo/telepathy-app/tree/v3)
 
-## 어떻게 동작하나
+기획자가 AI 코딩 도구로 만들어 운영하던 서비스로, 2026년 7월부터 개발을 단독으로 맡고 있습니다. 저장소는 기획자 계정에 있으며, 7월 이후 커밋이 담당한 작업입니다.
 
-서비스는 **15초 라운드**로 돈다. 라운드마다 단어 세트가 바뀌고, 사용자는 그중 하나를 고른다.
+넘겨받은 JavaScript 코드베이스를 TypeScript로 마이그레이션하며, 실시간 매칭·채팅, 환불 계좌 암호화, SMS 인증 등 백엔드와 React 프론트엔드 전반을 직접 구현하고 개선합니다. 화면 디자인은 Claude Design으로 직접 진행했습니다.
 
-```
-라운드 N (15초)
-  │
-  ├─ 사용자 A 가 "바다" 선택  →  대기열 등록 (waiting)
-  ├─ 사용자 B 가 "바다" 선택  →  대기열에서 A 를 찾음 → 매칭 성사
-  │                              · 양쪽 status = matched, 같은 room 배정
-  │                              · 양쪽 소켓에 'matched' 전송
-  └─ 채팅방으로 이동 — 서로의 신원은 닉네임뿐
-```
-
-매칭 **판정**은 DB 대기열에서 일어나지만, **통지**는 소켓이 맡는다.
-먼저 단어를 고른 쪽은 자신이 아무 동작도 하지 않은 시점에 매칭되기 때문에,
-서버가 능동적으로 알려주지 않으면 폴링 외에는 방법이 없다.
-
-회원가입 없이 **게스트로도 참여**할 수 있다.
-
----
-
-## 아키텍처
-
-![텔레파시 시스템 아키텍처](docs/telepathy-system-architecture.svg)
-
----
+현재 웹으로 운영 중인 서비스를 웹앱으로 패키징해 구글 플레이 스토어 출시를 준비하고 있습니다.
 
 ## 기술 스택
 
-| 영역 | 사용 |
-|---|---|
-| 서버 | Node.js + **Express 5** + TypeScript, 런타임 **tsx** |
-| DB | Supabase PostgreSQL (`@supabase/supabase-js`) |
-| 실시간 | Socket.IO 4 |
-| 인증 | `jsonwebtoken` + `cookie-parser`, 해시 `bcrypt`, 검증 `zod` |
-| 결제 | 계좌이체 + 은행 알림 웹훅 (PG 는 계획안 §27.1 로 범위 밖) |
-| 문자 | `solapi` (휴대폰 인증 OTP) |
-| 스케줄 | `node-cron` |
-| 프론트 | **React 19** + Vite + TS, `react-router-dom` 7, TanStack Query |
-| 스타일 | **Tailwind v4** + CSS 변수 토큰 (preflight 미로드) |
-| 린트/포맷 | `oxlint`, `prettier` |
+`React 19` · `TypeScript` · `TanStack Query` · `Tailwind CSS v4` · `Express 5` · `Socket.IO 4` · `Zod` · `Supabase / PostgreSQL` · `JWT` · `결제 · SMS 인증` · `Render`
 
-전체 목록과 주의점은 [기술스택 문서](docs/conventions/tech-stack.md)에 있다.
+## 시스템 아키텍처
 
----
+![텔레파시 시스템 아키텍처](docs/telepathy-system-architecture.svg)
 
-## 시작하기
+## 프론트엔드
 
-```bash
-npm install
-npm run build        # 프론트 프로덕션 빌드
-npm start            # 서버 실행 (빌드된 프론트 + API) → localhost:5000
-```
+### 서버 데이터 캐시
 
-개발 중에는 서버와 프론트를 따로 띄운다.
+#### 문제
 
-```bash
-npm run dev                          # 서버 (tsx watch)
-cd telepathy-front && npm run dev    # 프론트 (5179, /api → :5000 프록시)
-```
+**비효율적인 재요청 발생**
 
-커밋 전 **양쪽 타입체크**를 통과시킨다. `shared/` 변경은 서버·프론트 모두에 영향을 준다.
+- 서버 데이터를 담아둘 캐시 계층이 없어, 페이지를 오갈 때마다 같은 데이터를 새로 받아왔습니다.
+- 인증 확인은 라우트가 바뀔 때마다 호출됐는데, 인증 상태는 화면 이동으로 바뀌지 않으니 처음 한 번만 확인하면 충분했습니다.
 
-```bash
-npm run typecheck                    # 서버
-cd telepathy-front && npx tsc -b     # 프론트
-```
+#### 해결
 
-> `vite preview` 는 프록시 설정이 없어 `/api` 호출이 실패한다.
-> 프로덕션 동작 확인은 `npm start` → `localhost:5000` 에서 한다.
+**TanStack Query 도입**
 
-### 환경 변수
+- 요청 자체를 없애는 캐싱을 택했습니다. TanStack Query로 캐시 가능한 네 엔드포인트를 공용 캐시로 옮겨, 한번 받아온 데이터를 필요한 컴포넌트가 공용으로 사용하도록 했습니다.
+- 캐시를 쓰면 오래된 값이 보일 수 있어, 값이 바뀌는 시점(확성기 구매·발사, 로그인·로그아웃)에만 캐시를 비웠습니다. 구매 후에도 '확성기 없음'으로 표시되거나 로그인 직후 보호 화면에서 튕기는 문제를 막았습니다.
 
-서버는 `server/env.ts` 가 `.env` 를 로드한다 — **모든 진입점의 최상단에서 import 해야 한다.**
+#### 결과
 
-```
-SUPABASE_URL · SUPABASE_SERVICE_ROLE_KEY   # 서버만 보유. 프론트는 DB 에 직접 접근하지 않는다
-JWT_SECRET
-SOLAPI_API_KEY · SOLAPI_API_SECRET · SENDER_PHONE   # 문자 발송 (발신번호 사전등록 필요)
-ACCOUNT_SECRET_KEY                                  # 환불 계좌 암호화. 없으면 부팅 거부
-```
+| 지표 | Before | After | 개선 |
+| --- | ---: | ---: | --- |
+| 총 API 요청 (화면 이동 시나리오) | 15건 | 6건 | −60% |
+| `word-history` | 4회 | 1회 | −75% |
+| `auth/check` (클라이언트 라우팅) | 4회 | 1회 | −75% |
+| `profile` | 2회 | 1회 | −50% |
+| `megaphone-count` | 2회 | 1회 | −50% |
+| `current-round` (폴링) | 3회 | 3회 | 캐시 대상 아님 |
 
----
+Before는 `/mypage ↔ /mywords` 4회 이동 실측, After는 보호 라우트 로그인 제약으로 엔드포인트별 재측정을 합산했습니다. `current-round`는 의도된 폴링이라 캐시 대상이 아니며, 아래 실시간 라운드 구조에서 소켓 push로 따로 제거했습니다.
 
-## 디렉터리
+### 경쟁 상태 차단
 
-```
-telepathy-app/
-├─ server/
-│  ├─ index.ts              진입점 — HTTP + Socket.IO, io.use 인증, 라운드 타이머, cron
-│  ├─ app.ts                Express 앱 — 미들웨어·라우트 마운트·정적 서빙
-│  └─ src/
-│     ├─ modules/auth/      계층 분리 모듈 (route→controller→service→repository)
-│     ├─ routes/            *.routes.ts — 도메인별 REST
-│     ├─ middleware/        auth · validate · errorHandler
-│     ├─ errors/            AppError
-│     ├─ config/            supabase · chat.socket (매칭·채팅 핸들러)
-│     └─ utils/             round(15초 라운드) · flush · badwords · logger
-├─ telepathy-front/         현 활성 프론트 (React 19 + Vite)
-├─ client/                  ⚠️ 레거시 — 신규 작업 금지
-├─ shared/                  client↔server 공유 계약 타입 (런타임 코드 0)
-├─ supabase/migrations/     DB 함수·스키마 SQL
-└─ docs/                    아키텍처·규약·성능 측정 문서
-```
+#### 문제
 
-**UI 작업은 `telepathy-front`** 에서 한다. `client/` 는 대체된 레거시다.
+**연속 클릭 시 요청 낭비·race condition 위험**
 
----
+- 즐겨찾기 하트는 화면에 반영되는 요청은 하나인데 비해 매 클릭마다 요청이 되는 비효율이 있었습니다. Slow 4G 환경 기준 이 낭비로 인해 요청이 3초 이상 소요되었습니다.
+- 화면은 마지막에 받은 데이터를 기준으로 반영되기 때문에, 응답 도착 순서가 뒤집히면 화면과 DB가 불일치할 위험이 있었습니다.
 
-## 문서
+#### 해결
 
-작업 전에 해당 영역 문서를 확인한다.
+**`useMutation` 직렬화 + 낙관적 업데이트**
 
-| 문서 | 내용 |
-|---|---|
-| [아키텍처](docs/conventions/architecture.md) | 전체 구성·인증 구조·매칭 흐름·디자인 토큰 |
-| [기술스택](docs/conventions/tech-stack.md) | 사용 라이브러리·Tailwind v4 주의점 |
-| [TypeScript 규약](docs/conventions/typescript.md) | `shared/` 사용법·타입 스타일 |
-| [Supabase 규약](docs/conventions/supabase.md) | 에러 처리·null 비교·소유권 필터 |
-| [Git 규약](docs/conventions/git.md) | 브랜치·커밋 형식·PR 기준·`v3` 자동배포 주의 |
-| [성능 측정](docs/perf/README.md) | 측정 원칙과 개선 기록 (S1~S7) |
-| [최적화 백로그](docs/perf/optimization-backlog.md) | 발견했으나 미착수한 개선 지점 (O1~O13) |
-| [마이그레이션 계획](docs/project/migration-plan.md) | DB 정규화 계획 (TEL-6) |
-| [알려진 이슈](docs/project/known-issues.md) | 이월 과제 |
+- 같은 카드의 수정 요청을 직렬화해 최종값이 응답 도착 순서가 아닌 요청을 보낸 순서로 정해지도록 했습니다.
+- 저장 실패 시에는 반대값을 계산하는 대신 변경 직전 스냅샷으로 되돌립니다. 연속 클릭 중에는 반대값이 실제 이전 값과 다를 수 있기 때문입니다.
 
-### 자주 걸리는 함정
+#### 결과
 
-- **Supabase 는 DB 오류를 예외가 아닌 `{ data, error }` 반환값으로 준다** → `error` 확인이 없으면 조용히 실패한다
-- **`.eq()` 로는 null 을 잡을 수 없다** (SQL 3값 논리) → `.is()` 를 쓴다
-- **Tailwind arbitrary value 안에 공백을 넣지 않는다.** 클래스를 동적으로 조합하지 않는다
-- **`as` 는 런타임 검사가 없다** → 외부 경계 값은 사용처에서 방어한다
+| 지표 | Before | After | 개선 |
+| --- | --- | --- | --- |
+| 응답 역전 방어 | 방어 없음 | scope 직렬화 | 순서 보장 |
+| 저장 실패 시 복원 | 계산된 반대값 | 변경 직전 스냅샷 | 정확도 확보 |
+| 연타 중 목록 재조회 | 클릭마다 | 마지막 1건 | 중간 취소 |
 
----
+## 백엔드
 
-## 진행 중
+### 실시간 라운드 구조
 
-DB 를 정규화하고(14 → 53 테이블) 서버를 계층 구조로 이행하는 작업이 진행 중이다.
-로그인 하나에 입력 검증·HTTP 응답·DB 접근·토큰 발급이 한 함수에 몰려 있던 것을
-`route → controller → service → repository` 로 분리하고 있다.
+#### 문제
 
-배포는 `v3` 브랜치를 Render 가 자동 배포한다.
-**계보 브랜치에 직접 push 하지 않는다** — 작업은 브랜치에서 하고 PR 로 합친다.
-자세한 기준은 [Git 규약](docs/conventions/git.md)에 있다.
+**1초마다 비효율적인 폴링 발생**
+
+메인 화면이 15초 라운드의 남은 시간을 맞추기 위해 1초마다 서버에 요청하는 폴링 방식이었습니다. 라운드 길이가 15초로 고정돼 있어 대부분 불필요한 요청이었고, 클라이언트에서 시간을 계산해도 되는 로직이었습니다.
+
+#### 해결
+
+**Socket.IO push 전환**
+
+- 폴링 주기를 늘리면 라운드 변경을 늦게 감지하는 문제가 있어, 소켓 push로 전환해 폴링을 제거했습니다. 이미 소켓을 사용 중이라 추가 구현 부담이 적었습니다.
+- 서버 라운드는 시간으로만 계산되어 변경 시점을 알리는 이벤트가 없었습니다. 서버에 감시 타이머 1개(접속자 수와 무관)를 두고 라운드가 바뀔 때만 전체에 브로드캐스트하도록 구현해, 사용자당 매초 발생하던 요청을 서버 emit 15초당 1회로 대체했습니다.
+
+#### 결과
+
+| 지표 | Before | After | 개선 |
+| --- | ---: | ---: | --- |
+| `current-round` 요청/분 | 59건 | ≈0 | −100% |
+| 전송량/분 | 18.7 kB | ≈0 | −100% |
+| 서버 emit/분 | — | 4회 | 폴링 대체 |
+| 요청 겹침 위험 (주기 1s vs 응답 587ms) | 있음 | 소멸 | 구조적 해소 |
+| 100명 · 10분 환산 | 59,000건 | ≈0 | −100% |
+
+### Supabase RPC 기반 트랜잭션
+
+#### 문제
+
+**트랜잭션 부재로 데이터 일관성 붕괴**
+
+- 비밀번호 재설정, 결제, 닉네임 변경처럼 테이블 2개 이상을 함께 고쳐야 하는 작업을, 앱 코드가 select → insert/update를 순서대로 호출하는 방식으로 처리하고 있었습니다. supabase-js에는 트랜잭션 API가 없어 뒤 단계가 실패해도 앞 단계를 되돌릴 방법이 없었고, 조회와 수정이 분리돼 있어 동시 요청 시 일관성이 깨졌습니다.
+- 운영 DB를 확인해보니 결제한 34명 중 7명의 계정이 사라져 환불도 정산 추적도 불가능했고, 닉네임 이력 94건이 실제 이름과 달랐습니다.
+
+#### 해결
+
+**Postgres 함수(RPC) 전환**
+
+- 트랜잭션이 필요한 작업을 Postgres 함수로 내려 DB가 원자성을 보장하게 했습니다. 회원가입(4테이블) · 탈퇴 · 닉네임 변경 · 비밀번호 재설정 · 실패 카운터 · 인증 챌린지 · 결제, 신원·결제 도메인에 7개를 적용했습니다.
+- 사전 조회로 검사하는 대신 DB 제약 위반을 함수 내부에서 처리해 도메인 오류로 변환했습니다. 조회와 쓰기가 한 트랜잭션에서 실행되므로 check-then-act 경쟁 상태가 발생하지 않습니다.
+
+#### 결과
+
+| 지표 | Before | After | 개선 |
+| --- | --- | --- | --- |
+| 닉네임 이력 불일치 (v2-dev) | 94건 | 0건 | −100% |
+| 지급 실패 시 결제 기록 | 잔존 | 롤백 | 원자성 보장 |
+| 탈퇴 후 활동 이력 | 소실 | 보존 | 12항목 검증 |
+| 중복 닉네임 응답 | 500 | 409 | 원인 전달 |
