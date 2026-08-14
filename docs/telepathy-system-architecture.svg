@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="텔레파시 시스템 아키텍처">
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L0 6 L9 3z" fill="#334e68"/></marker>
+    <style>text{font-family:Arial,sans-serif;fill:#102a43}.t{font-size:28px;font-weight:bold}.h{font-size:18px;font-weight:bold}.s{font-size:14px;fill:#486581}.b{stroke:#334e68;stroke-width:2}.l{stroke:#334e68;stroke-width:2;fill:none;marker-end:url(#a)}</style>
+  </defs>
+  <rect width="1200" height="600" fill="#f8fafc"/>
+  <text x="60" y="60" class="t">텔레파시 시스템 아키텍처</text>
+  <text x="60" y="88" class="s">브라우저 · Node.js 프로세스 · 외부 서비스 · 배포 파이프라인</text>
+  <rect x="50" y="200" width="170" height="105" rx="16" fill="#eaf2f8" class="b"/><text x="135" y="244" text-anchor="middle" class="h">사용자</text><text x="135" y="271" text-anchor="middle" class="s">회원 · 게스트</text>
+  <rect x="310" y="150" width="330" height="175" rx="16" fill="#e8f6ff" class="b"/><text x="340" y="195" class="h">브라우저</text><text x="340" y="228" class="s">React 19 · React Router 7</text><text x="340" y="255" class="s">TanStack Query · socket.io-client</text><text x="340" y="286" class="s">화면 분기 · 쿼리 훅 · 소켓 연결</text>
+  <rect x="760" y="150" width="350" height="175" rx="16" fill="#fff2df" class="b"/><text x="790" y="195" class="h">Node.js 프로세스</text><text x="790" y="228" class="s">Express 5 · Socket.IO 4</text><text x="790" y="255" class="s">auth · zod · errorHandler</text><text x="790" y="286" class="s">도메인 라우트 · CORS · compression</text>
+  <path d="M220 252H310M640 210H760M760 270H640" class="l"/><text x="700" y="197" text-anchor="middle" class="s">REST /api</text><text x="700" y="297" text-anchor="middle" class="s">Socket.IO</text>
+  <rect x="340" y="420" width="260" height="110" rx="16" fill="#e8f8f0" class="b"/><text x="370" y="463" class="h">Supabase</text><text x="370" y="491" class="s">PostgreSQL · CRUD · RPC</text>
+  <rect x="785" y="420" width="260" height="110" rx="16" fill="#f6edff" class="b"/><text x="815" y="463" class="h">Solapi</text><text x="815" y="491" class="s">SMS 인증 · 입금 웹훅</text>
+  <path d="M920 325V375H470V420M915 325V420" class="l"/>
+  <text x="60" y="570" class="s">GitHub v3 브랜치 push → Render 자동 배포 → 브라우저 dist 정적 서빙</text>
+</svg>
