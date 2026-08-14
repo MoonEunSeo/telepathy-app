@@ -40,22 +40,6 @@
 
 ![텔레파시 시스템 아키텍처](docs/telepathy-system-architecture.svg)
 
-Vite 빌드 결과(`telepathy-front/dist`)를 Express 가 직접 서빙한다.
-즉 운영에서 **웹과 API 가 같은 오리진**이며, 배포 단위는 하나다.
-
-이 구조 덕분에 `token` 쿠키 하나로 **HTTP 와 Socket.IO 인증을 공유**한다.
-검증은 `server/src/middleware/auth.ts` 의 `decodeToken` 한 곳에서만 이뤄지고,
-회원과 게스트는 같은 쿠키를 쓰되 페이로드의 `role` 로 구분된다.
-
-통신 채널은 성격으로 나눈다.
-
-| 채널 | 담당 |
-|---|---|
-| REST | 요청-응답으로 끝나는 것 — 로그인·회원가입·결제 검증·신고·기록 조회 |
-| Socket.IO | 서버가 먼저 알려야 하는 것 — 매칭 통지·채팅·확성기·라운드 전환 |
-
-자세한 내용은 [아키텍처 문서](docs/conventions/architecture.md)를 참조한다.
-
 ---
 
 ## 기술 스택
