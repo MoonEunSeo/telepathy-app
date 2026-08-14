@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { redis } = require('../config/redis')
 const { SolapiMessageService } = require('solapi');
 require('dotenv').config();
-
-// 인증번호 저장소 (실 서비스에선 Redis 등 권장)
-const codeStore = new Map();
 
 // Solapi 서비스 인스턴스 생성
 const messageService = new SolapiMessageService(
@@ -20,9 +18,17 @@ router.post('/send', async (req, res) => {
   const { phone } = req.body;
   if (!phone) return res.status(400).json({ success: false, message: '전화번호를 입력해주세요.' });
 
+  const cooldownKey = `verify:cooldown:${phone}`;
+  const cooldownTtl = await redis.ttl(cooldownKey)
+
+  if (cooldownTtl > 0){
+    return res.status(429).json({
+      success: false,
+      message: '인증번호는 60초 후 다시 요청할 수 있어요.'
+    })
+  }
+
   const code = generateCode();
-  codeStore.set(phone, code);
-  setTimeout(() => codeStore.delete(phone), 180000); // 3분 후 삭제
 
   try {
     await messageService.send({
@@ -30,6 +36,10 @@ router.post('/send', async (req, res) => {
       from: process.env.SENDER_PHONE,
       text: `[텔레파시] 인증번호는 ${code}입니다.`,
     });
+
+    await redis.setEx(`verify:code:${phone}`, 180, code)
+    await redis.setEx(cooldownKey, 60, '1')
+
     res.json({ success: true });
   } catch (error) {
     console.error('문자 전송 실패:', error?.response?.data || error.message);
@@ -38,12 +48,12 @@ router.post('/send', async (req, res) => {
 });
 
 // ✅ 인증번호 검증 API
-router.post('/check', (req, res) => {
+router.post('/check', async (req, res) => {
   const { phone, code } = req.body;
-  const saved = codeStore.get(phone);
+  const saved = await redis.get(`verify:code:${phone}`)
 
   if (saved === code) {
-    codeStore.delete(phone);
+    await redis.del(`verify:code:${phone}`)
     res.json({ success: true });
   } else {
     res.status(400).json({ success: false, message: '인증번호가 일치하지 않습니다.' });

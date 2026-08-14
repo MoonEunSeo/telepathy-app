@@ -197,6 +197,7 @@ server.listen(PORT, () => {
 // server/index.js//
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const express = require('express');
+const { connectRedis } = require('./src/config/redis')
 const cors = require('cors');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
@@ -261,6 +262,12 @@ cron.schedule('*/30 * * * * *', () => {
 
 // ✅ 포트 설정 및 서버 실행
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
-});
+connectRedis().then(() => {
+  server.listen(PORT, () => {
+    console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+  })
+})
+.catch((error) => {
+  console.error('Redis 연결 실패:', error);
+    process.exit(1);
+})
