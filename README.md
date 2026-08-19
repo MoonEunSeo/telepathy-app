@@ -4,17 +4,17 @@
 
 15초의 한 턴 안에 같은 단어를 고른 사용자끼리 실시간으로 연결됩니다.
 
-| 구분 | 내용 |
-| --- | --- |
-| 기간 | 2026.07 ~ |
+| 구분 | 내용                |
+| ---- | ------------------- |
+| 기간 | 2026.07 ~           |
 | 인원 | 개발 1인 · 기획 1인 |
-| 상태 | 개발 중 |
+| 상태 | 개발 중             |
 
-[사이트 이동하기 ↗](https://telepathy.my/) · [관련 뉴스 ↗](https://platum.kr/archives/272577) · [GitHub](https://github.com/MoonEunSeo/telepathy-app/tree/v3)
+[사이트 이동하기](https://telepathy.my/) · [관련 뉴스](https://platum.kr/archives/272577) · [GitHub](https://github.com/MoonEunSeo/telepathy-app/tree/v3)
 
 기획자가 AI 코딩 도구로 만들어 운영하던 서비스로, 2026년 7월부터 개발을 단독으로 맡고 있습니다. 저장소는 기획자 계정에 있으며, 7월 이후 커밋이 담당한 작업입니다.
 
-넘겨받은 JavaScript 코드베이스를 TypeScript로 마이그레이션하며, 실시간 매칭·채팅, 환불 계좌 암호화, SMS 인증 등 백엔드와 React 프론트엔드 전반을 직접 구현하고 개선합니다. 화면 디자인은 Claude Design으로 직접 진행했습니다.
+기획자로부터 넘겨받은 JavaScript 코드베이스를 TypeScript로 마이그레이션하며, 실시간 매칭·채팅, 환불 계좌 암호화, SMS 인증 등 백엔드와 React 기반 프론트엔드 전반을 직접 구현하고 개선하고 있습니다. 화면 디자인은 Claude Design으로 직접 진행했습니다.
 
 현재 웹으로 운영 중인 서비스를 웹앱으로 패키징해 구글 플레이 스토어 출시를 준비하고 있습니다.
 
