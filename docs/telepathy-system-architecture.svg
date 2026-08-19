@@ -1,17 +1,215 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="텔레파시 시스템 아키텍처">
-  <defs>
-    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L0 6 L9 3z" fill="#334e68"/></marker>
-    <style>text{font-family:Arial,sans-serif;fill:#102a43}.t{font-size:28px;font-weight:bold}.h{font-size:18px;font-weight:bold}.s{font-size:14px;fill:#486581}.b{stroke:#334e68;stroke-width:2}.l{stroke:#334e68;stroke-width:2;fill:none;marker-end:url(#a)}</style>
-  </defs>
-  <rect width="1200" height="600" fill="#f8fafc"/>
-  <text x="60" y="60" class="t">텔레파시 시스템 아키텍처</text>
-  <text x="60" y="88" class="s">브라우저 · Node.js 프로세스 · 외부 서비스 · 배포 파이프라인</text>
-  <rect x="50" y="200" width="170" height="105" rx="16" fill="#eaf2f8" class="b"/><text x="135" y="244" text-anchor="middle" class="h">사용자</text><text x="135" y="271" text-anchor="middle" class="s">회원 · 게스트</text>
-  <rect x="310" y="150" width="330" height="175" rx="16" fill="#e8f6ff" class="b"/><text x="340" y="195" class="h">브라우저</text><text x="340" y="228" class="s">React 19 · React Router 7</text><text x="340" y="255" class="s">TanStack Query · socket.io-client</text><text x="340" y="286" class="s">화면 분기 · 쿼리 훅 · 소켓 연결</text>
-  <rect x="760" y="150" width="350" height="175" rx="16" fill="#fff2df" class="b"/><text x="790" y="195" class="h">Node.js 프로세스</text><text x="790" y="228" class="s">Express 5 · Socket.IO 4</text><text x="790" y="255" class="s">auth · zod · errorHandler</text><text x="790" y="286" class="s">도메인 라우트 · CORS · compression</text>
-  <path d="M220 252H310M640 210H760M760 270H640" class="l"/><text x="700" y="197" text-anchor="middle" class="s">REST /api</text><text x="700" y="297" text-anchor="middle" class="s">Socket.IO</text>
-  <rect x="340" y="420" width="260" height="110" rx="16" fill="#e8f8f0" class="b"/><text x="370" y="463" class="h">Supabase</text><text x="370" y="491" class="s">PostgreSQL · CRUD · RPC</text>
-  <rect x="785" y="420" width="260" height="110" rx="16" fill="#f6edff" class="b"/><text x="815" y="463" class="h">Solapi</text><text x="815" y="491" class="s">SMS 인증 · 입금 웹훅</text>
-  <path d="M920 325V375H470V420M915 325V420" class="l"/>
-  <text x="60" y="570" class="s">GitHub v3 브랜치 push → Render 자동 배포 → 브라우저 dist 정적 서빙</text>
+<svg viewBox="0 0 1136 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="텔레파시 시스템 아키텍처 — 브라우저·Node.js 프로세스·외부 서비스·배포 파이프라인" style="width:100%;height:auto;display:block;font-family:&#39;Noto Sans KR&#39;,sans-serif">
+<rect width="1136" height="640" rx="14" fill="#FBFBF7"></rect>
+
+<!-- 사용자 -->
+<circle cx="86" cy="118" r="17" fill="#F0F1F0"></circle>
+<circle cx="86" cy="113" r="4.6" fill="#2F3A39"></circle>
+<path d="M 77 128 a 9 8 0 0 1 18 0 z" fill="#2F3A39"></path>
+<text x="110" y="114" font-size="11.5" font-weight="700" fill="#243130">사용자</text>
+<text x="110" y="128" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">회원 · 게스트</text>
+<line x1="196" y1="118" x2="253" y2="118" stroke="#2F3A39" stroke-width="1.6"></line>
+<path d="M 262 118 L 253 113.5 L 253 122.5 Z" fill="#2F3A39"></path>
+
+<!-- 브라우저 -->
+<rect x="268" y="44" width="479" height="155" rx="12" fill="#fff" stroke="#2F3A39" stroke-width="1.5"></rect>
+<text x="288" y="79" font-size="14.5" font-weight="700" fill="#243130">브라우저</text>
+
+<rect x="287" y="98" width="42" height="42" rx="13" fill="#E9F4FA"></rect>
+<circle cx="308" cy="119" r="3.4" fill="#3E86B5"></circle>
+<ellipse cx="308" cy="119" rx="13.5" ry="5.2" fill="none" stroke="#3E86B5" stroke-width="1.5"></ellipse>
+<ellipse cx="308" cy="119" rx="13.5" ry="5.2" fill="none" stroke="#3E86B5" stroke-width="1.5" transform="rotate(60 308 119)"></ellipse>
+<ellipse cx="308" cy="119" rx="13.5" ry="5.2" fill="none" stroke="#3E86B5" stroke-width="1.5" transform="rotate(120 308 119)"></ellipse>
+<text x="308" y="158" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">React 19</text>
+
+<rect x="411" y="98" width="42" height="42" rx="13" fill="#FCEDEA"></rect>
+<path d="M 421 119 C 425 108, 439 130, 443 119" fill="none" stroke="#C8443C" stroke-width="2" stroke-linecap="round"></path>
+<circle cx="421" cy="119" r="3.2" fill="#C8443C"></circle>
+<circle cx="443" cy="119" r="3.2" fill="#C8443C"></circle>
+<circle cx="432" cy="110" r="2.2" fill="#C8443C" opacity="0.75"></circle>
+<circle cx="432" cy="128" r="2.2" fill="#C8443C" opacity="0.75"></circle>
+<text x="432" y="158" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">React Router 7</text>
+
+<defs>
+<clippath id="tsqClip"><circle cx="556" cy="119" r="19"></circle></clippath>
+<lineargradient id="tsqSky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#5FB0E5"></stop><stop offset="0.52" stop-color="#F7C9A0"></stop><stop offset="1" stop-color="#F2A277"></stop>
+</lineargradient>
+</defs>
+<g clip-path="url(#tsqClip)">
+<rect x="537" y="100" width="38" height="38" fill="url(#tsqSky)"></rect>
+<circle cx="565.6" cy="108.4" r="3.3" fill="#FBA63C"></circle>
+<g stroke="#FBA63C" stroke-width="1.1" stroke-linecap="round">
+<path d="M 565.6 103.6 L 565.6 102.2"></path><path d="M 569.4 105 L 570.4 104"></path><path d="M 570.4 108.4 L 571.8 108.4"></path><path d="M 569.4 111.8 L 570.4 112.8"></path><path d="M 561.8 105 L 560.8 104"></path>
+</g>
+<path d="M 537 124 q 4.8 -2.6 9.5 0 t 9.5 0 t 9.5 0 t 9.5 0 L 575 138 L 537 138 Z" fill="#4FA8D8"></path>
+<path d="M 537 128 q 4.8 -2.6 9.5 0 t 9.5 0 t 9.5 0 t 9.5 0 L 575 138 L 537 138 Z" fill="#2E86BE"></path>
+<ellipse cx="556" cy="137" rx="19" ry="8.6" fill="#8CC63F"></ellipse>
+<path d="M 559.5 130.6 q 3.2 2.4 6.4 0" fill="none" stroke="#E8506B" stroke-width="1.4" stroke-linecap="round"></path>
+<path d="M 553 134 C 552.4 127 551 120 549.4 114.6" fill="none" stroke="#8B5A2B" stroke-width="2.2" stroke-linecap="round"></path>
+<g fill="#37A048">
+<ellipse cx="544.6" cy="113" rx="5.2" ry="2.3" transform="rotate(-18 544.6 113)"></ellipse>
+<ellipse cx="554.6" cy="112" rx="5.2" ry="2.3" transform="rotate(16 554.6 112)"></ellipse>
+<ellipse cx="548.2" cy="109.2" rx="4.4" ry="2.1" transform="rotate(-46 548.2 109.2)"></ellipse>
+<ellipse cx="552" cy="108.8" rx="4.4" ry="2.1" transform="rotate(44 552 108.8)"></ellipse>
+</g>
+</g>
+<circle cx="556" cy="119" r="19.6" fill="none" stroke="#141414" stroke-width="2.6"></circle>
+<text x="556" y="158" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">TanStack Query</text>
+
+<circle cx="676" cy="119" r="21" fill="#F0F1F0"></circle>
+<path d="M 679 107 L 669 121 L 675 121 L 673 131 L 683 117 L 677 117 Z" fill="#243130"></path>
+<text x="676" y="158" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">socket.io-client</text>
+
+<text x="372" y="107" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">화면 분기</text>
+<line x1="333" y1="119" x2="402" y2="119" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 411 119 L 402 114.5 L 402 123.5 Z" fill="#2F3A39"></path>
+<text x="494" y="107" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">쿼리 훅 호출</text>
+<line x1="457" y1="119" x2="526" y2="119" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 535 119 L 526 114.5 L 526 123.5 Z" fill="#2F3A39"></path>
+<text x="616" y="98" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">소켓 연결</text>
+<line x1="580" y1="110" x2="646" y2="110" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 655 110 L 646 105.5 L 646 114.5 Z" fill="#2F3A39"></path>
+<line x1="655" y1="131" x2="586" y2="131" stroke="#2F6F65" stroke-width="1.5"></line>
+<path d="M 577 131 L 586 126.5 L 586 135.5 Z" fill="#2F6F65"></path>
+<text x="616" y="145" text-anchor="middle" font-size="9" font-weight="500" fill="#2F6F65">이벤트 → 캐시 갱신</text>
+
+
+<!-- 브라우저 &#8596; 서버 연결 -->
+<line x1="332" y1="339" x2="332" y2="208" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 332 199 L 327.5 208 L 336.5 208 Z" fill="#2F3A39"></path>
+<text x="342" y="245" font-size="11" font-weight="700" fill="#243130">dist 정적 서빙</text>
+
+<line x1="575" y1="199" x2="575" y2="330" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 575 339 L 570.5 330 L 579.5 330 Z" fill="#2F3A39"></path>
+<text x="565" y="245" text-anchor="end" font-size="11" font-weight="700" fill="#243130">REST /api</text>
+<text x="565" y="260" text-anchor="end" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">로그인 · 회원가입</text>
+<text x="565" y="274" text-anchor="end" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">결제 검증 · 기록 조회</text>
+
+<line x1="697" y1="208" x2="697" y2="330" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 697 199 L 692.5 208 L 701.5 208 Z" fill="#2F3A39"></path>
+<path d="M 697 339 L 692.5 330 L 701.5 330 Z" fill="#2F3A39"></path>
+<text x="707" y="245" font-size="11" font-weight="700" fill="#243130">Socket.IO /socket.io</text>
+<text x="707" y="260" font-size="9.5" font-weight="500" fill="#2F6F65">매칭 / 채팅 이벤트 양방향 통신</text>
+
+<!-- 배포 파이프라인 -->
+<circle cx="86" cy="363" r="17" fill="#F0F1F0"></circle>
+<rect x="77" y="354" width="18" height="18" rx="5.5" fill="#243130"></rect>
+<text x="86" y="367" text-anchor="middle" font-size="12" font-weight="700" fill="#FBFBF7">R</text>
+<text x="110" y="359" font-size="11.5" font-weight="700" fill="#243130">Render</text>
+<text x="110" y="373" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">호스팅</text>
+<text x="228" y="350" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">빌드 · 배포</text>
+<line x1="196" y1="363" x2="253" y2="363" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 262 363 L 253 358.5 L 253 367.5 Z" fill="#2F3A39"></path>
+
+<circle cx="86" cy="453" r="17" fill="#F0F1F0"></circle>
+<g transform="translate(76.5,443.5) scale(0.79)"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" fill="#243130"></path></g>
+<text x="110" y="449" font-size="11.5" font-weight="700" fill="#243130">code repo</text>
+<text x="110" y="463" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">GitHub</text>
+<line x1="86" y1="436" x2="86" y2="392" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 86 383 L 81.5 392 L 90.5 392 Z" fill="#2F3A39"></path>
+<text x="108" y="398" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">v3 브랜치</text>
+<text x="108" y="411" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">자동 배포</text>
+
+<rect x="69" y="526" width="34" height="34" rx="11" fill="#F0F1F0"></rect>
+<path d="M 81 537 L 76 543 L 81 549" fill="none" stroke="#2F3A39" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M 91 537 L 96 543 L 91 549" fill="none" stroke="#2F3A39" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+<text x="110" y="539" font-size="11.5" font-weight="700" fill="#243130">Dev</text>
+<text x="110" y="553" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">개발자</text>
+<line x1="86" y1="526" x2="86" y2="482" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 86 473 L 81.5 482 L 90.5 482 Z" fill="#2F3A39"></path>
+<text x="108" y="503" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">push</text>
+
+<!-- Node.js 프로세스 -->
+<rect x="268" y="339" width="479" height="228" rx="12" fill="#fff" stroke="#2F3A39" stroke-width="1.5"></rect>
+<text x="288" y="374" font-size="14.5" font-weight="700" fill="#243130">Node.js 프로세스</text>
+
+<line x1="286" y1="426" x2="286" y2="512" stroke="#2F3A39" stroke-width="1.4"></line>
+<line x1="286" y1="426" x2="298" y2="426" stroke="#2F3A39" stroke-width="1.4"></line>
+<path d="M 307 426 L 298 421.5 L 298 430.5 Z" fill="#2F3A39"></path>
+<line x1="286" y1="512" x2="298" y2="512" stroke="#2F3A39" stroke-width="1.4"></line>
+<path d="M 307 512 L 298 507.5 L 298 516.5 Z" fill="#2F3A39"></path>
+
+<!-- HTTP 경로 -->
+<rect x="307" y="405" width="42" height="42" rx="13" fill="#F1F1EE"></rect>
+<text x="328" y="433" text-anchor="middle" font-size="17" font-weight="700" fill="#243130" font-family="Consolas,Menlo,monospace">ex</text>
+<text x="328" y="464" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">Express 5</text>
+
+<rect x="487" y="405" width="42" height="42" rx="13" fill="#FDF3E7"></rect>
+<path d="M 508 412 L 519 417 L 519 427 C 519 434 513 439.5 508 441 C 503 439.5 497 434 497 427 L 497 417 Z" fill="none" stroke="#E0912F" stroke-width="1.7"></path>
+<path d="M 503 426 L 507 430 L 514 422" fill="none" stroke="#E0912F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+<text x="508" y="464" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">auth · zod · errorHandler</text>
+
+<rect x="659" y="405" width="42" height="42" rx="13" fill="#EDEEFB"></rect>
+<path d="M 680 412 L 693 419 L 680 426 L 667 419 Z" fill="#5A63C8"></path>
+<path d="M 667 425 L 680 432 L 693 425" fill="none" stroke="#5A63C8" stroke-width="1.7" stroke-linejoin="round"></path>
+<path d="M 667 432 L 680 439 L 693 432" fill="none" stroke="#5A63C8" stroke-width="1.7" stroke-linejoin="round"></path>
+<text x="680" y="464" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">도메인 라우트</text>
+
+<text x="420" y="414" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">CORS · compression</text>
+<line x1="353" y1="426" x2="478" y2="426" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 487 426 L 478 421.5 L 478 430.5 Z" fill="#2F3A39"></path>
+<text x="594" y="414" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">검증 통과</text>
+<line x1="533" y1="426" x2="650" y2="426" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 659 426 L 650 421.5 L 650 430.5 Z" fill="#2F3A39"></path>
+
+<!-- 소켓 경로 -->
+<circle cx="328" cy="512" r="21" fill="#F0F1F0"></circle>
+<path d="M 331 500 L 321 514 L 327 514 L 325 524 L 335 510 L 329 510 Z" fill="#243130"></path>
+<text x="328" y="550" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">Socket.IO 4</text>
+
+<rect x="487" y="491" width="42" height="42" rx="13" fill="#FCEDEA"></rect>
+<circle cx="503" cy="505" r="4.4" fill="none" stroke="#C8443C" stroke-width="1.6"></circle>
+<path d="M 495 521 a 8 7.5 0 0 1 16 0" fill="none" stroke="#C8443C" stroke-width="1.6"></path>
+<circle cx="516" cy="508" r="3.4" fill="none" stroke="#C8443C" stroke-width="1.5"></circle>
+<path d="M 510 521 a 6 5.5 0 0 1 12 0" fill="none" stroke="#C8443C" stroke-width="1.5"></path>
+<text x="508" y="550" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">chat.socket 매칭</text>
+
+<rect x="659" y="491" width="42" height="42" rx="13" fill="#E9F0FB"></rect>
+<circle cx="680" cy="512" r="12" fill="none" stroke="#3E6FB5" stroke-width="1.7"></circle>
+<path d="M 680 504 L 680 512 L 686 516" fill="none" stroke="#3E6FB5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+<text x="680" y="550" text-anchor="middle" font-size="11.5" font-weight="700" fill="#243130">라운드 경계 타이머</text>
+
+<text x="420" y="500" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">cookie 검증</text>
+<line x1="353" y1="512" x2="478" y2="512" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 487 512 L 478 507.5 L 478 516.5 Z" fill="#2F3A39"></path>
+<text x="594" y="500" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">15초 간격 매칭 감지</text>
+<line x1="533" y1="512" x2="650" y2="512" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 659 512 L 650 507.5 L 650 516.5 Z" fill="#2F3A39"></path>
+
+<!-- 외부 서비스 -->
+<rect x="880" y="372" width="198" height="62" rx="11" fill="#fff" stroke="#2F3A39" stroke-width="1.3"></rect>
+<rect x="898" y="389" width="28" height="28" rx="9" fill="#E9F6EE"></rect>
+<path d="M 914 392 L 904 405 L 911 405 L 910 414 L 920 401 L 913 401 Z" fill="#3ECF8E"></path>
+<text x="936" y="399" font-size="11.5" font-weight="700" fill="#243130">Supabase</text>
+<text x="936" y="414" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">PostgreSQL</text>
+
+<rect x="880" y="462" width="198" height="62" rx="11" fill="#fff" stroke="#2F3A39" stroke-width="1.3"></rect>
+<rect x="898" y="479" width="28" height="28" rx="9" fill="#F0F1F0"></rect>
+<rect x="904" y="486" width="16" height="12" rx="4" fill="none" stroke="#243130" stroke-width="1.5"></rect>
+<path d="M 908 498 L 908 502 L 913 498" fill="none" stroke="#243130" stroke-width="1.5" stroke-linejoin="round"></path>
+<text x="936" y="489" font-size="11.5" font-weight="700" fill="#243130">Solapi</text>
+<text x="936" y="504" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">SMS 인증</text>
+
+<rect x="880" y="552" width="198" height="62" rx="11" fill="#fff" stroke="#2F3A39" stroke-width="1.3"></rect>
+<rect x="898" y="569" width="28" height="28" rx="9" fill="#F0F1F0"></rect>
+<path d="M 903 582 L 912 575 L 921 582" fill="none" stroke="#243130" stroke-width="1.5" stroke-linejoin="round"></path>
+<path d="M 906 584 L 906 591 M 912 584 L 912 591 M 918 584 L 918 591" stroke="#243130" stroke-width="1.4"></path>
+<path d="M 902 593 L 922 593" stroke="#243130" stroke-width="1.6" stroke-linecap="round"></path>
+<text x="936" y="579" font-size="11.5" font-weight="700" fill="#243130">은행 알림</text>
+<text x="936" y="594" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.7">입금 웹훅</text>
+
+<text x="813" y="380" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">CRUD · RPC 호출</text>
+<line x1="747" y1="392" x2="871" y2="392" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 880 392 L 871 387.5 L 871 396.5 Z" fill="#2F3A39"></path>
+<line x1="880" y1="406" x2="756" y2="406" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 747 406 L 756 401.5 L 756 410.5 Z" fill="#2F3A39"></path>
+
+<text x="813" y="481" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">인증 문자 발송</text>
+<line x1="747" y1="493" x2="871" y2="493" stroke="#2F3A39" stroke-width="1.5"></line>
+<path d="M 880 493 L 871 488.5 L 871 497.5 Z" fill="#2F3A39"></path>
+
+<text x="820" y="534" text-anchor="middle" font-size="9.5" font-weight="500" fill="#2F3A39" opacity="0.75">입금내역 웹훅 수신 → 결제 검증</text>
+<path d="M 880 583 L 810 583 L 810 556 L 756 556" fill="none" stroke="#2F3A39" stroke-width="1.5"></path>
+<path d="M 747 556 L 756 551.5 L 756 560.5 Z" fill="#2F3A39"></path>
+
 </svg>
