@@ -1,0 +1,49 @@
+{
+  "contract": {
+    "target": "telepathy-app",
+    "date": "2026-08-22",
+    "startScore": 53,
+    "startGrade": "L3",
+    "targetScore": 65,
+    "targetGrade": "L4",
+    "focusPrinciples": ["P1", "P3", "P10"],
+    "maxIterations": 2,
+    "autoScope": ["file-creation", "config-addition", "doc-enhancement", "verification"],
+    "exclusions": ["domain-refactoring", "infrastructure-deployment"]
+  },
+  "iterations": [
+    {
+      "round": 1,
+      "score": 53,
+      "grade": "L3",
+      "fixes": [],
+      "delta": 0
+    },
+    {
+      "round": 2,
+      "score": 82,
+      "grade": "L4",
+      "fixes": [
+        "루트와 영역별 AGENTS.md 및 문서 지도 추가",
+        "TypeScript strict와 no-explicit-any 강제",
+        "포맷·린트·타입·테스트·빌드 통합 검증 추가",
+        "Husky·lint-staged·commitlint 커밋 게이트 추가",
+        "Node 버전·환경변수 템플릿·재현 가능한 npm ci 고정",
+        "GitHub Actions CI와 최소 Vitest 회귀 테스트 추가",
+        "아키텍처 ADR 및 배포·롤백 런북 추가"
+      ],
+      "delta": 29
+    }
+  ],
+  "status": "completed",
+  "result": {
+    "targetReached": true,
+    "finalScore": 82,
+    "finalGrade": "L4",
+    "remainingRisks": [
+      "기존 Oxlint 경고 정리",
+      "핵심 API·Socket 통합 테스트 확대",
+      "Docker·Redis·Capacitor 인프라 구현은 후속 범위"
+    ]
+  }
+}

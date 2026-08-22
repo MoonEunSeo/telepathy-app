@@ -3,5 +3,10 @@ dist
 build
 coverage
 package-lock.json
+server/src/types/database.types.ts
+server/src/middleware/errorHandler.ts
+server/src/modules/phone/phone.service.ts
+shared/api.ts
+shared/seo.ts
 *.min.js
 .env

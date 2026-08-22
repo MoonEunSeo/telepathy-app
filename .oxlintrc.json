@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "react-hooks", "import"],
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "eqeqeq": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["server/src/types/database.types.ts"],
+      "rules": {
+        "eslint/no-unused-vars": "off"
+      }
+    }
+  ]
+}

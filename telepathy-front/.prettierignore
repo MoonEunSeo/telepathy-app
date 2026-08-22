@@ -3,5 +3,8 @@ dist
 build
 coverage
 package-lock.json
+src/components/GuestLoginModal.tsx
+src/components/MegaphoneInputModal.tsx
+src/fonts.css
 *.min.js
 .env

@@ -15,6 +15,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "strict": true,
 
     /* 공유 계약 타입 (repo 루트 shared/) */
     "paths": { "@shared/*": ["../shared/*"] },

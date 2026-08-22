@@ -15,6 +15,16 @@ interface ParsedDeposit {
   bank: string | null;
 }
 
+type WebhookBody = Record<string, unknown>;
+
+function isWebhookBody(value: unknown): value is WebhookBody {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function optionalString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() ? value : undefined;
+}
+
 /**
  * ✅ 케이뱅크 입금 알림 전용 파서
  */
@@ -44,20 +54,27 @@ function parseKbankDeposit(text: string, appName = ''): ParsedDeposit {
 // ✅ MacroDroid Webhook (POST)
 router.post('/', async (req: Request, res: Response) => {
   try {
-    // ⚠️ 외부 웹훅 — text/plain(raw string) 또는 JSON 으로 들어옴. 동적 payload라 any 경계.
-    let body: any = req.body;
+    // 외부 웹훅은 text/plain 또는 JSON이다. unknown에서 시작해 사용하는 필드만 좁힌다.
+    let body: unknown = req.body;
     if (typeof body === 'string' && body.trim().startsWith('{')) {
       try {
-        // ✅ 줄바꿈, 탭, 특수제어문자 제거
-        body = body.replace(/[\r\n\t]/g, ' ').replace(/\s{2,}/g, ' ');
-        body = JSON.parse(body);
+        const normalizedBody = body.replace(/[\r\n\t]/g, ' ').replace(/\s{2,}/g, ' ');
+        body = JSON.parse(normalizedBody);
       } catch (e) {
-        console.warn('⚠️ JSON 파싱 실패:', (e as Error).message);
+        const message = e instanceof Error ? e.message : String(e);
+        console.warn('⚠️ JSON 파싱 실패:', message);
       }
     }
 
     const { key } = req.query;
-    const { title, text, app, sender, Sender, amount, Amount } = body || {};
+    const payload = isWebhookBody(body) ? body : {};
+    const title = optionalString(payload.title);
+    const text = optionalString(payload.text);
+    const app = optionalString(payload.app);
+    const sender = optionalString(payload.sender);
+    const legacySender = optionalString(payload.Sender);
+    const amount = payload.amount;
+    const legacyAmount = payload.Amount;
 
     // ✅ 보안키 확인
     if (key !== process.env.WEBHOOK_SECRET) {
@@ -69,8 +86,8 @@ router.post('/', async (req: Request, res: Response) => {
     const { sender: parsedSender, amount: parsedAmount, bank } = parseKbankDeposit(rawText, app);
 
     // 🧩 JSON에 sender/amount 직접 포함되어 있을 경우 우선 적용
-    const finalSender = sender || Sender || parsedSender || null;
-    const finalAmount = Number(amount || Amount || parsedAmount || 0) || null;
+    const finalSender = sender || legacySender || parsedSender || null;
+    const finalAmount = Number(amount || legacyAmount || parsedAmount || 0) || null;
 
     console.log('📩 [Webhook 수신]');
     console.log(' ├─ App:', app || '(unknown)');
@@ -181,7 +198,8 @@ router.post('/', async (req: Request, res: Response) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('💥 Webhook 처리 중 오류:', err);
-    res.status(500).json({ ok: false, error: (err as Error).message });
+    const message = err instanceof Error ? err.message : '알 수 없는 오류';
+    res.status(500).json({ ok: false, error: message });
   }
 });
 
