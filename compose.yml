@@ -12,6 +12,7 @@ services:
       PORT: 5000
       REDIS_ENABLED: 'true'
       REDIS_STREAM_NAME: telepathy:local:socket.io
+      REDIS_PRESENCE_KEY: telepathy:local:presence
       REDIS_URL: redis://redis:6379
       SERVE_WEB_STATIC: 'false'
       TRUST_PROXY_HOPS: 0

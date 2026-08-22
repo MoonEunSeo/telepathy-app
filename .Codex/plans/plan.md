@@ -1,14 +1,14 @@
-# Redis Streams Adapter 도입 계획
+# Redis presence·재접속 계획
 
 ## 목표
 
-Redis 연결 수명주기와 readiness를 서버 부트스트랩에 통합하고 Socket.IO broadcast 경계를
-Redis Streams Adapter로 전환한다.
+Redis에 고유 사용자 presence와 접속자 수를 공유하고, 일시적인 모바일 연결 끊김에
+60초 복구 유예를 적용한다.
 
 ## 단계
 
-1. 공식 Adapter와 node-redis 동작 확인
-2. Redis 환경변수 검증과 연결 수명주기 구현
-3. Socket.IO Adapter·readiness·graceful shutdown 통합
-4. 장애·비활성 모드 테스트와 문서 동기화
-5. 전체 저장소 검증
+1. TTL·heartbeat·키 설정과 presence store 계약 구현
+2. Redis sorted set·단일 인스턴스 메모리 구현
+3. Socket.IO connection state recovery와 지연 종료 통합
+4. 설정·TTL·고유 사용자 집계 테스트
+5. 문서 동기화와 전체 저장소 검증

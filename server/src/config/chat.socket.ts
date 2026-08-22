@@ -30,16 +30,19 @@ function isRecentDuplicate(key: string): boolean {
   return false;
 }
 
-export function registerSocketHandlers(io: IOServer): void {
+export interface RegisterSocketHandlerOptions {
+  getOnlineCount: () => Promise<number | null>;
+}
+
+export function registerSocketHandlers(io: IOServer, options: RegisterSocketHandlerOptions): void {
   io.on('connection', (socket: IOSocket) => {
     console.log('🟢 New socket connected:', socket.id);
 
-    // ✅ 접속자 수 항상 브로드캐스트
-    io.emit('onlineCount', io.engine.clientsCount);
-
     // ✅ 클라이언트가 직접 요청할 수도 있게
     socket.on('getOnlineCount', () => {
-      socket.emit('onlineCount', io.engine.clientsCount);
+      void options.getOnlineCount().then((count) => {
+        if (count !== null) socket.emit('onlineCount', count);
+      });
     });
 
     /**
@@ -388,18 +391,8 @@ export function registerSocketHandlers(io: IOServer): void {
         .match({ user_id: me.user_id, room_id: roomId });
     });
 
-    // ✅ 연결 끊기는 중 — 같은 방의 상대방에게 종료 알림
-    socket.on('disconnecting', () => {
-      for (const roomId of socket.rooms) {
-        if (roomId === socket.id) continue;
-        socket.to(roomId).emit('chatEnded');
-        console.log(`📤 chatEnded → room=${roomId}`);
-      }
-    });
-
     socket.on('disconnect', () => {
       console.log(`🔴 Socket disconnected: ${socket.id}`);
-      io.emit('onlineCount', io.engine.clientsCount);
     });
   });
 }

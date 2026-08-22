@@ -23,5 +23,6 @@
 
 Redis Adapter 장애만 발생한 경우 `REDIS_ENABLED=false`로 단일 인스턴스를 재기동할 수 있다.
 이 폴백은 다중 인스턴스에서 사용하면 Socket room이 분리되므로 반드시 API 인스턴스를 하나로 줄인 뒤 적용한다.
+presence 키는 휘발성 상태이므로 직접 복구하지 않고, 롤백 후 heartbeat TTL 동안 자동 수렴시킨다.
 
 정확한 명령과 이미지 태그 정책은 Docker CI/CD 구현 시 추가한다.

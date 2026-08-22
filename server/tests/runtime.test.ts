@@ -17,6 +17,9 @@ describe('서버 런타임 설정', () => {
       redis: {
         connectTimeoutMs: 3000,
         enabled: true,
+        presenceHeartbeatMs: 20000,
+        presenceKey: 'telepathy:development:presence',
+        presenceTtlMs: 60000,
         streamMaxLen: 10000,
         streamName: 'telepathy:development:socket.io',
         url: 'redis://redis:6379',
@@ -39,6 +42,14 @@ describe('서버 런타임 설정', () => {
     const config = parseServerRuntimeConfig({ NODE_ENV: 'production' });
 
     expect(config.redis.streamName).toBe('telepathy:production:socket.io');
+    expect(config.redis.presenceKey).toBe('telepathy:production:presence');
+  });
+
+  it('presence heartbeat는 TTL보다 짧아야 한다', () => {
+    expect(() =>
+      parseServerRuntimeConfig({ PRESENCE_TTL_MS: '60000', PRESENCE_HEARTBEAT_MS: '60000' }),
+    ).toThrow('PRESENCE_HEARTBEAT_MS');
+    expect(() => parseServerRuntimeConfig({ PRESENCE_TTL_MS: '9999' })).toThrow('PRESENCE_TTL_MS');
   });
 
   it('잘못된 포트와 경로가 포함된 출처를 거부한다', () => {

@@ -7,6 +7,7 @@ import type { RedisRuntimeConfig } from '../config/runtime';
 import { createOriginDelegate } from '../config/cors';
 import { registerSocketHandlers, type SocketData } from '../config/chat.socket';
 import type { RedisRuntime } from '../infra/redis';
+import { createPresenceStore } from '../infra/presence';
 import { decodeToken } from '../middleware/auth';
 import { expireRound } from '../modules/matching/matching.service';
 import { getCurrentRound } from '../utils/round';
@@ -55,6 +56,10 @@ export function createSocketRuntime(
       },
       transports: ['websocket'],
       path: '/socket.io',
+      connectionStateRecovery: {
+        maxDisconnectionDuration: options.redisConfig.presenceTtlMs,
+        skipMiddlewares: false,
+      },
     },
   );
 
@@ -62,6 +67,7 @@ export function createSocketRuntime(
     io.adapter(
       createAdapter(options.redis.client, {
         maxLen: options.redisConfig.streamMaxLen,
+        sessionKeyPrefix: `${options.redisConfig.streamName}:session:`,
         streamName: options.redisConfig.streamName,
       }),
     );
@@ -83,20 +89,113 @@ export function createSocketRuntime(
     next();
   });
 
-  let onlineUsers = 0;
+  const presence = createPresenceStore(options.redis, options.redisConfig.presenceKey);
+  const pendingRoomEnds = new Map<string, NodeJS.Timeout>();
+  const presenceExpiryTimers = new Set<NodeJS.Timeout>();
+  let stopped = false;
+
+  const getOnlineCount = async (): Promise<number | null> => {
+    try {
+      return await presence.count(Date.now());
+    } catch (error) {
+      console.error(
+        `[Presence] 접속자 수 조회 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+      );
+      return null;
+    }
+  };
+
+  const emitOnlineCount = async (): Promise<void> => {
+    const count = await getOnlineCount();
+    if (count !== null) io.emit('onlineCount', count);
+  };
+
+  const touchUsers = async (userIds: readonly string[]): Promise<boolean> => {
+    try {
+      await presence.touch(userIds, Date.now() + options.redisConfig.presenceTtlMs);
+      return true;
+    } catch (error) {
+      console.error(`[Presence] 갱신 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`);
+      return false;
+    }
+  };
+
+  const scheduleRoomEnd = (userId: string, roomId: string): void => {
+    const key = `${userId}:${roomId}`;
+    const previousTimer = pendingRoomEnds.get(key);
+    if (previousTimer !== undefined) clearTimeout(previousTimer);
+
+    const timer = setTimeout(() => {
+      pendingRoomEnds.delete(key);
+      void io
+        .in(roomId)
+        .fetchSockets()
+        .then((roomSockets) => {
+          const recovered = roomSockets.some(
+            (roomSocket) => roomSocket.data.user?.user_id === userId,
+          );
+          if (recovered) return;
+          io.to(roomId).emit('chatEnded');
+          console.log(`📤 재접속 유예 만료 → room=${roomId}`);
+        })
+        .catch((error: unknown) => {
+          console.error(
+            `[Socket] 방 복구 확인 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+          );
+        });
+    }, options.redisConfig.presenceTtlMs);
+    pendingRoomEnds.set(key, timer);
+  };
+
   io.on('connection', (socket) => {
-    onlineUsers++;
-    console.log('🟢 유저 접속, 현재 인원:', onlineUsers);
-    io.emit('onlineCount', onlineUsers);
+    const userId = socket.data.user?.user_id;
+    if (!userId) return;
+
+    void touchUsers([userId]).then((touched) => {
+      if (touched) void emitOnlineCount();
+    });
+
+    let disconnectedRooms: string[] = [];
+    let recoverableDisconnect = true;
+    socket.on('disconnecting', (reason) => {
+      disconnectedRooms = [...socket.rooms].filter((roomId) => roomId !== socket.id);
+      recoverableDisconnect = ![
+        'client namespace disconnect',
+        'server namespace disconnect',
+      ].includes(reason);
+
+      if (!recoverableDisconnect) {
+        for (const roomId of disconnectedRooms) socket.to(roomId).emit('chatEnded');
+      }
+    });
 
     socket.on('disconnect', () => {
-      onlineUsers--;
-      console.log('🔴 유저 종료, 현재 인원:', onlineUsers);
-      io.emit('onlineCount', onlineUsers);
+      if (stopped) return;
+      void touchUsers([userId]);
+      if (recoverableDisconnect) {
+        for (const roomId of disconnectedRooms) scheduleRoomEnd(userId, roomId);
+      }
+
+      const expiryTimer = setTimeout(() => {
+        presenceExpiryTimers.delete(expiryTimer);
+        void emitOnlineCount();
+      }, options.redisConfig.presenceTtlMs);
+      presenceExpiryTimers.add(expiryTimer);
     });
   });
 
-  registerSocketHandlers(io);
+  const presenceHeartbeat = setInterval(() => {
+    const userIds = [
+      ...new Set(
+        [...io.sockets.sockets.values()]
+          .map((socket) => socket.data.user?.user_id)
+          .filter((userId): userId is string => userId !== undefined),
+      ),
+    ];
+    void touchUsers(userIds);
+  }, options.redisConfig.presenceHeartbeatMs);
+
+  registerSocketHandlers(io, { getOnlineCount });
 
   let lastRound = getCurrentRound().round;
   const roundTimer = setInterval(() => {
@@ -111,6 +210,14 @@ export function createSocketRuntime(
 
   return {
     io,
-    stopSchedulers: () => clearInterval(roundTimer),
+    stopSchedulers: () => {
+      stopped = true;
+      clearInterval(roundTimer);
+      clearInterval(presenceHeartbeat);
+      for (const timer of pendingRoomEnds.values()) clearTimeout(timer);
+      pendingRoomEnds.clear();
+      for (const timer of presenceExpiryTimers) clearTimeout(timer);
+      presenceExpiryTimers.clear();
+    },
   };
 }

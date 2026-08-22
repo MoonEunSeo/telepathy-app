@@ -12,24 +12,24 @@ ID는 측정 시나리오(S1~S9)와 구분하기 위해 **O(Optimization)** 를 
 
 ## 우선순위
 
-| ID | 항목 | 분류 | 비용 | 효과 | 상태 |
-|---|---|---|---|---|---|
-| [O8](#o8-rls-전-테이블-비활성) | RLS 전 테이블 비활성 | 보안 | 매우 낮음 | 매우 높음 | 📋 [TEL-12](https://linear.app/newtelepathy/issue/TEL-12) |
-| [O9](#o9-jwt-원문을-로그에-출력) | JWT 원문 로그 출력 | 보안 | 매우 낮음 | 매우 높음 | 📋 [TEL-13](https://linear.app/newtelepathy/issue/TEL-13) |
-| [O10](#o10-session-status-인증-누락) | `/session-status` 인증 누락 | 보안 | 낮음 | 높음 | 📋 [TEL-14](https://linear.app/newtelepathy/issue/TEL-14) |
-| [O4](#o4-코드-스플리팅-미착수) | 코드 스플리팅 | 프론트 | 낮음 | 높음 | ⛔ 미착수 |
-| [O3](#o3-supabase-클라이언트-12개-중복-생성) | Supabase 클라이언트 12개 | 서버 | 낮음 | 중간 | ⛔ 미착수 |
-| [O6](#o6-구조화되지-않은-로그-40개) | 구조화되지 않은 로그 | 서버 | 낮음 | 중간 | ⛔ 미착수 |
-| [O1](#o1-onlinecount-이중-브로드캐스트) | `onlineCount` 이중 브로드캐스트 | 서버 | 중간 | 높음 | ⛔ 미착수 |
-| [O2](#o2-매칭-경쟁-상태와-db-왕복-6회) | 매칭 경쟁 상태 · 왕복 6회 | 서버 | 중간 | 높음 | ⛔ 미착수 |
-| [O12](#o12-db-인덱스가-코드로-관리되지-않음) | DB 인덱스 미관리 | DB | 중간 | 미확인 | ⛔ 미착수 |
-| [O5](#o5-select-남용) | `select('*')` 남용 | 서버 | 낮음 | 낮음 | ⛔ 미착수 |
-| [O7](#o7-flushround-트랜잭션-부재) | `flushRound` 트랜잭션 부재 | 서버 | 중간 | 중간 | ⛔ 미착수 |
-| [O14](#o14-큐와-채팅-세션의-수명-불일치) | 큐·채팅 세션 수명 불일치 | 정합성 | 중간 | 중간 | ⛔ 미착수 |
-| [O13](#o13-프로덕션에서-tsx로-ts-직접-실행) | prod에서 `tsx` 직접 실행 | 배포 | 중간 | 미확인 | ⛔ 미착수 |
-| [O11](#o11-수평-확장을-막는-4개-지점) | 수평 확장 차단 4개 지점 | 확장성 | 높음 | — | ⛔ 미착수 |
-| [O15](#o15-할로윈-테마-본문-대비-미달) | 할로윈 테마 본문 대비 미달 | 접근성 | 낮음 | 중간 | ⛔ 미착수 |
-| [O16](#o16-스플래시-고정-15초가-speed-index-를-끈다) | 스플래시 고정 1.5초 → SI +2,191 ms | 프론트 | 낮음 | **큼** | ⛔ 미착수 |
+| ID                                                   | 항목                               | 분류   | 비용      | 효과      | 상태                                                      |
+| ---------------------------------------------------- | ---------------------------------- | ------ | --------- | --------- | --------------------------------------------------------- |
+| [O8](#o8-rls-전-테이블-비활성)                       | RLS 전 테이블 비활성               | 보안   | 매우 낮음 | 매우 높음 | 📋 [TEL-12](https://linear.app/newtelepathy/issue/TEL-12) |
+| [O9](#o9-jwt-원문을-로그에-출력)                     | JWT 원문 로그 출력                 | 보안   | 매우 낮음 | 매우 높음 | 📋 [TEL-13](https://linear.app/newtelepathy/issue/TEL-13) |
+| [O10](#o10-session-status-인증-누락)                 | `/session-status` 인증 누락        | 보안   | 낮음      | 높음      | 📋 [TEL-14](https://linear.app/newtelepathy/issue/TEL-14) |
+| [O4](#o4-코드-스플리팅-미착수)                       | 코드 스플리팅                      | 프론트 | 낮음      | 높음      | ⛔ 미착수                                                 |
+| [O3](#o3-supabase-클라이언트-12개-중복-생성)         | Supabase 클라이언트 12개           | 서버   | 낮음      | 중간      | ⛔ 미착수                                                 |
+| [O6](#o6-구조화되지-않은-로그-40개)                  | 구조화되지 않은 로그               | 서버   | 낮음      | 중간      | ⛔ 미착수                                                 |
+| [O1](#o1-onlinecount-이중-브로드캐스트)              | `onlineCount` 이중 브로드캐스트    | 서버   | 중간      | 높음      | ✅ 구현·실 Redis 검증 대기                                |
+| [O2](#o2-매칭-경쟁-상태와-db-왕복-6회)               | 매칭 경쟁 상태 · 왕복 6회          | 서버   | 중간      | 높음      | ⛔ 미착수                                                 |
+| [O12](#o12-db-인덱스가-코드로-관리되지-않음)         | DB 인덱스 미관리                   | DB     | 중간      | 미확인    | ⛔ 미착수                                                 |
+| [O5](#o5-select-남용)                                | `select('*')` 남용                 | 서버   | 낮음      | 낮음      | ⛔ 미착수                                                 |
+| [O7](#o7-flushround-트랜잭션-부재)                   | `flushRound` 트랜잭션 부재         | 서버   | 중간      | 중간      | ⛔ 미착수                                                 |
+| [O14](#o14-큐와-채팅-세션의-수명-불일치)             | 큐·채팅 세션 수명 불일치           | 정합성 | 중간      | 중간      | ⛔ 미착수                                                 |
+| [O13](#o13-프로덕션에서-tsx로-ts-직접-실행)          | prod에서 `tsx` 직접 실행           | 배포   | 중간      | 미확인    | ⛔ 미착수                                                 |
+| [O11](#o11-수평-확장을-막는-4개-지점)                | 수평 확장 차단 4개 지점            | 확장성 | 높음      | —         | ⛔ 미착수                                                 |
+| [O15](#o15-할로윈-테마-본문-대비-미달)               | 할로윈 테마 본문 대비 미달         | 접근성 | 낮음      | 중간      | ⛔ 미착수                                                 |
+| [O16](#o16-스플래시-고정-15초가-speed-index-를-끈다) | 스플래시 고정 1.5초 → SI +2,191 ms | 프론트 | 낮음      | **큼**    | ⛔ 미착수                                                 |
 
 > **O8~O10은 성능이 아니라 보안이다.** 이 문서에는 발견 기록만 두고,
 > 실제 처리는 Linear 이슈로 분리했다 — **TEL-12 · TEL-13 · TEL-14** (2026-07-28 등록).
@@ -55,25 +55,17 @@ O3·O6을 부하테스트 **앞에** 두는 이유는, 로그 I/O와 클라이�
 
 ## O1. `onlineCount` 이중 브로드캐스트
 
-**위치**
-- [`server/index.ts:73-83`](../../server/index.ts) — 수동 카운터 `onlineUsers`로 `io.emit`
-- [`server/src/config/chat.socket.ts:38`](../../server/src/config/chat.socket.ts) — `io.engine.clientsCount`로 `io.emit`
+> 2026-08-23: 소스를 TTL presence로 통합하고 프론트의 랜덤 보정도 제거했다.
+> 다중 인스턴스 실 Redis 카운트 검증은 배포 전 통합 테스트로 남아 있다.
 
-**현상**
-접속·해제 1건마다 **전체 클라이언트에게 2번** 브로드캐스트된다.
-동시 접속 N명일 때 접속 1건당 **2N개 메시지**가 나간다.
+**해결 위치**
 
-**근거**
-핸들러가 두 곳에 등록돼 있고 둘 다 `io.emit`(전체 브로드캐스트)을 호출한다.
-두 값의 출처도 다르다 — 수동 카운터는 `io.use` 인증을 통과한 소켓만, `clientsCount`는
-엔진 레벨 전체를 센다. **숫자가 서로 다르며 화면에서 깜빡이는 원인**이기도 하다.
-[known-issues](../project/known-issues.md)에 "소스 이원화"로 기록돼 있으나 성능 항목으로는 다뤄지지 않았다.
+- [`server/src/infra/presence.ts`](../../server/src/infra/presence.ts) — Redis·메모리 presence 계약
+- [`server/src/bootstrap/socket.ts`](../../server/src/bootstrap/socket.ts) — heartbeat·TTL·`onlineCount` 통합
 
-**개선안**
-1. 소스를 하나로 통일한다 (인증 통과 소켓 기준 권장 — 계획안 §26의 "인증 완료된 Socket만 포함"과 일치)
-2. 접속마다 emit하지 않고 **1초 주기로 집계해, 값이 변했을 때만** emit한다
-
-접속당 2N → 초당 최대 N으로 떨어진다.
+**해결**
+인증된 `user_id`를 Redis sorted set member로 사용해 고유 사용자 수를 집계하고,
+기존 두 카운터와 프론트 랜덤 보정을 제거했다.
 
 **측정 방법**
 소켓 클라이언트 N개를 붙였다 떼면서 `onlineCount` 이벤트 수신 횟수를 센다.
@@ -85,7 +77,7 @@ O3·O6을 부하테스트 **앞에** 두는 이유는, 로그 I/O와 클라이�
 
 **위치** [`server/src/config/chat.socket.ts:114-199`](../../server/src/config/chat.socket.ts)
 
-**현상 ①  read-then-write 경쟁 상태**
+**현상 ① read-then-write 경쟁 상태**
 
 ```
 ① waiting 조회 (select)  →  ② 두 행을 matched 로 update
@@ -97,7 +89,7 @@ A가 조회한 `waiting[0]`을 B도 동시에 조회해 **한 사람이 두 방�
 
 15초 라운드 경계에 요청이 몰리는 구조라 실제로 발생할 조건이 갖춰져 있다.
 
-**현상 ②  매칭 1건당 DB 왕복 6회**
+**현상 ② 매칭 1건당 DB 왕복 6회**
 
 ```
 delete(재선택 정리) → insert(큐 등록) → select(상대 조회)
@@ -110,7 +102,7 @@ delete(재선택 정리) → insert(큐 등록) → select(상대 조회)
 Postgres 함수(RPC)로 묶어 `FOR UPDATE SKIP LOCKED` 기반 단일 트랜잭션 처리.
 **왕복 6회 → 1회**이면서 경쟁 상태도 동시에 해소된다.
 
-계획안 §14.2가 요구하는 *"Transaction으로 연결"* 과 방향이 같다.
+계획안 §14.2가 요구하는 _"Transaction으로 연결"_ 과 방향이 같다.
 
 **측정 방법**
 같은 `word`·`round`에 동시 진입하는 부하 시나리오로 중복 매칭 발생 건수를 센다.
@@ -157,17 +149,18 @@ password · report · register · withdraw · webhook
 **근거**
 [S5](s5-lighthouse/README.md)가 이미 진단을 마쳤다.
 
-| 지표 | 값 |
-|---|---|
-| 성능 점수(중앙값) | 76 |
-| LCP | 4,165 ms |
-| TBT / CLS | 0 / 0 (최상) |
-| 원인 | 550KB 단일 번들 |
+| 지표                | 값                |
+| ------------------- | ----------------- |
+| 성능 점수(중앙값)   | 76                |
+| LCP                 | 4,165 ms          |
+| TBT / CLS           | 0 / 0 (최상)      |
+| 원인                | 550KB 단일 번들   |
 | `unused-javascript` | ≈540 ms 절감 여지 |
 
-빌드도 같은 경고를 낸다 — *"chunks larger than 500 kB … use dynamic import() to code-split."*
+빌드도 같은 경고를 낸다 — _"chunks larger than 500 kB … use dynamic import() to code-split."_
 
 **개선안**
+
 1. **라우트 기반 분할** — `React.lazy` + `Suspense`로 페이지별 청크 (효과 최대)
 2. 무거운 의존성 지연 로드 — 초기에 불필요한 모듈
    (`@portone/browser-sdk` 는 2026-08-04 PortOne 제거로 해소됐다)
@@ -200,6 +193,7 @@ password · report · register · withdraw · webhook
 **위치** 11개 파일에 `console.log` **40건**
 
 **현상**
+
 - 소켓 연결마다 출력되는 로그가 있어 접속이 몰리면 **로그 I/O 자체가 부하**가 된다
 - [`flush.ts:8`](../../server/src/utils/flush.ts)의 `console.log('🧪 flushRound supabase 객체:', typeof supabase)` —
   디버그 잔재가 **30초마다** 실행 중이다
@@ -242,12 +236,12 @@ anon 키만 있으면 전체 행을 읽고 수정할 수 있다.
 
 노출 규모 (`count(*)` 실측, 2026-07-28):
 
-| | 운영 `Telepathy` | `telepathy-v2-dev` |
-|---|---|---|
+|               | 운영 `Telepathy`                                        | `telepathy-v2-dev`                                                |
+| ------------- | ------------------------------------------------------- | ----------------------------------------------------------------- |
 | 회원 개인정보 | `users` **1,191** (`password_hash`·`phone`·`real_name`) | `users`·`user_credentials`·`legacy_users` 각 1,191 (**3중 복제**) |
-| 대화 | `chat_logs` **8,222** | `chat_messages` 8,003 + `legacy_chat_logs` 8,175 |
-| 환불 계좌 | `sp_payments` **131** (`refund_account`) | `legacy_sp_payments` 131 |
-| 신고 | `reported_reports` 20 (신고자↔피신고자 대응) | `reports` 18 + `report_reason_items` 33 |
+| 대화          | `chat_logs` **8,222**                                   | `chat_messages` 8,003 + `legacy_chat_logs` 8,175                  |
+| 환불 계좌     | `sp_payments` **131** (`refund_account`)                | `legacy_sp_payments` 131                                          |
+| 신고          | `reported_reports` 20 (신고자↔피신고자 대응)            | `reports` 18 + `report_reason_items` 33                           |
 
 익명 대화가 서비스의 핵심 가치인데 그 대화 내용과 매칭 상대가 노출 대상이며,
 v2-dev 의 `user_credentials` 는 **인증 정보만 모아둔 테이블**이라 특히 위험하다.
@@ -308,7 +302,7 @@ console.log('📥 /end token:', token);
 플랫폼 로그(Render / CloudWatch)에 **유효한 인증 토큰이 평문으로 축적된다.**
 로그 접근 권한이 있으면 누구나 계정을 탈취할 수 있다.
 
-계획안 §8.3이 금지한 *"비밀번호를 로그에 출력"* 과 같은 범주다.
+계획안 §8.3이 금지한 _"비밀번호를 로그에 출력"_ 과 같은 범주다.
 
 **개선안** 해당 로그 제거. [O6](#o6-구조화되지-않은-로그-40개) 작업 시 전체 로그를 함께 점검한다.
 
@@ -345,12 +339,12 @@ router.post('/session-status', async (req, res) => {
 
 **현상** 인스턴스를 2대로 늘리는 순간 깨지는 지점들이다.
 
-| 위치 | 문제 |
-|---|---|
-| [`index.ts:100`](../../server/index.ts) `cron.schedule` | **모든 인스턴스가 동시에 `flushRound` 실행** → 같은 라운드 로그 중복 insert, delete 경합 |
-| [`index.ts:91`](../../server/index.ts) `setInterval` | 인스턴스마다 라운드 타이머 → `round:change`가 N번 emit |
-| [`chat.socket.ts:21`](../../server/src/config/chat.socket.ts) `recentBroadcasts` | 인메모리 Map → 인스턴스 분리 시 중복 방지 무력화 |
-| [`index.ts:72`](../../server/index.ts) `onlineUsers` | 인스턴스별 로컬 값 → 전체 접속자 수 산출 불가 |
+| 위치                                                                             | 문제                                                                                     |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [`index.ts:100`](../../server/index.ts) `cron.schedule`                          | **모든 인스턴스가 동시에 `flushRound` 실행** → 같은 라운드 로그 중복 insert, delete 경합 |
+| [`index.ts:91`](../../server/index.ts) `setInterval`                             | 인스턴스마다 라운드 타이머 → `round:change`가 N번 emit                                   |
+| [`chat.socket.ts:21`](../../server/src/config/chat.socket.ts) `recentBroadcasts` | 인메모리 Map → 인스턴스 분리 시 중복 방지 무력화                                         |
+| Redis presence                                                                   | ✅ TTL sorted set으로 전환, 실 Redis 2인스턴스 검증 대기                                 |
 
 여기에 Socket.IO 자체가 **다중 인스턴스에서 `@socket.io/redis-adapter`를 요구**한다.
 서로 다른 서버에 붙은 두 사용자는 같은 room에 있어도 메시지가 전달되지 않는다.
@@ -359,8 +353,9 @@ router.post('/session-status', async (req, res) => {
 확장의 전제 조건이라는 점이 코드로 확인된다.
 
 **개선안**
+
 - cron → **분산 락**, 라운드 타이머 → **리더 선출**
-- `recentBroadcasts` · `onlineUsers` → Redis
+- `recentBroadcasts` → Redis (`onlineUsers`는 presence로 전환 완료)
 - Socket.IO → `@socket.io/redis-adapter`
 
 **유리한 점**
@@ -368,8 +363,8 @@ router.post('/session-status', async (req, res) => {
 **ALB sticky session 없이도 확장 가능하다.**
 (대신 WebSocket을 차단하는 네트워크에서 접속이 실패하는 트레이드오프는 별도 판단 필요)
 
-계획안 §26의 *"서버를 여러 인스턴스로 확장할 때 사용할 수 있도록
-Presence Repository 인터페이스를 분리한다"* 와 직접 연결된다.
+계획안 §26의 _"서버를 여러 인스턴스로 확장할 때 사용할 수 있도록
+Presence Repository 인터페이스를 분리한다"_ 와 직접 연결된다.
 
 ---
 
@@ -383,8 +378,9 @@ Presence Repository 인터페이스를 분리한다"* 와 직접 연결된다.
 복합 인덱스가 없으면 **매 매칭마다 seq scan**이며, 부하테스트 1순위 병목 후보다.
 
 **개선안**
+
 1. `EXPLAIN ANALYZE`로 현재 실행 계획 확인
-2. 필요한 인덱스 추가 (계획안 §34가 *"매칭 Round·Word·Status"* 를 우선 인덱싱 대상으로 명시)
+2. 필요한 인덱스 추가 (계획안 §34가 _"매칭 Round·Word·Status"_ 를 우선 인덱싱 대상으로 명시)
 3. **스키마·인덱스를 `.sql`로 저장소에 편입** — 계획안의 "Supabase SQL Migration" 전환 첫 단계
 
 **측정 방법** `EXPLAIN ANALYZE` 실행 계획 및 실행 시간 Before/After.
@@ -409,22 +405,23 @@ Presence Repository 인터페이스를 분리한다"* 와 직접 연결된다.
 ## O14. 큐와 채팅 세션의 수명 불일치
 
 **위치**
+
 - [`chat.socket.ts:377`](../../server/src/config/chat.socket.ts) — `leaveRoom` (정상 종료)
 - [`chat.socket.ts:392`](../../server/src/config/chat.socket.ts) — `disconnecting` (비정상 종료)
 - [`flush.ts`](../../server/src/utils/flush.ts) — 30초 cron 정리
 
-**현상 ①  종료 처리가 비대칭이다**
+**현상 ① 종료 처리가 비대칭이다**
 
-| 경로 | 상대에게 알림 | DB 상태 |
-|---|---|---|
-| `leaveRoom` (나가기 버튼) | ✅ | ✅ `status='ended'` |
-| `disconnecting` (브라우저 닫기) | ✅ | ❌ **없음** |
+| 경로                            | 상대에게 알림 | DB 상태             |
+| ------------------------------- | ------------- | ------------------- |
+| `leaveRoom` (나가기 버튼)       | ✅            | ✅ `status='ended'` |
+| `disconnecting` (브라우저 닫기) | ✅            | ❌ **없음**         |
 
 브라우저를 그냥 닫으면 큐 행이 `matched` 인 채로 남는다.
 지금까지 드러나지 않은 이유는 `flushRound` 가 30초마다 치우기 때문이다.
 **배치가 뒤를 봐주고 있어 비대칭이 보이지 않았다.**
 
-**현상 ②  긴 채팅에서는 `leaveRoom` 의 update 도 무의미하다 — 더 중요한 발견**
+**현상 ② 긴 채팅에서는 `leaveRoom` 의 update 도 무의미하다 — 더 중요한 발견**
 
 큐 행의 수명을 계산하면 이렇다.
 
@@ -436,9 +433,10 @@ Presence Repository 인터페이스를 분리한다"* 와 직접 연결된다.
 **매칭 후 대략 15~45초면 큐 행이 사라진다.** 채팅은 그보다 오래 간다.
 
 ```ts
-await supabase.from('telepathy_sessions_queue')
+await supabase
+  .from('telepathy_sessions_queue')
   .update({ status: 'ended' })
-  .match({ user_id, room_id });   // ← 대상 행이 이미 없다
+  .match({ user_id, room_id }); // ← 대상 행이 이미 없다
 ```
 
 행이 없어도 Supabase 는 이것을 오류로 주지 않는다. `error` 는 `null` 이고 0건이 갱신된다.
@@ -446,10 +444,10 @@ await supabase.from('telepathy_sessions_queue')
 
 **근거 — 수명이 다른 두 가지가 한 테이블에 있다**
 
-| | 수명 |
-|---|---|
-| 매칭 대기열 | 라운드 1회 (15초) |
-| 채팅 세션 | 사용자가 나갈 때까지 (수 분) |
+|             | 수명                         |
+| ----------- | ---------------------------- |
+| 매칭 대기열 | 라운드 1회 (15초)            |
+| 채팅 세션   | 사용자가 나갈 때까지 (수 분) |
 
 `telepathy_sessions_queue` 는 이름 그대로 **매칭 대기열**이고 라운드 단위로 살고 죽는다.
 거기에 채팅 세션 상태를 함께 얹었기 때문에, **짧은 쪽 기준으로 정리될 때 긴 쪽 정보가 함께 사라진다.**
@@ -494,12 +492,12 @@ body.halloween-mode {
 
 MainPage 390×844 뷰포트에서 잰 값이다.
 
-| 텍스트 | 글자색 | 배경 평균색 | 대비비 | WCAG AA |
-|---|---|---|---:|---|
-| `Telepathy` 제목 (34 px) | `rgb(208,93,75)` | `rgb(178,81,81)` | **1.28** | ❌ (큰 글씨 기준 3.0 도 미달) |
-| 안내 문구 (15 px) | `rgb(255,230,179)` | `rgb(237,154,75)` | **1.85** | ❌ |
-| 집중운영시간 (9 px) | `rgb(125,106,88)` | `rgb(172,83,71)` | **1.00** | ❌ 사실상 보이지 않는다 |
-| ⓒ 푸터 (12 px) | `rgb(85,85,85)` | `rgb(244,159,78)` | 3.52 | ❌ (본문 기준 4.5 미달) |
+| 텍스트                   | 글자색             | 배경 평균색       |   대비비 | WCAG AA                       |
+| ------------------------ | ------------------ | ----------------- | -------: | ----------------------------- |
+| `Telepathy` 제목 (34 px) | `rgb(208,93,75)`   | `rgb(178,81,81)`  | **1.28** | ❌ (큰 글씨 기준 3.0 도 미달) |
+| 안내 문구 (15 px)        | `rgb(255,230,179)` | `rgb(237,154,75)` | **1.85** | ❌                            |
+| 집중운영시간 (9 px)      | `rgb(125,106,88)`  | `rgb(172,83,71)`  | **1.00** | ❌ 사실상 보이지 않는다       |
+| ⓒ 푸터 (12 px)           | `rgb(85,85,85)`    | `rgb(244,159,78)` |     3.52 | ❌ (본문 기준 4.5 미달)       |
 
 집중운영시간 안내는 대비비 **1.00** 이다. 배경과 밝기가 같아 글자를 읽을 수 없다.
 
@@ -524,8 +522,9 @@ MainPage 390×844 뷰포트에서 잰 값이다.
 ```js
 // devtools 콘솔
 const l = document.createElement('link');
-l.id = 'theme-style'; l.rel = 'stylesheet';
-l.href = '/assets/halloween-<hash>.css';       // dist/assets 에서 확인
+l.id = 'theme-style';
+l.rel = 'stylesheet';
+l.href = '/assets/halloween-<hash>.css'; // dist/assets 에서 확인
 document.head.insertBefore(l, document.head.firstChild);
 document.body.className = 'halloween-mode';
 ```

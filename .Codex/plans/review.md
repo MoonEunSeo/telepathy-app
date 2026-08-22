@@ -1,20 +1,21 @@
-# Redis Streams Adapter 도입 리뷰
+# Redis presence·재접속 리뷰
 
 ## 확인 항목
 
-- Redis URL과 오류 로그에 비밀값 비노출
-- Redis 비활성·준비·장애 readiness 상태 구분
-- Streams Adapter에 중복 Redis 클라이언트를 직접 전달하지 않음
-- Redis 장애 시 메모리 Adapter 동적 폴백 없음
-- 종료 시 Adapter 이후 Redis 클라이언트 종료
-- connection state recovery 미활성 상태 명시
+- `onlineCount` 생성원을 presence store 하나로 통합
+- Redis 장애 시 잘못된 카운트를 emit하지 않음
+- heartbeat 주기가 TTL보다 짧은지 환경변수 경계에서 검증
+- recovery에서도 인증 미들웨어를 다시 실행
+- 재접속 가능 단절에서만 `chatEnded`를 60초 유예
+- scheduler 종료 시 heartbeat·만료 타이머 정리
 
 ## 검증 결과
 
-- Redis 비활성 모드 실제 기동 및 `/healthz`, `/readyz` 확인
-- Redis 활성·연결 실패 모드의 제한된 재시도와 실패 종료 확인
-- `compose.yml` YAML 파싱 확인
+- 메모리 presence의 고유 사용자·heartbeat·TTL 단위 테스트
+- presence 환경변수 기본값·범위·상호 관계 테스트
+- 서버·프론트 strict 타입 검사
 
 ## 남은 검증
 
-현재 작업 PC에는 Docker/Redis가 없어 실제 Adapter broadcast와 이미지 빌드는 Docker 환경에서 실행해야 한다.
+현재 작업 PC에는 Docker/Redis가 없어 실 Redis 2인스턴스 presence·room recovery는
+Docker 환경에서 실행해야 한다. 프로세스 재시작을 넘는 `chatEnded` deadline claim은 후속 작업이다.

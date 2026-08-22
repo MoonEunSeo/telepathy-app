@@ -56,7 +56,10 @@ docker compose down
 - Docker 밖에서 Redis 없이 개발할 때는 `REDIS_ENABLED=false`를 사용하며 Socket.IO는 메모리 Adapter로 동작한다.
 - Redis가 활성화됐지만 준비되지 않으면 `/healthz`는 200을 유지하고 `/readyz`는 503을 반환한다.
 - 최초 Redis 연결 실패는 서버 시작 실패로 처리하며, 연결 후 일시 장애는 node-redis와 Streams Adapter가 재연결한다.
-- 60초 세션 복구는 아직 활성화하지 않았다. 현재 즉시 `chatEnded` 처리와 presence를 먼저 Redis로 이전해야 한다.
+- `PRESENCE_TTL_MS`(기본 60초) 동안 Socket.IO 세션·room을 복구하고, heartbeat는
+  `PRESENCE_HEARTBEAT_MS`(기본 20초)로 고유 사용자 presence를 갱신한다.
+- Redis 비활성 단일 인스턴스에서는 동일한 TTL 계약의 메모리 presence를 사용한다.
+- 재접속 가능한 단절은 즉시 `chatEnded`를 보내지 않고, 유예 만료 후 room 복구 여부를 확인한다.
 - `compose.yml`은 로컬 검증용이다. 운영 전 reverse proxy, TLS, Redis 인증과 GHCR 이미지 태그를 추가한다.
 
 ## 작업 루프

@@ -7,7 +7,7 @@
 PortOne PG 결제를 걷어냈다. 근거 셋 —
 
 - **PG 결제 실적 0건** (`legacy_payments` 0행 · 계좌이체 `legacy_sp_payments` 131행)
-- 계획안 §27.1 — *"PG 결제는 이번 마이그레이션에서 제외, 우선순위는 계좌이체"*
+- 계획안 §27.1 — _"PG 결제는 이번 마이그레이션에서 제외, 우선순위는 계좌이체"_
 - 걷어내기 전에도 이미 500 이었다 (`grant_megaphone_payment` 가 운영 DB 에 없었음)
 
 구매 모달은 버튼 대신 **"준비 중" 안내**를 띄운다. 확성기 **사용**(발사)은 그대로 동작한다.
@@ -39,7 +39,6 @@ PortOne PG 결제를 걷어냈다. 근거 셋 —
     `modules/phone/` 이 챌린지를 DB 에 쓰지만 **아직 마운트되지 않았다.**
     레거시 `verify-mvp.routes.ts` 는 여전히 인증번호를 메모리 `Map` 에 담아
     검증 성공이 DB 에 남지 않는다 — 그 전환이 선행돼야 재설정이 실제로 동작한다
-- 온라인 사용자 수 소스 이원화 (`index.ts` 수동 카운터 vs `chat.socket`의 `io.engine.clientsCount`)
 - `telepathy_sessions_queue`에 `role` 컬럼이 없어 게스트 판별을 `username === user_id`로
   **간접 추론**하고 있다 → `actors` 구조 도입 시 해소
 - `word_history`는 게스트 FK 문제로 `partner_id`를 null로 두는 임시방편 사용 중

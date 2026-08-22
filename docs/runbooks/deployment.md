@@ -47,4 +47,6 @@ docker compose down
 - Redis 인증을 적용하고 비밀값을 이미지·Compose 파일에 직접 기록하지 않는다.
 - GHCR의 `sha-<git-sha>` 이미지로 배포하고 `latest`를 배포 기준으로 사용하지 않는다.
 - `/readyz`의 `dependencies.redis`가 `ready`인지 확인한다. `unavailable`이면 배포를 중단한다.
+- 운영별 `REDIS_PRESENCE_KEY`를 분리하고 heartbeat는 `PRESENCE_TTL_MS`보다 짧게 설정한다.
+- 배포 교체 중 60초 이내 소켓 복구·room 유지·접속자 수 불변을 확인한다.
 - API 2개 인스턴스 간 Socket broadcast 통합 테스트를 통과하기 전에는 수평 확장하지 않는다.
