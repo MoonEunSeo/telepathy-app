@@ -1,7 +1,7 @@
-# 아키텍처
+# 현재 아키텍처
 
 > 기술스택은 [tech-stack.md](tech-stack.md), 코딩 규약은 [conventions-ts.md](typescript.md) 참조.
-
+> 웹·API 분리와 Redis·Capacitor 목표 구조는 [상세 설계](../project/architecture-design.md) 참조.
 
 ## 전체 구성
 
@@ -35,12 +35,11 @@ telepathy-app/
 │     ├─ config/socket.ts   소켓 싱글턴 (autoConnect: false)
 │     ├─ themes/base/tokens.css   디자인 토큰 SSOT
 │     └─ types/             @shared 재노출 + 프론트 전용 타입
-├─ client/                  ⚠️ 레거시 프론트 — 신규 작업 금지
 ├─ shared/                  공유 계약 타입 (타입 전용, 런타임 코드 0)
 └─ docs/                    성능 베이스라인 등
 ```
 
-**UI/디자인 작업은 `telepathy-front`.** `client/`는 telepathy-front로 대체된 레거시다.
+**UI/디자인 작업은 `telepathy-front`.** 저장소에 별도 레거시 프론트 디렉터리는 없다.
 
 ## 인증 구조
 
@@ -54,11 +53,11 @@ JWT를 **`token` 쿠키**(HttpOnly)에 담아 회원·게스트가 **같은 쿠�
 
 `server/src/middleware/auth.ts`가 단일 해석 지점이다.
 
-| 함수 | 용도 |
-|---|---|
+| 함수                 | 용도                                                     |
+| -------------------- | -------------------------------------------------------- |
 | `decodeToken(token)` | 검증 + `SessionUser` 반환. 실패는 예외가 아닌 **`null`** |
-| `requireMember` | 회원 전용 (마이페이지·결제·확성기) |
-| `requireSession` | 회원 + 게스트 (신고·피드백) |
+| `requireMember`      | 회원 전용 (마이페이지·결제·확성기)                       |
+| `requireSession`     | 회원 + 게스트 (신고·피드백)                              |
 
 - **HTTP와 Socket.IO가 `decodeToken`을 공유**한다 (`server/index.ts`의 `io.use`).
 - ⚠️ **`role` 없는 구 토큰은 `member`로 간주**(하위 호환). 게스트 토큰 발급·재발급 시
@@ -91,4 +90,3 @@ JWT를 **`token` 쿠키**(HttpOnly)에 담아 회원·게스트가 **같은 쿠�
   `className="bg-[var(--color-surface)]"`
 - `src/index.css`의 `@theme inline`이 토큰을 Tailwind 유틸리티로 브리지한다 (`bg-surface` 등).
 - **일회성 장식값**(그라디언트·마스킹테이프 등)은 토큰화하지 않고 컴포넌트에 리터럴로 둔다.
-
