@@ -17,6 +17,7 @@ import { getCurrentRound } from '../utils/round';
 interface InterServerEvents {} // 서버 간 통신 미사용
 
 export interface SocketData {
+  actorId?: string;
   user?: SessionUser;
 }
 

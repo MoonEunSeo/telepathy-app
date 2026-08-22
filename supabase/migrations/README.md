@@ -2,7 +2,7 @@
 
 `telepathy-v2-dev`(`gczftwqeulqzedcirqrr`)에 적용된 마이그레이션을 여기에 둔다.
 
-## 현황 — 저장소 18건 (2026-08-23)
+## 현황 — 저장소 19건 (2026-08-23)
 
 이 디렉터리가 생기기 전에 적용된 10건이 Supabase 에만 남아 있었으나,
 2026-08-04 에 이력에서 내보내 채웠다. **이제 여기만으로 V2 스키마를 재현할 수 있다.**
@@ -26,6 +26,7 @@
 | `20260804083423` | `add_withdraw_user_rpc`                    | `withdraw_user()`                                                                                         |
 | `20260804085643` | `add_change_nickname_rpc`                  | `change_nickname()`                                                                                       |
 | `20260822165751` | `add_commit_match_rpc`                     | Redis 선점 결과를 V2 매칭·채팅 원장에 멱등 확정                                                           |
+| `20260822171000` | `add_resolve_session_actor_rpc`            | 레거시 회원 ID 변환·V2 게스트 actor 멱등 생성                                                             |
 
 `20260729_grant_megaphone_payment.sql`은 Supabase 마이그레이션 시간 버전
 규칙을 따르지 않는 초기 운영 SQL이다. 새 환경 적용 전에 버전 정리가

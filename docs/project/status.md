@@ -49,6 +49,8 @@
 - 동일 `match_id` replay·fingerprint 충돌·롤백·RPC 권한을 검증하는 V2 SQL 통합 시나리오
 - DB 조회·멱등 commit·Redis 확정/보류/격리를 분리한 schema-neutral RESERVED 재조정 코어
 - DB timeout에서 예약을 유지하고 fingerprint 충돌만 격리하는 장애 회귀 테스트
+- V2 매칭 활성 시만 JWT 세션 ID를 `actors.id`로 해석하는 소켓 신원 경계
+- 레거시 회원 ID 변환·게스트 actor/profile 생성을 멱등 처리하는 `resolve_session_actor()`
 
 ## 다음 구현 순서
 

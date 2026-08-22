@@ -9,6 +9,7 @@ import { registerSocketHandlers, type SocketData } from '../config/chat.socket';
 import type { RedisRuntime } from '../infra/redis';
 import { createPresenceStore } from '../infra/presence';
 import { decodeToken } from '../middleware/auth';
+import { resolveSessionActor } from '../modules/auth/session-actor.repository';
 import { expireRound } from '../modules/matching/matching.service';
 import { RedisMatchQueue, type MatchQueue } from '../modules/matching/match-queue';
 import { getCurrentRound } from '../utils/round';
@@ -87,7 +88,22 @@ export function createSocketRuntime(
     }
 
     socket.data.user = user;
-    next();
+    if (!options.v2MatchingEnabled) {
+      next();
+      return;
+    }
+
+    void resolveSessionActor(user)
+      .then((actorId) => {
+        socket.data.actorId = actorId;
+        next();
+      })
+      .catch((error: unknown) => {
+        console.error(
+          `[Auth] V2 actor 해석 실패 (${error instanceof Error ? error.message : 'UNKNOWN'})`,
+        );
+        next(new Error('신원 호환 실패'));
+      });
   });
 
   const presence = createPresenceStore(options.redis, options.redisConfig.presenceKey);
