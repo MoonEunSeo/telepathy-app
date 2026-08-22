@@ -1,14 +1,15 @@
-# Redis presence·재접속 계획
+# Redis 원자적 매칭 대기열 계획
 
 ## 목표
 
-Redis에 고유 사용자 presence와 접속자 수를 공유하고, 일시적인 모바일 연결 끊김에
-60초 복구 유예를 적용한다.
+동일 라운드·단어의 대기 사용자를 Redis에서 원자적으로 선점해 3명 이상이
+동시에 요청해도 한 사용자가 두 방에 매칭되지 않게 한다.
 
 ## 단계
 
-1. TTL·heartbeat·키 설정과 presence store 계약 구현
-2. Redis sorted set·단일 인스턴스 메모리 구현
-3. Socket.IO connection state recovery와 지연 종료 통합
-4. 설정·TTL·고유 사용자 집계 테스트
-5. 문서 동기화와 전체 저장소 검증
+1. 라운드 단위 키·TTL·후보 계약 설계
+2. Redis Lua·메모리 대기열 구현
+3. `join_match`에 대기열 주입과 DB 상태 가드 적용
+4. Streams Adapter 기반 원격 socket room join·매칭 전송
+5. 동시성·재선택·TTL·장애 테스트와 문서 동기화
+6. 전체 저장소 검증·커밋·푸시

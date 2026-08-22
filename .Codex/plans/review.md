@@ -1,21 +1,24 @@
-# Redis presence·재접속 리뷰
+# Redis 원자적 매칭 대기열 리뷰
 
 ## 확인 항목
 
-- `onlineCount` 생성원을 presence store 하나로 통합
-- Redis 장애 시 잘못된 카운트를 emit하지 않음
-- heartbeat 주기가 TTL보다 짧은지 환경변수 경계에서 검증
-- recovery에서도 인증 미들웨어를 다시 실행
-- 재접속 가능 단절에서만 `chatEnded`를 60초 유예
-- scheduler 종료 시 heartbeat·만료 타이머 정리
+- Redis 매칭·레거시 DB 큐 요청별 폴백 금지
+- Lua의 후보 선점·재선택·중복 reservation 원자성
+- 클라이언트 round·신원 payload 미신뢰
+- PostgreSQL waiting 상태 가드 및 부분 실패 보상
+- DB 핵심 상태 확정 후에만 room join·`matched` 수행
+- Adapter 분산 room join과 DB 검증 `match:resume`
+- 라운드 종료·disconnect 시 대기 후보 정리
 
 ## 검증 결과
 
-- 메모리 presence의 고유 사용자·heartbeat·TTL 단위 테스트
-- presence 환경변수 기본값·범위·상호 관계 테스트
+- 메모리 계약으로 A-B 성사·C 대기 동시성 테스트
+- 중복 replay·단어 재선택·socket generation·TTL 테스트
+- 이행 플래그·Redis 필수 조건·TTL 환경변수 테스트
 - 서버·프론트 strict 타입 검사
 
 ## 남은 검증
 
-현재 작업 PC에는 Docker/Redis가 없어 실 Redis 2인스턴스 presence·room recovery는
-Docker 환경에서 실행해야 한다. 프로세스 재시작을 넘는 `chatEnded` deadline claim은 후속 작업이다.
+현재 작업 PC에는 Docker/Redis가 없어 Lua와 2인스턴스 socket 통합 테스트는
+Docker 환경에서 실행해야 한다. PostgreSQL 두 행 확정도 아직 단일 RPC 트랜잭션이
+아니므로 운영 플래그는 RPC·RESERVED 재조정 구현 후에 활성화한다.

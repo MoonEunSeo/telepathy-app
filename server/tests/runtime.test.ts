@@ -17,6 +17,9 @@ describe('서버 런타임 설정', () => {
       redis: {
         connectTimeoutMs: 3000,
         enabled: true,
+        matchQueuePrefix: 'telepathy:development:matching',
+        matchQueueTtlMs: 90000,
+        matchingEnabled: false,
         presenceHeartbeatMs: 20000,
         presenceKey: 'telepathy:development:presence',
         presenceTtlMs: 60000,
@@ -43,6 +46,7 @@ describe('서버 런타임 설정', () => {
 
     expect(config.redis.streamName).toBe('telepathy:production:socket.io');
     expect(config.redis.presenceKey).toBe('telepathy:production:presence');
+    expect(config.redis.matchQueuePrefix).toBe('telepathy:production:matching');
   });
 
   it('presence heartbeat는 TTL보다 짧아야 한다', () => {
@@ -50,6 +54,15 @@ describe('서버 런타임 설정', () => {
       parseServerRuntimeConfig({ PRESENCE_TTL_MS: '60000', PRESENCE_HEARTBEAT_MS: '60000' }),
     ).toThrow('PRESENCE_HEARTBEAT_MS');
     expect(() => parseServerRuntimeConfig({ PRESENCE_TTL_MS: '9999' })).toThrow('PRESENCE_TTL_MS');
+  });
+
+  it('Redis 매칭은 Redis 연결을 필수로 한다', () => {
+    expect(() => parseServerRuntimeConfig({ REDIS_MATCHING_ENABLED: 'true' })).toThrow(
+      'REDIS_ENABLED',
+    );
+    expect(() => parseServerRuntimeConfig({ MATCH_QUEUE_TTL_MS: '14999' })).toThrow(
+      'MATCH_QUEUE_TTL_MS',
+    );
   });
 
   it('잘못된 포트와 경로가 포함된 출처를 거부한다', () => {

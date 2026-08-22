@@ -25,6 +25,10 @@ export interface ServerToClientEvents {
   chatEndedByReport: () => void; // payload 없음
   onlineCount: (count: number) => void;
   matched: (data: MatchedPayload) => void;
+  'match:failed': (payload: {
+    code: 'MATCHING_IN_PROGRESS' | 'MATCHING_UNAVAILABLE' | 'PERSIST_FAILED' | 'ROUND_CLOSED';
+    retryable: boolean;
+  }) => void;
   'megaphone:show': (payload: MegaphoneShowPayload) => void;
   'megaphone:failed': (payload: MegaphoneFailedPayload) => void;
   'game:event': (e: GameEvent) => void;
@@ -41,6 +45,7 @@ export interface ClientToServerEvents {
   leaveRoom: (payload: { roomId: string; userId?: Id }) => void;
   getOnlineCount: () => void; // payload 없음
   join_match: (payload: JoinMatchPayload) => void;
+  'match:resume': (payload: { roomId: string }, ack: (response: { ok: boolean }) => void) => void;
   'megaphone:send': (payload: MegaphoneSendPayload) => void;
   'game:event': (e: GameEvent) => void;
 }

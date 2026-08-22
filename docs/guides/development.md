@@ -60,6 +60,10 @@ docker compose down
   `PRESENCE_HEARTBEAT_MS`(기본 20초)로 고유 사용자 presence를 갱신한다.
 - Redis 비활성 단일 인스턴스에서는 동일한 TTL 계약의 메모리 presence를 사용한다.
 - 재접속 가능한 단절은 즉시 `chatEnded`를 보내지 않고, 유예 만료 후 room 복구 여부를 확인한다.
+- `REDIS_MATCHING_ENABLED`는 `REDIS_ENABLED`과 별도의 이행 플래그다. 로컬 Compose에서는
+  Redis Lua 대기열을 검증하기 위해 ON으로 실행한다.
+- Redis 매칭 활성 시 후보는 90초 TTL로 보호되며, Redis 장애 중에는 레거시 DB 큐로
+  요청별 폴백하지 않고 `match:failed` 응답을 보낸다.
 - `compose.yml`은 로컬 검증용이다. 운영 전 reverse proxy, TLS, Redis 인증과 GHCR 이미지 태그를 추가한다.
 
 ## 작업 루프

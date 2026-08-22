@@ -1,11 +1,18 @@
 // 📦 src/config/chat.socket.ts
 import type { Server, Socket } from 'socket.io';
+import type { MatchedPayload } from '@shared/domain';
 import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketEvents';
 import { v4 as uuidv4 } from 'uuid';
 import supabase from './supabase';
 import { filterMessage } from '../utils/badwords';
 // chat.socket.ts
 import { GUEST_NICKNAME, type SessionUser } from '../middleware/auth';
+import type {
+  MatchQueue,
+  MatchQueueEntry,
+  MatchReservation,
+} from '../modules/matching/match-queue';
+import { getCurrentRound } from '../utils/round';
 
 interface InterServerEvents {} // 서버 간 통신 미사용
 
@@ -32,6 +39,44 @@ function isRecentDuplicate(key: string): boolean {
 
 export interface RegisterSocketHandlerOptions {
   getOnlineCount: () => Promise<number | null>;
+  matchQueue: MatchQueue | null;
+}
+
+function getMatchedPayload(reservation: MatchReservation, userId: string): MatchedPayload {
+  const me = reservation.current.userId === userId ? reservation.current : reservation.partner;
+  const partner = reservation.current.userId === userId ? reservation.partner : reservation.current;
+  return {
+    receiverId: partner.userId,
+    receiverNickname: partner.nickname,
+    receiverUsername: partner.username,
+    roomId: reservation.roomId,
+    round: me.round,
+    senderId: me.userId,
+    senderNickname: me.nickname,
+    senderUsername: me.username,
+    word: me.word,
+  };
+}
+
+async function deliverMatch(
+  io: IOServer,
+  socket: IOSocket,
+  reservation: MatchReservation,
+): Promise<void> {
+  const userId = socket.data.user?.user_id;
+  if (!userId) return;
+  const partner = reservation.current.userId === userId ? reservation.partner : reservation.current;
+
+  await socket.join(reservation.roomId);
+  socket.emit('matched', getMatchedPayload(reservation, userId));
+  try {
+    await io.in(partner.socketId).socketsJoin(reservation.roomId);
+    io.to(partner.socketId).emit('matched', getMatchedPayload(reservation, partner.userId));
+  } catch (error) {
+    console.error(
+      `[Matching] 상대 socket 전송 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+    );
+  }
 }
 
 export function registerSocketHandlers(io: IOServer, options: RegisterSocketHandlerOptions): void {
@@ -100,6 +145,7 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
      * 📌 매칭 요청 이벤트
      * data = { userId, username, nickname, word, round }
      */
+    let waitingEntry: MatchQueueEntry | null = null;
     socket.on('join_match', async (data) => {
       const { word, round } = data;
 
@@ -113,6 +159,20 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
       const username = isGuest ? userId : (me.username ?? userId);
 
       if (!word || round == null) return;
+      if (options.matchQueue !== null && getCurrentRound().round !== round) {
+        socket.emit('match:failed', { code: 'ROUND_CLOSED', retryable: true });
+        return;
+      }
+
+      const currentEntry: MatchQueueEntry = {
+        nickname,
+        queuedAt: Date.now(),
+        round,
+        socketId: socket.id,
+        userId,
+        username,
+        word: word.trim().normalize('NFC'),
+      };
 
       // 재선택: 같은 라운드에서 이 유저의 기존 waiting 행 제거 후 새로 등록
       await supabase
@@ -139,47 +199,152 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
         return;
       }
 
-      // 2. 같은 단어+라운드 waiting 유저 찾기 (본인 제외)
-      const { data: waiting, error: waitingError } = await supabase
-        .from('telepathy_sessions_queue')
-        .select('*')
-        .eq('word', word)
-        .eq('round', round)
-        .eq('status', 'waiting')
-        .neq('user_id', userId);
+      let reservation: MatchReservation | null = null;
+      if (options.matchQueue !== null) {
+        try {
+          const result = await options.matchQueue.join(currentEntry, {
+            matchId: uuidv4(),
+            roomId: uuidv4(),
+          });
+          if (result.kind === 'waiting') {
+            waitingEntry = currentEntry;
+            return;
+          }
+          waitingEntry = null;
+          reservation = result.reservation;
 
-      if (waitingError) {
-        console.error('❌ waiting 조회 실패:', waitingError.message);
-        return;
+          if (!result.isNew) {
+            await supabase
+              .from('telepathy_sessions_queue')
+              .delete()
+              .match({ socket_id: socket.id, status: 'waiting', user_id: userId, round });
+            if (reservation.status === 'COMMITTED') {
+              await deliverMatch(io, socket, reservation);
+            } else {
+              socket.emit('match:failed', { code: 'MATCHING_IN_PROGRESS', retryable: true });
+            }
+            return;
+          }
+        } catch (error) {
+          console.error(
+            `[Matching] Redis 대기열 처리 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+          );
+          await supabase
+            .from('telepathy_sessions_queue')
+            .delete()
+            .match({ socket_id: socket.id, status: 'waiting', user_id: userId, round });
+          socket.emit('match:failed', { code: 'MATCHING_UNAVAILABLE', retryable: true });
+          return;
+        }
+      } else {
+        const { data: waiting, error: waitingError } = await supabase
+          .from('telepathy_sessions_queue')
+          .select('*')
+          .eq('word', word)
+          .eq('round', round)
+          .eq('status', 'waiting')
+          .neq('user_id', userId);
+
+        if (waitingError) {
+          console.error('❌ waiting 조회 실패:', waitingError.message);
+          return;
+        }
+
+        const legacyPartner = waiting?.[0];
+        if (legacyPartner) {
+          reservation = {
+            current: currentEntry,
+            matchId: uuidv4(),
+            partner: {
+              nickname: legacyPartner.nickname,
+              queuedAt: new Date(legacyPartner.created_at).getTime(),
+              round,
+              socketId: legacyPartner.socket_id,
+              userId: legacyPartner.user_id,
+              username: legacyPartner.username,
+              word,
+            },
+            roomId: uuidv4(),
+            status: 'RESERVED',
+          };
+        }
       }
 
       // 3. 상대가 있으면 매칭 성사
-      if (waiting && waiting.length > 0) {
-        const partner = waiting[0];
-        const roomId = uuidv4();
+      if (reservation !== null) {
+        const partner = reservation.partner;
+        const roomId = reservation.roomId;
 
-        // 두 명 모두 matched 처리
-        await supabase
-          .from('telepathy_sessions_queue')
-          .update({
-            status: 'matched',
-            room_id: roomId,
-            partner_id: partner.user_id,
-            partner_username: partner.username,
-            partner_nickname: partner.nickname,
-          })
-          .match({ user_id: userId, round });
+        // Redis 선점 후에도 DB 상태를 다시 가드한다.
+        const [currentUpdate, partnerUpdate] = await Promise.all([
+          supabase
+            .from('telepathy_sessions_queue')
+            .update({
+              partner_id: partner.userId,
+              partner_nickname: partner.nickname,
+              partner_username: partner.username,
+              room_id: roomId,
+              status: 'matched',
+            })
+            .match({ round, status: 'waiting', user_id: userId })
+            .select('user_id'),
+          supabase
+            .from('telepathy_sessions_queue')
+            .update({
+              partner_id: userId,
+              partner_nickname: nickname,
+              partner_username: username,
+              room_id: roomId,
+              status: 'matched',
+            })
+            .match({ round, status: 'waiting', user_id: partner.userId })
+            .select('user_id'),
+        ]);
 
-        await supabase
-          .from('telepathy_sessions_queue')
-          .update({
-            status: 'matched',
-            room_id: roomId,
-            partner_id: userId,
-            partner_username: username,
-            partner_nickname: nickname,
-          })
-          .match({ user_id: partner.user_id, round });
+        const corePersistFailed =
+          currentUpdate.error !== null ||
+          partnerUpdate.error !== null ||
+          currentUpdate.data?.length !== 1 ||
+          partnerUpdate.data?.length !== 1;
+
+        if (corePersistFailed) {
+          console.error('[Matching] DB 핵심 상태 확정 실패');
+          await Promise.all([
+            supabase
+              .from('telepathy_sessions_queue')
+              .update({
+                partner_id: null,
+                partner_nickname: null,
+                partner_username: null,
+                room_id: null,
+                status: 'waiting',
+              })
+              .match({ room_id: roomId, user_id: userId }),
+            supabase
+              .from('telepathy_sessions_queue')
+              .update({
+                partner_id: null,
+                partner_nickname: null,
+                partner_username: null,
+                room_id: null,
+                status: 'waiting',
+              })
+              .match({ room_id: roomId, user_id: partner.userId }),
+          ]);
+          socket.emit('match:failed', { code: 'PERSIST_FAILED', retryable: true });
+          return;
+        }
+
+        if (options.matchQueue !== null) {
+          try {
+            await options.matchQueue.commit(reservation);
+            reservation = { ...reservation, status: 'COMMITTED' };
+          } catch (error) {
+            console.error(
+              `[Matching] Redis commit 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+            );
+          }
+        }
 
         // 4. 로그 기록 (양쪽 다 기록)
         await supabase.from('telepathy_sessions_log').insert([
@@ -190,14 +355,14 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
             word,
             round,
             result: 'matched',
-            partner_id: partner.user_id,
+            partner_id: partner.userId,
             partner_username: partner.username,
             partner_nickname: partner.nickname,
             room_id: roomId,
             created_at: new Date(),
           },
           {
-            user_id: partner.user_id,
+            user_id: partner.userId,
             username: partner.username,
             nickname: partner.nickname,
             word,
@@ -216,27 +381,27 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
         // · 상대가 게스트면 partner_id 는 null 로 두고 닉네임만 남긴다
         // · 같은 상대 + 같은 단어 조합은 한 번만 남긴다
 
-        const partnerIsGuest = partner.username === partner.user_id;
+        const partnerIsGuest = partner.username === partner.userId;
 
         try {
           const historyRows = [
             {
               user_id: userId,
               user_nickname: nickname,
-              partner_id: partnerIsGuest ? null : partner.user_id, // 👈
+              partner_id: partnerIsGuest ? null : partner.userId, // 👈
               partner_nickname: partner.nickname,
               word,
               isGuest,
             },
             {
-              user_id: partner.user_id,
+              user_id: partner.userId,
               user_nickname: partner.nickname,
               partner_id: isGuest ? null : userId,
               partner_nickname: nickname,
               word,
               // 큐에 role 컬럼이 없어 저장된 값으로 판별한다.
               // 게스트는 username에 user_id(uuid)를 그대로 넣으므로 두 값이 같다.
-              isGuest: partner.username === partner.user_id,
+              isGuest: partner.username === partner.userId,
             },
           ].filter((row) => !row.isGuest);
 
@@ -268,52 +433,40 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
           console.error('word_history 저장 실패:', (err as Error).message);
         }
 
-        // socket 방 join
-        // 같은 user의 다른 socket이 이미 이 room에 있으면 내보낸다.
-        // broadcast가 두 sid로 중복 도달하는 경로 차단 - Render 단일 인스턴스 가정
-        // 다중 인스턴스로 확장 시 Redis adapter 필요
-        for (const [sid, s] of io.sockets.sockets) {
-          if (sid === socket.id) continue; // 이 sid가 '나'면 건너뜀
-          if (s.data.user?.user_id !== userId) continue; // 이 소켓 s의 주인이 나랑 다르면 건너뜀
-          // 이 소켓 s가 그 방에 아직 있으면
-          if (s.rooms.has(roomId)) {
-            s.leave(roomId); // 그 방에서 내보냄
-            console.log(`중복 sid 정리: user=${userId} oldSid=${sid} room=${roomId}`);
-          }
+        // Adapter 분산 API를 사용해 다른 인스턴스의 socket도 room에 합류시킨다.
+        await deliverMatch(io, socket, reservation);
+
+        console.log(`✅ 매칭 성공! roomId=${roomId}, ${userId} <-> ${partner.userId}`);
+      }
+    });
+
+    socket.on('match:resume', async ({ roomId }, ack) => {
+      const userId = socket.data.user?.user_id;
+      if (!userId) {
+        ack({ ok: false });
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('telepathy_sessions_queue')
+          .select('user_id')
+          .match({ room_id: roomId, status: 'matched', user_id: userId })
+          .maybeSingle();
+
+        if (error || !data) {
+          console.error('[Matching] room 복구 검증 실패');
+          ack({ ok: false });
+          return;
         }
 
-        socket.join(roomId);
-        const partnerSocket = io.sockets.sockets.get(partner.socket_id);
-        if (partnerSocket) partnerSocket.join(roomId);
-
-        // 5. 매칭 성공 이벤트 전송
-        socket.emit('matched', {
-          roomId,
-          senderId: userId,
-          senderUsername: username,
-          senderNickname: nickname,
-          receiverId: partner.user_id,
-          receiverUsername: partner.username,
-          receiverNickname: partner.nickname,
-          word,
-          round,
-        });
-
-        if (partnerSocket) {
-          partnerSocket.emit('matched', {
-            roomId,
-            senderId: partner.user_id,
-            senderUsername: partner.username,
-            senderNickname: partner.nickname,
-            receiverId: userId,
-            receiverUsername: username,
-            receiverNickname: nickname,
-            word,
-            round,
-          });
-        }
-
-        console.log(`✅ 매칭 성공! roomId=${roomId}, ${userId} <-> ${partner.user_id}`);
+        await socket.join(roomId);
+        ack({ ok: true });
+      } catch (error) {
+        console.error(
+          `[Matching] room 복구 오류 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+        );
+        ack({ ok: false });
       }
     });
 
@@ -392,6 +545,13 @@ export function registerSocketHandlers(io: IOServer, options: RegisterSocketHand
     });
 
     socket.on('disconnect', () => {
+      if (options.matchQueue !== null && waitingEntry !== null) {
+        void options.matchQueue.removeWaiting(waitingEntry).catch((error: unknown) => {
+          console.error(
+            `[Matching] 단절 socket 큐 정리 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+          );
+        });
+      }
       console.log(`🔴 Socket disconnected: ${socket.id}`);
     });
   });

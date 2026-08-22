@@ -1,9 +1,13 @@
-# Redis presence·재접속 설계
+# Redis 원자적 매칭 대기열 설계
 
-- presence는 `user_id -> expiresAt`을 Redis sorted set으로 관리해 인스턴스 전체의 고유 사용자 수를 계산한다.
-- 연결·heartbeat·disconnect 시 만료 시각을 갱신하고, 집계 전 만료 회원을 제거한다.
-- Redis 비활성 모드는 같은 계약의 메모리 store를 사용해 현재 단일 인스턴스 운영을 유지한다.
-- Socket.IO recovery는 60초, `skipMiddlewares=false`로 설정해 인증을 다시 검증한다.
-- `disconnecting`에서 `chatEnded`를 즉시 보내지 않고 방 목록을 보관한다. 60초 후 해당 사용자가 방에
-  복구되지 않은 경우에만 종료 이벤트를 보낸다.
-- Redis 명령 실패 시 잘못된 0명·잘못된 채팅 종료를 방송하지 않고 readiness 복구를 기다린다.
+- 라운드별 sorted set은 대기 순서, hash는 서버가 확정한 사용자·socket·단어
+  메타데이터를 담는다.
+- Lua 하나에서 만료 정리, 본인 재선택 제거, 동일 단어 최고령 후보 선점,
+  상대가 없을 때 현재 사용자 등록을 수행한다.
+- member는 `user_id`로 해 한 라운드에서 사용자 하나가 두 후보가 되지 않게 한다.
+- 라운드는 클라이언트 payload를 신뢰하지 않고 현재 서버 라운드와 같은지 검증한다.
+- Redis 후보 선점 후 PostgreSQL의 두 waiting 행을 `status=waiting` 가드로 갱신한다.
+  한 쪽이라도 실패하면 해당 `room_id`를 가드로 두 행을 waiting으로 보상한다.
+- PostgreSQL 갱신 성공 후에만 room join·`matched`를 수행한다.
+- `REDIS_MATCHING_ENABLED`는 별도 이행 플래그며, 활성 시 Redis 연결을 필수로 한다.
+- Redis 매칭 모드에서 장애가 나면 레거시 DB 큐로 요청별 폴백하지 않는다.

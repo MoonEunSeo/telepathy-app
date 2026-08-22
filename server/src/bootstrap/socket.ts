@@ -10,6 +10,7 @@ import type { RedisRuntime } from '../infra/redis';
 import { createPresenceStore } from '../infra/presence';
 import { decodeToken } from '../middleware/auth';
 import { expireRound } from '../modules/matching/matching.service';
+import { RedisMatchQueue, type MatchQueue } from '../modules/matching/match-queue';
 import { getCurrentRound } from '../utils/round';
 
 interface InterServerEvents {}
@@ -90,6 +91,15 @@ export function createSocketRuntime(
   });
 
   const presence = createPresenceStore(options.redis, options.redisConfig.presenceKey);
+  let matchQueue: MatchQueue | null = null;
+  if (options.redisConfig.matchingEnabled) {
+    if (options.redis === null) throw new Error('Redis 매칭에는 Redis 연결이 필요합니다.');
+    matchQueue = new RedisMatchQueue(
+      options.redis,
+      options.redisConfig.matchQueuePrefix,
+      options.redisConfig.matchQueueTtlMs,
+    );
+  }
   const pendingRoomEnds = new Map<string, NodeJS.Timeout>();
   const presenceExpiryTimers = new Set<NodeJS.Timeout>();
   let stopped = false;
@@ -195,7 +205,7 @@ export function createSocketRuntime(
     void touchUsers(userIds);
   }, options.redisConfig.presenceHeartbeatMs);
 
-  registerSocketHandlers(io, { getOnlineCount });
+  registerSocketHandlers(io, { getOnlineCount, matchQueue });
 
   let lastRound = getCurrentRound().round;
   const roundTimer = setInterval(() => {
@@ -205,6 +215,13 @@ export function createSocketRuntime(
     const endedRound = lastRound;
     lastRound = round;
     io.emit('round:change', { round });
+    if (matchQueue !== null) {
+      void matchQueue.expireRound(endedRound).catch((error: unknown) => {
+        console.error(
+          `[Matching] 라운드 큐 정리 실패 (${error instanceof Error ? error.name : 'UNKNOWN'})`,
+        );
+      });
+    }
     if (options.v2MatchingEnabled) void expireRound(endedRound);
   }, 1_000);
 

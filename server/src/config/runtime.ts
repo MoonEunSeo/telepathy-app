@@ -13,6 +13,14 @@ const runtimeEnvironmentSchema = z.object({
   PORT: z.string().regex(/^\d+$/).optional(),
   REDIS_CONNECT_TIMEOUT_MS: z.string().regex(/^\d+$/).optional(),
   REDIS_ENABLED: z.enum(['true', 'false']).optional(),
+  REDIS_MATCHING_ENABLED: z.enum(['true', 'false']).optional(),
+  REDIS_MATCH_QUEUE_PREFIX: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .regex(/^[a-zA-Z0-9:_-]+$/)
+    .optional(),
   REDIS_PRESENCE_KEY: z
     .string()
     .trim()
@@ -31,6 +39,7 @@ const runtimeEnvironmentSchema = z.object({
   REDIS_URL: z.string().optional(),
   PRESENCE_HEARTBEAT_MS: z.string().regex(/^\d+$/).optional(),
   PRESENCE_TTL_MS: z.string().regex(/^\d+$/).optional(),
+  MATCH_QUEUE_TTL_MS: z.string().regex(/^\d+$/).optional(),
   SERVE_WEB_STATIC: z.enum(['true', 'false']).optional(),
   TRUST_PROXY_HOPS: z.string().regex(/^\d+$/).optional(),
   WEB_ORIGINS: z.string().optional(),
@@ -47,6 +56,9 @@ export interface ServerRuntimeConfig {
 export interface RedisRuntimeConfig {
   connectTimeoutMs: number;
   enabled: boolean;
+  matchQueuePrefix: string;
+  matchQueueTtlMs: number;
+  matchingEnabled: boolean;
   presenceHeartbeatMs: number;
   presenceKey: string;
   presenceTtlMs: number;
@@ -93,12 +105,16 @@ function parseWebOrigins(rawOrigins: string | undefined): string[] {
 
 function parseRedisConfig(parsed: z.infer<typeof runtimeEnvironmentSchema>): RedisRuntimeConfig {
   const enabled = parsed.REDIS_ENABLED === 'true';
+  const matchingEnabled = parsed.REDIS_MATCHING_ENABLED === 'true';
   const connectTimeoutMs = Number(parsed.REDIS_CONNECT_TIMEOUT_MS ?? '3000');
+  const matchQueueTtlMs = Number(parsed.MATCH_QUEUE_TTL_MS ?? '90000');
   const presenceTtlMs = Number(parsed.PRESENCE_TTL_MS ?? '60000');
   const presenceHeartbeatMs = Number(parsed.PRESENCE_HEARTBEAT_MS ?? '20000');
   const streamMaxLen = Number(parsed.REDIS_STREAM_MAX_LEN ?? '10000');
   const environmentName = parsed.NODE_ENV ?? 'development';
   const presenceKey = parsed.REDIS_PRESENCE_KEY?.trim() ?? `telepathy:${environmentName}:presence`;
+  const matchQueuePrefix =
+    parsed.REDIS_MATCH_QUEUE_PREFIX?.trim() ?? `telepathy:${environmentName}:matching`;
   const streamName = parsed.REDIS_STREAM_NAME?.trim() ?? `telepathy:${environmentName}:socket.io`;
   const redisUrl = parsed.REDIS_URL?.trim() || null;
 
@@ -112,6 +128,14 @@ function parseRedisConfig(parsed: z.infer<typeof runtimeEnvironmentSchema>): Red
 
   if (!Number.isSafeInteger(streamMaxLen) || streamMaxLen < 100 || streamMaxLen > 1_000_000) {
     throw new Error('REDIS_STREAM_MAX_LEN은 100~1000000 범위의 정수여야 합니다.');
+  }
+
+  if (
+    !Number.isSafeInteger(matchQueueTtlMs) ||
+    matchQueueTtlMs < 15_000 ||
+    matchQueueTtlMs > 120_000
+  ) {
+    throw new Error('MATCH_QUEUE_TTL_MS는 15000~120000 범위의 정수여야 합니다.');
   }
 
   if (!Number.isSafeInteger(presenceTtlMs) || presenceTtlMs < 10_000 || presenceTtlMs > 300_000) {
@@ -130,6 +154,10 @@ function parseRedisConfig(parsed: z.infer<typeof runtimeEnvironmentSchema>): Red
     throw new Error('REDIS_ENABLED=true이면 REDIS_URL이 필요합니다.');
   }
 
+  if (matchingEnabled && !enabled) {
+    throw new Error('REDIS_MATCHING_ENABLED=true이면 REDIS_ENABLED=true여야 합니다.');
+  }
+
   if (redisUrl !== null) {
     let protocol: string;
     try {
@@ -145,6 +173,9 @@ function parseRedisConfig(parsed: z.infer<typeof runtimeEnvironmentSchema>): Red
   return {
     connectTimeoutMs,
     enabled,
+    matchQueuePrefix,
+    matchQueueTtlMs,
+    matchingEnabled,
     presenceHeartbeatMs,
     presenceKey,
     presenceTtlMs,

@@ -13,6 +13,8 @@ services:
       REDIS_ENABLED: 'true'
       REDIS_STREAM_NAME: telepathy:local:socket.io
       REDIS_PRESENCE_KEY: telepathy:local:presence
+      REDIS_MATCHING_ENABLED: 'true'
+      REDIS_MATCH_QUEUE_PREFIX: telepathy:local:matching
       REDIS_URL: redis://redis:6379
       SERVE_WEB_STATIC: 'false'
       TRUST_PROXY_HOPS: 0

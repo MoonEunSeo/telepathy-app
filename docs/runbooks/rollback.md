@@ -25,4 +25,8 @@ Redis Adapter 장애만 발생한 경우 `REDIS_ENABLED=false`로 단일 인스�
 이 폴백은 다중 인스턴스에서 사용하면 Socket room이 분리되므로 반드시 API 인스턴스를 하나로 줄인 뒤 적용한다.
 presence 키는 휘발성 상태이므로 직접 복구하지 않고, 롤백 후 heartbeat TTL 동안 자동 수렴시킨다.
 
+Redis 매칭만 롤백할 때는 모든 API 인스턴스의 `REDIS_MATCHING_ENABLED=false`를 한 번에
+적용한다. 이미 PostgreSQL에 확정된 매칭은 유지하고 Redis의 대기·reservation 키는
+TTL로 만료시킨다. 활성 인스턴스가 섞인 상태에서 레거시 큐로 요청별 폴백하지 않는다.
+
 정확한 명령과 이미지 태그 정책은 Docker CI/CD 구현 시 추가한다.

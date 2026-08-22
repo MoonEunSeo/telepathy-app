@@ -291,26 +291,45 @@ export default function MainPage() {
 
   // ✅ 매칭 이벤트 수신
   useEffect(() => {
-    socket.on('matched', (data) => {
-      const chatInfo: ChatInfo = {
-        roomId: data.roomId,
-        word: data.word,
-        round: data.round,
-        myId: data.senderId,
-        myUsername: data.senderUsername,
-        myNickname: data.senderNickname,
-        partnerId: data.receiverId,
-        partnerUsername: data.receiverUsername,
-        partnerNickname: data.receiverNickname,
-      };
+    const handleMatchFailed = ({ code }: { code: string }) => {
+      const message =
+        code === 'ROUND_CLOSED'
+          ? '라운드가 바뀌었어요. 다시 선택해주세요.'
+          : code === 'MATCHING_IN_PROGRESS'
+            ? '매칭을 처리하고 있어요.'
+            : '매칭 서비스가 잠시 불안정해요. 잠시 후 다시 시도해주세요.';
+      toast.info(message);
+    };
 
-      setStorage('chatInfo', chatInfo);
-      startSession(chatInfo);
-      navigate('/chatpage');
+    socket.on('matched', (data) => {
+      socket.emit('match:resume', { roomId: data.roomId }, ({ ok }) => {
+        if (!ok) {
+          toast.error('매칭 방을 복구하지 못했어요. 다시 시도해주세요.');
+          return;
+        }
+
+        const chatInfo: ChatInfo = {
+          roomId: data.roomId,
+          word: data.word,
+          round: data.round,
+          myId: data.senderId,
+          myUsername: data.senderUsername,
+          myNickname: data.senderNickname,
+          partnerId: data.receiverId,
+          partnerUsername: data.receiverUsername,
+          partnerNickname: data.receiverNickname,
+        };
+
+        setStorage('chatInfo', chatInfo);
+        startSession(chatInfo);
+        navigate('/chatpage');
+      });
     });
+    socket.on('match:failed', handleMatchFailed);
 
     return () => {
       socket.off('matched');
+      socket.off('match:failed', handleMatchFailed);
     };
   }, [navigate, startSession]);
 

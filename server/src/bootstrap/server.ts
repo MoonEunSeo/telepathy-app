@@ -68,6 +68,7 @@ export async function startServer(): Promise<void> {
   console.log(`🚀 서버 실행 중: http://localhost:${serverRuntimeConfig.port}`);
   console.log(`   웹 정적 파일 제공: ${serverRuntimeConfig.serveWebStatic ? 'ON' : 'OFF'}`);
   console.log(`   Redis Streams Adapter: ${redis === null ? 'OFF' : 'ON'}`);
+  console.log(`   Redis 매칭 대기열: ${serverRuntimeConfig.redis.matchingEnabled ? 'ON' : 'OFF'}`);
 
   const shutdown = async (signal: NodeJS.Signals): Promise<void> => {
     if (shuttingDown) return;

@@ -5,7 +5,7 @@
 - 마지막 문서상 운영 배포: Render에서 Express가 API·Socket.IO·Vite 정적 파일을 함께 제공
 - 운영 연결 주의: 원격 `v3` 브랜치가 삭제되어 Render의 실제 배포 브랜치와 현재 서비스 상태를 재확인해야 함
 - 현재 데이터베이스: Supabase PostgreSQL
-- 현재 단계: Redis Streams Adapter·presence·60초 Socket.IO 재접속 기반 구성 완료
+- 현재 단계: Redis 원자적 매칭 후보 선점 기반 구성 완료, 이행 플래그 기본 OFF
 
 ## 수락된 목표 구조
 
@@ -40,13 +40,19 @@
 - Redis sorted set 기반 고유 사용자 presence와 TTL·heartbeat 집계
 - 60초 Socket.IO connection state recovery와 room 복구 후 지연 종료
 - 프론트 랜덤 접속자 수 보정 제거 및 Redis 집계값 표시
+- 라운드별 Redis ZSET·Hash·Lua 기반 원자적 매칭 후보 선점
+- 중복 요청을 차단하는 reservation·commit tombstone과 90초 TTL
+- Streams Adapter 분산 `socketsJoin`·socket-id room 이벤트 전송
+- PostgreSQL 멤버십 검증 후 room을 복구하는 `match:resume` ACK
+- `REDIS_MATCHING_ENABLED` 별도 이행 플래그와 Redis 장애 시 레거시 큐 폴백 차단
 
 ## 다음 구현 순서
 
-1. 매칭 대기열의 원자적 Redis 처리
-2. 경로별 정적 프리렌더와 Cloudflare Pages 배포
-3. reverse proxy·GHCR·Lightsail CI/CD
-4. Capacitor Android와 앱 전용 인증
+1. PostgreSQL 매칭 확정의 idempotent RPC 트랜잭션·RESERVED 재조정
+2. 실 Redis 2인스턴스 동시 매칭·room 복구 통합 테스트
+3. 경로별 정적 프리렌더와 Cloudflare Pages 배포
+4. reverse proxy·GHCR·Lightsail CI/CD
+5. Capacitor Android와 앱 전용 인증
 
 ## 아직 구현되지 않은 항목
 
@@ -57,7 +63,8 @@
 - API 다중 인스턴스
 - 운영 reverse proxy와 Redis 인증
 - API 2개 인스턴스 간 Socket broadcast 통합 검증
-- Redis 기반 매칭 대기열·rate limit·스케줄러 분산 조정
+- PostgreSQL 매칭 확정 RPC·Redis RESERVED 재조정
+- Redis 기반 rate limit·스케줄러 분산 조정
 - 프로세스 재시작을 견디는 Redis 기반 채팅 종료 deadline claim
 
 ## 진실 공급원
