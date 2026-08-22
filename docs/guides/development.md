@@ -52,7 +52,11 @@ docker compose down
 
 - API 이미지는 `server/`, `shared/`, 런타임 의존성만 포함하며 프론트 빌드를 포함하지 않는다.
 - API 포트는 로컬 루프백에만 바인딩하고 Redis 포트는 호스트에 공개하지 않는다.
-- 현재 Redis 컨테이너는 후속 연결 작업을 위한 기반이다. 서버 상태·Socket.IO·매칭은 아직 Redis를 사용하지 않는다.
+- Compose는 `REDIS_ENABLED=true`로 API를 시작하고 Socket.IO Redis Streams Adapter를 연결한다.
+- Docker 밖에서 Redis 없이 개발할 때는 `REDIS_ENABLED=false`를 사용하며 Socket.IO는 메모리 Adapter로 동작한다.
+- Redis가 활성화됐지만 준비되지 않으면 `/healthz`는 200을 유지하고 `/readyz`는 503을 반환한다.
+- 최초 Redis 연결 실패는 서버 시작 실패로 처리하며, 연결 후 일시 장애는 node-redis와 Streams Adapter가 재연결한다.
+- 60초 세션 복구는 아직 활성화하지 않았다. 현재 즉시 `chatEnded` 처리와 presence를 먼저 Redis로 이전해야 한다.
 - `compose.yml`은 로컬 검증용이다. 운영 전 reverse proxy, TLS, Redis 인증과 GHCR 이미지 태그를 추가한다.
 
 ## 작업 루프

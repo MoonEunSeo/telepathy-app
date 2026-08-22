@@ -9,7 +9,19 @@ const DEFAULT_WEB_ORIGINS = [
 ] as const;
 
 const runtimeEnvironmentSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
   PORT: z.string().regex(/^\d+$/).optional(),
+  REDIS_CONNECT_TIMEOUT_MS: z.string().regex(/^\d+$/).optional(),
+  REDIS_ENABLED: z.enum(['true', 'false']).optional(),
+  REDIS_STREAM_MAX_LEN: z.string().regex(/^\d+$/).optional(),
+  REDIS_STREAM_NAME: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .regex(/^[a-zA-Z0-9:_-]+$/)
+    .optional(),
+  REDIS_URL: z.string().optional(),
   SERVE_WEB_STATIC: z.enum(['true', 'false']).optional(),
   TRUST_PROXY_HOPS: z.string().regex(/^\d+$/).optional(),
   WEB_ORIGINS: z.string().optional(),
@@ -17,9 +29,18 @@ const runtimeEnvironmentSchema = z.object({
 
 export interface ServerRuntimeConfig {
   port: number;
+  redis: RedisRuntimeConfig;
   serveWebStatic: boolean;
   trustProxyHops: number;
   webOrigins: string[];
+}
+
+export interface RedisRuntimeConfig {
+  connectTimeoutMs: number;
+  enabled: boolean;
+  streamMaxLen: number;
+  streamName: string;
+  url: string | null;
 }
 
 function normalizeOrigin(value: string): string {
@@ -58,6 +79,51 @@ function parseWebOrigins(rawOrigins: string | undefined): string[] {
   return origins;
 }
 
+function parseRedisConfig(parsed: z.infer<typeof runtimeEnvironmentSchema>): RedisRuntimeConfig {
+  const enabled = parsed.REDIS_ENABLED === 'true';
+  const connectTimeoutMs = Number(parsed.REDIS_CONNECT_TIMEOUT_MS ?? '3000');
+  const streamMaxLen = Number(parsed.REDIS_STREAM_MAX_LEN ?? '10000');
+  const environmentName = parsed.NODE_ENV ?? 'development';
+  const streamName = parsed.REDIS_STREAM_NAME?.trim() ?? `telepathy:${environmentName}:socket.io`;
+  const redisUrl = parsed.REDIS_URL?.trim() || null;
+
+  if (
+    !Number.isSafeInteger(connectTimeoutMs) ||
+    connectTimeoutMs < 100 ||
+    connectTimeoutMs > 60_000
+  ) {
+    throw new Error('REDIS_CONNECT_TIMEOUT_MS는 100~60000 범위의 정수여야 합니다.');
+  }
+
+  if (!Number.isSafeInteger(streamMaxLen) || streamMaxLen < 100 || streamMaxLen > 1_000_000) {
+    throw new Error('REDIS_STREAM_MAX_LEN은 100~1000000 범위의 정수여야 합니다.');
+  }
+
+  if (enabled && redisUrl === null) {
+    throw new Error('REDIS_ENABLED=true이면 REDIS_URL이 필요합니다.');
+  }
+
+  if (redisUrl !== null) {
+    let protocol: string;
+    try {
+      protocol = new URL(redisUrl).protocol;
+    } catch {
+      throw new Error('REDIS_URL은 유효한 redis:// 또는 rediss:// URL이어야 합니다.');
+    }
+    if (protocol !== 'redis:' && protocol !== 'rediss:') {
+      throw new Error('REDIS_URL은 redis:// 또는 rediss:// 형식이어야 합니다.');
+    }
+  }
+
+  return {
+    connectTimeoutMs,
+    enabled,
+    streamMaxLen,
+    streamName,
+    url: redisUrl,
+  };
+}
+
 export function parseServerRuntimeConfig(environment: NodeJS.ProcessEnv): ServerRuntimeConfig {
   const parsed = runtimeEnvironmentSchema.parse(environment);
   const port = parsed.PORT === undefined ? 5000 : Number(parsed.PORT);
@@ -74,6 +140,7 @@ export function parseServerRuntimeConfig(environment: NodeJS.ProcessEnv): Server
 
   return {
     port,
+    redis: parseRedisConfig(parsed),
     serveWebStatic: parsed.SERVE_WEB_STATIC !== 'false',
     trustProxyHops,
     webOrigins: parseWebOrigins(parsed.WEB_ORIGINS),

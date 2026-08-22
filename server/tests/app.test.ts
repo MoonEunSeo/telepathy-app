@@ -17,7 +17,25 @@ describe('서버 HTTP 경계', () => {
     expect(healthResponse.status).toBe(200);
     expect(healthResponse.text).toBe('OK');
     expect(readyResponse.status).toBe(200);
-    expect(readyResponse.body).toEqual({ status: 'ready' });
+    expect(readyResponse.body).toEqual({
+      status: 'ready',
+      dependencies: { redis: 'disabled' },
+    });
+  });
+
+  it('필수 의존성이 준비되지 않으면 readiness를 503으로 전환한다', async () => {
+    const unavailableApp = createApp({
+      readinessCheck: () => ({ ready: false, redis: 'unavailable' }),
+      serveWebStatic: false,
+    });
+
+    const response = await request(unavailableApp).get('/readyz');
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      status: 'not_ready',
+      dependencies: { redis: 'unavailable' },
+    });
   });
 
   it('허용된 웹 출처에만 credential CORS 헤더를 제공한다', async () => {

@@ -17,7 +17,7 @@ import feedbackRoutes from './src/routes/feedback.routes';
 import timeRoutes from './src/routes/time';
 import userRoutes from './src/routes/user.routes';
 import commentRoutes from './src/routes/comment.routes';
-import { createApp } from './src/http/createApp';
+import { createApp, type CreateAppOptions } from './src/http/createApp';
 
 function registerApiRoutes(app: Express): void {
   app.use('/api/auth', authRoutes);
@@ -37,6 +37,8 @@ function registerApiRoutes(app: Express): void {
   app.use('/api/comments', commentRoutes);
 }
 
-const app = createApp({ registerApiRoutes });
-
-export default app;
+export function createServerApp(
+  options: Omit<CreateAppOptions, 'registerApiRoutes'> = {},
+): Express {
+  return createApp({ ...options, registerApiRoutes });
+}

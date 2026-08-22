@@ -17,9 +17,19 @@ export interface CreateAppOptions {
   allowedOrigins?: readonly string[];
   distPath?: string;
   registerApiRoutes?: (app: Express) => void;
+  readinessCheck?: ReadinessCheck;
   serveWebStatic?: boolean;
   trustProxyHops?: number;
 }
+
+export type RedisReadiness = 'disabled' | 'ready' | 'unavailable';
+
+export interface ReadinessSnapshot {
+  ready: boolean;
+  redis: RedisReadiness;
+}
+
+export type ReadinessCheck = () => Promise<ReadinessSnapshot> | ReadinessSnapshot;
 
 function isApiPath(pathname: string): boolean {
   return pathname === '/api' || pathname.startsWith('/api/');
@@ -42,6 +52,8 @@ export function createApp(options: CreateAppOptions = {}): Express {
   const allowedOrigins = options.allowedOrigins ?? serverRuntimeConfig.webOrigins;
   const serveWebStatic = options.serveWebStatic ?? serverRuntimeConfig.serveWebStatic;
   const trustProxyHops = options.trustProxyHops ?? serverRuntimeConfig.trustProxyHops;
+  const readinessCheck =
+    options.readinessCheck ?? (() => ({ ready: true, redis: 'disabled' as const }));
   const distPath = options.distPath ?? path.join(__dirname, '../../../telepathy-front/dist');
   const corsMiddleware = cors({
     origin: createOriginDelegate(allowedOrigins),
@@ -62,8 +74,19 @@ export function createApp(options: CreateAppOptions = {}): Express {
   options.registerApiRoutes?.(app);
 
   app.get('/healthz', (_req: Request, res: Response) => res.status(200).send('OK'));
-  app.get('/readyz', (_req: Request, res: Response) => {
-    res.status(200).json({ status: 'ready' });
+  app.get('/readyz', async (_req: Request, res: Response) => {
+    try {
+      const readiness = await readinessCheck();
+      res.status(readiness.ready ? 200 : 503).json({
+        status: readiness.ready ? 'ready' : 'not_ready',
+        dependencies: { redis: readiness.redis },
+      });
+    } catch {
+      res.status(503).json({
+        status: 'not_ready',
+        dependencies: { redis: 'unavailable' },
+      });
+    }
   });
 
   if (!serveWebStatic) {

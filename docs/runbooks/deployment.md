@@ -46,4 +46,5 @@ docker compose down
 - reverse proxy만 80/443 포트를 공개하고 API·Redis는 내부 네트워크에 둔다.
 - Redis 인증을 적용하고 비밀값을 이미지·Compose 파일에 직접 기록하지 않는다.
 - GHCR의 `sha-<git-sha>` 이미지로 배포하고 `latest`를 배포 기준으로 사용하지 않는다.
-- Redis 연결 도입 후 `/readyz`가 실제 Redis 상태를 반영하는지 확인한다.
+- `/readyz`의 `dependencies.redis`가 `ready`인지 확인한다. `unavailable`이면 배포를 중단한다.
+- API 2개 인스턴스 간 Socket broadcast 통합 테스트를 통과하기 전에는 수평 확장하지 않는다.
