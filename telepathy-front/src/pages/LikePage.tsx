@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
-import axios from 'axios';
+import { apiAxios } from '../lib/axiosClient';
 // ?no-inline — 4 kB 미만이면 Vite 가 base64 로 번들에 넣는데, 이 QR 은 두 곳에서 쓰여
 // 인라인되면 메인 번들에 3.8 kB 가 중복으로 들어간다. 후원 화면에서만 필요하므로 별도 파일로 둔다.
 import tossQr from '../assets/toss_qr.png?no-inline';
@@ -85,9 +85,12 @@ const LikesPage = () => {
 
     const fetchWordSets = async () => {
       try {
-        const res = await axios.get<WordsetsMineResponse>(`/api/wordsets/mine/${currentUser.id}`, {
-          withCredentials: true,
-        });
+        const res = await apiAxios.get<WordsetsMineResponse>(
+          `/api/wordsets/mine/${currentUser.id}`,
+          {
+            withCredentials: true,
+          },
+        );
         if (res.data.success && Array.isArray(res.data.wordsets)) {
           setMyWordSets(res.data.wordsets);
         }
@@ -105,7 +108,7 @@ const LikesPage = () => {
 
     try {
       // 🔍 user 테이블에서 실명 조회
-      const res = await axios.get<UserByIdResponse>('/api/user/me', {
+      const res = await apiAxios.get<UserByIdResponse>('/api/user/me', {
         withCredentials: true,
       });
       const savedName = res.data?.real_name;
@@ -129,7 +132,7 @@ const LikesPage = () => {
     if (!realName.trim()) return alert('실명을 입력해주세요!');
 
     try {
-      await axios.post(
+      await apiAxios.post(
         `/api/user/update-realname`,
         { user_id: currentUser!.id, real_name: realName },
         { withCredentials: true },
@@ -145,7 +148,7 @@ const LikesPage = () => {
   //✅ [5] 결제 생성 (공통 로직)
   const handleStartPayment = async (finalName: string) => {
     try {
-      await axios.post(
+      await apiAxios.post(
         `/api/sp_payments/create`,
         {
           name: finalName,
@@ -181,7 +184,7 @@ const LikesPage = () => {
 
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get<SpPaymentStatusResponse>('/api/sp_payments/status', {
+        const res = await apiAxios.get<SpPaymentStatusResponse>('/api/sp_payments/status', {
           withCredentials: true,
         });
 

@@ -5,7 +5,7 @@
 - 마지막 문서상 운영 배포: Render에서 Express가 API·Socket.IO·Vite 정적 파일을 함께 제공
 - 운영 연결 주의: 원격 `v3` 브랜치가 삭제되어 Render의 실제 배포 브랜치와 현재 서비스 상태를 재확인해야 함
 - 현재 데이터베이스: Supabase PostgreSQL
-- 현재 단계: 에이전트 개발 환경 완료, 웹·API 런타임 분리 설계 완료
+- 현재 단계: 프론트 API/Socket 런타임 경계와 호출부 이전 완료
 
 ## 수락된 목표 구조
 
@@ -24,16 +24,22 @@
 - [`../adr/004-lightsail-runtime-topology.md`](../adr/004-lightsail-runtime-topology.md)
 - [상세 설계](architecture-design.md)
 
+## 완료된 구현
+
+- `runtimeConfig`에서 API·Socket 주소와 web/native target 중앙 관리
+- 모든 REST 호출을 `apiFetch` 또는 `apiAxios` 경계로 이전
+- Socket.IO 인스턴스를 `config/socket.ts` 하나로 통합
+- 운영 빌드 환경변수 검증과 URL·credentials 회귀 테스트 추가
+
 ## 다음 구현 순서
 
-1. 프론트 API/Socket 주소 중앙화
-2. 직접 fetch·axios·중복 Socket 클라이언트 이전
-3. Express 정적 서빙 의존 제거와 백엔드 Docker 이미지 작성
-4. Redis 연결과 Socket.IO Redis Streams Adapter 도입
-5. presence·60초 재접속 상태 이전
-6. 매칭 대기열의 원자적 Redis 처리
-7. Cloudflare Pages·Lightsail CI/CD
-8. Capacitor Android와 앱 전용 인증
+1. Express 정적 서빙 토글과 공통 CORS 환경 설정
+2. 백엔드 전용 Docker 이미지와 로컬 Docker Compose 작성
+3. Redis 연결과 Socket.IO Redis Streams Adapter 도입
+4. presence·60초 재접속 상태 이전
+5. 매칭 대기열의 원자적 Redis 처리
+6. Cloudflare Pages·Lightsail CI/CD
+7. Capacitor Android와 앱 전용 인증
 
 ## 아직 구현되지 않은 항목
 

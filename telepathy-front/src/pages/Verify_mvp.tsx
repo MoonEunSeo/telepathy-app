@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -55,7 +56,7 @@ export default function Verify_mvp() {
   const handleSendCode = async () => {
     if (!phone) return showError('전화번호를 입력해주세요.');
     try {
-      const res = await fetch('/api/verify-mvp/send', {
+      const res = await apiFetch('/api/verify-mvp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone }),
@@ -77,7 +78,7 @@ export default function Verify_mvp() {
     if (!verificationCode) return showError('인증번호를 입력해주세요.');
 
     try {
-      const res = await fetch('/api/verify-mvp/check', {
+      const res = await apiFetch('/api/verify-mvp/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, code: verificationCode }),
@@ -92,7 +93,7 @@ export default function Verify_mvp() {
       // 인증 성공 → 회원가입 API 호출
       const username = getStorage('username');
       const password = getStorage('password');
-      const registerRes = await fetch('/api/register', {
+      const registerRes = await apiFetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -108,7 +109,7 @@ export default function Verify_mvp() {
       if (registerData.success) {
         // JWT 발급 후 닉네임 확인
         try {
-          const profileRes = await fetch('/api/nickname/profile', { credentials: 'include' });
+          const profileRes = await apiFetch('/api/nickname/profile', { credentials: 'include' });
           const profileData = (await profileRes.json()) as ProfileResponse;
           if (profileData.success && !profileData.nickname) {
             setStorage('needNicknameSetup', 'true');

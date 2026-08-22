@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import type { MegaphoneCountResponse } from '../types';
 
@@ -14,7 +15,7 @@ import type { MegaphoneCountResponse } from '../types';
 export const megaphoneCountKey = ['megaphoneCount'] as const;
 
 export async function fetchMegaphoneCount(): Promise<MegaphoneCountResponse> {
-  const res = await fetch('/api/user/megaphone-count', { credentials: 'include' });
+  const res = await apiFetch('/api/user/megaphone-count', { credentials: 'include' });
   return (await res.json()) as MegaphoneCountResponse;
 }
 

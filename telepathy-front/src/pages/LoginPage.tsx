@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { useModal } from '../contexts/ModalContext';
@@ -33,7 +34,7 @@ export default function LoginPage() {
   // ✅ 로그인 요청
   const onSubmit = async ({ username, password }: LoginForm) => {
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

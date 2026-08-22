@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import type { AuthCheckResponse } from '../types';
 
@@ -14,7 +15,7 @@ import type { AuthCheckResponse } from '../types';
 export const authCheckKey = ['authCheck'] as const;
 
 export async function fetchAuthCheck(): Promise<AuthCheckResponse> {
-  const res = await fetch('/api/auth/check', { credentials: 'include' });
+  const res = await apiFetch('/api/auth/check', { credentials: 'include' });
   return (await res.json()) as AuthCheckResponse;
 }
 

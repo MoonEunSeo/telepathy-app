@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +41,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch('/api/auth/check-username', {
+      const response = await apiFetch('/api/auth/check-username', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),

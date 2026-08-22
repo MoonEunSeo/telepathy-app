@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -117,7 +118,7 @@ export default function ChatPage() {
   // ✅ 세션 종료 공통 함수 (ChatPage.jsx)
   const endCurrentSession = async () => {
     try {
-      await fetch('/api/match/end', {
+      await apiFetch('/api/match/end', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -168,7 +169,7 @@ export default function ChatPage() {
   //✅ 신고 처리
   const handleSubmitReport = async ({ reasons, extra }: ReportSubmitValues) => {
     try {
-      const response = await fetch('/api/report', {
+      const response = await apiFetch('/api/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

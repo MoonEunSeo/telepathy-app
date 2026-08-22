@@ -30,6 +30,8 @@ npm run dev:front
 ```
 
 프론트 개발 서버는 `/api`를 `localhost:5000`으로 프록시한다.
+운영 통합 배포의 공개 URL 기본값은 `telepathy-front/.env.production`에 있으며,
+Cloudflare Pages 분리 시 배포 환경의 `VITE_API_BASE_URL`과 `VITE_SOCKET_URL`로 덮어쓴다.
 
 ## 작업 루프
 

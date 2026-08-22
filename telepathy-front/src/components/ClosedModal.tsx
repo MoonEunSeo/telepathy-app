@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { Comment, CommentsResponse, CommentCreateRequest } from '../types';
@@ -51,7 +52,7 @@ export default function ClosedModal({ username, nickname }: ClosedModalProps) {
 
   // 댓글 불러오기
   const fetchComments = async () => {
-    const res = await fetch('/api/comments');
+    const res = await apiFetch('/api/comments');
     const data = (await res.json()) as CommentsResponse;
     setComments(data);
   };
@@ -75,7 +76,7 @@ export default function ClosedModal({ username, nickname }: ClosedModalProps) {
 
     console.log('🚀 댓글 전송 데이터:', payload);
 
-    await fetch('/api/comments', {
+    await apiFetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

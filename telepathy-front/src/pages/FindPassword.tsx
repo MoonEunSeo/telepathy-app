@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -39,7 +40,7 @@ export default function FindPassword() {
 
   const onCheckId = async ({ username }: IdForm) => {
     try {
-      const res = await fetch('/api/password/check-user', {
+      const res = await apiFetch('/api/password/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),
@@ -59,7 +60,7 @@ export default function FindPassword() {
 
   const onResetPassword = async ({ newPassword }: ResetForm) => {
     try {
-      const res = await fetch('/api/password/reset', {
+      const res = await apiFetch('/api/password/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: confirmedUsername, password: newPassword }),

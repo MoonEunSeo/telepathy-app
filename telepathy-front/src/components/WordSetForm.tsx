@@ -1,7 +1,7 @@
 // ✅ WordSetForm.tsx
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { apiAxios } from '../lib/axiosClient';
 import type { ChangeEvent, CompositionEvent, KeyboardEvent } from 'react';
 import type { SpPaymentUpdateRefundResponse } from '../types';
 
@@ -91,7 +91,7 @@ export default function WordSetForm() {
     if (!isFormValid) return alert('입력값을 다시 확인해주세요.');
 
     try {
-      const res = await axios.post<SpPaymentUpdateRefundResponse>(
+      const res = await apiAxios.post<SpPaymentUpdateRefundResponse>(
         `/api/sp_payments/update-refund`,
         {
           refund_bank: refundBank,

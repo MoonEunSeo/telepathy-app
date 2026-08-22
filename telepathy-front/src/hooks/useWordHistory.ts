@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import type { WordHistoryResponse, WordHistoryItem, WordHistoryUpdateRequest } from '../types';
@@ -15,7 +16,7 @@ import type { WordHistoryResponse, WordHistoryItem, WordHistoryUpdateRequest } f
 export const wordHistoryKey = ['wordHistory'] as const;
 
 async function fetchWordHistory(): Promise<WordHistoryResponse> {
-  const res = await fetch('/api/word-history', { credentials: 'include' });
+  const res = await apiFetch('/api/word-history', { credentials: 'include' });
   if (!res.ok) throw new Error('단어 기록을 불러오지 못했습니다.');
   return (await res.json()) as WordHistoryResponse;
 }
@@ -46,7 +47,7 @@ export function usePatchWordHistory(id: string) {
   return useMutation({
     scope: { id: `wordHistory:${id}` },
     mutationFn: async (patch: WordHistoryUpdateRequest) => {
-      const res = await fetch(`/api/word-history/${id}`, {
+      const res = await apiFetch(`/api/word-history/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

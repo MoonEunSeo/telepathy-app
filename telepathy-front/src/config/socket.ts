@@ -1,19 +1,9 @@
 import { io } from 'socket.io-client';
 
 import type { AppSocket } from '../types';
+import { runtimeConfig } from './runtime';
 
-// dev(vite)는 프론트/백엔드 포트가 달라 백엔드를 명시해야 하지만,
-// 빌드본은 백엔드가 dist 를 정적 서빙하므로(= 프론트와 socket.io 가 동일 origin)
-// 페이지를 서빙하는 그 서버(window.location.origin)에 붙어야 한다.
-// (기존엔 VITE_REALSITE=onrender 를 하드코딩 → 로컬 서빙 시에도 소켓만 원격으로 나가 실패)
-const socketURL =
-  import.meta.env.MODE === 'development'
-    ? `http://localhost:${import.meta.env.VITE_SERV_DEV}`
-    : window.location.origin;
-
-console.log('🌐 socketURL =', socketURL);
-
-export const socket: AppSocket = io(socketURL, {
+export const socket: AppSocket = io(runtimeConfig.socketUrl, {
   withCredentials: true,
   transports: ['websocket'],
   autoConnect: false, // 세션 보장 후 수동 연결

@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import type { ProfileResponse, Id } from '../types';
 
@@ -17,7 +18,7 @@ export interface Profile {
 }
 
 async function fetchProfile(): Promise<ProfileResponse> {
-  const res = await fetch('/api/nickname/profile', { credentials: 'include' });
+  const res = await apiFetch('/api/nickname/profile', { credentials: 'include' });
   return (await res.json()) as ProfileResponse;
 }
 

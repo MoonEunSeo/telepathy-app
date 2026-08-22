@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useState, useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import { useWordSession } from '../contexts/WordSessionContext';
@@ -166,7 +167,7 @@ export default function MainPage() {
   useEffect(() => {
     const checkTime = async () => {
       try {
-        const res = await fetch('/api/server-time');
+        const res = await apiFetch('/api/server-time');
         const data = (await res.json()) as ServerTimeResponse;
 
         if (!data.isOpen) {
@@ -254,7 +255,7 @@ export default function MainPage() {
     }
 
     try {
-      const res = await fetch('/api/nickname/set-nickname', {
+      const res = await apiFetch('/api/nickname/set-nickname', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -345,7 +346,7 @@ export default function MainPage() {
     // 진입 시 1회 초기화 (라운드 중간 진입 대응)
     (async () => {
       try {
-        const res = await fetch('/api/match/current-round');
+        const res = await apiFetch('/api/match/current-round');
         const data = (await res.json()) as MatchCurrentRoundResponse;
         applyWordSet(data.round);
         setRound(data.round);
@@ -443,7 +444,7 @@ export default function MainPage() {
     };
 
     try {
-      const res = await fetch('/api/feedback/add', {
+      const res = await apiFetch('/api/feedback/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -1,7 +1,7 @@
 // ✅ WordSetPage.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { apiAxios } from '../lib/axiosClient';
 import WordSetForm from '../components/WordSetForm';
 import type { CurrentUser, ProfileResponse } from '../types';
 
@@ -14,7 +14,7 @@ export default function WordSetPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get<ProfileResponse>('/api/nickname/profile', {
+        const res = await apiAxios.get<ProfileResponse>('/api/nickname/profile', {
           withCredentials: true,
         });
         if (res.data.success && (res.data.id || res.data.userId)) {

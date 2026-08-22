@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +28,7 @@ export default function ChangePassword() {
   // handleSubmit이 검증을 통과시킨 뒤에만 호출한다 -> 여기선 값 검사 불필요
   const onSubmit = async ({ currentPassword, newPassword }: ChangePasswordForm) => {
     try {
-      const res = await fetch('/api/password/change', {
+      const res = await apiFetch('/api/password/change', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // 로그인된 사용자

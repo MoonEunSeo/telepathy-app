@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import type { Id, UserProfile } from '../types';
 
 export const GUEST_NICKNAME = '익명의 사용자';
@@ -12,7 +13,7 @@ interface GuestResponse {
 // 서버에서 게스트 세션을 발급받는다 (멱등 - 이미 있으면 같은 신원)
 export async function ensureGuestSession(): Promise<UserProfile | null> {
   try {
-    const res = await fetch('/api/auth/guest', {
+    const res = await apiFetch('/api/auth/guest', {
       method: 'POST',
       credentials: 'include',
     });
@@ -31,7 +32,7 @@ export async function ensureGuestSession(): Promise<UserProfile | null> {
 // 게스트 닉네임 변경 (토큰 재발급)
 export async function updateGuestNickname(nickname: string): Promise<boolean> {
   try {
-    const res = await fetch('/api/auth/guest/nickname', {
+    const res = await apiFetch('/api/auth/guest/nickname', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

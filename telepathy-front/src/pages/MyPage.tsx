@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -75,7 +76,7 @@ const MyPage = () => {
 
   const handleChangeLogout = async () => {
     try {
-      const res = await fetch('/api/auth/logout', {
+      const res = await apiFetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });
@@ -100,7 +101,7 @@ const MyPage = () => {
 
   const confirmWithdraw = async () => {
     try {
-      const res = await fetch('/api/auth/withdraw', {
+      const res = await apiFetch('/api/auth/withdraw', {
         method: 'POST',
         credentials: 'include',
       });
