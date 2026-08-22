@@ -1,11 +1,11 @@
 # 프로젝트 현재 상태
 
-- 최종 갱신: 2026-08-22
+- 최종 갱신: 2026-08-23
 - 저장소 기본 브랜치: `main`
 - 마지막 문서상 운영 배포: Render에서 Express가 API·Socket.IO·Vite 정적 파일을 함께 제공
 - 운영 연결 주의: 원격 `v3` 브랜치가 삭제되어 Render의 실제 배포 브랜치와 현재 서비스 상태를 재확인해야 함
 - 현재 데이터베이스: Supabase PostgreSQL
-- 현재 단계: 프론트 API/Socket 런타임 경계와 호출부 이전 완료
+- 현재 단계: 프론트·서버 런타임 경계와 로컬 컨테이너 기반 구성 완료
 
 ## 수락된 목표 구조
 
@@ -30,26 +30,29 @@
 - 모든 REST 호출을 `apiFetch` 또는 `apiAxios` 경계로 이전
 - Socket.IO 인스턴스를 `config/socket.ts` 하나로 통합
 - 운영 빌드 환경변수 검증과 URL·credentials 회귀 테스트 추가
+- REST와 Socket.IO가 `WEB_ORIGINS` 허용 목록을 공유
+- `SERVE_WEB_STATIC` 전환 플래그와 API 전용 JSON 404 동작 추가
+- `/healthz` liveness와 `/readyz` readiness 엔드포인트 분리
+- 백엔드 전용 `Dockerfile.server`와 API·Redis 로컬 `compose.yml` 추가
 
 ## 다음 구현 순서
 
-1. Express 정적 서빙 토글과 공통 CORS 환경 설정
-2. 백엔드 전용 Docker 이미지와 로컬 Docker Compose 작성
-3. Redis 연결과 Socket.IO Redis Streams Adapter 도입
-4. presence·60초 재접속 상태 이전
-5. 매칭 대기열의 원자적 Redis 처리
-6. Cloudflare Pages·Lightsail CI/CD
-7. Capacitor Android와 앱 전용 인증
+1. Redis 연결과 Socket.IO Redis Streams Adapter 도입
+2. presence·60초 재접속 상태 이전
+3. 매칭 대기열의 원자적 Redis 처리
+4. 경로별 정적 프리렌더와 Cloudflare Pages 배포
+5. reverse proxy·GHCR·Lightsail CI/CD
+6. Capacitor Android와 앱 전용 인증
 
 ## 아직 구현되지 않은 항목
 
-- Dockerfile과 Docker Compose
 - Redis 런타임 연결
 - Cloudflare Pages 배포
 - Lightsail 인스턴스와 배포 파이프라인
 - Capacitor Android 프로젝트
 - 앱용 Bearer/refresh 인증
 - API 다중 인스턴스
+- 운영 reverse proxy와 Redis 인증
 
 ## 진실 공급원
 

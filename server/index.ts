@@ -7,6 +7,8 @@ import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketE
 import { expireRound } from './src/modules/matching/matching.service';
 import { getCurrentRound } from './src/utils/round';
 import { registerSocketHandlers, type SocketData } from './src/config/chat.socket';
+import { createOriginDelegate } from './src/config/cors';
+import { serverRuntimeConfig } from './src/config/runtime';
 import app from './app';
 import { decodeToken } from './src/middleware/auth';
 
@@ -29,11 +31,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
   server,
   {
     cors: {
-      origin: [
-        'http://localhost:5179',
-        'https://telepathy.my',
-        'https://telepathy-app.onrender.com',
-      ],
+      origin: createOriginDelegate(serverRuntimeConfig.webOrigins),
       methods: ['GET', 'POST'],
       credentials: true,
     },
@@ -97,8 +95,8 @@ setInterval(() => {
 }, 1000);
 
 // ✅ 포트 설정 및 서버 실행
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+server.listen(serverRuntimeConfig.port, () => {
+  console.log(`🚀 서버 실행 중: http://localhost:${serverRuntimeConfig.port}`);
+  console.log(`   웹 정적 파일 제공: ${serverRuntimeConfig.serveWebStatic ? 'ON' : 'OFF'}`);
   console.log(`   V2 매칭 만료 처리: ${V2_MATCHING_ENABLED ? 'ON' : 'OFF (운영 스키마 미적용)'}`);
 });

@@ -18,7 +18,7 @@
 1. 현재 장애 이미지 태그와 직전 정상 태그를 기록한다.
 2. reverse proxy에서 신규 인스턴스를 제외한다.
 3. 직전 정상 이미지로 컨테이너를 기동한다.
-4. `/healthz`와 Redis·Supabase 연결을 확인한다.
+4. `/healthz`, `/readyz`와 Redis·Supabase 연결을 확인한다.
 5. 트래픽을 복구하고 오류율을 관찰한다.
 
 정확한 명령과 이미지 태그 정책은 Docker CI/CD 구현 시 추가한다.

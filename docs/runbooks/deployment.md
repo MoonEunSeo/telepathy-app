@@ -16,7 +16,7 @@
 2. 웹 정적 산출물을 Cloudflare Pages에 배포
 3. 백엔드 이미지를 GitHub Actions에서 빌드하고 registry에 push
 4. Lightsail에서 새 이미지 pull
-5. API 인스턴스를 순차 교체하고 `/healthz` 확인
+5. API 인스턴스를 순차 교체하고 `/healthz`, `/readyz` 확인
 6. Socket 재접속, Redis 연결, 핵심 API 확인
 7. 실패 시 `rollback.md`에 따라 이전 이미지로 복구
 
@@ -29,3 +29,21 @@
 - 로그에 토큰·개인정보가 노출되지 않는가
 
 실제 Lightsail 리소스명, registry 경로, 배포 명령은 인프라 구현 PR에서 추가한다.
+
+## 컨테이너 사전 검증
+
+```bash
+docker compose config
+docker compose build api
+docker compose up -d
+curl --fail http://localhost:5000/healthz
+curl --fail http://localhost:5000/readyz
+docker compose down
+```
+
+현재 `compose.yml`은 로컬 검증용이며 다음 조건을 운영 배포 전에 충족해야 한다.
+
+- reverse proxy만 80/443 포트를 공개하고 API·Redis는 내부 네트워크에 둔다.
+- Redis 인증을 적용하고 비밀값을 이미지·Compose 파일에 직접 기록하지 않는다.
+- GHCR의 `sha-<git-sha>` 이미지로 배포하고 `latest`를 배포 기준으로 사용하지 않는다.
+- Redis 연결 도입 후 `/readyz`가 실제 Redis 상태를 반영하는지 확인한다.
