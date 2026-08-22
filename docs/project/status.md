@@ -47,10 +47,12 @@
 - `REDIS_MATCHING_ENABLED` 별도 이행 플래그와 Redis 장애 시 레거시 큐 폴백 차단
 - `commit_match()`로 V2 세션·멤버 2건·매칭 시도 2건을 하나의 트랜잭션에 멱등 확정
 - 동일 `match_id` replay·fingerprint 충돌·롤백·RPC 권한을 검증하는 V2 SQL 통합 시나리오
+- DB 조회·멱등 commit·Redis 확정/보류/격리를 분리한 schema-neutral RESERVED 재조정 코어
+- DB timeout에서 예약을 유지하고 fingerprint 충돌만 격리하는 장애 회귀 테스트
 
 ## 다음 구현 순서
 
-1. V2 actor 신원 호환·채팅 종료 전이와 Redis RESERVED 재조정
+1. V2 actor 신원 호환·채팅 종료 전이와 Redis lease/fencing 재조정 adapter
 2. 검증 DB에 `commit_match()` 적용 후 멱등·동시성 SQL 통합 테스트
 3. 실 Redis 2인스턴스 동시 매칭·room 복구 통합 테스트
 4. 경로별 정적 프리렌더와 Cloudflare Pages 배포
