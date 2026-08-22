@@ -2,27 +2,34 @@
 
 `telepathy-v2-dev`(`gczftwqeulqzedcirqrr`)에 적용된 마이그레이션을 여기에 둔다.
 
-## 현황 — DB 14건 = 저장소 14건 (2026-08-04)
+## 현황 — 저장소 18건 (2026-08-23)
 
 이 디렉터리가 생기기 전에 적용된 10건이 Supabase 에만 남아 있었으나,
 2026-08-04 에 이력에서 내보내 채웠다. **이제 여기만으로 V2 스키마를 재현할 수 있다.**
 
-| 버전 | 이름 | 내용 |
-|---|---|---|
-| `20260727122241` | `v2_identity` | `actors` `users` `user_credentials` `guest_profiles` `nickname_histories` `phone_verification_challenges` |
-| `20260727122652` | `v2_matching_chat` | `match_attempts` `match_rounds` `chat_sessions` `chat_session_members` `chat_messages` `words` 외 4 |
-| `20260727125312` | `v2_report_feedback` | `reports` `report_reason_codes/items` `session_feedback` `balance_games/choices` `user_sanctions` |
-| `20260727125542` | `v2_payment_items` | `orders` `order_items` `payments` `payment_events` `products` `user_item_ledger` `daily_match_usage` |
-| `20260727125753` | `v2_content_notification` | `announcements(+comments)` `notifications` `presence_snapshots` `theme_campaigns` `trend_word_candidates` |
-| `20260728061000` | `enable_rls_and_revoke_anon_privileges` | 전 테이블 RLS + `anon` 권한 회수 |
-| `20260728065746` | `v2_add_word_bookmarks_and_refund_account` | `word_bookmarks`, `payments` 환불계좌 컬럼 |
-| `20260729003910` | `add_record_login_failure_rpc` | `record_login_failure()` |
-| `20260729003957` | `revoke_anon_execute_on_login_failure_rpc` | 함수 권한 회수 + `alter default privileges` |
-| `20260729013403` | `rename_user_id_to_actor_id` | 컬럼명 통일 + 참조 함수 재생성 |
-| `20260729015501` | `add_signup_user_rpc` | `signup_user()` |
-| `20260729055827` | `add_reset_password_rpc` | `reset_password()` |
-| `20260803070550` | `v2_item_purchase_and_consume` | `item_balance()` `record_item_purchase()` `consume_item()` |
-| `20260803233207` | `phone_verification_rpcs_and_indexes` | `record_challenge_attempt()` `mark_challenge_verified()` |
+| 버전             | 이름                                       | 내용                                                                                                      |
+| ---------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `20260727122241` | `v2_identity`                              | `actors` `users` `user_credentials` `guest_profiles` `nickname_histories` `phone_verification_challenges` |
+| `20260727122652` | `v2_matching_chat`                         | `match_attempts` `match_rounds` `chat_sessions` `chat_session_members` `chat_messages` `words` 외 4       |
+| `20260727125312` | `v2_report_feedback`                       | `reports` `report_reason_codes/items` `session_feedback` `balance_games/choices` `user_sanctions`         |
+| `20260727125542` | `v2_payment_items`                         | `orders` `order_items` `payments` `payment_events` `products` `user_item_ledger` `daily_match_usage`      |
+| `20260727125753` | `v2_content_notification`                  | `announcements(+comments)` `notifications` `presence_snapshots` `theme_campaigns` `trend_word_candidates` |
+| `20260728061000` | `enable_rls_and_revoke_anon_privileges`    | 전 테이블 RLS + `anon` 권한 회수                                                                          |
+| `20260728065746` | `v2_add_word_bookmarks_and_refund_account` | `word_bookmarks`, `payments` 환불계좌 컬럼                                                                |
+| `20260729003910` | `add_record_login_failure_rpc`             | `record_login_failure()`                                                                                  |
+| `20260729003957` | `revoke_anon_execute_on_login_failure_rpc` | 함수 권한 회수 + `alter default privileges`                                                               |
+| `20260729013403` | `rename_user_id_to_actor_id`               | 컬럼명 통일 + 참조 함수 재생성                                                                            |
+| `20260729015501` | `add_signup_user_rpc`                      | `signup_user()`                                                                                           |
+| `20260729055827` | `add_reset_password_rpc`                   | `reset_password()`                                                                                        |
+| `20260803070550` | `v2_item_purchase_and_consume`             | `item_balance()` `record_item_purchase()` `consume_item()`                                                |
+| `20260803233207` | `phone_verification_rpcs_and_indexes`      | `record_challenge_attempt()` `mark_challenge_verified()`                                                  |
+| `20260804083423` | `add_withdraw_user_rpc`                    | `withdraw_user()`                                                                                         |
+| `20260804085643` | `add_change_nickname_rpc`                  | `change_nickname()`                                                                                       |
+| `20260822165751` | `add_commit_match_rpc`                     | Redis 선점 결과를 V2 매칭·채팅 원장에 멱등 확정                                                           |
+
+`20260729_grant_megaphone_payment.sql`은 Supabase 마이그레이션 시간 버전
+규칙을 따르지 않는 초기 운영 SQL이다. 새 환경 적용 전에 버전 정리가
+필요하며, 신규 파일은 14자리 UTC timestamp를 사용한다.
 
 원본 조회는 이렇게 한다.
 
@@ -30,13 +37,13 @@
 select version, name, statements from supabase_migrations.schema_migrations order by version;
 ```
 
-### ⚠️ 이 14건만으로는 빈 DB 에 적용되지 않는다
+### ⚠️ 이 마이그레이션만으로는 빈 DB 에 적용되지 않는다
 
 두 가지가 이 디렉터리 밖에 있다.
 
-| 빠진 것 | 설명 |
-|---|---|
-| `legacy_*` 테이블 생성 | `legacy_users` 등 16개. 어느 마이그레이션에도 `rename to` 가 없다 |
+| 빠진 것                     | 설명                                                                  |
+| --------------------------- | --------------------------------------------------------------------- |
+| `legacy_*` 테이블 생성      | `legacy_users` 등 16개. 어느 마이그레이션에도 `rename to` 가 없다     |
 | 레거시 → V2 **데이터 변환** | `actors` 1,447 · `match_attempts` 16,565 등을 채운 로직이 이력에 없다 |
 
 특히 `20260728065746` 은 `public.legacy_sp_payments` 를 참조하므로,
@@ -45,8 +52,8 @@ select version, name, statements from supabase_migrations.schema_migrations orde
 
 ### ⚠️ dev 의 데이터는 마스킹된 사본이다
 
-`20260728065746` 주석에 명시돼 있다 — *"dev 환경의 값은 마스킹된 사본이며,
-운영 Backfill 시 실제 값이 들어온다."* **dev-v2 의 데이터를 운영으로 그대로
+`20260728065746` 주석에 명시돼 있다 — _"dev 환경의 값은 마스킹된 사본이며,
+운영 Backfill 시 실제 값이 들어온다."_ **dev-v2 의 데이터를 운영으로 그대로
 옮기면 안 된다.** 최소한 `payments.refund_bank`/`refund_account` 는 실제 값이 아니다.
 
 ### 이력에 없는 파일
@@ -81,11 +88,11 @@ grant execute on function public.함수명(인자타입...) to service_role;
 
 **세 가지가 자동으로 따라오지 않는다.**
 
-| | 따라오나 | 대응 |
-|---|---|---|
-| 인덱스·뷰 | ✅ 자동 | — |
-| **FK 제약 이름** | ❌ | `alter table … rename constraint` |
-| **`language sql`·`plpgsql` 함수 본문** | ❌ | 같은 마이그레이션에서 재생성 |
+|                                        | 따라오나 | 대응                              |
+| -------------------------------------- | -------- | --------------------------------- |
+| 인덱스·뷰                              | ✅ 자동  | —                                 |
+| **FK 제약 이름**                       | ❌       | `alter table … rename constraint` |
+| **`language sql`·`plpgsql` 함수 본문** | ❌       | 같은 마이그레이션에서 재생성      |
 
 함수가 특히 위험하다. 본문을 **텍스트로 저장했다가 실행 시점에 해석**하므로
 마이그레이션은 성공하고 **나중에 런타임에 터진다.**
@@ -104,11 +111,11 @@ where n.nspname = 'public' and l.lanname in ('sql', 'plpgsql');
 
 생성 타입이 있어도 **`.eq()` 같은 필터의 컬럼명은 검사되지 않는다.**
 
-| 지점 | 검사 |
-|---|---|
-| `select` 문자열의 컬럼명 | ✅ |
-| 결과 속성 접근 (`data.actor_id`) | ✅ |
-| **`.eq('actor_id', …)` 필터** | ❌ |
+| 지점                             | 검사 |
+| -------------------------------- | ---- |
+| `select` 문자열의 컬럼명         | ✅   |
+| 결과 속성 접근 (`data.actor_id`) | ✅   |
+| **`.eq('actor_id', …)` 필터**    | ❌   |
 
 `20260729013403` 때 실제로 3곳 중 2곳만 컴파일러가 짚었다.
 `createClient` 를 직접 쓰는 `scripts/` 는 제네릭이 없어 아예 검사 밖이다.

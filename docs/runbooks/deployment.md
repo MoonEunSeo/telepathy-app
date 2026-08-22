@@ -53,4 +53,7 @@ docker compose down
   대기열이 분할되므로 canary 단위로 다른 값을 사용하지 않는다.
 - 운영에서 Redis 매칭을 켜기 전 A-B 성사·C 대기, 중복 요청 replay, 다른 API 인스턴스의
   socket room 참가와 `match:resume` ACK를 통합 테스트한다.
+- V2 전환 전 `commit_match()` 멱등 replay·공유 actor 동시 확정·중간 실패 롤백·
+  `service_role` 전용 권한을 검증 DB에서 확인한다. 소켓 연결은 actor resolver,
+  `match_attempts.finished_at` 종료 전이, RESERVED 재조정이 완료된 뒤에만 활성화한다.
 - API 2개 인스턴스 간 Socket broadcast 통합 테스트를 통과하기 전에는 수평 확장하지 않는다.

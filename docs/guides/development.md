@@ -64,6 +64,9 @@ docker compose down
   Redis Lua 대기열을 검증하기 위해 ON으로 실행한다.
 - Redis 매칭 활성 시 후보는 90초 TTL로 보호되며, Redis 장애 중에는 레거시 DB 큐로
   요청별 폴백하지 않고 `match:failed` 응답을 보낸다.
+- V2 `commit_match()` 마이그레이션은 현재 레거시 Socket 경로와 분리돼 있다.
+  actor 신원 호환, 채팅 종료 시 `match_attempts.finished_at` 전이, RESERVED
+  재조정 작업자가 모두 완료되기 전에는 소켓에 연결하지 않는다.
 - `compose.yml`은 로컬 검증용이다. 운영 전 reverse proxy, TLS, Redis 인증과 GHCR 이미지 태그를 추가한다.
 
 ## 작업 루프
