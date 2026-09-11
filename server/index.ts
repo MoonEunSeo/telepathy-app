@@ -7,6 +7,7 @@ import type { ClientToServerEvents, ServerToClientEvents } from '@shared/socketE
 import { expireRound } from './src/modules/matching/matching.service';
 import { getCurrentRound } from './src/utils/round';
 import { registerSocketHandlers, type SocketData } from './src/config/chat.socket';
+import { connectRedis } from './src/config/redis';
 import app from './app';
 import { decodeToken } from './src/middleware/auth';
 
@@ -98,7 +99,17 @@ setInterval(() => {
 
 // ✅ 포트 설정 및 서버 실행
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
-  console.log(`   V2 매칭 만료 처리: ${V2_MATCHING_ENABLED ? 'ON' : 'OFF (운영 스키마 미적용)'}`);
+
+async function startServer(): Promise<void> {
+  await connectRedis();
+
+  server.listen(PORT, () => {
+    console.log(`🚀 서버 실행 중: http://localhost:${PORT}`);
+    console.log(`   V2 매칭 만료 처리: ${V2_MATCHING_ENABLED ? 'ON' : 'OFF (운영 스키마 미적용)'}`);
+  });
+}
+
+startServer().catch((error) => {
+  console.error('❌ 서버 시작 실패:', error);
+  process.exit(1);
 });

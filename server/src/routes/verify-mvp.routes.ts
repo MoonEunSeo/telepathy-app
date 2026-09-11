@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { SolapiMessageService } from 'solapi';
 import { randomInt } from 'node:crypto';
+import { redisClient } from '../config/redis';
 import type {
   VerifyMvpSendRequest,
   VerifyMvpSendResponse,
@@ -11,8 +12,19 @@ import type {
 // (Solapi SMS 인증)
 const router = express.Router();
 
-// 인증번호 저장소 (실 서비스에선 Redis 등 권장)
-const codeStore = new Map<string, string>();
+const CODE_TTL_SECONDS = 180;
+const DAILY_SEND_LIMIT = 5;
+const ONE_DAY_SECONDS = 24 * 60 * 60;
+const IP_WINDOW_SECONDS = 5 * 60;
+const IP_SEND_LIMIT = 20;
+
+const ipCountKey = (ip: string): string => `verify:ip:${ip}`;
+
+const codeKey = (phone: string): string => `verify:code:${phone}`;
+const dailyCountKey = (phone: string): string => {
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
+  return `verify:daily:${today}:${phone}`;
+};
 
 // Solapi 서비스 인스턴스 생성
 const messageService = new SolapiMessageService(
@@ -33,11 +45,23 @@ router.post('/send', async (req: Request, res: Response) => {
     } satisfies VerifyMvpSendResponse);
   }
 
+  const countKey = dailyCountKey(phone);
+  const sendsToday = await redisClient.incr(countKey);
+  if (sendsToday === 1) {
+    await redisClient.expire(countKey, ONE_DAY_SECONDS);
+  }
+
+  if (sendsToday > DAILY_SEND_LIMIT) {
+    return res.status(429).json({
+      success: false,
+      message: '인증번호는 하루에 최대 5회까지 요청할 수 있습니다.',
+    } satisfies VerifyMvpSendResponse);
+  }
+
   const code = generateCode();
-  codeStore.set(phone, code);
-  setTimeout(() => codeStore.delete(phone), 180000); // 3분 후 삭제
 
   try {
+    await redisClient.set(codeKey(phone), code, { EX: CODE_TTL_SECONDS });
     await messageService.send({
       to: phone,
       from: process.env.SENDER_PHONE as string,
@@ -45,6 +69,8 @@ router.post('/send', async (req: Request, res: Response) => {
     });
     res.json({ success: true } satisfies VerifyMvpSendResponse);
   } catch (error) {
+    await redisClient.del(codeKey(phone));
+    await redisClient.decr(countKey);
     const e = error as { response?: { data?: unknown }; message?: string };
     console.error('문자 전송 실패:', e.response?.data || e.message);
     res.status(500).json({
@@ -55,12 +81,12 @@ router.post('/send', async (req: Request, res: Response) => {
 });
 
 // ✅ 인증번호 검증 API
-router.post('/check', (req: Request, res: Response) => {
+router.post('/check', async (req: Request, res: Response) => {
   const { phone, code } = req.body as VerifyMvpCheckRequest;
-  const saved = codeStore.get(phone);
+  const saved = await redisClient.get(codeKey(phone));
 
   if (saved === code) {
-    codeStore.delete(phone);
+    await redisClient.del(codeKey(phone));
     res.json({ success: true } satisfies VerifyMvpCheckResponse);
   } else {
     res.status(400).json({
